@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from ndr_core.models import NdrCorePage, ApiConfiguration, SearchField, \
+from ndr_core.models import NdrCorePage, ApiConfiguration, NdrSearchField, \
     SearchConfiguration, SearchFieldFormConfiguration
 from ndr_core.query import Query
 
@@ -15,19 +15,19 @@ class SearchConfigurationTestCase(TestCase):
                                                    api_label='Asia Directories',
                                                    api_page_size=15)
 
-        field_1 = SearchField.objects.create(field_name='first_name',
-                                             field_label='First Name(s)',
-                                             field_type=SearchField.FieldType.STRING,
-                                             field_required=False,
-                                             help_text='Our database only has initials',
-                                             api_parameter='givenname')
+        field_1 = NdrSearchField.objects.create(field_name='first_name',
+                                                field_label='First Name(s)',
+                                                field_type=NdrSearchField.FieldType.STRING,
+                                                field_required=False,
+                                                help_text='Our database only has initials',
+                                                api_parameter='givenname')
 
-        field_2 = SearchField.objects.create(field_name='last_name',
-                                             field_label='Last Name',
-                                             field_type=SearchField.FieldType.STRING,
-                                             field_required=False,
-                                             help_text='Enter a name',
-                                             api_parameter='surname')
+        field_2 = NdrSearchField.objects.create(field_name='last_name',
+                                                field_label='Last Name',
+                                                field_type=NdrSearchField.FieldType.STRING,
+                                                field_required=False,
+                                                help_text='Enter a name',
+                                                api_parameter='surname')
 
         field_1_conf = SearchFieldFormConfiguration.objects.create(search_field=field_1,
                                                                    field_row=0,

@@ -1,0 +1,25 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load django_tables2 %}
+
+{% block content %}
+    <h2>Configure Settings</h2>
+    <div class="alert alert-info small" role="alert">
+
+    </div>
+
+    <h3>Basic Page Settings</h3>
+    <form method="POST">
+        {% csrf_token %}
+        {% render_table basic_settings_table %}
+        <button class="btn btn-primary" role="button">Save Changes</button>
+    </form>
+
+    <h3>Email/Contact Form Settings</h3>
+    <form method="POST">
+        {% csrf_token %}
+        {% render_table contact_settings_table %}
+        <button class="btn btn-primary" role="button">Save Changes</button>
+    </form>
+
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load django_tables2 %}
+
+{% block content %}
+    <h2>Configure Search Fields</h2>
+    <p>
+        Your installation has a number of search fields. These fields can be used to compose search forms.
+        You can create search fields manually or from an existing schema (recommended).
+    </p>
+
+    <h3>Search Fields in your installation</h3>
+    <div class="alert alert-info small" role="alert">
+        These are your configured search fields. You can use them in search forms.
+    </div>
+    {% render_table search_field_table %}
+    <p>
+        <a href="{% url 'ndr_core:create_search_field' %}" class="btn btn-primary" role="button">Create New Field</a>
+    </p>
+
+    <hr/>
+
+    <h3>Create search fields from JSON schema</h3>
+    <div class="alert alert-info small" role="alert">
+        We support a number of schemas. You can automatically create your search fields from them
+    </div>
+    {% for schema in json_schemas %}
+        <div class="row">
+            <div class="col"><a href="{% url 'ndr_core:create_fields_from_schema' schema.pk %}" class="btn btn-primary" role="button">Create Fields From Schema</a></div>
+            <div class="col">{{ schema.schema_label }}</div>
+            <div class="col"><a href="{{ schema.schema_url }}" target="_blank">View Schema</a></div>
+        </div>
+    {% endfor %}
+
+{% endblock %}

@@ -1,0 +1,26 @@
+[
+  {
+    "model": "ndr_core.NdrSearchField",
+    "fields": {
+      "field_name": "last_name",
+      "field_label": "Last Name",
+      "field_type": 1,
+      "field_required": false,
+      "help_text": "This is the person's last name",
+      "api_parameter": "surname",
+      "schema_name": "historic_persons"
+    }
+  },
+  {
+    "model": "ndr_core.NdrSearchField",
+    "fields": {
+      "field_name": "first_name",
+      "field_label": "First Name",
+      "field_type": 1,
+      "field_required": false,
+      "help_text": "This is the person's first name",
+      "api_parameter": "givennames",
+      "schema_name": "historic_persons"
+    }
+  }
+]

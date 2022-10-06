@@ -1,4 +1,4 @@
-from ndr_core.models import SearchConfiguration, SearchField
+from ndr_core.models import SearchConfiguration, NdrSearchField
 
 
 class Query:
@@ -19,7 +19,7 @@ class Query:
     def get_advanced_query(self, page):
         query = self.get_base_string("advanced", page)
         for field_name in self.values:
-            field = SearchField.objects.get(field_name=field_name)
+            field = NdrSearchField.objects.get(field_name=field_name)
             query += f"&{field.api_parameter}={self.values[field_name]}"
         return query
 

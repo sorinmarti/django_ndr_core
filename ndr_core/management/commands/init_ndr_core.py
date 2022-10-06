@@ -1,33 +1,61 @@
 import os
+import shutil
 
+from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
+from django.core.management import call_command
+from django.contrib.staticfiles import finders
+
+from ndr_core.models import NdrCorePage
+from ndr_core.ndr_settings import NdrSettings
 
 
 class Command(BaseCommand):
-    help = 'This command '
+    help = 'This command initializes your ndr_core app'
 
     def add_arguments(self, parser):
-        parser.add_argument('app_name', type=str)
+        pass
 
     def handle(self, *args, **options):
-        app_name = options['app_name']
+        app_name = NdrSettings.APP_NAME
 
-        # Check if app exists
-        if not os.path.isdir(app_name):
-            self.stdout.write(self.style.ERROR('Did not find app directory.'
-                                               ' Create the app using the "startapp" command.'))
+        if os.path.isdir(app_name):
+            self.stdout.write(f'ERROR: directory "{app_name}" already exists.')
             return
 
-        # Get additional data
-        app_label = ''
-        while not app_label:
-            app_label = input(f'What is the title of your app "{app_name}"? ')
+        urls_file = finders.find('ndr_core/app_init/urls.py')
+        if not os.path.isfile(urls_file):
+            self.stdout.write(f'ERROR: static files to copy not found')
+            return
 
-        short_description = input(f'Provide a short description: ')
+        # Create a new app
+        call_command('startapp', app_name)
+        self.stdout.write(f'Created new app "{app_name}"')
+        os.makedirs(f"{app_name}/templates/{app_name}")
 
-        app_path = ''
-        while not app_path:
-            app_path = input(f'What is the base URL path your app "{app_name}"? ')
+        # Load initial settings data
+        call_command('loaddata', 'initial_values.json', app_label='ndr_core')
+        call_command('loaddata', 'schemas.json', app_label='ndr_core')
 
+        User.objects.create_user(username='ndr_core_admin',
+                                 password='ndr_core',
+                                 is_superuser=True)
+
+        # Copy urls.py
+        shutil.copyfile(urls_file, f'{app_name}/urls.py')
+
+        # html files
+        base_file = finders.find('ndr_core/app_init/base.html')
+        shutil.copyfile(base_file, f'{app_name}/templates/{app_name}/base.html')
+
+        index_file = finders.find('ndr_core/app_init/index.html')
+        shutil.copyfile(index_file, f'{app_name}/templates/{app_name}/index.html')
+
+        # Pages
+        NdrCorePage.objects.create(name='Home Page',
+                                   label='Home',
+                                   view_name='index',
+                                   nav_icon='fas-fa home',
+                                   index=0)
 
         self.stdout.write(self.style.SUCCESS('Finished.'))

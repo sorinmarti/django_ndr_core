@@ -1,0 +1,14 @@
+[
+  {
+    "model": "ndr_core.NdrSearchField",
+    "fields": {
+      "field_name": "company_name",
+      "field_label": "Company Name",
+      "field_type": 1,
+      "field_required": false,
+      "help_text": "This is the company's last name",
+      "api_parameter": "name",
+      "schema_name": "historic_companies"
+    }
+  }
+]

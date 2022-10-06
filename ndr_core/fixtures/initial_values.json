@@ -1,0 +1,75 @@
+[
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "contact_form_send_to_address",
+      "value_label": "E-Mail address for Contact Form",
+      "value_help_text": "Messages from the contact form are sent to this address",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "contact_form_send_from_address",
+      "value_label": "E-Mail address for Contact Form",
+      "value_help_text": "Messages from the contact form are sent from this address",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "contact_form_default_subject",
+      "value_label": "Default Subject",
+      "value_help_text": "Default message subject",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "email_config_host",
+      "value_label": "E-Mail host to send messages",
+      "value_help_text": "",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "email_config_timeout",
+      "value_label": "E-Mail send Timeout",
+      "value_help_text": "",
+      "value_value": "10"
+    }
+  },
+
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "header_default_title",
+      "value_label": "Default Header title",
+      "value_help_text": "The title which will appear as title in your browser tab",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "header_description",
+      "value_label": "Description in HTML header",
+      "value_help_text": "",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "header_author",
+      "value_label": "Author in HTML header",
+      "value_help_text": "",
+      "value_value": ""
+    }
+  }
+]

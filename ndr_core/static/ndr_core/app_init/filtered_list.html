@@ -1,0 +1,14 @@
+{% extends 'ndr/base.html' %}
+
+{% block content %}
+    <!-- Filter form -->
+    {% crispy form %}
+
+    <div class="mb-2">Showing {{ meta.total }} sub-collections. Showing page {{ meta.page }} of {{ meta.num_pages }}.</div>
+
+    {% for result in results %}
+        {# show_source_card result #}
+        TODO Result dummy
+    {% endfor %}
+
+{% endblock %}

@@ -2,16 +2,25 @@
 {% load ndr_values %}
 {% load ndr_navigation %}
 
+{% config_value 'main_view' as logo_view_name %}
+
 <!doctype html>
 <html lang="en">
     <head>
-        <meta name="description" content="NDR core admin">
-        <meta name="author" content="sorin.marti@gmail.com">
+        <meta name="description" content="{% config_value 'header_description' %}">
+        <meta name="author" content="{% config_value 'header_author' %}">
         <link rel="icon" href="{% static 'ndr_core/images/favicon.ico' %}">
-        <title>NDR core admin</title>
+        <title>{% config_value 'header_default_title' %}</title>
         <link href="{% static 'ndr_core/css/bootstrap.css' %}" rel="stylesheet">
+
         <link href="{% static 'ndr_core/css/ndr_core_default.css' %}" rel="stylesheet">
+        <link href="{% static 'fontawesome/css/all.min.css' %}" rel="stylesheet" type="text/css">
+
         <script src="{% static 'ndr_core/js/jquery.min.js' %}"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
     </head>
 
     <body>
@@ -20,8 +29,9 @@
                 <header class="blog-header py-3">
                     <div class="row flex-nowrap justify-content-between align-items-center">
                         <div class="col-4 pt-1">
-                            <!-- LOGO -->
-                            <strong>NDR CORE ADMIN</strong>
+                            {% block logo %}
+                                <a class="blog-header-logo text-dark" href="/">NDR CORE</a>
+                            {% endblock logo %}
                         </div>
 
                         <div class="col-4 text-center">
@@ -36,23 +46,16 @@
 
                     <div class="py-1 mb-2 ml-0 d-xl-block d-lg-block d-none" id="links"> <!-- desktop - lg/xl only -->
                         <nav class="nav d-flex justify-content-between border-top">
-                            <a class="p-2 nav-item" href="{% url 'ndr_core:dashboard' %}">Dashboard</a>
-                            <a class="p-2 nav-item" href="{% url 'ndr_core:manage_pages' %}">Pages</a>
-                            <a class="p-2 nav-item" href="{% url 'ndr_core:configure_settings' %}">Settings</a>
-                            <a class="p-2 nav-item" href="{% url 'ndr_core:configure_api' %}">Configure API</a>
-                            <a class="p-2 nav-item" href="{% url 'ndr_core:configure_search_fields' %}">Search Fields</a>
-                            <a class="p-2 nav-item" href="{% url 'ndr_core:configure_search' %}">Search Forms</a>
-                            {% if user.is_authenticated %}
-                                 <a class="p-2 nav-item" href="{% url 'ndr_core:logout' %}">Logout</a>
-                            {% else %}
-                                 <a class="p-2 nav-item" href="{% url 'ndr_core:login' %}">Login</a>
-                            {% endif %}
+                             {% print_navigation %}
+                        </nav>
+                    </div>
+
+                    <div class="collapse py-1 mb-2 ml-0 d-xl-none d-lg-none" id="links"> <!-- mobile - all other sizes -->
+                        <nav class="d-flex flex-column">
+                            {% print_navigation %}
                         </nav>
                     </div>
                 </header>
-
-                {% include 'ndr_core/messages.html' %}
-
             </div>
         </div>  <!-- end of navigation -->
 
@@ -60,6 +63,12 @@
             {% block content %}
             {% endblock %}
         </div>
+
+    {% block footer %}
+        NDR core
+    {% endblock %}
+
+
 
         <script src="{% static 'ndr_core/js/popper.min.js' %}"></script>
         <script src="{% static 'ndr_core/js/bootstrap.min.js' %}"></script>

@@ -1,0 +1,10 @@
+<div class="col-5 offset-md-1">
+    <ul class="navbar-nav mr-auto navbar-ul-items">
+        {% for nav_item in navigation %}
+             <li class="nav-item-bottom">
+                 <a class="link-bottom" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
+             </li>
+        {% endfor %}
+    </ul>
+</div>
+

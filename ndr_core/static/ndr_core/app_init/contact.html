@@ -1,0 +1,10 @@
+{% extends 'ndr/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h5 class="pb-3 mb-3 border-bottom"> Fill in the form below to contact us with any queries.  </h5>
+
+    <div class="col-8">
+        {% crispy form %}
+    </div>
+{% endblock %}

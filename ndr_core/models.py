@@ -1,18 +1,31 @@
 from django.db import models
 from django.urls import reverse, NoReverseMatch
 
+from ndr_core.ndr_settings import NdrSettings
+
 
 class NdrCorePage(models.Model):
     """ An NdrCorePage is a page on the ndr_core website instance. """
+
+    class PageType(models.IntegerChoices):
+        TEMPLATE = 1, "Template Page"
+        SIMPLE_SEARCH = 2, "Simple Search"
+        SEARCH = 3, "Custom Search"
+        COMBINED_SEARCH = 4, "Simple/Custom Search"
+        CONTACT = 5, "Contact Form"
+        FILTER_LIST = 6, "Filterable List"
+
+    view_name = models.CharField(max_length=200,
+                                 help_text='The url part of your page (e.g. https://yourdomain.org/p/view_name)',
+                                 unique=True)
+
+    page_type = models.IntegerField(choices=PageType.choices, default=PageType.TEMPLATE)
 
     name = models.CharField(max_length=200,
                             help_text='The name of the page, e.g. the page\'s title')
 
     label = models.CharField(max_length=200,
                              help_text='The label of the page, e.g. the page\'s navigation label')
-
-    view_name = models.CharField(max_length=200,
-                                 help_text='The name of the view to display')
 
     nav_icon = models.CharField(max_length=200,
                                 help_text='The fontawesome nav icon (leave blank if none)',
@@ -23,9 +36,12 @@ class NdrCorePage(models.Model):
 
     def url(self):
         try:
-            reverse_url = reverse(f'main:{self.view_name}')
+            reverse_url = reverse(f'{NdrSettings.APP_NAME}:{self.view_name}')
         except NoReverseMatch:
-            reverse_url = '#'
+            try:
+                reverse_url = reverse(f'{NdrSettings.APP_NAME}:ndr_view', kwargs={'ndr_page': self.view_name})
+            except NoReverseMatch:
+                reverse_url = '#'
 
         return reverse_url
 
@@ -33,7 +49,7 @@ class NdrCorePage(models.Model):
         return f"{self.name}: {self.label}"
 
 
-class SearchField(models.Model):
+class NdrSearchField(models.Model):
     class FieldType(models.IntegerChoices):
         STRING = 1, "String"
         NUMBER = 2, "Number"
@@ -45,6 +61,7 @@ class SearchField(models.Model):
     field_required = models.BooleanField(default=False)
     help_text = models.CharField(max_length=250)
     api_parameter = models.CharField(max_length=100)
+    schema_name = models.CharField(max_length=100, null=True)
 
 
 class ApiConfiguration(models.Model):
@@ -61,7 +78,7 @@ class ApiConfiguration(models.Model):
 
 
 class SearchFieldFormConfiguration(models.Model):
-    search_field = models.ForeignKey(SearchField, on_delete=models.CASCADE)
+    search_field = models.ForeignKey(NdrSearchField, on_delete=models.CASCADE)
     field_row = models.IntegerField()
     field_column = models.IntegerField()
     field_size = models.IntegerField()
@@ -75,7 +92,14 @@ class SearchConfiguration(models.Model):
 
 
 class NdrCoreValue(models.Model):
-    value_name = models.CharField(max_length=100)
+    value_name = models.CharField(max_length=100, unique=True)
     value_label = models.CharField(max_length=100)
-    value_help_text = models.CharField(max_length=100)
+    value_help_text = models.CharField(max_length=250)
     value_value = models.CharField(max_length=100)
+
+
+class NdrCoreDataSchema(models.Model):
+    schema_url = models.URLField()
+    schema_label = models.CharField(max_length=100)
+    schema_name = models.CharField(max_length=100)
+    fixture_name = models.CharField(max_length=100)

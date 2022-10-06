@@ -1,0 +1,38 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+    <h2>Ndr core dashboard</h2>
+    <p>
+        You find all your configurations here.
+    </p>
+    <a href="{% url 'ndr:index' %}" class="btn btn-primary" role="button">View Your Web Page</a>
+
+    <h3>Your Pages</h3>
+    <div class="alert alert-info small" role="alert">
+        These pages will show up on your webpage in this order.
+    </div>
+    {% render_table pages_table %}
+    <a href="{% url 'ndr_core:manage_pages' %}" class="btn btn-primary" role="button">Manage Pages</a>
+
+    <hr/>
+
+    <h3>Your Search Forms</h3>
+    <div class="alert alert-info small" role="alert">
+        These search forms can be used to search your repositories
+    </div>
+    {% render_table forms_table %}
+    <a href="{% url 'ndr_core:create_search_field' %}" class="btn btn-primary" role="button">Create New Form</a>
+
+    <hr/>
+
+    <h3>Your Settings</h3>
+    <div class="alert alert-info small" role="alert">
+        These settings are used in your installation
+    </div>
+    {% render_table settings_table %}
+    <a href="{% url 'ndr_core:create_search_field' %}" class="btn btn-primary" role="button">Save Settings</a>
+
+    <hr/>
+
+{% endblock %}

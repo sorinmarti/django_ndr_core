@@ -1,0 +1,29 @@
+{% extends 'ndr/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    {% if result %}
+        <h4 class="mt-4">Search Results
+            <div class="btn-group float-right">
+                <a href="#" type="button" class="btn btn-sm btn-outline-secondary ">refine search</a>
+                <a href="#" type="button" class="btn btn-sm btn-outline-secondary float-right">start a new search</a>
+            </div>
+        </h4>
+        {% include 'ndr_core/messages.html' %}
+
+        <div class="mb-2">Your search returned {{ meta.total }} results, showing page {{ meta.page }} of {{ meta.num_pages }}.</div>
+
+        {% for result_line in result %}
+
+        {% endfor %}
+
+
+
+    {% else %}
+        <h4 class="mt-4"></h4>
+        {% include 'ndr_core/messages.html' %}
+        {% crispy form %}
+    {% endif %}
+
+{% endblock %}

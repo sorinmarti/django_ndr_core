@@ -1,0 +1,20 @@
+[
+  {
+    "model": "ndr_core.NdrCoreDataSchema",
+    "fields": {
+      "schema_url": "http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json",
+      "schema_label": "Historic Person Instance (v1.0.1.)",
+      "schema_name": "historic_persons",
+      "fixture_name": "person_instance.json"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreDataSchema",
+    "fields": {
+      "schema_url": "http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json",
+      "schema_label": "Historic Company Instance (v1.0.1.)",
+      "schema_name": "historic_companies",
+      "fixture_name": "company_instance.json"
+    }
+  }
+]

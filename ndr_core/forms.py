@@ -5,21 +5,21 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, Row, Column, Div, Button, BaseInput, Fieldset, HTML
 from django import forms
 from django.conf import settings
+from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Max
 from django.utils.safestring import mark_safe
 
-from models import SearchConfiguration, SearchFieldFormConfiguration
+from ndr_core.models import SearchConfiguration, SearchFieldFormConfiguration, NdrCoreValue
 from ndr_core.widgets import CustomSelect, CustomRange
 
 
-class _NdrCoreSearchForm(forms.Form):
+class _NdrCoreForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
-        self.api_config = get_api_config()
         super(forms.Form, self).__init__(*args, **kwargs)
 
 
-class SimpleSearchForm(_NdrCoreSearchForm):
+class SimpleSearchForm(_NdrCoreForm):
     search_term = forms.CharField(label='Search Term', max_length=100, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -32,7 +32,7 @@ class SimpleSearchForm(_NdrCoreSearchForm):
         return helper
 
 
-class AdvancedSearchForm(_NdrCoreSearchForm):
+class AdvancedSearchForm(_NdrCoreForm):
 
     config = None
     repo_to_search = forms.Field()
@@ -79,7 +79,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
         return helper
 
 
-class FilterForm(_NdrCoreSearchForm):
+class FilterForm(_NdrCoreForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -135,19 +135,18 @@ class FilterForm(_NdrCoreSearchForm):
         return helper
 
 
-class ContactForm(_NdrCoreSearchForm):
+class ContactForm(_NdrCoreForm):
 
     def __init__(self, *args, **kwargs):
         super(ContactForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "POST"
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-sm-3'
-        self.helper.field_class = 'col-sm-9'
         self.helper.add_input(MySubmit('submit', 'Send Message'))
 
+        self.fields['subject'].initial = NdrCoreValue.objects.get(value_name='contact_form_default_subject').value_value
+
     subject = forms.CharField(label='Subject',
-                              initial="The Divisive Power of Citizenship - The French Case",
+                              initial='',
                               help_text="You can change the subject.",
                               required=True)
     email = forms.EmailField(label='Your E-Mail Address', help_text="We are going to reply to this e-mail address.", required=True)
@@ -195,3 +194,13 @@ def querydict_to_dict(query_dict):
             v = v[0]
         data[key] = v
     return data
+
+
+class NdrCoreLoginForm(AuthenticationForm):
+    """Takes Django's login form and adds an input to it so it can be rendered with crispy forms """
+
+    def __init__(self, *args, **kwargs):
+        super(NdrCoreLoginForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "POST"
+        self.helper.add_input(MySubmit('login', 'Login'))
