@@ -2,7 +2,7 @@ import django_tables2 as tables
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from ndr_core.models import NdrCorePage, SearchConfiguration, NdrCoreValue, NdrSearchField
+from ndr_core.models import NdrCorePage, SearchConfiguration, NdrCoreValue, NdrSearchField, ApiConfiguration
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -59,3 +59,10 @@ class ChangeSettingsTable(SettingsTable):
     @staticmethod
     def render_value_value(value, record):
         return mark_safe(f'<input type="text" name="save_{record.value_name}" value="{record.value_value}" />')
+
+
+class ApiTable(tables.Table):
+
+    class Meta:
+        model = ApiConfiguration
+        fields = ('api_name', 'api_host', 'api_protocol', 'api_port', 'api_label', 'api_page_size')

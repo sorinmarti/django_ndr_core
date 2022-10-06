@@ -1,4 +1,5 @@
 {% extends 'ndr_core/admin_views/base.html' %}
+{% load django_tables2 %}
 
 {% block content %}
     <h2>Configure APIs</h2>
@@ -6,6 +7,8 @@
         You can create multiple API configurations to query multiple endpoints.
     </div>
 
-
+    <h3>Existing APIs</h3>
+    {% render_table apis_table %}
+    <a href="{% url 'ndr_core:create_api' %}" class="btn btn-primary" role="button">Create New API Configuration</a>
 
 {% endblock %}

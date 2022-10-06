@@ -1,18 +1,21 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 
-from ndr_core.forms import NdrCoreLoginForm
+from ndr_core.admin_forms import NdrCoreLoginForm
 from ndr_core.admin_views import create_search_fields, dummy, PageEditView, PageDeleteView, move_page_up, \
-    ConfigureSettings
+    ConfigureSettings, ApiConfigurationCreateView
 from ndr_core.admin_views import NdrCoreDashboard, ManagePages, ConfigureApi, ConfigureSearch, ConfigureSearchFields, PageCreateView
 
 app_name = 'ndr_core'
 urlpatterns = [
     path('', NdrCoreDashboard.as_view(), name='dashboard'),
     path('manage/', ManagePages.as_view(), name='manage_pages'),
-    path('configure/api/', ConfigureApi.as_view(), name='configure_api'),
 
     path('configure/settings/', ConfigureSettings.as_view(), name='configure_settings'),
+
+    path('configure/api/', ConfigureApi.as_view(), name='configure_api'),
+    path('configure/api/create/new/', ApiConfigurationCreateView.as_view(), name='create_api'),
+    path('configure/api/edit/<int:pk>/', ApiConfigurationEditView.as_view(), name='edit_api'),
 
     path('configure/search/', ConfigureSearch.as_view(), name='configure_search'),
     path('configure/search/fields/', ConfigureSearchFields.as_view(), name='configure_search_fields'),

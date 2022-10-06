@@ -13,13 +13,16 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from ndr_core.admin_forms import PageForm
-from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrSearchField, SearchConfiguration, NdrCoreValue
-from ndr_core.admin_tables import PagesTable, FormsTable, SettingsTable, ChangeSettingsTable, PagesManageTable, SearchFieldTable
+from ndr_core.admin_forms import PageForm, ApiForm
+from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrSearchField, SearchConfiguration, NdrCoreValue, \
+    ApiConfiguration
+from ndr_core.admin_tables import PagesTable, FormsTable, SettingsTable, ChangeSettingsTable, PagesManageTable, \
+    SearchFieldTable, ApiTable
 from ndr_core.ndr_settings import NdrSettings
 
 
 class NdrCoreDashboard(LoginRequiredMixin, View):
+    """TODO """
 
     def get(self, request, *args, **kwargs):
         pages_table = PagesTable(data=NdrCorePage.objects.all().order_by('index'))
@@ -34,6 +37,7 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
 
 
 class ManagePages(LoginRequiredMixin, ListView):
+    """TODO """
     template_name = 'ndr_core/admin_views/manage_pages.html'
     model = NdrCorePage
     paginate_by = 10
@@ -84,19 +88,29 @@ class ConfigureSettings(LoginRequiredMixin, View):
                       context={'basic_settings_table': basic_settings,
                                'contact_settings_table': contact_settings})
 
+
 class ConfigureApi(LoginRequiredMixin, View):
+    """TODO """
 
     def get(self, request, *args, **kwargs):
-        return render(self.request, template_name='ndr_core/admin_views/configure_api.html')
+        return render(self.request, template_name='ndr_core/admin_views/configure_api.html',
+                      context=self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        apis_table = ApiTable(data=ApiConfiguration.objects.all().order_by('api_name'))
+        context = {'apis_table': apis_table}
+        return context
 
 
 class ConfigureSearch(LoginRequiredMixin, View):
+    """TODO """
 
     def get(self, request, *args, **kwargs):
         return render(self.request, template_name='ndr_core/admin_views/configure_search.html')
 
 
 class ConfigureSearchFields(LoginRequiredMixin, View):
+    """TODO """
 
     def get(self, request, *args, **kwargs):
         return render(self.request,
@@ -112,6 +126,7 @@ class ConfigureSearchFields(LoginRequiredMixin, View):
 
 class PageCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new NdrCorePage """
+
     model = NdrCorePage
     form_class = PageForm
     success_url = reverse_lazy('ndr_core:manage_pages')
@@ -161,6 +176,7 @@ class PageCreateView(LoginRequiredMixin, CreateView):
 
 class PageEditView(LoginRequiredMixin, UpdateView):
     """ View to edit an existing NdrCorePage """
+
     model = NdrCorePage
     form_class = PageForm
     success_url = reverse_lazy('ndr_core:manage_pages')
@@ -170,6 +186,7 @@ class PageEditView(LoginRequiredMixin, UpdateView):
 class PageDeleteView(LoginRequiredMixin, DeleteView):
     """ View to delete an NdrCorePage from the database. Asks to confirm.
     This function also deletes the created HTML template. """
+
     model = NdrCorePage
     success_url = reverse_lazy('ndr_core:manage_pages')
     template_name = 'ndr_core/admin_views/page_confirm_delete.html'
@@ -184,6 +201,28 @@ class PageDeleteView(LoginRequiredMixin, DeleteView):
         return super(PageDeleteView, self).form_valid(form)
 
 
+class ApiConfigurationCreateView(LoginRequiredMixin, CreateView):
+    """ View to create a new API configuration """
+
+    model = ApiConfiguration
+    form_class = ApiForm
+    success_url = reverse_lazy('ndr_core:configure_api')
+    template_name = 'ndr_core/admin_views/api_create.html'
+
+    def form_valid(self, form):
+        response = super(PageCreateView, self).form_valid(form)
+        return response
+
+
+class ApiConfigurationEditView(LoginRequiredMixin, UpdateView):
+    """ View to edit an existing API configuration """
+
+    model = ApiConfiguration
+    form_class = ApiForm
+    success_url = reverse_lazy('ndr_core:configure_api')
+    template_name = 'ndr_core/admin_views/api_edit.html'
+
+
 @login_required
 def create_search_fields(request, schema_pk):
     """ Creates a list of NdrSearchField objects based on a schema definition.
@@ -194,6 +233,7 @@ def create_search_fields(request, schema_pk):
         :param schema_pk: The primary key of the schema object to create search fields from
         :return: A redirect response to to 'configure_search_fields'
     """
+
     try:
         schema = NdrCoreDataSchema.objects.get(id=schema_pk)
         existing_fields = NdrSearchField.objects.filter(schema_name=schema.schema_name)
@@ -217,6 +257,7 @@ def move_page_up(request, pk):
     :param pk: The primary key of the NdrCorePage to move up
     :return: A redirect response to to 'manage_pages'
     """
+
     try:
         page = NdrCorePage.objects.get(id=pk)
         if page.index > 0:
@@ -234,4 +275,5 @@ def move_page_up(request, pk):
 
 
 def dummy(request):
+    """TODO Delete this view again"""
     return render(request, 'ndr/index.html')

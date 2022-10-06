@@ -1,3 +1,6 @@
+"""
+models.py contains ndr_core's database models.
+"""
 from django.db import models
 from django.urls import reverse, NoReverseMatch
 
@@ -5,9 +8,10 @@ from ndr_core.ndr_settings import NdrSettings
 
 
 class NdrCorePage(models.Model):
-    """ An NdrCorePage is a page on the ndr_core website instance. """
+    """ An NdrCorePage is a page on the ndr_core website instance. TODO """
 
     class PageType(models.IntegerChoices):
+        """TODO """
         TEMPLATE = 1, "Template Page"
         SIMPLE_SEARCH = 2, "Simple Search"
         SEARCH = 3, "Custom Search"
@@ -50,56 +54,68 @@ class NdrCorePage(models.Model):
 
 
 class NdrSearchField(models.Model):
+    """TODO """
+
     class FieldType(models.IntegerChoices):
+        """TODO """
         STRING = 1, "String"
         NUMBER = 2, "Number"
         DICTIONARY = 3, "Dictionary"
 
-    field_name = models.CharField(max_length=100)
-    field_label = models.CharField(max_length=100)
-    field_type = models.PositiveSmallIntegerField(choices=FieldType.choices, default=FieldType.STRING)
-    field_required = models.BooleanField(default=False)
-    help_text = models.CharField(max_length=250)
-    api_parameter = models.CharField(max_length=100)
-    schema_name = models.CharField(max_length=100, null=True)
+    field_name = models.CharField(max_length=100, help_text="TODO")
+    field_label = models.CharField(max_length=100, help_text="TODO")
+    field_type = models.PositiveSmallIntegerField(choices=FieldType.choices, default=FieldType.STRING, help_text="TODO")
+    field_required = models.BooleanField(default=False, help_text="TODO")
+    help_text = models.CharField(max_length=250, help_text="TODO")
+    api_parameter = models.CharField(max_length=100, help_text="TODO")
+    schema_name = models.CharField(max_length=100, null=True, help_text="TODO")
 
 
 class ApiConfiguration(models.Model):
+    """TODO """
+
     class Protocol(models.IntegerChoices):
+        """TODO """
         HTTP = 1, "http"
         HTTPS = 2, "https"
 
-    api_name = models.CharField(max_length=100, unique=True)
-    api_host = models.CharField(max_length=100)
-    api_protocol = models.PositiveSmallIntegerField(choices=Protocol.choices, default=Protocol.HTTPS)
-    api_port = models.IntegerField(default=80)
-    api_label = models.CharField(max_length=250)
-    api_page_size = models.IntegerField(default=10)
+    api_name = models.CharField(max_length=100, unique=True, help_text="TODO")
+    api_host = models.CharField(max_length=100, help_text="TODO")
+    api_protocol = models.PositiveSmallIntegerField(choices=Protocol.choices, default=Protocol.HTTPS, help_text="TODO")
+    api_port = models.IntegerField(default=80, help_text="TODO")
+    api_label = models.CharField(max_length=250, help_text="TODO")
+    api_page_size = models.IntegerField(default=10, help_text="TODO")
 
 
 class SearchFieldFormConfiguration(models.Model):
-    search_field = models.ForeignKey(NdrSearchField, on_delete=models.CASCADE)
-    field_row = models.IntegerField()
-    field_column = models.IntegerField()
-    field_size = models.IntegerField()
+    """TODO """
+
+    search_field = models.ForeignKey(NdrSearchField, on_delete=models.CASCADE, help_text="TODO")
+    field_row = models.IntegerField(help_text="TODO")
+    field_column = models.IntegerField(help_text="TODO")
+    field_size = models.IntegerField(help_text="TODO")
 
 
 class SearchConfiguration(models.Model):
-    """ A search configuration contains """
+    """ A search configuration contains TODO """
 
-    api_configuration = models.ForeignKey(ApiConfiguration, on_delete=models.CASCADE)
-    search_form_fields = models.ManyToManyField(SearchFieldFormConfiguration)
+    api_configuration = models.ForeignKey(ApiConfiguration, on_delete=models.CASCADE, help_text="TODO")
+    search_form_fields = models.ManyToManyField(SearchFieldFormConfiguration, help_text="TODO")
 
 
 class NdrCoreValue(models.Model):
-    value_name = models.CharField(max_length=100, unique=True)
-    value_label = models.CharField(max_length=100)
-    value_help_text = models.CharField(max_length=250)
-    value_value = models.CharField(max_length=100)
+    """TODO """
+
+    value_name = models.CharField(max_length=100, unique=True, help_text="TODO")
+    value_label = models.CharField(max_length=100, help_text="TODO")
+    value_help_text = models.CharField(max_length=250, help_text="TODO")
+    value_value = models.CharField(max_length=100, help_text="TODO")
 
 
 class NdrCoreDataSchema(models.Model):
+    """TODO """
+
     schema_url = models.URLField()
-    schema_label = models.CharField(max_length=100)
-    schema_name = models.CharField(max_length=100)
-    fixture_name = models.CharField(max_length=100)
+    schema_label = models.CharField(max_length=100, help_text="TODO")
+    schema_name = models.CharField(max_length=100, help_text="TODO")
+    fixture_name = models.CharField(max_length=100, help_text="TODO")

@@ -5,7 +5,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, Row, Column, Div, Button, BaseInput, Fieldset, HTML
 from django import forms
 from django.conf import settings
-from django.contrib.auth.forms import AuthenticationForm
 from django.db.models import Max
 from django.utils.safestring import mark_safe
 
@@ -195,12 +194,3 @@ def querydict_to_dict(query_dict):
         data[key] = v
     return data
 
-
-class NdrCoreLoginForm(AuthenticationForm):
-    """Takes Django's login form and adds an input to it so it can be rendered with crispy forms """
-
-    def __init__(self, *args, **kwargs):
-        super(NdrCoreLoginForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = "POST"
-        self.helper.add_input(MySubmit('login', 'Login'))
