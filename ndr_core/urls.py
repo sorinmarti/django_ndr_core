@@ -3,8 +3,9 @@ from django.contrib.auth import views as auth_views
 
 from ndr_core.admin_forms import NdrCoreLoginForm
 from ndr_core.admin_views import create_search_fields, dummy, PageEditView, PageDeleteView, move_page_up, \
-    ConfigureSettings, ApiConfigurationCreateView
-from ndr_core.admin_views import NdrCoreDashboard, ManagePages, ConfigureApi, ConfigureSearch, ConfigureSearchFields, PageCreateView
+    ConfigureSettings, ApiConfigurationCreateView, ApiConfigurationEditView
+from ndr_core.admin_views import NdrCoreDashboard, ManagePages, ConfigureApi, ConfigureSearch, ConfigureSearchFields, \
+    PageCreateView
 
 app_name = 'ndr_core'
 urlpatterns = [
@@ -27,7 +28,7 @@ urlpatterns = [
     path('configure/pages/delete/<int:pk>/', PageDeleteView.as_view(), name='delete_page'),
     path('configure/pages/move/up/<int:pk>/', move_page_up, name='move_page_up'),
 
-
-    path('login/', auth_views.LoginView.as_view(template_name='ndr_core/admin_views/login.html', form_class=NdrCoreLoginForm), name='login'),
+    path('login/', auth_views.LoginView.as_view(template_name='ndr_core/admin_views/login.html',
+                                                form_class=NdrCoreLoginForm), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='ndr_core/admin_views/logout.html'), name='logout')
 ]

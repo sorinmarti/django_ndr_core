@@ -104,18 +104,43 @@ class SearchConfiguration(models.Model):
 
 
 class NdrCoreValue(models.Model):
-    """TODO """
+    """NdrCore provides a number of ready-to-use components which need to be configured with setting values. This data
+     model stores these setting values. Example: A contact form has a subject field which can be prefilled with a string
+     of choice. This string can be provided by this data model (value_name='contact_form_default_subject').
+     The list of values is given and gets loaded from a fixture when the management command 'init_ndr_core' is
+     executed. Users can only manipulate the 'value_value' of each object."""
 
-    value_name = models.CharField(max_length=100, unique=True, help_text="TODO")
-    value_label = models.CharField(max_length=100, help_text="TODO")
-    value_help_text = models.CharField(max_length=250, help_text="TODO")
-    value_value = models.CharField(max_length=100, help_text="TODO")
+    value_name = models.CharField(max_length=100, unique=True)
+    """This is the identifier of a NdrCoreValue. In the source, each value gets loaded by searching for this name"""
+
+    value_label = models.CharField(max_length=100)
+    """This is a human readable label for the value (e.g. its title)"""
+
+    value_help_text = models.CharField(max_length=250)
+    """This is the help text for a value which explains to users what it is for"""
+
+    value_value = models.CharField(max_length=100)
+    """This is the actual value which can be updated by the user"""
 
 
 class NdrCoreDataSchema(models.Model):
-    """TODO """
+    """NdrCore provides a number of already implemented schemas. For each schema it is known which search fields are
+     possible so they can be generated automatically. Example: NdrCore has a 'Historic Person Instances' schema
+     implemented for which we know we can search for last and given names, organization affiliation and locations
+     (etc.). So we provide a django-fixture to automatically create these NdrSearchField objects to use them in
+     a search form.
+     The list of available schemas is loaded when the management command 'init_ndr_core' is executed and can not
+     be manipulated by users."""
 
     schema_url = models.URLField()
-    schema_label = models.CharField(max_length=100, help_text="TODO")
-    schema_name = models.CharField(max_length=100, help_text="TODO")
-    fixture_name = models.CharField(max_length=100, help_text="TODO")
+    """This is a stable URL of the implemented schema"""
+
+    schema_label = models.CharField(max_length=100)
+    """This is a human readable label for the schema (e.g. its title)"""
+
+    schema_name = models.CharField(max_length=100)
+    """This is the name of the schema (e.g. its identifier within ndrCore)"""
+
+    fixture_name = models.CharField(max_length=100)
+    """This is the filename of the fixture to load the search fields from. This contains only the file name which must
+    be available in the ndr_core module in 'ndr_core/fixtures/'"""

@@ -110,7 +110,7 @@ class ConfigureSearch(LoginRequiredMixin, View):
 
 
 class ConfigureSearchFields(LoginRequiredMixin, View):
-    """TODO """
+    """ View to configure Search Fields. Displays the configured fields and a list of  """
 
     def get(self, request, *args, **kwargs):
         return render(self.request,
