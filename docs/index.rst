@@ -13,6 +13,7 @@ Welcome to NDR Core's documentation!
    modules/what-is-ndr-core.rst
    modules/how-to-get-started.rst
    modules/administration-interface.rst
+   modules/models.rst
    modules/views.rst
    modules/admin-views.rst
    modules/about-ndr-core.rst

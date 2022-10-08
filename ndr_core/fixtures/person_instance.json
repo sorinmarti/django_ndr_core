@@ -6,7 +6,7 @@
       "field_label": "Last Name",
       "field_type": 1,
       "field_required": false,
-      "help_text": "This is the person's last name",
+      "help_text": "Insert a Last Name.",
       "api_parameter": "surname",
       "schema_name": "historic_persons"
     }
@@ -18,8 +18,44 @@
       "field_label": "First Name",
       "field_type": 1,
       "field_required": false,
-      "help_text": "This is the person's first name",
+      "help_text": "Insert First Name Initials or Titles.",
       "api_parameter": "givennames",
+      "schema_name": "historic_persons"
+    }
+  },
+  {
+    "model": "ndr_core.NdrSearchField",
+    "fields": {
+      "field_name": "organization",
+      "field_label": "Organization",
+      "field_type": 1,
+      "field_required": false,
+      "help_text": "Insert an Organisation Name (e.g. Company, Governments, Department, School, etc.).",
+      "api_parameter": "organisation",
+      "schema_name": "historic_persons"
+    }
+  },
+  {
+    "model": "ndr_core.NdrSearchField",
+    "fields": {
+      "field_name": "profession",
+      "field_label": "Profession",
+      "field_type": 1,
+      "field_required": false,
+      "help_text": "Insert a Profession (e.g. Missionary, Merchant, Wharfinger, etc.).",
+      "api_parameter": "occupation",
+      "schema_name": "historic_persons"
+    }
+  },
+  {
+    "model": "ndr_core.NdrSearchField",
+    "fields": {
+      "field_name": "location",
+      "field_label": "Location",
+      "field_type": 1,
+      "field_required": false,
+      "help_text": "Search for locations. You may select multiple. If left blank, all locations are searched.",
+      "api_parameter": "location",
       "schema_name": "historic_persons"
     }
   }

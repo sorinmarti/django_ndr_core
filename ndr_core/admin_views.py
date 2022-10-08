@@ -16,7 +16,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from ndr_core.admin_forms import PageForm, ApiForm
 from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrSearchField, SearchConfiguration, NdrCoreValue, \
     ApiConfiguration
-from ndr_core.admin_tables import PagesTable, FormsTable, SettingsTable, ChangeSettingsTable, PagesManageTable, \
+from ndr_core.admin_tables import PagesTable, SearchConfigurationTable, SettingsTable, ChangeSettingsTable, PagesManageTable, \
     SearchFieldTable, ApiTable
 from ndr_core.ndr_settings import NdrSettings
 
@@ -26,7 +26,7 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         pages_table = PagesTable(data=NdrCorePage.objects.all().order_by('index'))
-        forms_table = FormsTable(data=SearchConfiguration.objects.all())
+        forms_table = SearchConfigurationTable(data=SearchConfiguration.objects.all())
         settings_table = SettingsTable(data=NdrCoreValue.objects.all())
 
         return render(self.request,
@@ -38,7 +38,7 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
 
 class ManagePages(LoginRequiredMixin, ListView):
     """TODO """
-    template_name = 'ndr_core/admin_views/manage_pages.html'
+    template_name = 'ndr_core/admin_views/configure_pages.html'
     model = NdrCorePage
     paginate_by = 10
 
@@ -99,6 +99,7 @@ class ConfigureApi(LoginRequiredMixin, View):
     def get_context_data(self, **kwargs):
         apis_table = ApiTable(data=ApiConfiguration.objects.all().order_by('api_name'))
         context = {'apis_table': apis_table}
+
         return context
 
 
@@ -106,7 +107,14 @@ class ConfigureSearch(LoginRequiredMixin, View):
     """TODO """
 
     def get(self, request, *args, **kwargs):
-        return render(self.request, template_name='ndr_core/admin_views/configure_search.html')
+        return render(self.request, template_name='ndr_core/admin_views/configure_search.html',
+                      context=self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        search_config_table = SearchConfigurationTable(data=SearchConfiguration.objects.all())
+        context = {'search_config_table': search_config_table}
+
+        return context
 
 
 class ConfigureSearchFields(LoginRequiredMixin, View):
@@ -129,7 +137,7 @@ class PageCreateView(LoginRequiredMixin, CreateView):
 
     model = NdrCorePage
     form_class = PageForm
-    success_url = reverse_lazy('ndr_core:manage_pages')
+    success_url = reverse_lazy('ndr_core:configure_pages')
     template_name = 'ndr_core/admin_views/page_create.html'
 
     def form_valid(self, form):
@@ -179,7 +187,7 @@ class PageEditView(LoginRequiredMixin, UpdateView):
 
     model = NdrCorePage
     form_class = PageForm
-    success_url = reverse_lazy('ndr_core:manage_pages')
+    success_url = reverse_lazy('ndr_core:configure_pages')
     template_name = 'ndr_core/admin_views/page_edit.html'
 
 
@@ -188,7 +196,7 @@ class PageDeleteView(LoginRequiredMixin, DeleteView):
     This function also deletes the created HTML template. """
 
     model = NdrCorePage
-    success_url = reverse_lazy('ndr_core:manage_pages')
+    success_url = reverse_lazy('ndr_core:configure_pages')
     template_name = 'ndr_core/admin_views/page_confirm_delete.html'
 
     def form_valid(self, form):
@@ -210,7 +218,7 @@ class ApiConfigurationCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/api_create.html'
 
     def form_valid(self, form):
-        response = super(PageCreateView, self).form_valid(form)
+        response = super(ApiConfigurationCreateView, self).form_valid(form)
         return response
 
 
@@ -255,7 +263,7 @@ def move_page_up(request, pk):
 
     :param request: The page's request object
     :param pk: The primary key of the NdrCorePage to move up
-    :return: A redirect response to to 'manage_pages'
+    :return: A redirect response to to 'configure_pages'
     """
 
     try:
@@ -271,7 +279,7 @@ def move_page_up(request, pk):
             messages.warning(request, "Page is already on top")
     except NdrCorePage.DoesNotExist:
         messages.error(request, "Page does not exist")
-    return redirect('ndr_core:manage_pages')
+    return redirect('ndr_core:configure_pages')
 
 
 def dummy(request):

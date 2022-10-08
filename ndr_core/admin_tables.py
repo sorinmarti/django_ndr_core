@@ -2,11 +2,14 @@ import django_tables2 as tables
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
+from ndr_core.form_preview import get_image_from_queryset
 from ndr_core.models import NdrCorePage, SearchConfiguration, NdrCoreValue, NdrSearchField, ApiConfiguration
 from ndr_core.ndr_settings import NdrSettings
 
 
 class PagesTable(tables.Table):
+    """Table to show NdrCorePages in the configuration"""
+
     class Meta:
         model = NdrCorePage
         fields = ('name', 'label', 'page_type', 'view_name')
@@ -30,10 +33,23 @@ class PagesManageTable(PagesTable):
                          '<a href="'+reverse(f'{NdrSettings.APP_NAME}:ndr_view', kwargs={'ndr_page': record.view_name})+'" class="btn btn-sm btn-secondary">View</a>')
 
 
-class FormsTable(tables.Table):
+class SearchConfigurationTable(tables.Table):
+    """Table to show configured search forms"""
+
+    search_fields = tables.Column(accessor='search_form_fields.all', verbose_name='Form Configuration')
+
     class Meta:
         model = SearchConfiguration
 
+    def render_api_configuration(self, value, record):
+        return mark_safe(f'<small>{value.api_name} ({value.get_base_url()})</small>')
+
+    def render_search_fields(self, value, record):
+        image = get_image_from_queryset(value)
+        ret_value = ''
+        for field in value:
+            ret_value += f'{field.field_row}, {field.field_column}, {field.field_size}<br/>'
+        return mark_safe(f'<img src="data:image/png;base64, {image}" />')
 
 class SearchFieldTable(tables.Table):
     class Meta:

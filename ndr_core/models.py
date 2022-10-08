@@ -8,37 +8,62 @@ from ndr_core.ndr_settings import NdrSettings
 
 
 class NdrCorePage(models.Model):
-    """ An NdrCorePage is a page on the ndr_core website instance. TODO """
+    """ An NdrCorePage is a web page on the ndr_core website instance. Each page has a type (see PageType) and upon
+     creation, a HTML template is created and saved in the projects template folder. This allows users to create
+     pages over the administration interface and then adapt its contents as needed."""
 
     class PageType(models.IntegerChoices):
-        """TODO """
+        """Ndr Core can display multiple page types which are listed in this choice class """
+
         TEMPLATE = 1, "Template Page"
+        """A template page is a static page. A HTML template is created which can be filled with any content"""
+
         SIMPLE_SEARCH = 2, "Simple Search"
+        """A simple search page is a page which contains a form with a single catch-all search field"""
+
         SEARCH = 3, "Custom Search"
+        """A search page features a configured search form which contains a number of search fields"""
+
         COMBINED_SEARCH = 4, "Simple/Custom Search"
+        """A combined search page contains both a simple and a configured search form which search the same repo."""
+
         CONTACT = 5, "Contact Form"
+        """A contact from page displays a form to send a message to the project team"""
+
         FILTER_LIST = 6, "Filterable List"
+        """A filter list page shows a list of data which can be filtered down"""
 
     view_name = models.CharField(max_length=200,
                                  help_text='The url part of your page (e.g. https://yourdomain.org/p/view_name)',
                                  unique=True)
+    """The view_name is part of the page url in the form: https://yourdomain.org/p/view_name"""
 
-    page_type = models.IntegerField(choices=PageType.choices, default=PageType.TEMPLATE)
+    page_type = models.IntegerField(choices=PageType.choices,
+                                    default=PageType.TEMPLATE,
+                                    help_text="Choose a type for your page. Template is a static page, search pages"
+                                              "display search forms, a filtered list displays data resources with a"
+                                              "filter, contact form displays a form to send a message.")
+    """The page_type determines what kind of page is generated and what View is called (see PageType)"""
 
     name = models.CharField(max_length=200,
-                            help_text='The name of the page, e.g. the page\'s title')
+                            help_text="The name of the page, e.g. the page's title")
+    """This is the name/title of the page. It will be displayed as a <h2>title</h2>"""
 
     label = models.CharField(max_length=200,
-                             help_text='The label of the page, e.g. the page\'s navigation label')
+                             help_text="The label of the page, e.g. the page's navigation label")
+    """This is the navigation label which is displayed in the navigation"""
 
     nav_icon = models.CharField(max_length=200,
                                 help_text='The fontawesome nav icon (leave blank if none)',
                                 blank=True)
+    """For the navigation, fontawesome icons can be displayed (e.g. 'fas fa-home')"""
 
     index = models.IntegerField(default=0,
                                 help_text='Page order')
+    """The index determines the order the pages are displayed. 0 comes first (=most left)"""
 
     def url(self):
+        """Returns the url of a given page or '#' if none is found"""
         try:
             reverse_url = reverse(f'{NdrSettings.APP_NAME}:{self.view_name}')
         except NoReverseMatch:
@@ -54,37 +79,95 @@ class NdrCorePage(models.Model):
 
 
 class NdrSearchField(models.Model):
-    """TODO """
+    """A NdrCoreSearch field servers two purposes: First it can produce a HTML form field and second its information
+      is used to formulate an API request."""
 
     class FieldType(models.IntegerChoices):
-        """TODO """
-        STRING = 1, "String"
-        NUMBER = 2, "Number"
-        DICTIONARY = 3, "Dictionary"
+        """The FieldType of a searchField is used to render the HTML form """
 
-    field_name = models.CharField(max_length=100, help_text="TODO")
-    field_label = models.CharField(max_length=100, help_text="TODO")
-    field_type = models.PositiveSmallIntegerField(choices=FieldType.choices, default=FieldType.STRING, help_text="TODO")
-    field_required = models.BooleanField(default=False, help_text="TODO")
-    help_text = models.CharField(max_length=250, help_text="TODO")
-    api_parameter = models.CharField(max_length=100, help_text="TODO")
-    schema_name = models.CharField(max_length=100, null=True, help_text="TODO")
+        STRING = 1, "String"
+        """This type produces a text field"""
+
+        NUMBER = 2, "Number"
+        """This type produces a number field"""
+
+        DICTIONARY = 3, "Dictionary"
+        """This field produces a dropdown or multi select field"""
+
+    field_name = models.CharField(max_length=100,
+                                  help_text="Choose a name for the field. Can't contain spaces or special characters")
+    """The field_name is used as the HTML form name"""
+
+    field_label = models.CharField(max_length=100,
+                                   help_text="This is the form field's label")
+    """The field_label is the label for the HTML form field"""
+
+    field_type = models.PositiveSmallIntegerField(choices=FieldType.choices,
+                                                  default=FieldType.STRING,
+                                                  help_text="Type of the form field. String produces a text field, "
+                                                            "Number a number field and dictionary a dropdown.")
+    """Type of the form field. This translates to the HTML input type"""
+
+    field_required = models.BooleanField(default=False,
+                                         help_text="Does this field need to be filled out?")
+    """Sets a field to 'required' which means it can't be blank"""
+
+    help_text = models.CharField(max_length=250,
+                                 help_text="The help text which will be displayed in the form")
+    """The help text which will be displayed in the form"""
+
+    api_parameter = models.CharField(max_length=100,
+                                     help_text="The name of the API parameter which is used to generate a query")
+    """The name of the API parameter which is used to generate a query"""
+
+    schema_name = models.CharField(max_length=100,
+                                   null=True,
+                                   help_text="Name of the schema this search_field is created from")
+    """If the search fields were created from a schema, this field gets filled out with the schema's name. This helps
+    to identify fields which were automatically created so they can be overwritten when they are regenerated from a 
+    schema"""
 
 
 class ApiConfiguration(models.Model):
-    """TODO """
+    """An API configuration contains all necessary information to create a query to an API endpoint. """
 
     class Protocol(models.IntegerChoices):
-        """TODO """
+        """Defines the protocol of the API configuration """
         HTTP = 1, "http"
         HTTPS = 2, "https"
 
-    api_name = models.CharField(max_length=100, unique=True, help_text="TODO")
-    api_host = models.CharField(max_length=100, help_text="TODO")
-    api_protocol = models.PositiveSmallIntegerField(choices=Protocol.choices, default=Protocol.HTTPS, help_text="TODO")
-    api_port = models.IntegerField(default=80, help_text="TODO")
-    api_label = models.CharField(max_length=250, help_text="TODO")
-    api_page_size = models.IntegerField(default=10, help_text="TODO")
+    api_name = models.CharField(max_length=100,
+                                unique=True,
+                                help_text="The (form) name of the API. Can't contain special characters or spaces")
+    """This name is used as identifier for the API Can't contain special characters or spaces"""
+
+    api_host = models.CharField(max_length=100,
+                                help_text="The API host (domain only, e.g. my-api-host.org)")
+    """The API host (domain only, e.g. my-api-host.org) """
+
+    api_protocol = models.PositiveSmallIntegerField(choices=Protocol.choices,
+                                                    default=Protocol.HTTPS,
+                                                    help_text="The protocol used (http or https)")
+    """The protocol used (http or https) """
+
+    api_port = models.IntegerField(default=80,
+                                   help_text="TODO")
+    """The TCP port of the API """
+
+    api_label = models.CharField(max_length=250,
+                                 help_text="The API's label is the title of the queried repository")
+    """The API's label is the title of the queried repository """
+
+    api_page_size = models.IntegerField(default=10,
+                                        help_text="Size of the result page (e.g. 'How many results at once')")
+    """The query results will return a page of the results. You can define the page size"""
+
+    def get_base_url(self):
+        """
+        Get the base URL for a configured API
+        :return: base URL for a configured API
+        """
+        return f'{self.get_api_protocol_display()}://{self.api_host}:{self.api_port}/'
 
 
 class SearchFieldFormConfiguration(models.Model):
