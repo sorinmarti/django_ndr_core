@@ -1,0 +1,104 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h2>Create New Search Configuration</h2>
+    {% crispy form %}
+    <img id="preview_image" />
+{% endblock %}
+
+{% block page_js %}
+    <script>
+        function generatePreview() {
+            let data_array = [];
+            for (let i = 0; i < 20; i++) {
+                let row_field =  $('#id_row_field_'+i)
+                let column_field =  $('#id_column_field_'+i)
+                let size_field = $('#id_size_field_'+i);
+                let search_field = $('#id_search_field_'+i);
+                data_array[i]=row_field.val()+"~"+column_field.val()+"~"+size_field.val()+"~"+search_field.val();
+            }
+            let sensorID = "{% url 'ndr_core:preview_image' 'image_string' %}";
+            let url_mask = sensorID.replace("image_string", data_array);
+
+            $('#preview_image').attr("src", url_mask);
+        }
+        $(document).ready(function(){
+            for (let i = 0; i < 20; i++) {
+                let select_box = $('#id_search_field_'+i);
+                select_box.data('pre', $(this).val());
+
+                select_box.change(function(e){
+                    let before_change = $(this).data('pre');//get the pre data
+                    $(this).data('pre', $(this).val());//update the pre data
+                    let after_change = $(this).data('pre');//get the pre data
+                    let this_index = this.id.split('_').slice(-1);
+                    if(before_change !== '') {
+                        for (let x = 0; x < 20; x++) {
+                            if(x !== parseInt(this_index)) {
+                                $('#id_search_field_'+x+' option[value="'+before_change+'"]').removeAttr("disabled");
+                            }
+                        }
+                    }
+                    if(after_change !== '') {
+                        for (let x = 0; x < 20; x++) {
+                            if(x !== parseInt(this_index)) {
+                                $('#id_search_field_'+x+' option[value="'+after_change+'"]').attr("disabled", "disabled");
+                            }
+                        }
+                    }
+
+                    generatePreview();
+                });
+
+                $('#id_row_field_'+i).on('change', generatePreview);
+                $('#id_column_field_'+i).on('change', generatePreview);
+                $('#id_size_field_'+i).on('change', generatePreview);
+            }
+
+            // When document is ready:
+            // Hide remove row
+            $('#button-id-remove_row').hide();
+            // Hide rows 2-20
+            for (let i = 1; i < 20; i++) {
+              $('#search_field_config_row_'+i).hide();
+            }
+            // Set visible buttons to 1
+            let visible_buttons = 0;
+
+            $('#button-id-add_row').on('click', function () {
+                $('#button-id-remove_row').show();
+                if (visible_buttons < 19) {
+                    visible_buttons += 1;
+                    $('#search_field_config_row_' + visible_buttons).show();
+                }
+                if (visible_buttons === 19) {
+                    $('#button-id-add_row').hide();
+                }
+
+                console.log(visible_buttons);
+            });
+
+            $('#button-id-remove_row').on('click', function () {
+                if(visible_buttons > 0) {
+                    $('#id_search_field_'+visible_buttons).val(null);
+                    $('#id_search_field_'+visible_buttons).change();
+                    $('#id_row_field_'+visible_buttons).val("");
+                    $('#id_column_field_'+visible_buttons).val("");
+                    $('#id_size_field_'+visible_buttons).val("");
+                    $('#search_field_config_row_'+visible_buttons).hide();
+
+                    if (visible_buttons === 1) {
+                        $('#button-id-remove_row').hide();
+                    }
+                    if (visible_buttons === 19) {
+                        $('#button-id-add_row').show();
+                    }
+                    visible_buttons -= 1;
+                }
+            });
+
+
+        });
+    </script>
+{% endblock %}

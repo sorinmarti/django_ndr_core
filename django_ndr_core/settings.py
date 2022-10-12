@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'ndr',
     'django_tables2',
     'crispy_forms',
+    'django_select2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

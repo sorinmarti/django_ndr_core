@@ -1,6 +1,5 @@
 import os.path
 import shutil
-from os import terminal_size
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -8,16 +7,18 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.staticfiles import finders
 from django.core.management import call_command
 from django.db.models import Max
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView
 
-from ndr_core.admin_forms import PageForm, ApiForm
+from ndr_core.form_preview import get_image_from_raw_data
+from ndr_core.admin_forms import PageForm, ApiForm, SearchFieldForm, SearchConfigurationForm
 from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrSearchField, SearchConfiguration, NdrCoreValue, \
-    ApiConfiguration
-from ndr_core.admin_tables import PagesTable, SearchConfigurationTable, SettingsTable, ChangeSettingsTable, PagesManageTable, \
-    SearchFieldTable, ApiTable
+    ApiConfiguration, SearchFieldFormConfiguration
+from ndr_core.admin_tables import PagesTable, SearchConfigurationTable, SettingsTable, ChangeSettingsTable, \
+    PagesManageTable, SearchFieldTable, ApiTable
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -36,16 +37,17 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
                                'settings_table': settings_table})
 
 
-class ManagePages(LoginRequiredMixin, ListView):
+class ManagePages(LoginRequiredMixin, View):
     """TODO """
-    template_name = 'ndr_core/admin_views/configure_pages.html'
-    model = NdrCorePage
-    paginate_by = 10
+
+    def get(self, request, *args, **kwargs):
+        return render(self.request,
+                      template_name='ndr_core/admin_views/configure_pages.html',
+                      context=self.get_context_data())
 
     def get_context_data(self, **kwargs):
         pages_table = PagesManageTable(data=NdrCorePage.objects.all().order_by('index'))
-        context = super().get_context_data(**kwargs)
-        context['pages_table'] = pages_table
+        context = {'pages_table': pages_table}
         return context
 
 
@@ -117,21 +119,6 @@ class ConfigureSearch(LoginRequiredMixin, View):
         return context
 
 
-class ConfigureSearchFields(LoginRequiredMixin, View):
-    """ View to configure Search Fields. Displays the configured fields and a list of  """
-
-    def get(self, request, *args, **kwargs):
-        return render(self.request,
-                      template_name='ndr_core/admin_views/configure_search_fields.html',
-                      context=self.get_context_data())
-
-    def get_context_data(self, **kwargs):
-        context = dict()
-        context["json_schemas"] = NdrCoreDataSchema.objects.all()
-        context["search_field_table"] = SearchFieldTable(data=NdrSearchField.objects.all())
-        return context
-
-
 class PageCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new NdrCorePage """
 
@@ -190,6 +177,11 @@ class PageEditView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('ndr_core:configure_pages')
     template_name = 'ndr_core/admin_views/page_edit.html'
 
+    def form_valid(self, form):
+        response = super(PageEditView, self).form_valid(form)
+        print("Form Asset", form.cleaned_data['config_asset'])
+        return response
+
 
 class PageDeleteView(LoginRequiredMixin, DeleteView):
     """ View to delete an NdrCorePage from the database. Asks to confirm.
@@ -209,6 +201,7 @@ class PageDeleteView(LoginRequiredMixin, DeleteView):
         return super(PageDeleteView, self).form_valid(form)
 
 
+# API CONFIGURATION----------------------------------------------------------------------------------------------------
 class ApiConfigurationCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new API configuration """
 
@@ -229,6 +222,66 @@ class ApiConfigurationEditView(LoginRequiredMixin, UpdateView):
     form_class = ApiForm
     success_url = reverse_lazy('ndr_core:configure_api')
     template_name = 'ndr_core/admin_views/api_edit.html'
+
+
+class ApiConfigurationDeleteView(LoginRequiredMixin, DeleteView):
+    """ View to delete an API configuration from the database. Asks to confirm."""
+
+    model = ApiConfiguration
+    success_url = reverse_lazy('ndr_core:configure_api')
+    template_name = 'ndr_core/admin_views/api_confirm_delete.html'
+
+    def form_valid(self, form):
+        return super(ApiConfigurationDeleteView, self).form_valid(form)
+
+
+# SEARCH FIELDS--------------------------------------------------------------------------------------------------------
+class ConfigureSearchFields(LoginRequiredMixin, View):
+    """ View to configure Search Fields. Displays the configured fields and a list of  """
+
+    def get(self, request, *args, **kwargs):
+        return render(self.request,
+                      template_name='ndr_core/admin_views/configure_search_fields.html',
+                      context=self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        context = dict()
+        context["json_schemas"] = NdrCoreDataSchema.objects.all()
+        context["search_field_table"] = SearchFieldTable(data=NdrSearchField.objects.all())
+        return context
+
+
+class SearchFieldConfigurationCreateView(LoginRequiredMixin, CreateView):
+    """ View to create a new Search Field """
+
+    model = NdrSearchField
+    form_class = SearchFieldForm
+    success_url = reverse_lazy('ndr_core:configure_search_fields')
+    template_name = 'ndr_core/admin_views/search_field_create.html'
+
+    def form_valid(self, form):
+        response = super(SearchFieldConfigurationCreateView, self).form_valid(form)
+        return response
+
+
+class SearchFieldConfigurationEditView(LoginRequiredMixin, UpdateView):
+    """ View to edit an existing Search field """
+
+    model = NdrSearchField
+    form_class = SearchFieldForm
+    success_url = reverse_lazy('ndr_core:configure_search_fields')
+    template_name = 'ndr_core/admin_views/search_field_edit.html'
+
+
+class SearchFieldConfigurationDeleteView(LoginRequiredMixin, DeleteView):
+    """ View to delete a Search Field from the database. Asks to confirm."""
+
+    model = NdrSearchField
+    success_url = reverse_lazy('ndr_core:configure_search_fields')
+    template_name = 'ndr_core/admin_views/search_field_confirm_delete.html'
+
+    def form_valid(self, form):
+        return super(SearchFieldConfigurationDeleteView, self).form_valid(form)
 
 
 @login_required
@@ -282,6 +335,66 @@ def move_page_up(request, pk):
     return redirect('ndr_core:configure_pages')
 
 
-def dummy(request):
-    """TODO Delete this view again"""
-    return render(request, 'ndr/index.html')
+# SEARCH FORM CONFIGURATION--------------------------------------------------------------------------------------------
+class SearchConfigurationCreateView(LoginRequiredMixin, CreateView):
+    """ View to create a new API configuration """
+
+    model = SearchConfiguration
+    form_class = SearchConfigurationForm
+    success_url = reverse_lazy('ndr_core:configure_search')
+    template_name = 'ndr_core/admin_views/search_config_create.html'
+
+    def form_valid(self, form):
+        response = super(SearchConfigurationCreateView, self).form_valid(form)
+
+        for row in range(20):
+            if f'search_field_{row}' in form.cleaned_data and \
+               f'row_field_{row}' in form.cleaned_data and \
+               f'column_field_{row}' in form.cleaned_data and \
+               f'size_field_{row}' in form.cleaned_data and \
+               form.cleaned_data[f'search_field_{row}'] is not None and \
+               form.cleaned_data[f'row_field_{row}'] is not None and \
+               form.cleaned_data[f'column_field_{row}'] is not None and  \
+               form.cleaned_data[f'size_field_{row}'] is not None:
+                new_field = SearchFieldFormConfiguration.objects.create(search_field=form.cleaned_data[f'search_field_{row}'],
+                                                                        field_row=form.cleaned_data[f'row_field_{row}'],
+                                                                        field_column=form.cleaned_data[f'column_field_{row}'],
+                                                                        field_size=form.cleaned_data[f'size_field_{row}'])
+                self.object.search_form_fields.add(new_field)
+
+        return response
+
+
+class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
+    """ View to edit an existing API configuration """
+
+    model = SearchConfiguration
+    form_class = SearchConfigurationForm
+    success_url = reverse_lazy('ndr_core:configure_search')
+    template_name = 'ndr_core/admin_views/search_config_edit.html'
+
+
+class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
+    """ View to delete a Search Field from the database. Asks to confirm."""
+
+    model = SearchConfiguration
+    success_url = reverse_lazy('ndr_core:configure_search')
+    template_name = 'ndr_core/admin_views/search_config_confirm_delete.html'
+
+    def form_valid(self, form):
+        return super(SearchConfigurationDeleteView, self).form_valid(form)
+
+
+def preview_image(request, img_config):
+    data = []
+    config_rows = img_config.split(",")
+    for row in config_rows:
+        config_row = row.split("~")
+        if '' not in config_row:
+            data.append({
+                'row': int(config_row[0]),
+                'col': int(config_row[1]),
+                'size': int(config_row[2]),
+                'text': NdrSearchField.objects.get(id=int(config_row[3])).field_label})
+    image_data = get_image_from_raw_data(data)
+    return HttpResponse(image_data, content_type="image/png")

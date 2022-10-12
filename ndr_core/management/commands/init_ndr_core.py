@@ -37,9 +37,13 @@ class Command(BaseCommand):
         call_command('loaddata', 'initial_values.json', app_label='ndr_core')
         call_command('loaddata', 'schemas.json', app_label='ndr_core')
 
-        User.objects.create_user(username='ndr_core_admin',
-                                 password='ndr_core',
-                                 is_superuser=True)
+        if User.objects.filter(username='ndr_core_admin').count()==0:
+            User.objects.create_user(username='ndr_core_admin',
+                                     password='ndr_core',
+                                     is_superuser=True)
+            self.stdout.write(f'Created new user "ndr_core_admin"')
+        else:
+            self.stdout.write(f'Skipped creating new user "ndr_core_admin". Already exists.')
 
         # Copy urls.py
         shutil.copyfile(urls_file, f'{app_name}/urls.py')

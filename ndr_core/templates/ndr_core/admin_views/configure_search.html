@@ -8,5 +8,8 @@
     </div>
 
     {% render_table search_config_table %}
+    <p>
+        <a href="{% url 'ndr_core:create_search' %}" class="btn btn-primary" role="button">Create New Search Configuration</a>
+    </p>
 
 {% endblock %}

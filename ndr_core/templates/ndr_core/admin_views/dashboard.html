@@ -4,35 +4,34 @@
 {% block content %}
     <h2>Ndr core dashboard</h2>
     <p>
-        You find all your configurations here.
+        Welcome to the NDR core administration interface.
+        Your NDR core website consists of pages of a certain type (static templates, search interfaces,
+        filterable lists, contact forms). You can configure your API and your search forms and add pages
+        which use them.
     </p>
-    <a href="{% url 'ndr:index' %}" class="btn btn-primary" role="button">View Your Web Page</a>
 
-    <h3>Your Pages</h3>
+    <div class="row">
+        <div class="col">
+            <a href="{% url 'ndr_core:configure_pages' %}" class="btn btn-primary btn-block" role="button">Create Pages</a>
+        </div>
+        <div class="col">
+            <a href="{% url 'ndr:index' %}" class="btn btn-primary btn-block" role="button">View Your Web Page</a>
+        </div>
+        <div class="col">
+            <a href="{% url 'ndr_core:help' %}" class="btn btn-primary btn-block" role="button">Help Page</a>
+        </div>
+    </div>
+
+    <hr/>
+    <br/>
+
+    <h3>Pages in your installation</h3>
     <div class="alert alert-info small" role="alert">
-        These pages will show up on your webpage in this order.
+        These pages will show up on your webpage in this order. Go to
+        <a href="{% url 'ndr_core:configure_pages' %}" class="">Manage pages</a> to add or edit pages and to change
+        their order.
     </div>
     {% render_table pages_table %}
-    <a href="{% url 'ndr_core:configure_pages' %}" class="btn btn-primary" role="button">Manage Pages</a>
-        
-    <hr/>
 
-    <h3>Your Search Forms</h3>
-    <div class="alert alert-info small" role="alert">
-        These search forms can be used to search your repositories
-    </div>
-    {% render_table forms_table %}
-    <a href="{% url 'ndr_core:create_search_field' %}" class="btn btn-primary" role="button">Create New Form</a>
-
-    <hr/>
-
-    <h3>Your Settings</h3>
-    <div class="alert alert-info small" role="alert">
-        These settings are used in your installation
-    </div>
-    {% render_table settings_table %}
-    <a href="{% url 'ndr_core:create_search_field' %}" class="btn btn-primary" role="button">Save Settings</a>
-
-    <hr/>
 
 {% endblock %}

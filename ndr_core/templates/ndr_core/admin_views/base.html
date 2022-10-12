@@ -11,6 +11,8 @@
         <title>NDR core admin</title>
         <link href="{% static 'ndr_core/css/bootstrap.css' %}" rel="stylesheet">
         <link href="{% static 'ndr_core/css/ndr_core_default.css' %}" rel="stylesheet">
+        {% block extra_css %}
+        {% endblock %}
         <script src="{% static 'ndr_core/js/jquery.min.js' %}"></script>
     </head>
 
@@ -64,6 +66,9 @@
         <script src="{% static 'ndr_core/js/popper.min.js' %}"></script>
         <script src="{% static 'ndr_core/js/bootstrap.min.js' %}"></script>
         <script src="{% static 'fontawesome/js/all.min.js' %}"></script>
+
+        {% block page_js %}
+        {% endblock %}
 
     </body>
 </html>
