@@ -60,8 +60,17 @@
         </div>  <!-- end of navigation -->
 
         <div class="container">
-            {% block content %}
+            {% block page_title %}
+                <h1>{{ page.name }}</h1>
             {% endblock %}
+
+            {% block generated_content %}
+            {% endblock %}
+
+            {% block content %}
+                {{ page.template_text|safe }}
+            {% endblock %}
+
         </div>
 
     {% block footer %}

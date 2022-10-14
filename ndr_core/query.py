@@ -5,9 +5,8 @@ class Query:
 
     api_config = None
 
-    def __init__(self, config_name):
-        config = SearchConfiguration.objects.get(api_configuration__api_name=config_name)
-        self.api_config = config.api_configuration
+    def __init__(self, api_configuration):
+        self.api_config = api_configuration
 
         self.values = {}
 

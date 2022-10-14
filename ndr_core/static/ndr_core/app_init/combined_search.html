@@ -1,7 +1,13 @@
 {% extends 'ndr/base.html' %}
 {% load crispy_forms_tags %}
 
-{% block content %}
+{# block page_title #}
+{# endblock #}
+
+{# block content #}
+{# endblock #}
+
+{% block generated_content %}
 
     {% if result %}
         <h4 class="mt-4">Search Results
@@ -17,8 +23,6 @@
         {% for result_line in result %}
 
         {% endfor %}
-
-
 
     {% else %}
         <h4 class="mt-4"></h4>

@@ -4,6 +4,7 @@ models.py contains ndr_core's database models.
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse, NoReverseMatch
+from ckeditor.fields import RichTextField
 
 from ndr_core.ndr_settings import NdrSettings
 
@@ -201,7 +202,8 @@ class NdrCorePage(models.Model):
                                               "filter, contact form displays a form to send a message.")
     """The page_type determines what kind of page is generated and what View is called (see PageType)"""
 
-    name = models.CharField(max_length=200,
+    name = models.CharField(verbose_name="Page Title",
+                            max_length=200,
                             help_text="The name of the page, e.g. the page's title")
     """This is the name/title of the page. It will be displayed as a <h2>title</h2>"""
 
@@ -219,8 +221,14 @@ class NdrCorePage(models.Model):
     """The index determines the order the pages are displayed. 0 comes first (=most left)"""
 
     search_configs = models.ManyToManyField(SearchConfiguration)
+    """TODO """
 
     list_configs = models.ManyToManyField(FilterableListConfiguration)
+    """TODO """
+
+    template_text = RichTextField(null=True, blank=True,
+                                  help_text='Text for your template page')
+    """TODO """
 
     def url(self):
         """Returns the url of a given page or '#' if none is found"""

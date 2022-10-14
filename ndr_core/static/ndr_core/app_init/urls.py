@@ -1,11 +1,12 @@
 from django.urls import path
-from django.views.generic import TemplateView
 
-from ndr_core.views import dispatch
+from models import NdrCorePage
+from ndr_core.views import dispatch, NdrTemplateView
 from ndr_core.ndr_settings import NdrSettings
 
 app_name = NdrSettings.APP_NAME
 urlpatterns = [
-    path('', TemplateView.as_view(template_name=f'{app_name}/index.html'), name='index'),
+    path('', NdrTemplateView.as_view(template_name=f'{app_name}/index.html',
+                                     ndr_page=NdrCorePage.objects.get(view_name='index')), name='index'),
     path('p/<str:ndr_page>/', dispatch, name='ndr_view'),
 ]

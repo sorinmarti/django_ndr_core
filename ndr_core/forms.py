@@ -2,13 +2,13 @@ import csv
 import os
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Field, Row, Column, Div, Button, BaseInput, Fieldset, HTML
+from crispy_forms.layout import Submit, Layout, Field, Row, Column, Div, BaseInput
 from django import forms
 from django.conf import settings
 from django.db.models import Max
 from django.utils.safestring import mark_safe
 
-from ndr_core.models import SearchConfiguration, SearchFieldFormConfiguration, NdrCoreValue
+from ndr_core.models import NdrCoreValue
 from ndr_core.widgets import CustomSelect, CustomRange
 
 
@@ -33,18 +33,17 @@ class SimpleSearchForm(_NdrCoreForm):
 
 class AdvancedSearchForm(_NdrCoreForm):
 
-    config = None
-    repo_to_search = forms.Field()
+    search_config = None
 
-    def __init__(self, config: SearchConfiguration, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        self.search_config = kwargs.pop('search_config')
         super().__init__(*args, **kwargs)
-        self.config = config
 
         self.query_dict = {}
         if len(args) > 0:
             self.query_dict = querydict_to_dict(args[0])
 
-        for field in self.config.search_form_fields.all():
+        for field in self.search_config.search_form_fields.all():
             search_field = field.search_field
             form_field = None
             help_text = mark_safe(f'<small id="{search_field.field_name}Help" class="form-text text-muted">'
@@ -56,7 +55,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                 form_field = forms.IntegerField(required=search_field.field_required, help_text=help_text)
 
             if form_field is not None:
-                self.fields[field] = form_field
+                self.fields[search_field.field_name] = form_field
 
     @property
     def helper(self):
@@ -64,15 +63,17 @@ class AdvancedSearchForm(_NdrCoreForm):
         helper.form_method = "GET"
         layout = helper.layout = Layout()
 
-        max_row = self.config.search_form_fields.aaggregate(Max('field_row'))
+        max_row = self.search_config.search_form_fields.all().aggregate(Max('field_row'))
         for row in range(max_row['field_row__max']):
+            row += 1
             form_row = Div(css_class='form-row')
-            for column in self.config.search_form_fields.filter(field_row=row).order_by('field_column'):
+            for column in self.search_config.search_form_fields.filter(field_row=row).order_by('field_column'):
                 form_field = Field(column.search_field.field_name, placeholder=column.search_field.field_label,
                                    wrapper_class=f'col-md-{column.field_size}')
                 form_row.append(form_field)
             layout.append(form_row)
 
+        layout.append(Div(Submit('search', 'Search'), css_class="text-right"))
         helper.form_show_labels = False
 
         return helper
@@ -96,7 +97,10 @@ class FilterForm(_NdrCoreForm):
         else:
             selection = []
 
-        choice_widget = CustomSelect(attrs={'list_name': 'tags', 'selection': selection, 'placeholder': 'All sub collections are selected. Filter them by type here.'}, )
+        choice_widget = CustomSelect(attrs={'list_name': 'tags',
+                                            'selection': selection,
+                                            'placeholder': 'All sub collections are selected. '
+                                                           'Filter them by type here.'}, )
         dict_config = {
             "type": "tsv",
             "file": "main/tag_list.tsv",
@@ -148,12 +152,15 @@ class ContactForm(_NdrCoreForm):
                               initial='',
                               help_text="You can change the subject.",
                               required=True)
-    email = forms.EmailField(label='Your E-Mail Address', help_text="We are going to reply to this e-mail address.", required=True)
+
+    email = forms.EmailField(label='Your E-Mail Address',
+                             help_text="We are going to reply to this e-mail address.",
+                             required=True)
+
     message = forms.CharField(label="Message",
-                              help_text='Please be as specific as you can in your message. It will help us to answer your questions!',
+                              help_text='Please be as specific as you can in your message. '
+                                        'It will help us to answer your questions!',
                               widget=forms.Textarea)
-
-
 
 
 class MySubmit(BaseInput):
@@ -162,7 +169,6 @@ class MySubmit(BaseInput):
     def __init__(self, *args, **kwargs):
         self.field_classes = "btn btn btn-outline-secondary w-100"
         super().__init__(*args, **kwargs)
-
 
 
 def get_choices_from_tsv(dict_config):

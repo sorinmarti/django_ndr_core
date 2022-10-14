@@ -179,7 +179,6 @@ class PageEditView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super(PageEditView, self).form_valid(form)
-        print("Form Asset", form.cleaned_data['config_asset'])
         return response
 
 

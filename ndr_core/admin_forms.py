@@ -26,16 +26,19 @@ class FilteredListWidget(s2forms.ModelSelect2MultipleWidget):
 
 class PageForm(forms.ModelForm):
     search_configs = forms.ModelMultipleChoiceField(queryset=SearchConfiguration.objects.filter().order_by('conf_name'),
-                                            required=False,
-                                            widget=SearchConfigurationWidget(attrs={'data-minimum-input-length': 0}))
+                                                    required=False,
+                                                    widget=SearchConfigurationWidget(
+                                                        attrs={'data-minimum-input-length': 0}))
 
-    list_configs = forms.ModelMultipleChoiceField(queryset=FilterableListConfiguration.objects.all().order_by('list_name'),
-                                          required=False,
-                                          widget=SearchConfigurationWidget(attrs={'data-minimum-input-length': 0}))
+    list_configs = forms.ModelMultipleChoiceField(queryset=FilterableListConfiguration.objects.all().\
+                                                  order_by('list_name'),
+                                                  required=False,
+                                                  widget=SearchConfigurationWidget(
+                                                      attrs={'data-minimum-input-length': 0}))
 
     class Meta:
         model = NdrCorePage
-        fields = ['name', 'label', 'page_type', 'search_configs', 'list_configs', 'view_name']
+        fields = ['name', 'label', 'page_type', 'search_configs', 'list_configs', 'view_name', 'template_text']
 
     def __init__(self, *args, **kwargs):
         super(PageForm, self).__init__(*args, **kwargs)
