@@ -51,7 +51,7 @@ class SearchConfigurationTestCase(TestCase):
 
     def test_basic_query(self):
         query = Query("asia_dir")
-        query_string = query.get_basic_query('1234', 1)
+        query_string = query.get_simple_query('1234', 1)
         self.assertEqual('http://asiadir.int:8080/query/basic?s=15&p=1&t=1234', query_string)
 
     def test_advanced_query(self):

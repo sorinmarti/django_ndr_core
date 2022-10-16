@@ -10,7 +10,7 @@ class Query:
 
         self.values = {}
 
-    def get_basic_query(self, search_term, page):
+    def get_simple_query(self, search_term, page):
         query = self.get_base_string("basic", page)
         query += f"&t={search_term}"
         return query

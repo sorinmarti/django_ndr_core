@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 
-from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm
+from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm
 from ndr_core.models import NdrCorePage
 from ndr_core.query import Query
 
@@ -21,17 +21,23 @@ def dispatch(request, ndr_page):
     try:
         page = NdrCorePage.objects.get(view_name=ndr_page)
         if page.page_type == page.PageType.TEMPLATE:
-            return NdrTemplateView.as_view(template_name=f'ndr/{page.view_name}.html', ndr_page=page)(request)
+            return NdrTemplateView.as_view(template_name=f'ndr/{page.view_name}.html',
+                                           ndr_page=page)(request)
         elif page.page_type == page.PageType.FILTER_LIST:
-            return FilterListView.as_view(template_name=f'ndr/{page.view_name}.html', ndr_page=page)(request)
+            return FilterListView.as_view(template_name=f'ndr/{page.view_name}.html',
+                                          ndr_page=page)(request)
         elif page.page_type == page.PageType.SIMPLE_SEARCH:
-            return SearchView.as_view(template_name=f'ndr/{page.view_name}.html', ndr_page=page)(request)
+            return SimpleSearchView.as_view(template_name=f'ndr/{page.view_name}.html',
+                                            ndr_page=page)(request)
         elif page.page_type == page.PageType.SEARCH:
-            return SearchView.as_view(template_name=f'ndr/{page.view_name}.html', ndr_page=page)(request)
+            return SearchView.as_view(template_name=f'ndr/{page.view_name}.html',
+                                      ndr_page=page)(request)
         elif page.page_type == page.PageType.COMBINED_SEARCH:
-            return SearchView.as_view(template_name=f'ndr/{page.view_name}.html', ndr_page=page)(request)
+            return SearchView.as_view(template_name=f'ndr/{page.view_name}.html',
+                                      ndr_page=page)(request)
         elif page.page_type == page.PageType.CONTACT:
-            return ContactView.as_view(template_name=f'ndr/{page.view_name}.html', ndr_page=page)(request)
+            return ContactView.as_view(template_name=f'ndr/{page.view_name}.html',
+                                       ndr_page=page)(request)
         else:
             return HttpResponseNotFound("Page Type Not Found")
     except NdrCorePage.DoesNotExist:
@@ -73,20 +79,53 @@ class FilterListView(_NdrCoreView):
 
 
 class SearchView(_NdrCoreView):
-    search_config = None
 
     def get(self, request, *args, **kwargs):
-        self.search_config = self.ndr_page.search_configs.all()[0]
-        form = AdvancedSearchForm(search_config=self.search_config)
+        form = AdvancedSearchForm(ndr_page=self.ndr_page)
         if request.method == "GET":
-            form = AdvancedSearchForm(request.GET, search_config=self.search_config)
-            if form.is_valid():
+            # Check if/which a search button has been pressed
+            requested_search = None
+            for value in request.GET.keys():
+                if value.startswith('search_button_'):
+                    requested_search = value[len('search_button_'):]
+                    break
+
+            # If a button has been pressed: reinitialize form with values and check its validity
+            if requested_search is not None:
+                form = AdvancedSearchForm(request.GET, ndr_page=self.ndr_page)
+                if form.is_valid():
+                    if requested_search == 'simple':
+                        query = Query(self.ndr_page.simple_api)
+                        query_string = query.get_simple_query(request.GET.get('search_term', ''), request.GET.get("page", 1))
+                    else:
+                        search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
+                        query = Query(search_config.api_configuration)
+                        for key in request.GET.keys():
+                            if search_config.search_form_fields.filter(search_field__field_name=key).count() > 0:
+                                query.set_value(key, request.GET.get(key))
+                        query_string = query.get_advanced_query(request.GET.get("page", 1))
+                    print(query_string)
+            else:
+                print("No search")
+
+        context = self.get_context_data()
+        context.update({'form': form, 'requested_search': requested_search})
+        return render(request, self.template_name, context)
+
+
+class SimpleSearchView(_NdrCoreView):
+
+    def get(self, request, *args, **kwargs):
+        form = SimpleSearchForm(ndr_page=self.ndr_page)
+        if request.method == "GET":
+            form = SimpleSearchForm(request.GET, ndr_page=self.ndr_page)
+            """if form.is_valid():
                 query = Query(self.search_config.api_configuration)
                 for key in request.GET.keys():
                     if self.search_config.search_form_fields.filter(search_field__field_name=key).count() > 0:
                         query.set_value(key, request.GET.get(key))
                 query_string = query.get_advanced_query(request.GET.get("page", 1))
-                print(query_string)
+                print(query_string)"""
 
         context = self.get_context_data()
         context.update({'form': form})

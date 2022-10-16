@@ -138,7 +138,13 @@ class SearchConfiguration(models.Model):
 
     conf_name = models.CharField(max_length=100,
                                  unique=True,
-                                 help_text="Name of this search configuration")
+                                 help_text="Name of this search configuration. "
+                                           "Can't contain spaces or special characters.")
+    """Name of the search configuration. Can't contain spaces or special characters. Can't be 'simple' """
+
+    conf_label = models.CharField(max_length=100,
+                                  unique=True,
+                                  help_text="Label of this search configuration")
     """Name of the search configuration """
 
     api_configuration = models.ForeignKey(ApiConfiguration,
@@ -224,6 +230,12 @@ class NdrCorePage(models.Model):
     """TODO """
 
     list_configs = models.ManyToManyField(FilterableListConfiguration)
+    """TODO """
+
+    simple_api = models.ForeignKey(ApiConfiguration,
+                                   null=True, blank=True,
+                                   help_text='Api for simple search',
+                                   on_delete=models.SET_NULL)
     """TODO """
 
     template_text = RichTextField(null=True, blank=True,

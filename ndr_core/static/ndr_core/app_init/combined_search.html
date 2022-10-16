@@ -1,12 +1,16 @@
 {% extends 'ndr/base.html' %}
 {% load crispy_forms_tags %}
 
+<!-- You can overwrite the page title -->
 {# block page_title #}
 {# endblock #}
 
+<!-- You can overwrite the page's content -->
 {# block content #}
 {# endblock #}
 
+<!-- This block gets regenerated when you edit the page in the administration interface.
+     Be aware of this when changing it manually -->
 {% block generated_content %}
 
     {% if result %}

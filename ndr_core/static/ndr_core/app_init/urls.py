@@ -1,6 +1,6 @@
 from django.urls import path
 
-from models import NdrCorePage
+from ndr_core.models import NdrCorePage
 from ndr_core.views import dispatch, NdrTemplateView
 from ndr_core.ndr_settings import NdrSettings
 

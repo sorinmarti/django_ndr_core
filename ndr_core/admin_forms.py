@@ -38,7 +38,8 @@ class PageForm(forms.ModelForm):
 
     class Meta:
         model = NdrCorePage
-        fields = ['name', 'label', 'page_type', 'search_configs', 'list_configs', 'view_name', 'template_text']
+        fields = ['name', 'label', 'page_type',
+                  'simple_api', 'search_configs', 'list_configs', 'view_name', 'template_text']
 
     def __init__(self, *args, **kwargs):
         super(PageForm, self).__init__(*args, **kwargs)
