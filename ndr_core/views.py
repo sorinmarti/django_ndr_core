@@ -20,6 +20,7 @@ def dispatch(request, ndr_page):
     """
     try:
         page = NdrCorePage.objects.get(view_name=ndr_page)
+
         if page.page_type == page.PageType.TEMPLATE:
             return NdrTemplateView.as_view(template_name=f'ndr/{page.view_name}.html',
                                            ndr_page=page)(request)
@@ -58,7 +59,7 @@ class _NdrCoreView(View):
         return render(request, self.template_name, context)
 
     def get_context_data(self, **kwargs):
-        context = {'page': self.ndr_page}
+        context = {'page': self.ndr_page, 'navigation': NdrCorePage.objects.all().order_by('index')}
         return context
 
 
@@ -81,10 +82,11 @@ class FilterListView(_NdrCoreView):
 class SearchView(_NdrCoreView):
 
     def get(self, request, *args, **kwargs):
+        requested_search = None
         form = AdvancedSearchForm(ndr_page=self.ndr_page)
+
         if request.method == "GET":
             # Check if/which a search button has been pressed
-            requested_search = None
             for value in request.GET.keys():
                 if value.startswith('search_button_'):
                     requested_search = value[len('search_button_'):]
@@ -93,17 +95,18 @@ class SearchView(_NdrCoreView):
             # If a button has been pressed: reinitialize form with values and check its validity
             if requested_search is not None:
                 form = AdvancedSearchForm(request.GET, ndr_page=self.ndr_page)
+                # If the form is valid: create a search query
                 if form.is_valid():
                     if requested_search == 'simple':
-                        query = Query(self.ndr_page.simple_api)
-                        query_string = query.get_simple_query(request.GET.get('search_term', ''), request.GET.get("page", 1))
+                        query = Query(self.ndr_page.simple_api, page=request.GET.get("page", 1))
+                        query_string = query.get_simple_query(request.GET.get('search_term', ''))
                     else:
                         search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
-                        query = Query(search_config.api_configuration)
+                        query = Query(search_config.api_configuration, page=request.GET.get("page", 1))
                         for key in request.GET.keys():
                             if search_config.search_form_fields.filter(search_field__field_name=key).count() > 0:
                                 query.set_value(key, request.GET.get(key))
-                        query_string = query.get_advanced_query(request.GET.get("page", 1))
+                        query_string = query.get_advanced_query()
                     print(query_string)
             else:
                 print("No search")

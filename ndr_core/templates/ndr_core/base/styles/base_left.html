@@ -1,0 +1,94 @@
+{% load static %}
+{% load ndr_values %}
+
+{% config_value 'main_view' as logo_view_name %}
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        {% include 'ndr_core/base/base_header_tags.html' %}
+        <link href="{% static 'ndr_core/css/ndr_core_left.css' %}" rel="stylesheet">
+    </head>
+
+    <body>
+
+        <div class="wrapper">
+            <!-- Sidebar -->
+            <nav id="sidebar">
+                <div class="sidebar-header">
+                    <h3>{% config_value 'project_title' %}</h3>
+                </div>
+
+                <ul class="list-unstyled components">
+                    {% for nav_item in navigation %}
+                        <li>
+                            <a href="{{ nav_item.url }}">{{ nav_item.label }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            <!-- Page Content -->
+            <div id="content">
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <div class="container-fluid">
+
+                        <button type="button" id="sidebarCollapse" class="navbar-btn">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </button>
+                        <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="fas fa-align-justify"></i>
+                        </button>
+
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="nav navbar-nav ml-auto">
+                                {% for nav_item in navigation %}
+                                    <li class="nav-item active">
+                                        <a class="nav-link" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+
+                {% block page_title %}
+                    <h1>{{ page.name }}</h1>
+                {% endblock %}
+
+                {% block generated_content %}
+                {% endblock %}
+
+                {% block content %}
+                    {{ page.template_text|safe }}
+                {% endblock %}
+            </div>
+
+        </div>
+
+        {% block footer %}
+            NDR core
+        {% endblock %}
+
+        <script src="{% static 'ndr_core/js/popper.min.js' %}"></script>
+        <script src="{% static 'ndr_core/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'fontawesome/js/all.min.js' %}"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#sidebarCollapse').on('click', function () {
+                    $('#sidebar').toggleClass('active');
+                    $(this).toggleClass('active');
+                });
+            });
+        </script>
+
+        {% block page_js %}
+        {% endblock %}
+
+    </body>
+
+</html>

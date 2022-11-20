@@ -1,9 +1,10 @@
 import csv
 import os
 
+from captcha.fields import ReCaptchaField
 from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Field, Row, Column, Div, BaseInput, HTML
+from crispy_forms.layout import Layout, Field, Row, Column, Div, BaseInput
 from django import forms
 from django.conf import settings
 from django.db.models import Max
@@ -237,6 +238,9 @@ class ContactForm(_NdrCoreForm):
                               help_text='Please be as specific as you can in your message. '
                                         'It will help us to answer your questions!',
                               widget=forms.Textarea)
+
+    captcha = ReCaptchaField()
+
 
 
 class MySubmit(BaseInput):

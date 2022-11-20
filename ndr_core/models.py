@@ -1,10 +1,11 @@
 """
 models.py contains ndr_core's database models.
 """
+from ckeditor_uploader.fields import RichTextUploadingField
+from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse, NoReverseMatch
-from ckeditor.fields import RichTextField
 
 from ndr_core.ndr_settings import NdrSettings
 
@@ -238,8 +239,8 @@ class NdrCorePage(models.Model):
                                    on_delete=models.SET_NULL)
     """TODO """
 
-    template_text = RichTextField(null=True, blank=True,
-                                  help_text='Text for your template page')
+    template_text = RichTextUploadingField(null=True, blank=True,
+                                           help_text='Text for your template page')
     """TODO """
 
     def url(self):
@@ -256,6 +257,56 @@ class NdrCorePage(models.Model):
 
     def __str__(self):
         return f"{self.name}: {self.label}"
+
+
+class NdrCoreUiStyle(models.Model):
+    """TODO"""
+
+    name = models.CharField(max_length=100, unique=True)
+    """TODO"""
+
+    label = models.CharField(max_length=100)
+    """TODO"""
+
+    filename = models.CharField(max_length=50)
+    """TODO"""
+
+    description = models.TextField()
+    """TODO"""
+
+
+class NdrCoreColorScheme(models.Model):
+    """TODO"""
+
+    scheme_name = models.CharField(unique=True, max_length=50)
+    """The name of the color scheme. For display and reference."""
+
+    scheme_label = models.CharField(max_length=100)
+
+    background_color = ColorField()
+    """Basic background color of the whole page."""
+
+    text_color = ColorField()
+    """Basic text color for the whole page."""
+
+    button_color = ColorField()
+    """Basic color of primary buttons."""
+
+    button_text_color = ColorField()
+    """TODO"""
+
+    second_button_color = ColorField()
+    """Basic color of secondary buttons."""
+
+    second_button_text_color = ColorField()
+    """TODO"""
+
+    link_color = ColorField()
+    """Color of hrefs."""
+
+    accent_color_1 = ColorField()
+    accent_color_2 = ColorField()
+
 
 
 class NdrCoreValue(models.Model):
@@ -276,6 +327,17 @@ class NdrCoreValue(models.Model):
 
     value_value = models.CharField(max_length=100)
     """This is the actual value which can be updated by the user"""
+
+    @staticmethod
+    def get_or_initialize(value_name, init_value=None, init_label=None):
+        try:
+            return NdrCoreValue.objects.get(value_name=value_name)
+        except NdrCoreValue.DoesNotExist:
+            if init_value is None:
+                init_value = ''
+            if init_label is None:
+                init_label = value_name
+            return NdrCoreValue.objects.create(value_name=value_name, value_value=init_value, value_label=init_label)
 
 
 class NdrCoreDataSchema(models.Model):
@@ -299,3 +361,36 @@ class NdrCoreDataSchema(models.Model):
     fixture_name = models.CharField(max_length=100)
     """This is the filename of the fixture to load the search fields from. This contains only the file name which must
     be available in the ndr_core module in 'ndr_core/fixtures/'"""
+
+
+class NdrCorrection(models.Model):
+    """Users can be given the opportunity to correct entries which have errors. Each correction can consist of
+     multiple field corrections. Users need to provide an ORCID. This does not automatically correct data
+     but administrators can accept or reject corrections."""
+
+    corrected_dataset = models.ForeignKey(ApiConfiguration,
+                                          on_delete=models.CASCADE)
+    """TODO """
+
+    corrected_record_id = models.CharField(max_length=255)
+    """TODO """
+
+    corrector_orcid = models.CharField(max_length=50)
+    """TODO """
+
+
+class NdrCorrectedField(models.Model):
+    """TODO """
+
+    ndr_correction = models.ForeignKey(NdrCorrection,
+                                       on_delete=models.CASCADE)
+    """TODO """
+
+    field_name = models.CharField(max_length=100)
+    """TODO """
+
+    old_value = models.TextField()
+    """TODO """
+
+    new_value = models.TextField()
+    """TODO """

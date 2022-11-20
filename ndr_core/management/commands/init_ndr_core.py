@@ -36,8 +36,10 @@ class Command(BaseCommand):
         # Load initial settings data
         call_command('loaddata', 'initial_values.json', app_label='ndr_core')
         call_command('loaddata', 'schemas.json', app_label='ndr_core')
+        call_command('loaddata', 'base_styles.json', app_label='ndr_core')
+        call_command('loaddata', 'color_palettes.json', app_label='ndr_core')
 
-        if User.objects.filter(username='ndr_core_admin').count()==0:
+        if User.objects.filter(username='ndr_core_admin').count() == 0:
             User.objects.create_user(username='ndr_core_admin',
                                      password='ndr_core',
                                      is_superuser=True)
@@ -54,6 +56,11 @@ class Command(BaseCommand):
 
         index_file = finders.find('ndr_core/app_init/index.html')
         shutil.copyfile(index_file, f'{app_name}/templates/{app_name}/index.html')
+
+        # static files
+        os.makedirs(f'{app_name}/static/{app_name}/css/')
+        css_file = finders.find('ndr_core/app_init/style.css')
+        shutil.copyfile(css_file, f'{app_name}/static/{app_name}/css/style.css')
 
         # Pages
         NdrCorePage.objects.create(name='Home Page',

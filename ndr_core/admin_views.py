@@ -1,4 +1,5 @@
 import os.path
+import re
 import shutil
 
 from django.contrib import messages
@@ -14,9 +15,10 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from ndr_core.form_preview import get_image_from_raw_data
-from ndr_core.admin_forms import PageForm, ApiForm, SearchFieldForm, SearchConfigurationForm
+from ndr_core.admin_forms import ApiForm, SearchFieldForm, SearchConfigurationForm, PageCreateForm, \
+    PageEditForm
 from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrSearchField, SearchConfiguration, NdrCoreValue, \
-    ApiConfiguration, SearchFieldFormConfiguration
+    ApiConfiguration, SearchFieldFormConfiguration, NdrCoreUiStyle, NdrCoreColorScheme
 from ndr_core.admin_tables import PagesTable, SearchConfigurationTable, SettingsTable, ChangeSettingsTable, \
     PagesManageTable, SearchFieldTable, ApiTable
 from ndr_core.ndr_settings import NdrSettings
@@ -51,10 +53,55 @@ class ManagePages(LoginRequiredMixin, View):
         return context
 
 
-class ConfigureSettings(LoginRequiredMixin, View):
+class ConfigureUI(LoginRequiredMixin, View):
 
+    def get(self, request, *args, **kwargs):
+        return render(self.request,
+                      template_name='ndr_core/admin_views/configure_ui.html',
+                      context=self.get_context_data())
+
+    def post(self, request, *args, **kwargs):
+        new_ui_style = request.POST.get('ui_style', None)
+        new_color_scheme = request.POST.get('ui_color_scheme', None)
+        changed_values = False
+
+        if new_ui_style is not None:
+            setting = NdrCoreValue.get_or_initialize('ui_style')
+            if new_ui_style != setting.value_value:
+                setting.value_value = new_ui_style
+                setting.save()
+                changed_values = True
+
+        if new_color_scheme is not None:
+            setting = NdrCoreValue.get_or_initialize('ui_color_scheme')
+            if new_color_scheme != setting.value_value:
+                setting.value_value = new_color_scheme
+                setting.save()
+                changed_values = True
+
+        if changed_values:
+            messages.info(request, "Settings saved")
+
+        return render(self.request,
+                      template_name='ndr_core/admin_views/configure_ui.html',
+                      context=self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        ui_list = NdrCoreUiStyle.objects.all().order_by('name')
+        palette_list = NdrCoreColorScheme.objects.all().order_by('scheme_name')
+        current_style = NdrCoreValue.get_or_initialize('ui_style', init_value='default').value_value
+        current_palette = NdrCoreValue.get_or_initialize('ui_color_scheme', init_value='default').value_value
+        return {'ui_styles': ui_list,
+                'palettes': palette_list,
+                'current_style': current_style,
+                'current_palette':current_palette}
+
+
+class ConfigureSettings(LoginRequiredMixin, View):
+    """ TODO """
     def get_settings_tables(self):
-        basic_settings = ChangeSettingsTable(data=NdrCoreValue.objects.filter(value_name__in=['header_default_title',
+        basic_settings = ChangeSettingsTable(data=NdrCoreValue.objects.filter(value_name__in=['project_title',
+                                                                                              'header_default_title',
                                                                                               'header_description',
                                                                                               'header_author']))
 
@@ -67,6 +114,19 @@ class ConfigureSettings(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         basic_settings, contact_settings = self.get_settings_tables()
+
+        ui_list = os.listdir('ndr_core/templates/ndr_core/base/styles')
+        print(ui_list)
+        base_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/base.html'
+        f = open(base_filename, "r")
+        file_str = f.read()
+        match = re.match(r'^\{\% extends [\"\']ndr_core/base/styles/(.*)[\"\'] \%\}', file_str)
+        f.close()
+
+        file_to_write = open(base_filename, 'w')
+        new_file_str = file_str.replace(match.groups()[0], 'base_default.html')
+        file_to_write.write(new_file_str)
+        file_to_write.close()
 
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_settings.html',
@@ -123,7 +183,7 @@ class PageCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new NdrCorePage """
 
     model = NdrCorePage
-    form_class = PageForm
+    form_class = PageCreateForm
     success_url = reverse_lazy('ndr_core:configure_pages')
     template_name = 'ndr_core/admin_views/page_create.html'
 
@@ -136,15 +196,14 @@ class PageCreateView(LoginRequiredMixin, CreateView):
         self.object.save()
 
         # If the new page is a CONTACT page, don't add it
-        if self.object.page_type == self.object.PageType.CONTACT:
+        """if self.object.page_type == self.object.PageType.CONTACT:
             existing_contact_forms = NdrCorePage.objects.filter(page_type=self.object.PageType.CONTACT).count()
             if existing_contact_forms > 0:
                 self.object.delete()
                 messages.error(self.request, "You can only add one contact form")
-                return response
+                return response"""
 
-        app_name = NdrSettings.APP_NAME
-        new_filename = f'{app_name}/templates/{app_name}/{form.cleaned_data["view_name"]}.html'
+        new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{form.cleaned_data["view_name"]}.html'
         if os.path.isfile(new_filename):
             messages.error(self.request, "The file name already existed. No new template was generated.")
         else:
@@ -173,7 +232,7 @@ class PageEditView(LoginRequiredMixin, UpdateView):
     """ View to edit an existing NdrCorePage """
 
     model = NdrCorePage
-    form_class = PageForm
+    form_class = PageEditForm
     success_url = reverse_lazy('ndr_core:configure_pages')
     template_name = 'ndr_core/admin_views/page_edit.html'
 

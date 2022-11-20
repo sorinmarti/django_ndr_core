@@ -6,7 +6,8 @@ from ndr_core.admin_forms import NdrCoreLoginForm
 from ndr_core.admin_views import create_search_fields, PageEditView, PageDeleteView, move_page_up, \
     ConfigureSettings, ApiConfigurationCreateView, ApiConfigurationEditView, SearchConfigurationCreateView, \
     SearchConfigurationEditView, SearchConfigurationDeleteView, SearchFieldConfigurationCreateView, \
-    SearchFieldConfigurationEditView, SearchFieldConfigurationDeleteView, ApiConfigurationDeleteView, preview_image
+    SearchFieldConfigurationEditView, SearchFieldConfigurationDeleteView, ApiConfigurationDeleteView, preview_image, \
+    ConfigureUI
 from ndr_core.admin_views import NdrCoreDashboard, ManagePages, ConfigureApi, ConfigureSearch, ConfigureSearchFields, \
     PageCreateView
 
@@ -23,6 +24,7 @@ urlpatterns = [
 
     # SETTINGS
     path('configure/settings/', ConfigureSettings.as_view(), name='configure_settings'),
+    path('configure/ui_settings/', ConfigureUI.as_view(), name='ui_settings'),
 
     # API
     path('configure/api/', ConfigureApi.as_view(), name='configure_api'),

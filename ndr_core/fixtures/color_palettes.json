@@ -1,0 +1,34 @@
+[
+  {
+    "model": "ndr_core.NdrCoreColorScheme",
+    "fields": {
+      "scheme_name": "default",
+      "scheme_label": "Default Scheme",
+      "background_color": "#FFFFFF",
+      "text_color": "#000000",
+      "button_color": "#0d6efd",
+      "button_text_color": "#000000",
+      "second_button_color": "#6c757d",
+      "second_button_text_color": "#000000",
+      "link_color": "#FF0000",
+      "accent_color_1": "#00FF00",
+      "accent_color_2": "#0000FF"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreColorScheme",
+    "fields": {
+      "scheme_name": "second",
+      "scheme_label": "Second Scheme",
+      "background_color": "#FF0000",
+      "text_color": "#000000",
+      "button_color": "#0d6efd",
+      "button_text_color": "#000000",
+      "second_button_color": "#000000",
+      "second_button_text_color": "#FFFFFF",
+      "link_color": "#FF0000",
+      "accent_color_1": "#0000FF",
+      "accent_color_2": "#00FF00"
+    }
+  }
+]

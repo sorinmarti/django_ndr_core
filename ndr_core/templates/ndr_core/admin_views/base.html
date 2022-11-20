@@ -1,6 +1,5 @@
 {% load static %}
 {% load ndr_values %}
-{% load ndr_navigation %}
 
 <!doctype html>
 <html lang="en">
@@ -11,6 +10,11 @@
         <title>NDR core admin</title>
         <link href="{% static 'ndr_core/css/bootstrap.css' %}" rel="stylesheet">
         <link href="{% static 'ndr_core/css/ndr_core_default.css' %}" rel="stylesheet">
+        <link href="{% static 'ndr_core/css/color_palette.css' %}" rel="stylesheet">
+        <link href="{% static 'ndr_core/css/ndr_core_admin.css' %}" rel="stylesheet">
+        <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
         {% block extra_css %}
         {% endblock %}
         <script src="{% static 'ndr_core/js/jquery.min.js' %}"></script>
@@ -40,6 +44,7 @@
                         <nav class="nav d-flex justify-content-between border-top">
                             <a class="p-2 nav-item" href="{% url 'ndr_core:dashboard' %}">Dashboard</a>
                             <a class="p-2 nav-item" href="{% url 'ndr_core:configure_pages' %}">Pages</a>
+                            <a class="p-2 nav-item" href="{% url 'ndr_core:ui_settings' %}">UI Settings</a>
                             <a class="p-2 nav-item" href="{% url 'ndr_core:configure_settings' %}">Settings</a>
                             <a class="p-2 nav-item" href="{% url 'ndr_core:configure_api' %}">Configure API</a>
                             <a class="p-2 nav-item" href="{% url 'ndr_core:configure_search_fields' %}">Search Fields</a>
@@ -65,7 +70,9 @@
 
         <script src="{% static 'ndr_core/js/popper.min.js' %}"></script>
         <script src="{% static 'ndr_core/js/bootstrap.min.js' %}"></script>
-        <script src="{% static 'fontawesome/js/all.min.js' %}"></script>
+        <script src="{% static 'fontawesomefree/js/fontawesome.js' %}"></script>
+        <script src="{% static 'fontawesomefree/js/solid.js' %}"></script>
+        <script src="{% static 'fontawesomefree/js/brands.js' %}"></script>
 
         {% block page_js %}
         {% endblock %}

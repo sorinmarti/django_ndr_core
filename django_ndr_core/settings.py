@@ -40,6 +40,10 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_select2',
     'ckeditor',
+    'ckeditor_uploader',
+    'captcha',
+    'colorfield',
+    'fontawesomefree',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -147,3 +151,11 @@ MESSAGE_TAGS = {
         messages.WARNING: 'alert-warning',
         messages.ERROR: 'alert-danger',
 }
+
+RECAPTCHA_PUBLIC_KEY = '6LdlOBshAAAAAOTXPq47RzZLTeoPLuxEGUua3n38'
+RECAPTCHA_PRIVATE_KEY = '6LdlOBshAAAAAGxW09MuXbIrybbSSYnaVCU_3kOQ'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'

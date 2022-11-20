@@ -45,17 +45,57 @@ class PageForm(forms.ModelForm):
         super(PageForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "POST"
+        # self.helper.add_input(Submit('submit', 'Create New Page'))
+
+    def clean(self):
+        cleaned_data = super().clean()
+        page_type = cleaned_data['page_type']
+        search_configs = cleaned_data['search_configs']
+        list_configs = cleaned_data['list_configs']
+        simple_api = cleaned_data['simple_api']
+
+        if page_type == NdrCorePage.PageType.TEMPLATE:
+            # no additional fields required
+            pass
+        elif page_type == NdrCorePage.PageType.SIMPLE_SEARCH:
+            if simple_api is None:
+                msg = "You must provide an API configuration for Simple Search pages."
+                self.add_error('simple_api', msg)
+        elif page_type == NdrCorePage.PageType.SEARCH:
+            if search_configs.count() == 0:
+                msg = "You must provide at least one Search configuration for Search pages."
+                self.add_error('search_configs', msg)
+        elif page_type == NdrCorePage.PageType.COMBINED_SEARCH:
+            if search_configs.count() == 0:
+                msg = "You must provide at least one Search configuration for Combined Search pages."
+                self.add_error('search_configs', msg)
+            if simple_api is None:
+                msg = "You must provide an API configuration for Combined Search pages."
+                self.add_error('simple_api', msg)
+        elif page_type == NdrCorePage.PageType.FILTER_LIST:
+            if list_configs.count() == 0:
+                msg = "You must provide at least one List configuration for List pages."
+                self.add_error('list_configs', msg)
+        elif page_type == NdrCorePage.PageType.CONTACT:
+            if NdrCorePage.objects.filter(page_type=NdrCorePage.PageType.CONTACT).count() > 0:
+                msg = "You can't have more than one contact page."
+                self.add_error('page_type', msg)
+        else:
+            pass
+
+
+class PageCreateForm(PageForm):
+    def __init__(self, *args, **kwargs):
+        super(PageCreateForm, self).__init__(*args, **kwargs)
         self.helper.add_input(Submit('submit', 'Create New Page'))
-
-    def clean_search_configs(self):
-        page_type = self.cleaned_data['page_type']
-        data = self.cleaned_data['search_configs']
-        print(data, NdrCorePage.PageType.SEARCH, page_type)
-        if data.count() == 0 and page_type == NdrCorePage.PageType.SEARCH:
-            raise ValidationError("Choose a Search Configuration")
-        return data
-
-
+        
+        
+class PageEditForm(PageForm):
+    def __init__(self, *args, **kwargs):
+        super(PageEditForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Save Page'))
+    
+    
 class ApiForm(forms.ModelForm):
     class Meta:
         model = ApiConfiguration
@@ -106,6 +146,12 @@ class SearchConfigurationForm(forms.ModelForm):
             self.fields[f'row_field_{search_field_conf_row}'] = row_field
             self.fields[f'column_field_{search_field_conf_row}'] = column_field
             self.fields[f'size_field_{search_field_conf_row}'] = size_field
+
+    def clean_conf_name(self):
+        data = self.cleaned_data['conf_name']
+        if data == 'simple':
+            raise ValidationError("'simple' is a reserved term and can't be used")
+        return data
 
     @property
     def helper(self):

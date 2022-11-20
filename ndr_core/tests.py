@@ -50,15 +50,15 @@ class SearchConfigurationTestCase(TestCase):
         self.assertIsNotNone(conf.api_configuration)
 
     def test_basic_query(self):
-        query = Query("asia_dir")
-        query_string = query.get_simple_query('1234', 1)
+        query = Query("asia_dir", page=1)
+        query_string = query.get_simple_query('1234')
         self.assertEqual('http://asiadir.int:8080/query/basic?s=15&p=1&t=1234', query_string)
 
     def test_advanced_query(self):
-        query = Query("asia_dir")
+        query = Query("asia_dir", page=1)
         query.set_value("first_name", "John")
         query.set_value("last_name", "Smith")
-        query_string = query.get_advanced_query(1)
+        query_string = query.get_advanced_query()
         self.assertEqual('http://asiadir.int:8080/query/advanced?s=15&p=1&givenname=John&surname=Smith', query_string)
 
 

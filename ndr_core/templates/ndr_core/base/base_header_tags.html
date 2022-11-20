@@ -1,0 +1,20 @@
+{% load static %}
+{% load ndr_values %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="{% config_value 'header_description' %}">
+<meta name="author" content="{% config_value 'header_author' %}">
+<link rel="icon" href="{% static 'ndr_core/images/favicon.ico' %}">
+<title>{% config_value 'header_default_title' %}</title>
+<link href="{% static 'ndr_core/css/bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+<script src="{% static 'ndr_core/js/jquery.min.js' %}"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+<link href="{% static 'ndr_core/css/custom_select2.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'ndr/css/style.css' %}" rel="stylesheet" type="text/css">

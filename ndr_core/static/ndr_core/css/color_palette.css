@@ -1,0 +1,28 @@
+div.ndr-color-palette {
+    width: calc(100% / 6);
+    float: left;
+    cursor: pointer;
+    display: table;
+    margin: 0;
+}
+
+div.ndr-color-item {
+    display: table-cell;
+    width: 100%;
+    border: 1px solid black;
+    margin: 0;
+}
+
+div.ndr-color-item p {
+    padding: 3px;
+}
+
+div.ndr-color {
+    background: red;
+    min-height: 20px;
+    height: 75%;
+    width: 75%;
+    padding: 3px;
+    border: 1px solid #1d2124;
+    border-radius: 10px;
+}

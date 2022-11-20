@@ -1,0 +1,29 @@
+[
+  {
+    "model": "ndr_core.NdrCoreUiStyle",
+    "fields": {
+      "name": "centered",
+      "label": "Centered",
+      "filename": "style_default",
+      "description": "Centered content with a navigation on top."
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreUiStyle",
+    "fields": {
+      "name": "left",
+      "label": "Left Navigation",
+      "filename": "style_left",
+      "description": "Content on the right side, navigation on the left."
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreUiStyle",
+    "fields": {
+      "name": "top_fixed",
+      "label": "Top Navigation Fixed",
+      "filename": "style_top_fixed",
+      "description": "Fixed navigation at top, content below."
+    }
+  }
+]

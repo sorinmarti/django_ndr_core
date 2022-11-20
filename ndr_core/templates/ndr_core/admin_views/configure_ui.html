@@ -1,0 +1,105 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load django_tables2 %}
+{% load static %}
+
+{% block content %}
+    <h2>Configure UI</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <h3>Basic Page Settings</h3>
+        <p>
+            Choose your desired UI style. A style defines
+        </p>
+
+        <p>
+            <div class="container parent">
+                <div class="row">
+                    {% for style in ui_styles %}
+                        <div class='col text-center'>
+                            <div>
+                                <b>{{ style.label }}</b>
+                            </div>
+                            <input type="radio" name="ui_style" id="{{ style.filename }}" class="d-none imgbgchk" value="{{ style.name }}"{% if current_style == style.name %} checked="True"{% endif %}>
+                            <label for="{{ style.filename }}">
+                                {% with 'ndr_core/images/admin/'|add:style.filename|add:'.png' as image_static %}
+                                    <img src="{% static image_static %}" alt="Image 1">
+                                {% endwith %}
+                                <div class="tick_container">
+                                    <div class="tick"><i class="fa fa-check"></i></div>
+                                </div>
+                            </label>
+                            <div>
+                                {{ style.description }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </p>
+
+        <h3>Color Settings</h3>
+        <p>
+            <table class="table-sm">
+                <tr>
+                    <th style="width: 18%">Scheme</th>
+                    <th style="width: 8%" class="small">Page Background</th>
+                    <th style="width: 8%" class="small">Text Color</th>
+                    <th style="width: 8%" class="small">Button Color</th>
+                    <th style="width: 8%" class="small">Button Text Color</th>
+                    <th style="width: 8%" class="small">2nd Button Color</th>
+                    <th style="width: 8%" class="small">2nd Button Text Color</th>
+                    <th style="width: 8%" class="small">Link Color</th>
+                    <th style="width: 8%" class="small">Accent Color 1</th>
+                    <th style="width: 8%" class="small">Accent Color 2</th>
+                </tr>
+            {% for palette in palettes %}
+                <tr>
+                    <td>
+                        <input type="radio" name="ui_color_scheme" id="radio{{ palette.id }}" value="{{ palette.scheme_name }}" {% if current_palette == palette.scheme_name %} checked="True"{% endif %}/>
+                        <label for="radio{{ palette.id }}">{{  palette.scheme_label }}</label>
+                    </td>
+                    <td>
+                        <div class="ndr-color" style="background-color: {{ palette.background_color }};"></div>
+                        {{ palette.background_color }}
+                    </td>
+                    <td>
+                        <div class="ndr-color" style="background-color: {{ palette.text_color }};"></div>
+                        {{ palette.text_color }}
+                    </td>
+                    <td>
+                        <div class="ndr-color" style="background-color: {{ palette.button_color }};"></div>
+                        {{ palette.button_color }}
+                    </td>
+                    <td>
+                        <div class="ndr-color" style="background-color: {{ palette.button_text_color }};"></div>
+                        {{ palette.button_text_color }}
+                    </td>
+                    <td>
+                        <div class="ndr-color" style="background-color: {{ palette.second_button_color }};"></div>
+                        {{ palette.second_button_color }}
+                    </td>
+                    <td>
+                        <div class="ndr-color" style="background-color: {{ palette.second_button_text_color }};"></div>
+                        {{ palette.second_button_text_color }}
+                    </td>
+                    <td>
+                        <div class="ndr-color" style="background-color: {{ palette.link_color }};"></div>
+                        {{ palette.link_color }}
+                    </td>
+                    <td>
+                        <div class="ndr-color" style="background-color: {{ palette.accent_color_1 }};"></div>
+                        {{ palette.accent_color_1 }}
+                    </td>
+                    <td>
+                        <div class="ndr-color" style="background-color: {{ palette.accent_color_2 }};"></div>
+                        {{ palette.accent_color_2 }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </table>
+        </p>
+
+        <input type="submit" class="btn btn-primary" role="button" value="Save Changes">
+    </form>
+{% endblock %}

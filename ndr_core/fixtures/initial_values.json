@@ -2,6 +2,24 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "ui_style",
+      "value_label": "UI Style",
+      "value_help_text": "UI Style",
+      "value_value": "default"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "ui_color_scheme",
+      "value_label": "UI Color Scheme",
+      "value_help_text": "UI Color Scheme",
+      "value_value": "default"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "contact_form_send_to_address",
       "value_label": "E-Mail address for Contact Form",
       "value_help_text": "Messages from the contact form are sent to this address",
@@ -69,6 +87,15 @@
       "value_name": "header_author",
       "value_label": "Author in HTML header",
       "value_help_text": "",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "project_title",
+      "value_label": "Project title",
+      "value_help_text": "The project's or web page's title.",
       "value_value": ""
     }
   }
