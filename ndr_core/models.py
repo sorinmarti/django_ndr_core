@@ -292,20 +292,33 @@ class NdrCoreColorScheme(models.Model):
     button_color = ColorField()
     """Basic color of primary buttons."""
 
+    button_hover_color = ColorField()
+
     button_text_color = ColorField()
+    """TODO"""
+
+    button_border_color = ColorField()
     """TODO"""
 
     second_button_color = ColorField()
     """Basic color of secondary buttons."""
 
+    second_button_hover_color =ColorField()
+
     second_button_text_color = ColorField()
     """TODO"""
+
+    second_button_border_color = ColorField()
 
     link_color = ColorField()
     """Color of hrefs."""
 
     accent_color_1 = ColorField()
     accent_color_2 = ColorField()
+
+    info_color = ColorField()
+    success_color = ColorField()
+    error_color = ColorField()
 
 
 

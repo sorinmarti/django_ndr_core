@@ -1,8 +1,14 @@
-{% extends 'ndr_core/base/base_default.html' %}
+{% extends 'ndr_core/base/styles/base_default.html' %}
+{% load static %}
 
 {% block logo %}
     <a class="blog-header-logo text-dark" href="/">NDR CORE</a>
 {% endblock logo %}
+
+{% block custom_css %}
+    <link href="{% static 'ndr/css/colors.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'ndr/css/style.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
 
 {% block footer %}
     <div class="container">

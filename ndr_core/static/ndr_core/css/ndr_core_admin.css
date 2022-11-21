@@ -52,3 +52,10 @@
     width: 40px;
     border-radius: 100%;
 }
+
+.verticalText{
+   -ms-transform: rotate(90deg);
+   -moz-transform: rotate(90deg);
+   -webkit-transform: rotate(90deg);
+   transform: rotate(90deg);
+}

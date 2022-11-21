@@ -1,0 +1,70 @@
+{% extends 'ndr/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1>Page Title (Heading 1)</h1>
+    <p>
+        This is a test page to test your UI settings. <a href="#">This is a link on your page</a>.
+    </p>
+
+    <h2>Text (Heading 2)</h2>
+    <p>
+        This is a paragraph of Text. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+        tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+        dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem
+        ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+        magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+        gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+    </p>
+
+    <h3>Buttons (Heading 3)</h3>
+    <p>
+        <table>
+            <tr>
+                <td>
+                    <input type="submit" value="This is a primary Button" class="btn btn-primary">
+                </td>
+                <td>
+                    <input type="submit" value="This is a primary outline Button" class="btn btn-outline-primary">
+                </td>
+                <td>
+                    <input type="submit" value="This is a secondary Button" class="btn btn-secondary">
+                </td>
+                <td>
+                    <input type="submit" value="This is a secondary outline Button" class="btn btn-outline-secondary">
+                </td>
+            </tr>
+        </table>
+    </p>
+
+     <h4>Forms (Heading 4)</h4>
+    <p>
+        This is a form
+        {% crispy form %}
+    </p>
+
+    <h5>Accent Colors (Heading 5)</h5>
+    <p>
+        These are accent colors:
+        <span class="accent-1">Color 1</span>
+        <span class="accent-2">Color 2</span>
+    </p>
+
+    <h6>Alerts (Heading 6)</h6>
+    <p>
+        <div class="alert alert-info small" role="alert">
+            This is an info
+        </div>
+    </p>
+    <p>
+        <div class="alert alert-danger small" role="alert">
+            This is an error
+        </div>
+    </p>
+    <p>
+        <div class="alert alert-success small" role="alert">
+            This is a success
+        </div>
+    </p>
+
+{% endblock %}

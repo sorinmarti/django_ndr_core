@@ -5,9 +5,10 @@ from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 
-from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm
+from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
 from ndr_core.models import NdrCorePage
 from ndr_core.query import Query
+from ndr_core.ndr_settings import NdrSettings
 
 
 def dispatch(request, ndr_page):
@@ -65,6 +66,12 @@ class _NdrCoreView(View):
 
 class NdrTemplateView(_NdrCoreView):
     pass
+
+
+class NdrTestView(_NdrCoreView):
+    def get(self, request, *args, **kwargs):
+        form = TestForm()
+        return render(request, f"{NdrSettings.APP_NAME}/test.html", {'form': form})
 
 
 class FilterListView(_NdrCoreView):

@@ -1,0 +1,87 @@
+/* DO NOT MODIFY THIS FILE. IT IS GENERATED. MODIFY style.css INSTEAD. */
+
+/* BODY */
+body {
+    background: [[background_color]];
+    color: [[text_color]];
+}
+
+/* PRIMARY */
+.btn-primary {
+    background: [[button_color]];
+    color: [[button_text_color]];
+    border-color: [[button_border_color]];
+}
+
+.btn-primary:hover {
+    background: [[button_hover_color]];
+    color: [[button_text_color]];
+    border-color: [[button_border_color]];
+}
+
+.btn-outline-primary {
+    background: [[background_color]];
+    color: [[text_color]];
+    border-color: [[button_border_color]];
+}
+
+.btn-outline-primary:hover {
+    background: [[button_color]];
+    color: [[button_text_color]];
+    border-color: [[button_border_color]];
+}
+
+/* SECONDARY */
+.btn-secondary {
+    background: [[second_button_color]];
+    color: [[second_button_text_color]];
+    border-color: [[second_button_border_color]];
+}
+
+.btn-secondary:hover {
+    background: [[second_button_hover_color]];
+    color: [[second_button_text_color]];
+    border-color: [[second_button_border_color]];
+}
+
+.btn-outline-secondary {
+    background: [[background_color]];
+    color: [[text_color]];
+    border-color: [[second_button_border_color]];
+}
+
+.btn-outline-secondary:hover {
+    background: [[second_button_color]];
+    color: [[second_button_text_color]];
+    border-color: [[second_button_border_color]];
+}
+
+/* LINKS */
+a {
+    color: [[link_color]];
+}
+
+/* ALERTS */
+.alert-info {
+    background: [[info_color]];
+    color: [[text_color]];
+}
+
+.alert-danger {
+    background: [[error_color]];
+    color: [[text_color]];
+}
+
+.alert-success {
+    background: [[success_color]];
+    color: [[text_color]];
+}
+
+/* ACCENTS */
+.accent-1 {
+    background: [[accent_color_1]];
+}
+
+.accent-2 {
+    background: [[accent_color_2]];
+}

@@ -242,6 +242,11 @@ class ContactForm(_NdrCoreForm):
     captcha = ReCaptchaField()
 
 
+class TestForm(_NdrCoreForm):
+    field_1 = forms.CharField()
+    field_2 = forms.BooleanField()
+    field_3 = forms.ChoiceField(choices=[('1', 'Choice'),('2', 'Choice 2'), ('3', 'Choice 3')])
+
 
 class MySubmit(BaseInput):
     input_type = "submit"
@@ -279,3 +284,4 @@ def querydict_to_dict(query_dict):
             v = v[0]
         data[key] = v
     return data
+

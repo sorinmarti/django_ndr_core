@@ -8,6 +8,9 @@
     <head>
         {% include 'ndr_core/base/base_header_tags.html' %}
         <link href="{% static 'ndr_core/css/ndr_core_default.css' %}" rel="stylesheet">
+        {% block custom_css %}
+            <!-- custom css -->
+        {% endblock %}
     </head>
 
     <body>
@@ -62,10 +65,13 @@
             {% endblock %}
 
             {% block generated_content %}
+                {% if page.template_text %}
+                    {{ page.template_text|safe }}
+                {% endif %}
             {% endblock %}
 
             {% block content %}
-                {{ page.template_text|safe }}
+
             {% endblock %}
 
         </div>

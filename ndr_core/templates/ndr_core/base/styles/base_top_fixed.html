@@ -8,6 +8,9 @@
     <head>
         {% include 'ndr_core/base/base_header_tags.html' %}
         <link href="{% static 'ndr_core/css/ndr_core_top_fixed.css' %}" rel="stylesheet">
+        {% block custom_css %}
+            <!-- custom css -->
+        {% endblock %}
     </head>
 
     <body>

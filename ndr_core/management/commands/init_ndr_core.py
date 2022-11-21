@@ -57,6 +57,9 @@ class Command(BaseCommand):
         index_file = finders.find('ndr_core/app_init/index.html')
         shutil.copyfile(index_file, f'{app_name}/templates/{app_name}/index.html')
 
+        test_file = finders.find('ndr_core/app_init/test.html')
+        shutil.copyfile(test_file, f'{app_name}/templates/{app_name}/test.html')
+
         # static files
         os.makedirs(f'{app_name}/static/{app_name}/css/')
         css_file = finders.find('ndr_core/app_init/style.css')

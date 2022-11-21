@@ -9,7 +9,7 @@
         {% csrf_token %}
         <h3>Basic Page Settings</h3>
         <p>
-            Choose your desired UI style. A style defines
+            Choose your desired UI style. A style defines the basic look and feel of your page.
         </p>
 
         <p>
@@ -40,18 +40,28 @@
 
         <h3>Color Settings</h3>
         <p>
-            <table class="table-sm">
+            Choose your desired color scheme. A color scheme defines the colors of your page, text and buttons.
+        </p>
+        <p>
+            <table class="table-bordered table-sm">
                 <tr>
-                    <th style="width: 18%">Scheme</th>
-                    <th style="width: 8%" class="small">Page Background</th>
-                    <th style="width: 8%" class="small">Text Color</th>
-                    <th style="width: 8%" class="small">Button Color</th>
-                    <th style="width: 8%" class="small">Button Text Color</th>
-                    <th style="width: 8%" class="small">2nd Button Color</th>
-                    <th style="width: 8%" class="small">2nd Button Text Color</th>
-                    <th style="width: 8%" class="small">Link Color</th>
-                    <th style="width: 8%" class="small">Accent Color 1</th>
-                    <th style="width: 8%" class="small">Accent Color 2</th>
+                    <th style="width: 20%">Scheme</th>
+                    <th style="width: 5%" class="small align-bottom">Page Background</th>
+                    <th style="width: 5%" class="small align-bottom">Text Color</th>
+                    <th style="width: 5%" class="small align-bottom">Button Color</th>
+                    <th style="width: 5%" class="small align-bottom">Button Hover Color</th>
+                    <th style="width: 5%" class="small align-bottom">Button Text Color</th>
+                    <th style="width: 5%" class="small align-bottom">Button Border Color</th>
+                    <th style="width: 5%" class="small align-bottom">2nd Button Color</th>
+                    <th style="width: 5%" class="small align-bottom">2nd Button Hover Color</th>
+                    <th style="width: 5%" class="small align-bottom">2nd Button Text Color</th>
+                    <th style="width: 5%" class="small align-bottom">2nd Button Border Color</th>
+                    <th style="width: 5%" class="small align-bottom">Link Color</th>
+                    <th style="width: 5%" class="small align-bottom">Accent Color 1</th>
+                    <th style="width: 5%" class="small align-bottom">Accent Color 2</th>
+                    <th style="width: 5%" class="small align-bottom">Info Color</th>
+                    <th style="width: 5%" class="small align-bottom">Success Color</th>
+                    <th style="width: 5%" class="small align-bottom">Error Color</th>
                 </tr>
             {% for palette in palettes %}
                 <tr>
@@ -59,47 +69,87 @@
                         <input type="radio" name="ui_color_scheme" id="radio{{ palette.id }}" value="{{ palette.scheme_name }}" {% if current_palette == palette.scheme_name %} checked="True"{% endif %}/>
                         <label for="radio{{ palette.id }}">{{  palette.scheme_label }}</label>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div class="ndr-color" style="background-color: {{ palette.background_color }};"></div>
-                        {{ palette.background_color }}
+                        <small>{{ palette.background_color }}</small>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div class="ndr-color" style="background-color: {{ palette.text_color }};"></div>
-                        {{ palette.text_color }}
+                        <small>{{ palette.text_color }}</small>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div class="ndr-color" style="background-color: {{ palette.button_color }};"></div>
-                        {{ palette.button_color }}
+                        <small>{{ palette.button_color }}</small>
                     </td>
-                    <td>
+                    <td class="text-center">
+                        <div class="ndr-color" style="background-color: {{ palette.button_hover_color }};"></div>
+                        <small>{{ palette.button_hover_color }}</small>
+                    </td>
+                    <td class="text-center">
                         <div class="ndr-color" style="background-color: {{ palette.button_text_color }};"></div>
-                        {{ palette.button_text_color }}
+                        <small>{{ palette.button_text_color }}</small>
                     </td>
-                    <td>
+                    <td class="text-center">
+                        <div class="ndr-color" style="background-color: {{ palette.button_border_color }};"></div>
+                        <small>{{ palette.button_border_color }}</small>
+                    </td>
+                    <td class="text-center">
                         <div class="ndr-color" style="background-color: {{ palette.second_button_color }};"></div>
-                        {{ palette.second_button_color }}
+                        <small>{{ palette.second_button_color }}</small>
                     </td>
-                    <td>
+                    <td class="text-center">
+                        <div class="ndr-color" style="background-color: {{ palette.second_button_hover_color }};"></div>
+                        <small>{{ palette.second_button_hover_color }}</small>
+                    </td>
+                    <td class="text-center">
                         <div class="ndr-color" style="background-color: {{ palette.second_button_text_color }};"></div>
-                        {{ palette.second_button_text_color }}
+                        <small>{{ palette.second_button_text_color }}</small>
                     </td>
-                    <td>
+                    <td class="text-center">
+                        <div class="ndr-color" style="background-color: {{ palette.second_button_border_color }};"></div>
+                        <small>{{ palette.second_button_border_color }}</small>
+                    </td>
+                    <td class="text-center">
                         <div class="ndr-color" style="background-color: {{ palette.link_color }};"></div>
-                        {{ palette.link_color }}
+                        <small>{{ palette.link_color }}</small>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div class="ndr-color" style="background-color: {{ palette.accent_color_1 }};"></div>
-                        {{ palette.accent_color_1 }}
+                        <small>{{ palette.accent_color_1 }}</small>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div class="ndr-color" style="background-color: {{ palette.accent_color_2 }};"></div>
-                        {{ palette.accent_color_2 }}
+                        <small>{{ palette.accent_color_2 }}</small>
+                    </td>
+                    <td class="text-center">
+                        <div class="ndr-color" style="background-color: {{ palette.info_color }};"></div>
+                        <small>{{ palette.info_color }}</small>
+                    </td>
+                    <td class="text-center">
+                        <div class="ndr-color" style="background-color: {{ palette.success_color }};"></div>
+                        <small>{{ palette.success_color }}</small>
+                    </td>
+                    <td class="text-center">
+                        <div class="ndr-color" style="background-color: {{ palette.error_color }};"></div>
+                        <small>{{ palette.error_color }}</small>
                     </td>
                 </tr>
             {% endfor %}
             </table>
         </p>
 
+        <p>
+            <input data-jscolor="{
+                preset: 'dark',
+                closeButton: true,
+                closeText: 'OK'
+                }">
+        </p>
+
         <input type="submit" class="btn btn-primary" role="button" value="Save Changes">
     </form>
+{% endblock %}
+
+{% block page_js %}
+    <script src="{% static 'ndr_core/js/jscolor.min.js' %}"></script>
 {% endblock %}
