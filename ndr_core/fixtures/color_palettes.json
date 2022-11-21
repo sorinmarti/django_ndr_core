@@ -7,28 +7,42 @@
       "background_color": "#FFFFFF",
       "text_color": "#000000",
       "button_color": "#0d6efd",
+      "button_hover_color": "#FFFFFF",
       "button_text_color": "#000000",
+      "button_border_color": "#FFFFFF",
       "second_button_color": "#6c757d",
+      "second_button_hover_color": "#6c757d",
       "second_button_text_color": "#000000",
+      "second_button_border_color": "#000000",
       "link_color": "#FF0000",
       "accent_color_1": "#00FF00",
-      "accent_color_2": "#0000FF"
+      "accent_color_2": "#0000FF",
+      "info_color": "#0000FF",
+      "success_color": "#0000FF",
+      "error_color": "#0000FF"
     }
   },
   {
     "model": "ndr_core.NdrCoreColorScheme",
     "fields": {
-      "scheme_name": "second",
-      "scheme_label": "Second Scheme",
-      "background_color": "#FF0000",
+      "scheme_name": "dark",
+      "scheme_label": "Dark Scheme",
+      "background_color": "#FFFFFF",
       "text_color": "#000000",
       "button_color": "#0d6efd",
+      "button_hover_color": "#FFFFFF",
       "button_text_color": "#000000",
-      "second_button_color": "#000000",
-      "second_button_text_color": "#FFFFFF",
+      "button_border_color": "#FFFFFF",
+      "second_button_color": "#6c757d",
+      "second_button_hover_color": "#6c757d",
+      "second_button_text_color": "#000000",
+      "second_button_border_color": "#000000",
       "link_color": "#FF0000",
-      "accent_color_1": "#0000FF",
-      "accent_color_2": "#00FF00"
+      "accent_color_1": "#00FF00",
+      "accent_color_2": "#0000FF",
+      "info_color": "#0000FF",
+      "success_color": "#0000FF",
+      "error_color": "#0000FF"
     }
   }
 ]

@@ -20,7 +20,7 @@
                     <div class="row flex-nowrap justify-content-between align-items-center">
                         <div class="col-4 pt-1">
                             {% block logo %}
-                                <a class="blog-header-logo text-dark" href="/">NDR CORE</a>
+                                <a href="/"><img src="{% block logo_url %}{% static 'ndr_core/images/logo.png' %}{% endblock %}" style="height: 5em;"/></a>
                             {% endblock logo %}
                         </div>
 

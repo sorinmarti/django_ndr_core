@@ -14,8 +14,13 @@
     </head>
 
     <body>
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-            <a class="navbar-brand" href="#">Fixed navbar</a>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top accent-1-bg">
+            {% block logo %}
+                <a class="navbar-brand" href="/">
+                    <img src="{% block logo_url %}{% static 'ndr_core/images/logo.png' %}{% endblock %}" style="height: 3em;"/>
+                </a>
+            {% endblock logo %}
+
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -23,7 +28,7 @@
                 <ul class="navbar-nav mr-auto">
                     {% for nav_item in navigation %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
+                            <a class="nav-link ndr-text-fg" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
                         </li>
                     {% endfor %}
                 </ul>
@@ -34,7 +39,7 @@
             </div>
         </nav>
 
-        <main role="main" class="container">
+        <main role="main" class="container" style="padding-top: 7em;">
             {% block page_title %}
                 <h1>{{ page.name }}</h1>
             {% endblock %}

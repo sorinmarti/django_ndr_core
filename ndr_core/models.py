@@ -228,20 +228,21 @@ class NdrCorePage(models.Model):
     """The index determines the order the pages are displayed. 0 comes first (=most left)"""
 
     search_configs = models.ManyToManyField(SearchConfiguration)
-    """TODO """
+    """If the page is of one of the search types (SEARCH, COMBINED_SEARCH), a number of search configurations can 
+    be saved. """
 
     list_configs = models.ManyToManyField(FilterableListConfiguration)
-    """TODO """
+    """If the page is of the List type, a list configuration can be saved. """
 
     simple_api = models.ForeignKey(ApiConfiguration,
                                    null=True, blank=True,
                                    help_text='Api for simple search',
                                    on_delete=models.SET_NULL)
-    """TODO """
+    """If the page is of type SIMPLE_SEARCH, a simple search configuration can be saved."""
 
     template_text = RichTextUploadingField(null=True, blank=True,
                                            help_text='Text for your template page')
-    """TODO """
+    """Template Pages can be filled with RichText content (instead of 'manual' HTML). """
 
     def url(self):
         """Returns the url of a given page or '#' if none is found"""
@@ -260,28 +261,31 @@ class NdrCorePage(models.Model):
 
 
 class NdrCoreUiStyle(models.Model):
-    """TODO"""
+    """A NDR Core page is styled a certain way. Navigation may be on top or to the left, fonts may be different and
+    so on. Each UI Style provides a base.html and (most probably) a css file."""
 
     name = models.CharField(max_length=100, unique=True)
-    """TODO"""
+    """Name of the style. Used as identifier. """
 
     label = models.CharField(max_length=100)
-    """TODO"""
+    """Human readable and descriptive label of the UI style."""
 
     filename = models.CharField(max_length=50)
-    """TODO"""
+    """Filename to save the base file and css with (no extension and no path information). """
 
     description = models.TextField()
-    """TODO"""
+    """Description of the style, highlighting its properties."""
 
 
 class NdrCoreColorScheme(models.Model):
-    """TODO"""
+    """The NDR Core UI styles get colored with a certain color scheme. The selected scheme is used to create a
+    colors.css stylesheet file in your ndr installation. It gets regenerated when you change the selected scheme."""
 
     scheme_name = models.CharField(unique=True, max_length=50)
     """The name of the color scheme. For display and reference."""
 
     scheme_label = models.CharField(max_length=100)
+    """Human readable label of the scheme """
 
     background_color = ColorField()
     """Basic background color of the whole page."""
@@ -293,33 +297,43 @@ class NdrCoreColorScheme(models.Model):
     """Basic color of primary buttons."""
 
     button_hover_color = ColorField()
+    """Hover color of primary buttons."""
 
     button_text_color = ColorField()
-    """TODO"""
+    """Text color of primary buttons."""
 
     button_border_color = ColorField()
-    """TODO"""
+    """Border color of primary buttons."""
 
     second_button_color = ColorField()
     """Basic color of secondary buttons."""
 
-    second_button_hover_color =ColorField()
+    second_button_hover_color = ColorField()
+    """Hover cover of secondary buttons."""
 
     second_button_text_color = ColorField()
-    """TODO"""
+    """Text color of secondary buttons."""
 
     second_button_border_color = ColorField()
+    """Border colorof secondary buttons."""
 
     link_color = ColorField()
-    """Color of hrefs."""
+    """Color for hrefs."""
 
     accent_color_1 = ColorField()
+    """Accent color 1."""
+
     accent_color_2 = ColorField()
+    """Accent color 2."""
 
     info_color = ColorField()
-    success_color = ColorField()
-    error_color = ColorField()
+    """Info color for alerts."""
 
+    success_color = ColorField()
+    """Success color for alerts."""
+
+    error_color = ColorField()
+    """Error color for alerts."""
 
 
 class NdrCoreValue(models.Model):

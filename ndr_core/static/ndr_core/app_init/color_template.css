@@ -2,86 +2,103 @@
 
 /* BODY */
 body {
-    background: [[background_color]];
-    color: [[text_color]];
+    background: [[background_color]] !important;
+    color: [[text_color]] !important;
 }
 
 /* PRIMARY */
 .btn-primary {
-    background: [[button_color]];
-    color: [[button_text_color]];
-    border-color: [[button_border_color]];
+    background: [[button_color]] !important;
+    color: [[button_text_color]] !important;
+    border-color: [[button_border_color]] !important;
 }
 
 .btn-primary:hover {
-    background: [[button_hover_color]];
-    color: [[button_text_color]];
-    border-color: [[button_border_color]];
+    background: [[button_hover_color]] !important;
+    color: [[button_text_color]] !important;
+    border-color: [[button_border_color]] !important;
 }
 
 .btn-outline-primary {
-    background: [[background_color]];
-    color: [[text_color]];
-    border-color: [[button_border_color]];
+    background: [[background_color]] !important;
+    color: [[text_color]] !important;
+    border-color: [[button_border_color]] !important;
 }
 
 .btn-outline-primary:hover {
-    background: [[button_color]];
-    color: [[button_text_color]];
-    border-color: [[button_border_color]];
+    background: [[button_color]] !important;
+    color: [[button_text_color]] !important;
+    border-color: [[button_border_color]] !important;
 }
 
 /* SECONDARY */
 .btn-secondary {
-    background: [[second_button_color]];
-    color: [[second_button_text_color]];
-    border-color: [[second_button_border_color]];
+    background: [[second_button_color]] !important;
+    color: [[second_button_text_color]] !important;
+    border-color: [[second_button_border_color]] !important;
 }
 
 .btn-secondary:hover {
-    background: [[second_button_hover_color]];
-    color: [[second_button_text_color]];
-    border-color: [[second_button_border_color]];
+    background: [[second_button_hover_color]] !important;
+    color: [[second_button_text_color]] !important;
+    border-color: [[second_button_border_color]] !important;
 }
 
 .btn-outline-secondary {
-    background: [[background_color]];
-    color: [[text_color]];
-    border-color: [[second_button_border_color]];
+    background: [[background_color]] !important;
+    color: [[text_color]] !important;
+    border-color: [[second_button_border_color]] !important;
 }
 
 .btn-outline-secondary:hover {
-    background: [[second_button_color]];
-    color: [[second_button_text_color]];
-    border-color: [[second_button_border_color]];
+    background: [[second_button_color]] !important;
+    color: [[second_button_text_color]] !important;
+    border-color: [[second_button_border_color]] !important;
 }
 
 /* LINKS */
 a {
-    color: [[link_color]];
+    color: [[link_color]] !important;
 }
 
 /* ALERTS */
 .alert-info {
-    background: [[info_color]];
-    color: [[text_color]];
+    background: [[info_color]] !important;
+    color: [[text_color]] !important;
 }
 
 .alert-danger {
-    background: [[error_color]];
-    color: [[text_color]];
+    background: [[error_color]] !important;
+    color: [[text_color]] !important;
 }
 
 .alert-success {
-    background: [[success_color]];
-    color: [[text_color]];
+    background: [[success_color]] !important;
+    color: [[text_color]] !important;
 }
 
 /* ACCENTS */
-.accent-1 {
-    background: [[accent_color_1]];
+.accent-1-bg {
+    background: [[accent_color_1]] !important;
 }
 
-.accent-2 {
-    background: [[accent_color_2]];
+.accent-1-fg {
+    color: [[accent_color_1]] !important;
+}
+
+.accent-2-bg {
+    background: [[accent_color_2]] !important;
+}
+
+.accent-2-fg {
+    color: [[accent_color_2]] !important;
+}
+
+/* TEXT */
+.ndr-text-fg {
+    color: [[text_color]] !important;
+}
+
+.ndr-text-fg:hover {
+    color: [[accent_color_2]] !important;
 }

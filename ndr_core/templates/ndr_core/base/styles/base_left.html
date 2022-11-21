@@ -18,9 +18,11 @@
 
         <div class="wrapper">
             <!-- Sidebar -->
-            <nav id="sidebar">
+            <nav id="sidebar" class="accent-1-bg">
                 <div class="sidebar-header">
-                    <h3>{% config_value 'project_title' %}</h3>
+                    {% block logo %}
+                        <a href="/"><img src="{% block logo_url %}{% static 'ndr_core/images/logo.png' %}{% endblock %}" style="height: 5em;"/></a>
+                    {% endblock logo %}
                 </div>
 
                 <ul class="list-unstyled components">
