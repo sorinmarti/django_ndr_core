@@ -1,6 +1,6 @@
 [
   {
-    "model": "ndr_core.NdrSearchField",
+    "model": "ndr_core.NdrCoreSearchField",
     "fields": {
       "field_name": "last_name",
       "field_label": "Last Name",
@@ -12,7 +12,7 @@
     }
   },
   {
-    "model": "ndr_core.NdrSearchField",
+    "model": "ndr_core.NdrCoreSearchField",
     "fields": {
       "field_name": "first_name",
       "field_label": "First Name",
@@ -24,7 +24,7 @@
     }
   },
   {
-    "model": "ndr_core.NdrSearchField",
+    "model": "ndr_core.NdrCoreSearchField",
     "fields": {
       "field_name": "organization",
       "field_label": "Organization",
@@ -36,7 +36,7 @@
     }
   },
   {
-    "model": "ndr_core.NdrSearchField",
+    "model": "ndr_core.NdrCoreSearchField",
     "fields": {
       "field_name": "profession",
       "field_label": "Profession",
@@ -48,7 +48,7 @@
     }
   },
   {
-    "model": "ndr_core.NdrSearchField",
+    "model": "ndr_core.NdrCoreSearchField",
     "fields": {
       "field_name": "location",
       "field_label": "Location",

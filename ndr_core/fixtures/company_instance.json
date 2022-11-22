@@ -1,6 +1,6 @@
 [
   {
-    "model": "ndr_core.NdrSearchField",
+    "model": "ndr_core.NdrCoreSearchField",
     "fields": {
       "field_name": "company_name",
       "field_label": "Company Name",

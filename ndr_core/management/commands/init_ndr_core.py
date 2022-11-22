@@ -57,6 +57,9 @@ class Command(BaseCommand):
         index_file = finders.find('ndr_core/app_init/index.html')
         shutil.copyfile(index_file, f'{app_name}/templates/{app_name}/index.html')
 
+        search_file = finders.find('ndr_core/app_init/search.html')
+        shutil.copyfile(index_file, f'{app_name}/templates/{app_name}/search.html')
+
         test_file = finders.find('ndr_core/app_init/test.html')
         shutil.copyfile(test_file, f'{app_name}/templates/{app_name}/test.html')
 
@@ -70,9 +73,12 @@ class Command(BaseCommand):
         shutil.copyfile(logo_file, f'{app_name}/static/{app_name}/images/logo.png')
 
         # media directory
-        os.makedirs(f'media/backgrounds/')
-        os.makedirs(f'media/teams/')
-        os.makedirs(f'media/uploads/')
+        if not os.path.exists('media/backgrounds/'):
+            os.makedirs('media/backgrounds/')
+        if not os.path.exists('media/teams/'):
+            os.makedirs('media/teams/')
+        if not os.path.exists('media/backgrounds/'):
+            os.makedirs('media/backgrounds/')
 
         # Home Page
         NdrCorePage.objects.create(page_type=NdrCorePage.PageType.TEMPLATE,
@@ -94,7 +100,7 @@ class Command(BaseCommand):
         NdrCorePage.objects.create(page_type=NdrCorePage.PageType.SIMPLE_SEARCH,
                                    name='Test Search',
                                    label='Test Search',
-                                   view_name='index',
+                                   view_name='search',
                                    nav_icon='fas-fa search',
                                    index=1,
                                    simple_api=api_conf)

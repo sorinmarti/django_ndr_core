@@ -3,7 +3,9 @@ import shutil
 
 from django.core.management.base import BaseCommand
 
-from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreDataSchema, NdrCoreSearchField
+from ndr_core.models import NdrCoreApiConfiguration, NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration, \
+    NdrCoreCorrectedField, NdrCoreCorrection, NdrCoreColorScheme, NdrCoreUiStyle, NdrCoreValue, NdrCorePage, \
+    NdrCoreDataSchema, NdrCoreSearchField, NdrCoreFilterableListConfiguration
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -22,15 +24,29 @@ class Command(BaseCommand):
         if confirmation_input == "YES_DELETE":
             if os.path.isdir(app_name):
                 shutil.rmtree(app_name, ignore_errors=False, onerror=None)
+            if os.path.isdir('media/backgrounds'):
+                shutil.rmtree('media/backgrounds', ignore_errors=False, onerror=None)
+            if os.path.isdir('media/teams'):
+                shutil.rmtree('media/teams', ignore_errors=False, onerror=None)
+            if os.path.isdir('media/uploads'):
+                shutil.rmtree('media/uploads', ignore_errors=False, onerror=None)
 
-                NdrCoreValue.objects.all().delete()
-                NdrCorePage.objects.all().delete()
-                NdrCoreDataSchema.objects.all().delete()
-                NdrCoreSearchField.objects.all().delete()
+            self.stdout.write('Deleting database...')
+            NdrCoreValue.objects.all().delete()
+            NdrCoreColorScheme.objects.all().delete()
+            NdrCoreUiStyle.objects.all().delete()
+            NdrCorePage.objects.all().delete()
+            NdrCoreDataSchema.objects.all().delete()
+            NdrCoreSearchField.objects.all().delete()
+            NdrCoreSearchConfiguration.objects.all().delete()
+            NdrCoreSearchFieldFormConfiguration.objects.all().delete()
+            NdrCoreApiConfiguration.objects.all().delete()
+            NdrCoreCorrectedField.objects.all().delete()
+            NdrCoreCorrection.objects.all().delete()
+            NdrCoreFilterableListConfiguration.objects.all().delete()
 
-                self.stdout.write('NDR installation deleted')
-                self.stdout.write('IMPORTANT: remove "ndr" from INSTALLED_APPS in settings')
-            else:
-                self.stdout.write('Aborted. No installation found')
+            self.stdout.write('NDR installation deleted')
+            self.stdout.write('IMPORTANT: remove "ndr" from INSTALLED_APPS in settings')
+
         else:
             self.stdout.write('Aborted. No changes were made')
