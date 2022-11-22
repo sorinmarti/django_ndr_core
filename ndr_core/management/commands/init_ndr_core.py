@@ -65,6 +65,15 @@ class Command(BaseCommand):
         css_file = finders.find('ndr_core/app_init/style.css')
         shutil.copyfile(css_file, f'{app_name}/static/{app_name}/css/style.css')
 
+        os.makedirs(f'{app_name}/static/{app_name}/images/')
+        logo_file = finders.find('ndr_core/app_init/logo.png')
+        shutil.copyfile(logo_file, f'{app_name}/static/{app_name}/images/logo.png')
+
+        # media directory
+        os.makedirs(f'media/backgrounds/')
+        os.makedirs(f'media/teams/')
+        os.makedirs(f'media/uploads/')
+
         # Pages
         NdrCorePage.objects.create(name='Home Page',
                                    label='Home',

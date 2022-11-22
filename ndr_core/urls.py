@@ -10,6 +10,7 @@ from ndr_core.admin_views import create_search_fields, PageEditView, PageDeleteV
     ConfigureUI
 from ndr_core.admin_views import NdrCoreDashboard, ManagePages, ConfigureApi, ConfigureSearch, ConfigureSearchFields, \
     PageCreateView
+from ndr_core.views import ApiTestView
 
 app_name = 'ndr_core'
 urlpatterns = [
@@ -52,5 +53,8 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='ndr_core/admin_views/logout.html'), name='logout'),
 
     # Help
-    path('help/', TemplateView.as_view(template_name='ndr_core/admin_views/help.html'), name='help')
+    path('help/', TemplateView.as_view(template_name='ndr_core/admin_views/help.html'), name='help'),
+
+    # TEST SERVER
+    path('query/<str:api_request>', ApiTestView.as_view(), name='api_test')
 ]

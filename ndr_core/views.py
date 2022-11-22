@@ -1,4 +1,4 @@
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
@@ -154,3 +154,21 @@ class ContactView(_NdrCoreView):
         context = self.get_context_data()
         context.update({'form': form})
         return render(request, self.template_name, context)
+
+
+class ApiTestView(View):
+
+    def get(self, request, *args, **kwargs):
+        api_request = self.kwargs['api_request']
+        json_response = {}
+
+        if api_request == 'basic':
+            json_response = {}
+        elif api_request == 'advanced':
+            json_response = {}
+        elif api_request == 'fulldata':
+            json_response = {}
+        elif api_request == 'list':
+            json_response = {}
+
+        return JsonResponse(json_response)

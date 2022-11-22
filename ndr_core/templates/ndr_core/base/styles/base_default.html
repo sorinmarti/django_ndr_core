@@ -65,13 +65,10 @@
             {% endblock %}
 
             {% block generated_content %}
-                {% if page.template_text %}
-                    {{ page.template_text|safe }}
-                {% endif %}
             {% endblock %}
 
             {% block content %}
-
+                {{ page.template_text|safe }}
             {% endblock %}
 
         </div>
