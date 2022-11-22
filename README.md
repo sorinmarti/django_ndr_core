@@ -5,7 +5,20 @@ This repository contains the sources to the ndr_core module. You don't need to c
 or download it in order to use ndr_core. If you want to build your own ndr web interface,
 follow the instructions below
 
-## How to use ndr_core
+## How to use ndr_core (in this creation phase)
+1. Clone the repo, create and activate a virtual environment
+2. Install requirements: ```pip install -r requirements.txt``` 
+3. Create Sqlite Database: ```python manage.py migrate```
+4. Collect static files: ```python manage.py collectstatic``` (might take a while)
+5. Init your NDR page: ```python manage.py init_ndr_core```
+6. Run your server: ```python manage.py runserver```
+
+You should be able to access your site now. It consists of a simple home page.
+![image](https://user-images.githubusercontent.com/32014438/203301471-24935756-0d4a-4926-9faa-db1dcbb3bc72.png)
+
+Go to http://localhost:8000/ndr_core/ to configure your page.
+
+## How to use ndr_core (in the future)
 Follow these step-by-step instructions to create your own ndr installation.
 
 1. Create a base directory
