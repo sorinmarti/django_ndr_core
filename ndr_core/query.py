@@ -1,4 +1,4 @@
-from ndr_core.models import SearchConfiguration, NdrSearchField
+from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreSearchField
 
 
 class Query:
@@ -34,7 +34,7 @@ class Query:
             param_divider = '?'
 
         for field_name in self.values:
-            field = NdrSearchField.objects.get(field_name=field_name)
+            field = NdrCoreSearchField.objects.get(field_name=field_name)
             query += f"{param_divider}{field.api_parameter}={self.values[field_name]}"
             param_divider = '&'
         return query

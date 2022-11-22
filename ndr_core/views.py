@@ -1,3 +1,6 @@
+import json
+
+from django.contrib.staticfiles import finders
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 
@@ -163,7 +166,7 @@ class ApiTestView(View):
         json_response = {}
 
         if api_request == 'basic':
-            json_response = {}
+            json_response = json.load(open(finders.find('ndr_core/test_server_assets/test.json')))
         elif api_request == 'advanced':
             json_response = {}
         elif api_request == 'fulldata':

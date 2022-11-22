@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='ApiConfiguration',
+            name='NdrCoreApiConfiguration',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('api_name', models.CharField(help_text="The (form) name of the API. Can't contain special characters or spaces", max_length=100, unique=True)),
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='FilterableListConfiguration',
+            name='NdrCoreFilterableListConfiguration',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('list_name', models.CharField(max_length=100, unique=True)),
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='NdrSearchField',
+            name='NdrCoreSearchField',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('field_name', models.CharField(help_text="Choose a name for the field. Can't contain spaces or special charactersand must be unique", max_length=100, unique=True)),
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='SearchFieldFormConfiguration',
+            name='NdrCoreSearchFieldFormConfiguration',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('field_row', models.IntegerField(help_text='The row in the form. Starts with 1.')),
@@ -78,7 +78,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='SearchConfiguration',
+            name='NdrCoreSearchConfiguration',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('conf_name', models.CharField(help_text="Name of this search configuration. Can't contain spaces or special characters.", max_length=100, unique=True)),

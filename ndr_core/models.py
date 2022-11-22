@@ -10,7 +10,7 @@ from django.urls import reverse, NoReverseMatch
 from ndr_core.ndr_settings import NdrSettings
 
 
-class NdrSearchField(models.Model):
+class NdrCoreSearchField(models.Model):
     """A NdrCoreSearch field servers two purposes: First it can produce a HTML form field and second its information
       is used to formulate an API request."""
 
@@ -65,11 +65,11 @@ class NdrSearchField(models.Model):
         return f'{self.field_name} ({self.field_label})'
 
 
-class SearchFieldFormConfiguration(models.Model):
+class NdrCoreSearchFieldFormConfiguration(models.Model):
     """Search fields can be used in forms. In order to place them, they can be configured to fit in a grid with
-     a SearchFieldFormConfiguration."""
+     a NdrCoreSearchFieldFormConfiguration."""
 
-    search_field = models.ForeignKey(NdrSearchField,
+    search_field = models.ForeignKey(NdrCoreSearchField,
                                      on_delete=models.CASCADE,
                                      help_text="The search field to place in a form")
     """The search field to place in a form"""
@@ -89,7 +89,7 @@ class SearchFieldFormConfiguration(models.Model):
         return f'{self.search_field.field_label} (R{self.field_row}/C{self.field_column}/S{self.field_size})'
 
 
-class ApiConfiguration(models.Model):
+class NdrCoreApiConfiguration(models.Model):
     """An API configuration contains all necessary information to create a query to an API endpoint. """
 
     class Protocol(models.IntegerChoices):
@@ -123,18 +123,24 @@ class ApiConfiguration(models.Model):
                                         help_text="Size of the result page (e.g. 'How many results at once')")
     """The query results will return a page of the results. You can define the page size"""
 
+    api_url_stub = models.CharField(default=None, null=True, blank=True, max_length=50)
+    """TODO"""
+
     def get_base_url(self):
         """
         Get the base URL for a configured API
         :return: base URL for a configured API
         """
-        return f'{self.get_api_protocol_display()}://{self.api_host}:{self.api_port}/'
+        api_base_url = f'{self.get_api_protocol_display()}://{self.api_host}:{self.api_port}/'
+        if self.api_url_stub is not None:
+            api_base_url += self.api_url_stub + "/"
+        return api_base_url
 
     def __str__(self):
         return f'{self.api_name} ({self.api_label})'
 
 
-class SearchConfiguration(models.Model):
+class NdrCoreSearchConfiguration(models.Model):
     """ A search configuration contains TODO """
 
     conf_name = models.CharField(max_length=100,
@@ -148,12 +154,12 @@ class SearchConfiguration(models.Model):
                                   help_text="Label of this search configuration")
     """Name of the search configuration """
 
-    api_configuration = models.ForeignKey(ApiConfiguration,
+    api_configuration = models.ForeignKey(NdrCoreApiConfiguration,
                                           on_delete=models.CASCADE,
                                           help_text="The API to query")
     """The API to query """
 
-    search_form_fields = models.ManyToManyField(SearchFieldFormConfiguration,
+    search_form_fields = models.ManyToManyField(NdrCoreSearchFieldFormConfiguration,
                                                 help_text="Fields associated with this configuration")
     """Fields associated with this configuration """
 
@@ -161,13 +167,13 @@ class SearchConfiguration(models.Model):
         return self.conf_name
 
 
-class FilterableListConfiguration(models.Model):
+class NdrCoreFilterableListConfiguration(models.Model):
     """TODO """
 
     list_name = models.CharField(max_length=100, unique=True)
     """TODO """
 
-    api_configuration = models.ForeignKey(ApiConfiguration, on_delete=models.CASCADE, help_text="TODO")
+    api_configuration = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE, help_text="TODO")
     """TODO """
 
 
@@ -227,14 +233,14 @@ class NdrCorePage(models.Model):
                                 help_text='Page order')
     """The index determines the order the pages are displayed. 0 comes first (=most left)"""
 
-    search_configs = models.ManyToManyField(SearchConfiguration)
+    search_configs = models.ManyToManyField(NdrCoreSearchConfiguration)
     """If the page is of one of the search types (SEARCH, COMBINED_SEARCH), a number of search configurations can 
     be saved. """
 
-    list_configs = models.ManyToManyField(FilterableListConfiguration)
+    list_configs = models.ManyToManyField(NdrCoreFilterableListConfiguration)
     """If the page is of the List type, a list configuration can be saved. """
 
-    simple_api = models.ForeignKey(ApiConfiguration,
+    simple_api = models.ForeignKey(NdrCoreApiConfiguration,
                                    null=True, blank=True,
                                    help_text='Api for simple search',
                                    on_delete=models.SET_NULL)
@@ -371,7 +377,7 @@ class NdrCoreDataSchema(models.Model):
     """NdrCore provides a number of already implemented schemas. For each schema it is known which search fields are
      possible so they can be generated automatically. Example: NdrCore has a 'Historic Person Instances' schema
      implemented for which we know we can search for last and given names, organization affiliation and locations
-     (etc.). So we provide a django-fixture to automatically create these NdrSearchField objects to use them in
+     (etc.). So we provide a django-fixture to automatically create these NdrCoreSearchField objects to use them in
      a search form.
      The list of available schemas is loaded when the management command 'init_ndr_core' is executed and can not
      be manipulated by users."""
@@ -390,12 +396,12 @@ class NdrCoreDataSchema(models.Model):
     be available in the ndr_core module in 'ndr_core/fixtures/'"""
 
 
-class NdrCorrection(models.Model):
+class NdrCoreCorrection(models.Model):
     """Users can be given the opportunity to correct entries which have errors. Each correction can consist of
      multiple field corrections. Users need to provide an ORCID. This does not automatically correct data
      but administrators can accept or reject corrections."""
 
-    corrected_dataset = models.ForeignKey(ApiConfiguration,
+    corrected_dataset = models.ForeignKey(NdrCoreApiConfiguration,
                                           on_delete=models.CASCADE)
     """TODO """
 
@@ -406,10 +412,10 @@ class NdrCorrection(models.Model):
     """TODO """
 
 
-class NdrCorrectedField(models.Model):
+class NdrCoreCorrectedField(models.Model):
     """TODO """
 
-    ndr_correction = models.ForeignKey(NdrCorrection,
+    ndr_correction = models.ForeignKey(NdrCoreCorrection,
                                        on_delete=models.CASCADE)
     """TODO """
 

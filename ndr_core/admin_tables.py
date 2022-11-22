@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from ndr_core.form_preview import get_image_from_queryset
-from ndr_core.models import NdrCorePage, SearchConfiguration, NdrCoreValue, NdrSearchField, ApiConfiguration
+from ndr_core.models import NdrCorePage, NdrCoreSearchConfiguration, NdrCoreValue, NdrCoreSearchField, NdrCoreApiConfiguration
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -39,7 +39,7 @@ class SearchConfigurationTable(tables.Table):
     search_fields = tables.Column(accessor='search_form_fields.all', verbose_name='Form Configuration')
 
     class Meta:
-        model = SearchConfiguration
+        model = NdrCoreSearchConfiguration
 
     def render_api_configuration(self, value, record):
         return mark_safe(f'<small>{value.api_name} ({value.get_base_url()})</small>')
@@ -53,7 +53,7 @@ class SearchConfigurationTable(tables.Table):
 
 class SearchFieldTable(tables.Table):
     class Meta:
-        model = NdrSearchField
+        model = NdrCoreSearchField
 
 
 class SettingsTable(tables.Table):
@@ -80,5 +80,5 @@ class ChangeSettingsTable(SettingsTable):
 class ApiTable(tables.Table):
 
     class Meta:
-        model = ApiConfiguration
+        model = NdrCoreApiConfiguration
         fields = ('api_name', 'api_host', 'api_protocol', 'api_port', 'api_label', 'api_page_size')

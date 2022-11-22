@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from django.contrib.staticfiles import finders
 
-from ndr_core.models import NdrCorePage
+from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -74,11 +74,29 @@ class Command(BaseCommand):
         os.makedirs(f'media/teams/')
         os.makedirs(f'media/uploads/')
 
-        # Pages
-        NdrCorePage.objects.create(name='Home Page',
+        # Home Page
+        NdrCorePage.objects.create(page_type=NdrCorePage.PageType.TEMPLATE,
+                                   name='Home Page',
                                    label='Home',
                                    view_name='index',
                                    nav_icon='fas-fa home',
                                    index=0)
+
+        # Test Search
+        api_conf = NdrCoreApiConfiguration.objects.create(api_name='test_api',
+                                                          api_host='localhost',
+                                                          api_protocol=NdrCoreApiConfiguration.Protocol.HTTP,
+                                                          api_port=8000,
+                                                          api_label='Test API',
+                                                          api_page_size=10,
+                                                          api_url_stub='ndr_core')
+
+        NdrCorePage.objects.create(page_type=NdrCorePage.PageType.SIMPLE_SEARCH,
+                                   name='Test Search',
+                                   label='Test Search',
+                                   view_name='index',
+                                   nav_icon='fas-fa search',
+                                   index=1,
+                                   simple_api=api_conf)
 
         self.stdout.write(self.style.SUCCESS('Finished.'))

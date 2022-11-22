@@ -3,7 +3,7 @@ import shutil
 
 from django.core.management.base import BaseCommand
 
-from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreDataSchema, NdrSearchField
+from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreDataSchema, NdrCoreSearchField
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -26,7 +26,7 @@ class Command(BaseCommand):
                 NdrCoreValue.objects.all().delete()
                 NdrCorePage.objects.all().delete()
                 NdrCoreDataSchema.objects.all().delete()
-                NdrSearchField.objects.all().delete()
+                NdrCoreSearchField.objects.all().delete()
 
                 self.stdout.write('NDR installation deleted')
                 self.stdout.write('IMPORTANT: remove "ndr" from INSTALLED_APPS in settings')

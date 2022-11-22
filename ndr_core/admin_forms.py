@@ -6,31 +6,31 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django_select2 import forms as s2forms
 
-from ndr_core.models import NdrCorePage, ApiConfiguration, NdrSearchField, SearchConfiguration, \
-    FilterableListConfiguration
+from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreSearchField, NdrCoreSearchConfiguration, \
+    NdrCoreFilterableListConfiguration
 
 
 class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
-    model = SearchConfiguration
+    model = NdrCoreSearchConfiguration
     search_fields = [
         'conf_name__icontains'
     ]
 
 
 class FilteredListWidget(s2forms.ModelSelect2MultipleWidget):
-    model = FilterableListConfiguration
+    model = NdrCoreFilterableListConfiguration
     search_fields = [
         'list_name__icontains'
     ]
 
 
 class PageForm(forms.ModelForm):
-    search_configs = forms.ModelMultipleChoiceField(queryset=SearchConfiguration.objects.filter().order_by('conf_name'),
+    search_configs = forms.ModelMultipleChoiceField(queryset=NdrCoreSearchConfiguration.objects.filter().order_by('conf_name'),
                                                     required=False,
                                                     widget=SearchConfigurationWidget(
                                                         attrs={'data-minimum-input-length': 0}))
 
-    list_configs = forms.ModelMultipleChoiceField(queryset=FilterableListConfiguration.objects.all().\
+    list_configs = forms.ModelMultipleChoiceField(queryset=NdrCoreFilterableListConfiguration.objects.all().\
                                                   order_by('list_name'),
                                                   required=False,
                                                   widget=SearchConfigurationWidget(
@@ -98,7 +98,7 @@ class PageEditForm(PageForm):
     
 class ApiForm(forms.ModelForm):
     class Meta:
-        model = ApiConfiguration
+        model = NdrCoreApiConfiguration
         fields = ['api_name', 'api_host', 'api_protocol', 'api_port', 'api_label', 'api_page_size']
 
     def __init__(self, *args, **kwargs):
@@ -110,7 +110,7 @@ class ApiForm(forms.ModelForm):
 
 class SearchFieldForm(forms.ModelForm):
     class Meta:
-        model = NdrSearchField
+        model = NdrCoreSearchField
         fields = ['field_name', 'field_label', 'field_type', 'field_required', 'help_text', 'api_parameter']
 
     def __init__(self, *args, **kwargs):
@@ -123,7 +123,7 @@ class SearchFieldForm(forms.ModelForm):
 class SearchConfigurationForm(forms.ModelForm):
 
     class Meta:
-        model = SearchConfiguration
+        model = NdrCoreSearchConfiguration
         fields = ['conf_name', 'api_configuration']
 
     def __init__(self, *args, **kwargs):
@@ -134,7 +134,7 @@ class SearchConfigurationForm(forms.ModelForm):
             if search_field_conf_row == 0:
                 required = True
 
-            search_field = forms.ModelChoiceField(queryset=NdrSearchField.objects.all(),
+            search_field = forms.ModelChoiceField(queryset=NdrCoreSearchField.objects.all(),
                                                   required=required, help_text="")
             row_field = forms.IntegerField(required=required,
                                            help_text="")
