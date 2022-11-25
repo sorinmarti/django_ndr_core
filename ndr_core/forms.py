@@ -63,6 +63,7 @@ class SimpleSearchForm(_NdrCoreForm):
     @property
     def helper(self):
         helper = FormHelper()
+        helper.form_method = 'GET'
         layout = helper.layout = Layout()
 
         search_field, type_field = self.get_simple_search_layout_fields()

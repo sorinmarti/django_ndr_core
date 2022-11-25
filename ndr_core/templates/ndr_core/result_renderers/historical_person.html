@@ -1,0 +1,36 @@
+{% extends 'ndr_core/result_renderers/base_renderer.html' %}
+
+{% block custom_content %}
+    <p class="card-text mb-2 pt-3">
+        Sub collection: {{ result.meta.partof.title }}
+    </p>
+    <h3 class="mb-2 pt-0">
+        <a class="text-dark" href="#">Name: {{ result.full_name }}</a>
+    </h3>
+
+    {% if result.organization.transcription %}
+        <p class="card-text mb-2">Organization: {{ result.organization.transcription }}</p>
+    {% endif %}
+
+    {% if result.ndr.transcription %}
+        <p class="card-text mb-2">Organization: {{ result.ndr.transcription }}</p>
+    {% endif %}
+
+    {% if result.location|length > 0 %}
+        <p class="card-text mb-2">
+        Locations:
+        {% for loc in result.location %}
+            {{ loc.transcription }}
+            {% if not forloop.last %}
+                ,
+            {% endif %}
+        {% endfor %}
+        </p>
+    {% endif %}
+
+
+{% endblock %}
+
+{% block muted_info %}
+    ({{ result.meta.partof.title }}: {{ result.meta.partof.id }})
+{% endblock %}

@@ -1,0 +1,18 @@
+<ul class="pagination justify-content-center">
+    <li class="page-item {% if result.page == 1 %}disabled{% endif %}"><span class="page-link text-secondary"><a href="{{ result.page_links.prev }}" class="text-secondary">Previous</a></span></li>
+        {% for pagelink in result.page_links.pages %}
+            {% if pagelink.page == result.page|slugify %}
+                <li class="page-item active">
+                    <span class="page-link bg-secondary border">
+                        {{ pagelink.page }}
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+            {% elif pagelink.page == '...'%}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="{{ pagelink.url }}">{{ pagelink.page }}</a></li>
+            {% endif %}
+        {% endfor %}
+    <li class="page-item {% if result.page == result.num_pages %}disabled{% endif %}"><span class="page-link text-secondary"><a href="{{ result.page_links.next }}" class="text-secondary">Next</a></span></li>
+</ul>

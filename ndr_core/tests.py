@@ -50,12 +50,14 @@ class SearchConfigurationTestCase(TestCase):
         self.assertIsNotNone(conf.api_configuration)
 
     def test_basic_query(self):
-        query = Query("asia_dir", page=1)
+        conf = NdrCoreSearchConfiguration.objects.get(api_configuration__api_name="asia_dir")
+        query = Query(conf.api_configuration, page=1)
         query_string = query.get_simple_query('1234')
         self.assertEqual('http://asiadir.int:8080/query/basic?s=15&p=1&t=1234', query_string)
 
     def test_advanced_query(self):
-        query = Query("asia_dir", page=1)
+        conf = NdrCoreSearchConfiguration.objects.get(api_configuration__api_name="asia_dir")
+        query = Query(conf.api_configuration, page=1)
         query.set_value("first_name", "John")
         query.set_value("last_name", "Smith")
         query_string = query.get_advanced_query()
@@ -73,5 +75,10 @@ class PagesTestCase(TestCase):
 
     def test_pages(self):
         page = NdrCorePage.objects.get(view_name='home')
-        self.assertEqual('#', page.url())
+        self.assertEqual('/p/home/', page.url())
 
+
+class ResultTemplateTestCase(TestCase):
+
+    def test_template(self):
+        pass

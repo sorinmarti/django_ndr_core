@@ -167,6 +167,41 @@ class NdrCoreSearchConfiguration(models.Model):
         return self.conf_name
 
 
+class NdrCoreResultTemplateField(models.Model):
+    """TODO """
+
+    class Renderer(models.IntegerChoices):
+        GEONAMES = 1, "geonames.org"
+
+    class Container(models.TextChoices):
+        OPTIONS = "options", "Options"
+        VALUE_LIST = "values", "Value List"
+
+    belongs_to = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE)
+    """"""
+
+    target_field_name = models.CharField(max_length=100)
+    """Field name of the resulting structured response which is used to render a result line"""
+
+    source_field_name = models.CharField(max_length=100)
+    """Field name of the raw search result json. Nested objects are separated by '.'"""
+
+    alternate_field_name = models.CharField(max_length=100, null=True, blank=True)
+    """Field name of the raw search result json.  Used if 'source_field_name' does not exist or its value is None."""
+
+    field_none_value = models.CharField(max_length=100, default='')
+    """Displayed value if both 'source_field_name' and 'alternate_field_name' are None. """
+
+    field_label = models.CharField(max_length=100, null=True, blank=True)
+    """TODO """
+
+    field_container = models.CharField(max_length=100)
+    """TODO """
+
+    field_renderer = models.IntegerField(choices=Renderer.choices, null=True, blank=True)
+    """TODO """
+
+
 class NdrCoreFilterableListConfiguration(models.Model):
     """TODO """
 

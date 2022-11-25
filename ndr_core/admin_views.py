@@ -15,8 +15,8 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from ndr_core.form_preview import get_image_from_raw_data
-from ndr_core.admin_forms import ApiForm, SearchFieldForm, SearchConfigurationForm, PageCreateForm, \
-    PageEditForm
+from ndr_core.admin_forms import SearchFieldForm, SearchConfigurationForm, PageCreateForm, \
+    PageEditForm, ApiCreateForm, ApiEditForm, SearchFieldCreateForm, SearchFieldEditForm
 from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrCoreSearchField, NdrCoreSearchConfiguration, NdrCoreValue, \
     NdrCoreApiConfiguration, NdrCoreSearchFieldFormConfiguration, NdrCoreUiStyle, NdrCoreColorScheme
 from ndr_core.admin_tables import PagesTable, SearchConfigurationTable, SettingsTable, ChangeSettingsTable, \
@@ -311,12 +311,17 @@ class ApiConfigurationCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new API configuration """
 
     model = NdrCoreApiConfiguration
-    form_class = ApiForm
+    form_class = ApiCreateForm
     success_url = reverse_lazy('ndr_core:configure_api')
     template_name = 'ndr_core/admin_views/api_create.html'
 
     def form_valid(self, form):
         response = super(ApiConfigurationCreateView, self).form_valid(form)
+
+        for row in range(20):
+            # TODO
+            pass
+
         return response
 
 
@@ -324,7 +329,7 @@ class ApiConfigurationEditView(LoginRequiredMixin, UpdateView):
     """ View to edit an existing API configuration """
 
     model = NdrCoreApiConfiguration
-    form_class = ApiForm
+    form_class = ApiEditForm
     success_url = reverse_lazy('ndr_core:configure_api')
     template_name = 'ndr_core/admin_views/api_edit.html'
 
@@ -360,7 +365,7 @@ class SearchFieldConfigurationCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new Search Field """
 
     model = NdrCoreSearchField
-    form_class = SearchFieldForm
+    form_class = SearchFieldCreateForm
     success_url = reverse_lazy('ndr_core:configure_search_fields')
     template_name = 'ndr_core/admin_views/search_field_create.html'
 
@@ -373,7 +378,7 @@ class SearchFieldConfigurationEditView(LoginRequiredMixin, UpdateView):
     """ View to edit an existing Search field """
 
     model = NdrCoreSearchField
-    form_class = SearchFieldForm
+    form_class = SearchFieldEditForm
     success_url = reverse_lazy('ndr_core:configure_search_fields')
     template_name = 'ndr_core/admin_views/search_field_edit.html'
 

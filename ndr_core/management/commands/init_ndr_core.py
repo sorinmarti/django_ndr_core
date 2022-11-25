@@ -58,7 +58,7 @@ class Command(BaseCommand):
         shutil.copyfile(index_file, f'{app_name}/templates/{app_name}/index.html')
 
         search_file = finders.find('ndr_core/app_init/search.html')
-        shutil.copyfile(index_file, f'{app_name}/templates/{app_name}/search.html')
+        shutil.copyfile(search_file, f'{app_name}/templates/{app_name}/search.html')
 
         test_file = finders.find('ndr_core/app_init/test.html')
         shutil.copyfile(test_file, f'{app_name}/templates/{app_name}/test.html')

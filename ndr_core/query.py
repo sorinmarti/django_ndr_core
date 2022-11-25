@@ -1,7 +1,8 @@
-from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreSearchField
+from ndr_core.models import NdrCoreSearchField
 
 
 class Query:
+    """TODO """
 
     SIMPLE = 'SIMPLE'
     ADVANCED = 'ADVANCED'
@@ -81,7 +82,11 @@ class Query:
             (This requests the first 10 results: page=1, size=10)"""
 
         base_string = f"{self.api_config.Protocol(self.api_config.api_protocol).label}://{self.api_config.api_host}:" \
-                      f"{self.api_config.api_port}/query/{query_type}"
+                      f"{self.api_config.api_port}/"
+        if self.api_config.api_url_stub is not None:
+            base_string += f'{self.api_config.api_url_stub}/'
+        base_string += f'query/{query_type}'
+
         if add_page_and_size:
             base_string += f"?s={self.api_config.api_page_size}&p={self.page}"
         return base_string

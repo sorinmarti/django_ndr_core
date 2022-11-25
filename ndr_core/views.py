@@ -4,14 +4,14 @@ from django.contrib.staticfiles import finders
 from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 
-# Create your views here.
 from django.views import View
 from django.views.generic import TemplateView
 
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
-from ndr_core.models import NdrCorePage
+from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration
 from ndr_core.query import Query
 from ndr_core.ndr_settings import NdrSettings
+from ndr_core.result import Result
 
 
 def dispatch(request, ndr_page):
@@ -68,16 +68,35 @@ class _NdrCoreView(View):
 
 
 class NdrTemplateView(_NdrCoreView):
+    """Basic template view. (Is currently the same as _NdrCoreView) """
     pass
 
 
 class NdrTestView(_NdrCoreView):
+    """Shows a test view to test the UI settings """
+
     def get(self, request, *args, **kwargs):
         form = TestForm()
         return render(request, f"{NdrSettings.APP_NAME}/test.html", {'form': form})
 
 
+class NdrDownloadView(View):
+    """Returns a json from an ID request to the API """
+
+    def get(self, request, *args, **kwargs):
+        try:
+            api_config = NdrCoreApiConfiguration.objects.get(api_name=self.kwargs['api_config'])
+            api = Query(api_config)
+            query = api.get_record_query(self.kwargs['record_id'])
+            result = Result(api_config, query, self.request)
+            result.load_result(transform_result=False)
+            return JsonResponse(result.raw_result)
+        except NdrCoreApiConfiguration.DoesNotExist:
+            return JsonResponse({})
+
+
 class FilterListView(_NdrCoreView):
+    """TODO """
 
     def get(self, request, *args, **kwargs):
         form = FilterForm()
@@ -90,6 +109,7 @@ class FilterListView(_NdrCoreView):
 
 
 class SearchView(_NdrCoreView):
+    """TODO """
 
     def get(self, request, *args, **kwargs):
         requested_search = None
@@ -127,25 +147,29 @@ class SearchView(_NdrCoreView):
 
 
 class SimpleSearchView(_NdrCoreView):
+    """TODO """
 
     def get(self, request, *args, **kwargs):
         form = SimpleSearchForm(ndr_page=self.ndr_page)
+        context = self.get_context_data()
+
         if request.method == "GET":
             form = SimpleSearchForm(request.GET, ndr_page=self.ndr_page)
-            """if form.is_valid():
-                query = Query(self.search_config.api_configuration)
-                for key in request.GET.keys():
-                    if self.search_config.search_form_fields.filter(search_field__field_name=key).count() > 0:
-                        query.set_value(key, request.GET.get(key))
-                query_string = query.get_advanced_query(request.GET.get("page", 1))
-                print(query_string)"""
 
-        context = self.get_context_data()
+            if "search_button_simple" in request.GET.keys():
+                query = Query(self.ndr_page.simple_api)
+                query_string = query.get_simple_query(request.GET.get('search_term', ''), request.GET.get("page", 1))
+                result = Result(self.ndr_page.simple_api, query_string, self.request)
+                result.load_result()
+                context.update({'api_config': self.ndr_page.simple_api})
+                context.update({'result': result})
+
         context.update({'form': form})
         return render(request, self.template_name, context)
 
 
 class ContactView(_NdrCoreView):
+    """TODO """
 
     def get(self, request, *args, **kwargs):
         form = ContactForm()
@@ -160,9 +184,11 @@ class ContactView(_NdrCoreView):
 
 
 class ApiTestView(View):
+    """TODO """
 
     def get(self, request, *args, **kwargs):
         api_request = self.kwargs['api_request']
+        print(api_request)
         json_response = {}
 
         if api_request == 'basic':
@@ -170,7 +196,7 @@ class ApiTestView(View):
         elif api_request == 'advanced':
             json_response = {}
         elif api_request == 'fulldata':
-            json_response = {}
+            json_response = json.load(open(finders.find('ndr_core/test_server_assets/test.json')))["hits"][0]
         elif api_request == 'list':
             json_response = {}
 

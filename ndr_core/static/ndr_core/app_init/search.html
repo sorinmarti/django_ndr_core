@@ -1,25 +1,25 @@
 {% extends 'ndr/base.html' %}
 {% load crispy_forms_tags %}
-
-{# block page_title #}
-{# endblock #}
+{% load ndr_utils %}
 
 {% block generated_content %}
 
     {% if result %}
         <h4 class="mt-4">Search Results
             <div class="btn-group float-right">
-                <a href="#" type="button" class="btn btn-sm btn-outline-secondary ">refine search</a>
-                <a href="#" type="button" class="btn btn-sm btn-outline-secondary float-right">start a new search</a>
+                <a href="{{ result.form_links.refine }}" type="button" class="btn btn-sm btn-outline-secondary ">refine search</a>
+                <a href="{{ result.form_links.new }}" type="button" class="btn btn-sm btn-outline-secondary float-right">start a new search</a>
             </div>
         </h4>
         {% include 'ndr_core/messages.html' %}
 
-        <div class="mb-2">Your search returned {{ meta.total }} results, showing page {{ meta.page }} of {{ meta.num_pages }}.</div>
+        <div class="mb-2">Your search returned {{ result.total }} results, showing page {{ result.page }} of {{ result.num_pages }}.</div>
 
-        {% for result_line in result %}
-
+        {% for result_line in result.results %}
+            {% render_result result_line %}
         {% endfor %}
+
+        {% include 'ndr_core/pagination.html' %}
 
     {% else %}
         <h4 class="mt-4"></h4>

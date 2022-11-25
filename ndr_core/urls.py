@@ -10,7 +10,7 @@ from ndr_core.admin_views import create_search_fields, PageEditView, PageDeleteV
     ConfigureUI
 from ndr_core.admin_views import NdrCoreDashboard, ManagePages, ConfigureApi, ConfigureSearch, ConfigureSearchFields, \
     PageCreateView
-from ndr_core.views import ApiTestView
+from ndr_core.views import ApiTestView, NdrDownloadView
 
 app_name = 'ndr_core'
 urlpatterns = [
@@ -54,6 +54,9 @@ urlpatterns = [
 
     # Help
     path('help/', TemplateView.as_view(template_name='ndr_core/admin_views/help.html'), name='help'),
+
+    # Download URL for single DB entry
+    path('download/<str:api_config>/<str:record_id>/', NdrDownloadView.as_view(), name='download_record'),
 
     # TEST SERVER
     path('query/<str:api_request>', ApiTestView.as_view(), name='api_test')

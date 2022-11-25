@@ -1,0 +1,67 @@
+<div class="card mb-2 box-shadow">
+    <div class="card-body d-flex flex-column align-items-start">
+        <div class="row">
+            <div class="col-{% if result.ndr.has_page_image %}8{% else %}12{% endif %}">
+                {% block title_bar %}
+                    <div class="d-inline-block mb-2 text-secondary">
+                        <small>Result {{ result.ndr.result_meta.result_number }} of {{ result.ndr.result_meta.total_results }}</small>
+                        &nbsp;&nbsp;
+                        {% block tags %}
+                            {% for tag in result.meta.tags %}
+                                <span class="badge border border-secondary small" style="font-weight: normal;">{{ tag }}</span>
+                            {% endfor %}
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+
+                {% block card_content %}
+                    {% block custom_content %}
+                    {% endblock %}
+
+                    {% block values_content %}
+                        {% if result.ndr.values %}
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    {% for value in result.ndr.values %}
+                                        <tr>
+                                            <td class="text-right"><i>{{ value.label }}</i></td>
+                                            <td>{{ value.value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        {% endif %}
+                    {% endblock %}
+                {% endblock %}
+
+                {% block fragment_image %}
+                    {% if result.ndr.has_fragment_image %}
+                        <div style="position: absolute; bottom: 0;">
+                            <img class="card-img-top mb-3 w-80" src="{{ result.ndr.fragment_image }}" alt="IIIF fragment">
+                        </div>
+                    {% endif %}
+                {% endblock %}
+
+        </div>
+        {% if result.ndr.has_page_image %}
+            <div class="col-md-4">
+                <a href="{{ result.ndr.page_image }}" target="_blank">
+                    <img class="card-img-top w-100 p-0 m-0" src="{{ result.ndr.page_image }}">
+                </a>
+            </div>
+        {% endif %}
+      </div>
+    </div>
+  <div class="card-footer bg-white">
+        {% block options %}
+            {% for result_option in result.ndr.options %}
+                <a href="{{ result_option.url }}" target="{{ result_option.target }}" class="btn btn-outline-secondary">{{ result_option.label }}</a>
+            {% endfor %}
+        {% endblock %}
+
+        <small class="text-muted float-right">
+            {% block muted_info %}
+            {% endblock %}
+        </small>
+  </div>
+</div>
