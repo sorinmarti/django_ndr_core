@@ -1,4 +1,4 @@
-"""Contains al forms used in the NDRCore admin interface."""
+"""Contains all forms used in the NDRCore admin interface."""
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Div, Field, Layout, HTML, Button

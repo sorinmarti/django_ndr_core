@@ -1,3 +1,4 @@
+"""Contains all views used in the NDRCore admin interface."""
 import os.path
 import re
 import shutil
@@ -15,19 +16,21 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from ndr_core.form_preview import get_image_from_raw_data
-from ndr_core.admin_forms import SearchFieldForm, SearchConfigurationForm, PageCreateForm, \
+from ndr_core.admin_forms import SearchConfigurationForm, PageCreateForm, \
     PageEditForm, ApiCreateForm, ApiEditForm, SearchFieldCreateForm, SearchFieldEditForm
-from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrCoreSearchField, NdrCoreSearchConfiguration, NdrCoreValue, \
-    NdrCoreApiConfiguration, NdrCoreSearchFieldFormConfiguration, NdrCoreUiStyle, NdrCoreColorScheme
+from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrCoreSearchField, NdrCoreSearchConfiguration, \
+    NdrCoreValue, NdrCoreApiConfiguration, NdrCoreSearchFieldFormConfiguration, NdrCoreUiStyle, NdrCoreColorScheme
 from ndr_core.admin_tables import PagesTable, SearchConfigurationTable, SettingsTable, ChangeSettingsTable, \
     PagesManageTable, SearchFieldTable, ApiTable
 from ndr_core.ndr_settings import NdrSettings
 
 
 class NdrCoreDashboard(LoginRequiredMixin, View):
-    """TODO """
+    """The NDR Core dashboard is the start page of the admin interface. It shows your pages and your options. """
 
     def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
         pages_table = PagesTable(data=NdrCorePage.objects.all().order_by('index'))
         forms_table = SearchConfigurationTable(data=NdrCoreSearchConfiguration.objects.all())
         settings_table = SettingsTable(data=NdrCoreValue.objects.all())
@@ -40,29 +43,33 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
 
 
 class ManagePages(LoginRequiredMixin, View):
-    """TODO """
+    """The ManagePages view shows a table of all pages in an installation and lets you define their order. You can
+      edit, delete and create pages here. """
 
     def get(self, request, *args, **kwargs):
-        return render(self.request,
-                      template_name='ndr_core/admin_views/configure_pages.html',
-                      context=self.get_context_data())
+        """GET request for this view. """
 
-    def get_context_data(self, **kwargs):
         pages_table = PagesManageTable(data=NdrCorePage.objects.all().order_by('index'))
         context = {'pages_table': pages_table}
-        return context
+
+        return render(self.request,
+                      template_name='ndr_core/admin_views/configure_pages.html',
+                      context=context)
 
 
 class ConfigureUI(LoginRequiredMixin, View):
+    """The configure UI view lets you choose a UI style and a color scheme for your installation. """
 
     def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_ui.html',
                       context=self.get_context_data())
 
     def post(self, request, *args, **kwargs):
-        """Check if style or color scheme have been changed. Save changes in DB and rewrite the base.html file
-        accordingly."""
+        """Executed when the form is sent. Check if style or color scheme have been changed. Save changes in DB and
+        rewrite the base.html file accordingly."""
         new_ui_style = request.POST.get('ui_style', None)
         new_color_scheme = request.POST.get('ui_color_scheme', None)
         changed_values = False
@@ -146,7 +153,9 @@ class ConfigureUI(LoginRequiredMixin, View):
                       template_name='ndr_core/admin_views/configure_ui.html',
                       context=self.get_context_data())
 
-    def get_context_data(self, **kwargs):
+    @staticmethod
+    def get_context_data(**kwargs):
+        """Returns the context data for both GET and POST request. """
         ui_list = NdrCoreUiStyle.objects.all().order_by('name')
         palette_list = NdrCoreColorScheme.objects.all().order_by('scheme_name')
         current_style = NdrCoreValue.get_or_initialize('ui_style', init_value='default').value_value
@@ -158,74 +167,83 @@ class ConfigureUI(LoginRequiredMixin, View):
 
 
 class ConfigureSettings(LoginRequiredMixin, View):
-    """ TODO """
-    def get_settings_tables(self):
-        basic_settings = ChangeSettingsTable(data=NdrCoreValue.objects.filter(value_name__in=['project_title',
-                                                                                              'header_default_title',
-                                                                                              'header_description',
-                                                                                              'header_author']))
-
-        contact_settings = ChangeSettingsTable(data=NdrCoreValue.objects.filter(value_name__in=['contact_form_default_subject',
-                                                                                                'email_config_host',
-                                                                                                'email_config_timeout',
-                                                                                                'contact_form_send_to_address',
-                                                                                                'contact_form_send_from_address']))
-        return basic_settings, contact_settings
+    """View to change value settings of NDR Core (such as HTML page title tags, etc.). """
 
     def get(self, request, *args, **kwargs):
-        basic_settings, contact_settings = self.get_settings_tables()
+        """GET request for this view. """
+
+        context = self.get_context_data()
 
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_settings.html',
-                      context={'basic_settings_table': basic_settings,
-                               'contact_settings_table': contact_settings})
+                      context=context)
 
     def post(self, request, *args, **kwargs):
-        basic_settings, contact_settings = self.get_settings_tables()
+        """POST request for this view. Gets executed when setting values are saved."""
+
+        save_key = 'save_'
         for key in request.POST.keys():
             value = request.POST.get(key)
-            if key.startswith('save_'):
-                key = key[5:]
-                print(key)
+            if key.startswith(save_key):
+                key = key[len(save_key):]
                 v_object = NdrCoreValue.objects.get(value_name=key)
                 v_object.value_value = value
                 v_object.save()
 
         messages.success(request, "Saved Changes")
+        context = self.get_context_data()
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_settings.html',
-                      context={'basic_settings_table': basic_settings,
-                               'contact_settings_table': contact_settings})
+                      context=context)
+
+    @staticmethod
+    def get_context_data():
+        """Returns the context data for both GET and POST request. """
+
+        basic_settings = ChangeSettingsTable(data=NdrCoreValue.objects.filter(value_name__in=['project_title',
+                                                                                              'header_default_title',
+                                                                                              'header_description',
+                                                                                              'header_author']))
+
+        contact_settings = ChangeSettingsTable(
+            data=NdrCoreValue.objects.filter(value_name__in=['contact_form_default_subject',
+                                                             'email_config_host',
+                                                             'email_config_timeout',
+                                                             'contact_form_send_to_address',
+                                                             'contact_form_send_from_address']))
+        context = {'basic_settings_table': basic_settings,
+                   'contact_settings_table': contact_settings}
+
+        return context
 
 
 class ConfigureApi(LoginRequiredMixin, View):
-    """TODO """
+    """View to add/edit/delete API configurations. """
 
     def get(self, request, *args, **kwargs):
-        return render(self.request, template_name='ndr_core/admin_views/configure_api.html',
-                      context=self.get_context_data())
+        """GET request for this view. """
 
-    def get_context_data(self, **kwargs):
         apis_table = ApiTable(data=NdrCoreApiConfiguration.objects.all().order_by('api_name'))
         context = {'apis_table': apis_table}
 
-        return context
+        return render(self.request, template_name='ndr_core/admin_views/configure_api.html',
+                      context=context)
 
 
 class ConfigureSearch(LoginRequiredMixin, View):
-    """TODO """
+    """View to add/edit/delete Search configurations. """
 
     def get(self, request, *args, **kwargs):
-        return render(self.request, template_name='ndr_core/admin_views/configure_search.html',
-                      context=self.get_context_data())
+        """GET request for this view. """
 
-    def get_context_data(self, **kwargs):
         search_config_table = SearchConfigurationTable(data=NdrCoreSearchConfiguration.objects.all())
         context = {'search_config_table': search_config_table}
 
-        return context
+        return render(self.request, template_name='ndr_core/admin_views/configure_search.html',
+                      context=context)
 
 
+# PAGES----------------------------------------------------------------------------------------------------------------
 class PageCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new NdrCorePage """
 
@@ -235,20 +253,15 @@ class PageCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/page_create.html'
 
     def form_valid(self, form):
+        """Overwrites form_valid function of CreateView. Sets the index of the newly created page object and creates
+         a template to save in the ndr apps template folder."""
+
         response = super(PageCreateView, self).form_valid(form)
 
         max_index = NdrCorePage.objects.aggregate(Max('index'))
         new_index = max_index["index__max"] + 1
         self.object.index = new_index
         self.object.save()
-
-        # If the new page is a CONTACT page, don't add it
-        """if self.object.page_type == self.object.PageType.CONTACT:
-            existing_contact_forms = NdrCorePage.objects.filter(page_type=self.object.PageType.CONTACT).count()
-            if existing_contact_forms > 0:
-                self.object.delete()
-                messages.error(self.request, "You can only add one contact form")
-                return response"""
 
         new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{form.cleaned_data["view_name"]}.html'
         if os.path.isfile(new_filename):
@@ -284,6 +297,10 @@ class PageEditView(LoginRequiredMixin, UpdateView):
     template_name = 'ndr_core/admin_views/page_edit.html'
 
     def form_valid(self, form):
+        """Overwrites form_valid function of CreateView. Sets the index of the newly created page object and creates
+        a template to save in the ndr apps template folder.
+            TODO Recreate the template"""
+
         response = super(PageEditView, self).form_valid(form)
         return response
 
@@ -297,11 +314,13 @@ class PageDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'ndr_core/admin_views/page_confirm_delete.html'
 
     def form_valid(self, form):
+        """Overwrites form_valid function of DeleteView. Deletes the object and its template."""
+
         filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{self.object.view_name}.html'
         if os.path.isfile(filename):
             os.remove(filename)
         else:
-            messages.warning(self.request, "HTML template was not found.")
+            messages.warning(self.request, "HTML template to delete was not found.")
 
         return super(PageDeleteView, self).form_valid(form)
 
@@ -319,7 +338,7 @@ class ApiConfigurationCreateView(LoginRequiredMixin, CreateView):
         response = super(ApiConfigurationCreateView, self).form_valid(form)
 
         for row in range(20):
-            # TODO
+            # TODO Check and create rendering fields
             pass
 
         return response
@@ -332,6 +351,15 @@ class ApiConfigurationEditView(LoginRequiredMixin, UpdateView):
     form_class = ApiEditForm
     success_url = reverse_lazy('ndr_core:configure_api')
     template_name = 'ndr_core/admin_views/api_edit.html'
+
+    def form_valid(self, form):
+        response = super(ApiConfigurationEditView, self).form_valid(form)
+
+        for row in range(20):
+            # TODO Check and create/update/delete rendering fields
+            pass
+
+        return response
 
 
 class ApiConfigurationDeleteView(LoginRequiredMixin, DeleteView):
@@ -455,6 +483,8 @@ class SearchConfigurationCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/search_config_create.html'
 
     def form_valid(self, form):
+        """TODO """
+
         response = super(SearchConfigurationCreateView, self).form_valid(form)
 
         for row in range(20):
@@ -466,10 +496,11 @@ class SearchConfigurationCreateView(LoginRequiredMixin, CreateView):
                form.cleaned_data[f'row_field_{row}'] is not None and \
                form.cleaned_data[f'column_field_{row}'] is not None and  \
                form.cleaned_data[f'size_field_{row}'] is not None:
-                new_field = NdrCoreSearchFieldFormConfiguration.objects.create(search_field=form.cleaned_data[f'search_field_{row}'],
-                                                                               field_row=form.cleaned_data[f'row_field_{row}'],
-                                                                               field_column=form.cleaned_data[f'column_field_{row}'],
-                                                                               field_size=form.cleaned_data[f'size_field_{row}'])
+                new_field = NdrCoreSearchFieldFormConfiguration.objects.create(
+                    search_field=form.cleaned_data[f'search_field_{row}'],
+                    field_row=form.cleaned_data[f'row_field_{row}'],
+                    field_column=form.cleaned_data[f'column_field_{row}'],
+                    field_size=form.cleaned_data[f'size_field_{row}'])
                 self.object.search_form_fields.add(new_field)
 
         return response
@@ -496,6 +527,8 @@ class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def preview_image(request, img_config):
+    """Creates a form preview image of a search form configuration. """
+
     data = []
     config_rows = img_config.split(",")
     for row in config_rows:
