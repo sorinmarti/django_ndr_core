@@ -1,0 +1,47 @@
+{
+  "status":"foreign resident",
+  "source":{
+    "id":"https://directories.europa-institute.org/mirador/m/576800",
+    "selector":{
+      "canvas":"https://iiif.directories.europa-institute.org/image/582045_0000/full/full/0/default.jpg",
+      "xywh":"224, 1267, 679, 46",
+      "page":"175",
+      "fragment":"https://iiif.directories.europa-institute.org/image/582045_0000/224,1267,679,46/full/0/default.jpg"
+    },
+    "title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C."
+  },
+  "date":{"ref":"1873"},
+  "transcription":{
+    "original":"Smith, J., (Smith & Co.) merchant, Yedo",
+    "corrected":"Smith, J., Smith & Co., merchant, Yedo"
+  },
+  "id":"FRP-1873-175-26",
+  "_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json",
+  "occupation":[
+    {"transcription":"& Co., merchant, Yedo"}
+  ],
+  "meta":{
+    "generated":"2022-06-21",
+    "version":1,
+    "partOf":"DATASET_PID",
+    "actions":[
+      {
+        "classifiedAction":"auto_parse_frp",
+        "date":"2022-06-21",
+        "actor":{
+          "name":"Sorin Marti",
+          "scheme":"ORCID",
+          "id":"0000-0002-9541-1202"
+        },
+        "summary":"Parsed by v.2021-10-31-0 of the FRP-Parser"
+      }
+    ]
+  },
+  "name":{
+    "postnominals":"",
+    "givennames":"J., Smith",
+    "familyname":"Smith",
+    "title":"",
+    "transcription":"Smith, J., Smith"
+  }
+}

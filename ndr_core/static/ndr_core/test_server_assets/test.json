@@ -1,0 +1,112 @@
+{
+  "page":1,
+  "links":{
+    "self":"/api/basic?p=1&s=10&t=smith",
+    "prev":null,
+    "next":"/api/basic?p=2&s=10&t=smith"
+  },
+  "total":105,
+  "size":10,
+  "hits":[
+    {
+      "transcription":{
+        "original":"Smith, J., (Smith & Co.) merchant, Yedo --> This text is only here to make this string longer. Still too short, therefore I will write some more"
+      },
+      "date":{"ref":"1873"},
+      "status":"foreign resident",
+      "source":{
+        "id":"https://directories.europa-institute.org/mirador/m/576800",
+        "title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C.",
+        "selector":{
+          "canvas":"https://iiif.directories.europa-institute.org/image/582045_0000/full/full/0/default.jpg",
+          "xywh":"224, 1267, 679, 46",
+          "page":"175",
+          "fragment":"https://iiif.directories.europa-institute.org/image/582045_0000/224,1267,679,46/full/0/default.jpg"
+        }
+      },
+      "occupation":[{"transcription":"& Co., merchant, Yedo"}],
+      "meta":{
+        "partOf":"DATASET_PID",
+        "actions":[
+          {
+            "summary":"Parsed by v.2021-10-31-0 of the FRP-Parser",
+            "classifiedAction":"auto_parse_frp",
+            "actor":{"name":"Sorin Marti","id":"0000-0002-9541-1202","scheme":"ORCID"},
+            "date":"2022-06-21"
+          }
+        ],
+        "version":1,
+        "generated":"2022-06-21"
+      },
+      "name":{
+        "transcription":"Smith, J., Smith",
+        "familyname":"Smith",
+        "title":"",
+        "givennames":"J., Smith",
+        "postnominals":""
+      },
+      "id":"FRP-1873-175-26",
+      "_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json"
+    },
+
+    {
+      "_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json",
+      "id":"FRP-1874-180-40",
+      "name":{
+        "transcription":"Smith, J., Smith",
+        "title":"",
+        "familyname":"Smith",
+        "postnominals":"",
+        "givennames":"J., Smith"
+      },
+      "meta":{
+        "version":1,
+        "actions":[
+          {
+            "actor":{
+              "scheme":"ORCID",
+              "id":"0000-0002-9541-1202",
+              "name":"Sorin Marti"
+            },
+            "date":"2022-08-30",
+            "classifiedAction":"auto_parse_frp",
+            "summary":"Parsed by v.2021-10-31-0 of the FRP-Parser"
+          }
+        ],
+        "partOf":"DATASET_PID",
+        "generated":"2022-08-30"
+      },
+      "occupation":[
+        {
+          "transcription":"& Co., merchant"
+        }
+      ],
+      "source":{
+        "title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C.",
+        "selector":{
+          "fragment":"https://iiif.directories.europa-institute.org/image/75767_0000/120,1679,685,42/full/0/default.jpg",
+          "xywh":"120, 1679, 685, 42",
+          "canvas":"https://iiif.directories.europa-institute.org/image/75767_0000/full/full/0/default.jpg",
+          "page":"180"
+        },
+        "id":"https://directories.europa-institute.org/mirador/m/75587"
+      },
+      "location":[
+        {
+          "transcription":"Yedo"
+        },
+        {
+          "transcription":"Shanghai"
+        }
+      ],"date":{"ref":"1874"},"transcription":{"original":"Smith, J., (Smith & Co.) merchant, Yedo","corrected":"Smith, J., Smith & Co., merchant, Yedo"}},
+
+    {"id":"FRP-1873-175-51","_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json","meta":{"partOf":"DATASET_PID","actions":[{"classifiedAction":"auto_parse_frp","date":"2022-06-21","actor":{"name":"Sorin Marti","scheme":"ORCID","id":"0000-0002-9541-1202"},"summary":"Parsed by v.2021-10-31-0 of the FRP-Parser"}],"version":1,"generated":"2022-06-21"},"occupation":[{"transcription":"Bell, & Co., clerk"}],"name":{"transcription":"Smith, D. A., Smith","givennames":"D. A., Smith","postnominals":"","title":"","familyname":"Smith"},"status":"foreign resident","source":{"selector":{"xywh":"223, 2267, 796, 45","canvas":"https://iiif.directories.europa-institute.org/image/582045_0000/full/full/0/default.jpg","page":"175","fragment":"https://iiif.directories.europa-institute.org/image/582045_0000/223,2267,796,45/full/0/default.jpg"},"title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C.","id":"https://directories.europa-institute.org/mirador/m/576800"},"date":{"ref":"1873"},"transcription":{"corrected":"Smith, D. A., Smith, Bell, & Co., clerk, Manila","original":"Smith, D. A., (Smith, Bell, & Co.) clerk, Manila"},"location":[{"transcription":"Manila","inferred":"Manila","id":"1701668","scheme":"geonames.org"}]},
+    {"_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json","id":"FRP-1871-142-18","name":{"transcription":"Smith, D. A., Smith.","postnominals":"","givennames":"D. A., Smith.","title":"","familyname":"Smith"},"meta":{"generated":"2022-08-30","partOf":"DATASET_PID","actions":[{"summary":"Parsed by v.2021-10-31-0 of the FRP-Parser","classifiedAction":"auto_parse_frp","actor":{"name":"Sorin Marti","scheme":"ORCID","id":"0000-0002-9541-1202"},"date":"2022-08-30"}],"version":1},"occupation":[{"transcription":"Bell, & Co., clerk"}],"source":{"id":"https://directories.europa-institute.org/mirador/m/590037","selector":{"xywh":"66, 828, 776, 40","canvas":"https://iiif.directories.europa-institute.org/image/593652_0000/full/full/0/default.jpg","page":"142","fragment":"https://iiif.directories.europa-institute.org/image/593652_0000/66,828,776,40/full/0/default.jpg"},"title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C."},"status":"foreign resident","location":[{"transcription":"Cebu","inferred":"Cebu City","id":"1717512","scheme":"geonames.org"}],"date":{"ref":"1871"},"transcription":{"original":"Smith, D. A., (Smith. Bell, & Co.) clerk, Cebu","corrected":"Smith, D. A., Smith. Bell, & Co., clerk, Cebu"}},
+    {"source":{"id":"https://directories.europa-institute.org/mirador/m/312415","title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C.","selector":{"fragment":"https://iiif.directories.europa-institute.org/image/315897_0000/105,1421,901,43/full/0/default.jpg","page":"1224","xywh":"105, 1421, 901, 43","canvas":"https://iiif.directories.europa-institute.org/image/315897_0000/full/full/0/default.jpg"}},"status":"foreign resident","location":[{"transcription":"Sungkai, Perak"}],"transcription":{"original":"Smith, Alexr., surveyor, Win. Smith, Sungkai, Perak","corrected":"Smith, Alexr., surveyor, Wm. Smith, Sungkai, Perak"},"date":{"ref":"1898"},"_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json","id":"FRP-1898-1224-36","name":{"givennames":"","postnominals":"","title":"","familyname":"Smith","transcription":"Smith"},"meta":{"actions":[{"summary":"Parsed by v.2021-10-31-0 of the FRP-Parser","date":"2022-09-20","actor":{"id":"0000-0002-9541-1202","scheme":"ORCID","name":"Sorin Marti"},"classifiedAction":"auto_parse_frp"}],"partOf":"DATASET_PID","version":1,"generated":"2022-09-20"},"occupation":[{"transcription":"Alexr., surveyor, Wm. Smith"}]},
+    {"location":[{"inferred":"Singapore","id":"1880252","scheme":"geonames.org","transcription":"Singapore"}],"date":{"ref":"1903"},"transcription":{"original":"Smith, \\V. K., civil engineer, Smith it Foster, Singapore","corrected":"Smith, \\V. K., civil engineer, Smith & Foster, Singapore"},"source":{"title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C.","selector":{"canvas":"https://iiif.directories.europa-institute.org/image/87307_0000/full/full/0/default.jpg","xywh":"97, 1726, 936, 38","page":"1530","fragment":"https://iiif.directories.europa-institute.org/image/87307_0000/97,1726,936,38/full/0/default.jpg"},"id":"https://directories.europa-institute.org/mirador/m/85777"},"status":"foreign resident","name":{"familyname":"Smith","title":"","givennames":"","postnominals":"","transcription":"Smith"},"meta":{"version":1,"actions":[{"summary":"Parsed by v.2021-10-31-0 of the FRP-Parser","classifiedAction":"auto_parse_frp","date":"2022-05-18","actor":{"scheme":"ORCID","id":"0000-0002-9541-1202","name":"Sorin Marti"}}],"partOf":"DATASET_PID","generated":"2022-05-18"},"occupation":[{"transcription":"\\V. K., civil engineer, Smith & Foster"}],"_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json","id":"FRP-1903-1530-45"},
+    {"name":{"transcription":"Smith, J., C. Smith","givennames":"J., C. Smith","postnominals":"","title":"","familyname":"Smith"},"meta":{"version":1,"actions":[{"actor":{"name":"Sorin Marti","id":"0000-0002-9541-1202","scheme":"ORCID"},"date":"2022-06-07","classifiedAction":"auto_parse_frp","summary":"Parsed by v.2021-10-31-0 of the FRP-Parser"}],"partOf":"DATASET_PID","generated":"2022-06-07"},"_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json","id":"FRP-1878-174-34","location":[{"id":"1787093","scheme":"geonames.org","inferred":"Yantai","transcription":"Chefoo"}],"date":{"ref":"1878"},"transcription":{"corrected":"Smith, J., C. Smith & Co.) compradore, Chefoo","original":"Smith, J., (J. Smith & Co.) compradore, Chefoo"},"source":{"id":"https://directories.europa-institute.org/mirador/m/590036","title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C.","selector":{"page":"174","xywh":"138, 1556, 810, 44","canvas":"https://iiif.directories.europa-institute.org/image/635134_0000/full/full/0/default.jpg","fragment":"https://iiif.directories.europa-institute.org/image/635134_0000/138,1556,810,44/full/0/default.jpg"}},"status":"foreign resident"},
+    {"date":{"ref":"1879"},"transcription":{"corrected":"Smith, J., C. Smith & Co.) compradore, Chefoo","original":"Smith, J., (J. Smith & Co.) compradore, Chefoo"},"location":[{"transcription":"Chefoo","id":"1787093","scheme":"geonames.org","inferred":"Yantai"}],"status":"foreign resident","source":{"title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C.","selector":{"fragment":"https://iiif.directories.europa-institute.org/image/643735_0000/545,1968,1813,114/full/0/default.jpg","xywh":"545, 1968, 1813, 114","canvas":"https://iiif.directories.europa-institute.org/image/643735_0000/full/full/0/default.jpg","page":"179"},"id":"https://directories.europa-institute.org/mirador/m/581449"},"meta":{"actions":[{"summary":"Parsed by v.2021-10-31-0 of the FRP-Parser","classifiedAction":"auto_parse_frp","actor":{"name":"Sorin Marti","scheme":"ORCID","id":"0000-0002-9541-1202"},"date":"2022-06-07"}],"partOf":"DATASET_PID","version":1,"generated":"2022-06-07"},"name":{"transcription":"Smith, J., C. Smith","familyname":"Smith","title":"","postnominals":"","givennames":"J., C. Smith"},"id":"FRP-1879-179-14","_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json"},
+    {"source":{"id":"https://directories.europa-institute.org/mirador/m/581465","title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C.","selector":{"xywh":"269, 476, 1061, 61","canvas":"https://iiif.directories.europa-institute.org/image/648244_0000/full/full/0/default.jpg","page":"181","fragment":"https://iiif.directories.europa-institute.org/image/648244_0000/269,476,1061,61/full/0/default.jpg"}},"status":"foreign resident","location":[{"id":"1787093","scheme":"geonames.org","inferred":"Yantai","transcription":"Chefoo"}],"date":{"ref":"1881"},"transcription":{"corrected":"Smith, J., C. Smith & Co.) compradore, Chefoo","original":"Smith, J., (J. Smith & Co.) compradore, Chefoo"},"_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json","id":"FRP-1881-181-2","name":{"transcription":"Smith, J., C. Smith","givennames":"J., C. Smith","postnominals":"","title":"","familyname":"Smith"},"meta":{"version":1,"actions":[{"date":"2022-06-07","actor":{"scheme":"ORCID","id":"0000-0002-9541-1202","name":"Sorin Marti"},"classifiedAction":"auto_parse_frp","summary":"Parsed by v.2021-10-31-0 of the FRP-Parser"}],"partOf":"DATASET_PID","generated":"2022-06-07"}},
+    {"location":[{"transcription":"Chefoo","inferred":"Yantai","id":"1787093","scheme":"geonames.org"}],"date":{"ref":"1882"},"transcription":{"corrected":"Smith, J., C. Smith & Co.) compradore, Chefoo","original":"Smith, J., (J. Smith & Co.) compradore, Chefoo"},"source":{"selector":{"fragment":"https://iiif.directories.europa-institute.org/image/635639_0000/475,2742,1607,93/full/0/default.jpg","canvas":"https://iiif.directories.europa-institute.org/image/635639_0000/full/full/0/default.jpg","xywh":"475, 2742, 1607, 93","page":"196"},"title":"THE DIRECTORY & CHRONICLE FOR CHINA, JAPAN, COREA, INDOCHINA, STRAITS SETTLEMENTS, MALAY STATES, SIAM, NETHERLANDS INDIA, BORNEO, THE PHILIPPINES, &C.","id":"https://directories.europa-institute.org/mirador/m/581451"},"status":"foreign resident","name":{"givennames":"J., C. Smith","postnominals":"","title":"","familyname":"Smith","transcription":"Smith, J., C. Smith"},"meta":{"generated":"2022-06-07","actions":[{"classifiedAction":"auto_parse_frp","actor":{"name":"Sorin Marti","scheme":"ORCID","id":"0000-0002-9541-1202"},"date":"2022-06-07","summary":"Parsed by v.2021-10-31-0 of the FRP-Parser"}],"partOf":"DATASET_PID","version":1},"_schema":"http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json","id":"FRP-1882-196-28"}
+  ]
+}
