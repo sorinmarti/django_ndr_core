@@ -7,3 +7,4 @@ django-recaptcha~=3.0.0
 django-tables2~=2.4.1
 django-select2~=8.0.0
 django-colorfield~=0.7.2
+fontawesomefree~=6.2.1
