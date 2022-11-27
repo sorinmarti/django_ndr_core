@@ -5,6 +5,8 @@ This repository contains the sources to the ndr_core module. You don't need to c
 or download it in order to use ndr_core. If you want to build your own ndr web interface,
 follow the instructions below
 
+![example workflow](https://github.com/sorinmarti/django_ndr_core/actions/workflows/django.yml/badge.svg)
+
 ## How to use ndr_core (in this creation phase)
 1. Clone the repo, create and activate a virtual environment
 2. Install requirements: ```pip install -r requirements.txt``` 
