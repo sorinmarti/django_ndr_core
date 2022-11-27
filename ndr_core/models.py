@@ -1,6 +1,8 @@
 """
 models.py contains ndr_core's database models.
 """
+import os.path
+
 from ckeditor_uploader.fields import RichTextUploadingField
 from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -287,6 +289,9 @@ class NdrCorePage(models.Model):
 
     def url(self):
         """Returns the url of a given page or '#' if none is found"""
+        if not os.path.isdir(NdrSettings.APP_NAME):
+            return '#'
+
         try:
             reverse_url = reverse(f'{NdrSettings.APP_NAME}:{self.view_name}')
         except NoReverseMatch:
