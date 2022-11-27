@@ -16,7 +16,7 @@
         <div class="mb-2">Your search returned {{ result.total }} results, showing page {{ result.page }} of {{ result.num_pages }}.</div>
 
         {% for result_line in result.results %}
-            {% render_result result_line %}
+            {% render_result result_line api_config %}
         {% endfor %}
 
         {% include 'ndr_core/pagination.html' %}

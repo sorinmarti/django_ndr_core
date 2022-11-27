@@ -1,8 +1,83 @@
 {% extends 'ndr_core/admin_views/base.html' %}
+{% load static %}
 {% load render_table from django_tables2 %}
 
 {% block content %}
-    <h2>Ndr core dashboard</h2>
+
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/ndr.png' %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">NDR Core Administration</h5>
+                  <p class="card-text">Welcome to the NDR Core administration interface.</p>
+                  <p class="card-text">
+                      <small class="text-muted">Last updated 3 mins ago</small>
+                      <img src="https://github.com/sorinmarti/django_ndr_core/actions/workflows/django.yml/badge.svg">
+                  </p>
+            </div>
+            <div class="card-footer text-center">
+              <a href="#" class="btn btn-secondary">Go somewhere</a>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/search.png' %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Configure Your Search</h5>
+                  <p class="card-text">
+                      NDR Core provides a fronted for your data. In order to use the search functions, you need to
+                      define the API the data is served with and define how your results will be styled by NDR Core.
+                  </p>
+                  <p class="card-text"><small class="text-muted">You have 0 search configurations in your installation.</small></p>
+            </div>
+            <div class="card-footer">
+      <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/pages.png' %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Create or Edit Pages</h5>
+                  <p class="card-text">
+                      Your web site consists of a number of pages. You can create pages of various types to display
+                      static content, search or contact forms and more.
+                  </p>
+                  <p class="card-text"><small class="text-muted">You have 0 pages in your installation.</small></p>
+            </div>
+            <div class="card-footer">
+      <a href="#" class="btn btn-primary">Go somewhere</a>
+    </div>
+        </div>
+    </div>
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/style.png' %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Change Look & Feel and Colors</h5>
+                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                  <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/view.png' %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">View your Homepage</h5>
+                  <p class="card-text">
+                      All Changes you make to your configuration will change how your home page looks and feels.
+                  </p>
+                  <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/help.png' %}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Read the Documentation</h5>
+                  <p class="card-text">
+                      You can view a FAQ-like help page here or read NDR Core's documentation.
+                  </p>
+                  <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+            </div>
+        </div>
+    </div>
     <p>
         Welcome to the NDR core administration interface.
         Your NDR core website consists of pages of a certain type (static templates, search interfaces,

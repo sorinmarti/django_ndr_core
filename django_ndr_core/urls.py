@@ -19,7 +19,7 @@ from django.urls import path, include, re_path
 from django.views.static import serve
 
 urlpatterns = [
-    path('', include('ndr.urls')),
+    # path('', include('ndr.urls')),
     path('ndr_core/', include('ndr_core.urls')),
     path("select2/", include("django_select2.urls")),
     re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),

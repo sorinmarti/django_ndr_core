@@ -35,7 +35,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'ndr_core',
-    'ndr',
+    #'ndr',
     'django_tables2',
     'crispy_forms',
     'django_select2',
