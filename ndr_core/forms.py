@@ -15,17 +15,25 @@ from ndr_core.widgets import CustomSelect
 
 
 class _NdrCoreForm(forms.Form):
-    """TODO """
+    """Base form class for all (non-admin) NDR Core forms.  """
 
     ndr_page = None
 
     def __init__(self, *args, **kwargs):
+        """Init the form class. Save the ndr page if it is provided."""
         if 'ndr_page' in kwargs:
             self.ndr_page = kwargs.pop('ndr_page')
 
         super(forms.Form, self).__init__(*args, **kwargs)
 
+
+class _NdrCoreSearchForm(_NdrCoreForm):
+    """Base form class for all (non-admin) NDR Core Search forms. Provides common functions for simple and
+    configured search. """
+
     def init_simple_search_fields(self):
+        """Create form fields for simple search. """
+
         self.fields['search_term'] = forms.CharField(label='Search Term',
                                                      required=False,
                                                      max_length=100,
@@ -36,32 +44,46 @@ class _NdrCoreForm(forms.Form):
                                                         required=False,
                                                         )
 
-    def get_simple_search_layout_fields(self):
-        search_field = Field('search_term',
-                             wrapper_class='col-md-12')
-        type_field = Field('and_or_field',
-                           wrapper_class='col-md-4')
+    @staticmethod
+    def get_simple_search_layout_fields():
+        """Create and return layout fields for the simple search fields. """
 
+        search_field = Field('search_term', wrapper_class='col-md-12')
+        type_field = Field('and_or_field', wrapper_class='col-md-4')
         return search_field, type_field
 
-    def get_search_button(self, conf_name):
+    @staticmethod
+    def get_search_button(conf_name):
+        """Create and return right aligned search button. """
+
         div = Div(
-                Div(css_class="col-md-8"),
-                Div(Div(MySubmit(f'search_button_{conf_name}', 'Search'), css_class="text-right"),
-                    css_class="col-md-4"),
-                css_class="form-row")
+                Div(
+                    css_class="col-md-8"
+                    ),
+                Div(
+                    Div(
+                        MySubmit(f'search_button_{conf_name}', 'Search'),
+                        css_class="text-right"
+                    ),
+                    css_class="col-md-4"
+                ),
+                css_class="form-row"
+        )
         return div
 
 
-class SimpleSearchForm(_NdrCoreForm):
-    """TODO """
+class SimpleSearchForm(_NdrCoreSearchForm):
+    """Form class for the simple search form. Provides a text field, an and/or option and a search button. """
 
     def __init__(self, *args, **kwargs):
+        """Initializes the form fields."""
         super().__init__(*args, **kwargs)
         self.init_simple_search_fields()
 
     @property
     def helper(self):
+        """Creates and returns the form helper class with the layout-ed form fields. """
+
         helper = FormHelper()
         helper.form_method = 'GET'
         layout = helper.layout = Layout()
@@ -75,10 +97,13 @@ class SimpleSearchForm(_NdrCoreForm):
         return helper
 
 
-class AdvancedSearchForm(_NdrCoreForm):
-    """TODO """
+class AdvancedSearchForm(_NdrCoreSearchForm):
+    """Form class for the advanced (=configured) search. Needs a search config and then creates and configures
+    the form from it. """
 
     def __init__(self, *args, **kwargs):
+        """Initialises  all needed form fields for the configured search based on the page's search configuration. """
+
         super().__init__(*args, **kwargs)
 
         self.search_configs = self.ndr_page.search_configs.all()
@@ -107,6 +132,8 @@ class AdvancedSearchForm(_NdrCoreForm):
 
     @property
     def helper(self):
+        """Creates and returns the form helper class with the layout-ed form fields. """
+
         helper = FormHelper()
         helper.form_method = "GET"
         layout = helper.layout = Layout()
@@ -157,8 +184,11 @@ class AdvancedSearchForm(_NdrCoreForm):
 
 
 class FilterForm(_NdrCoreForm):
+    """TODO """
 
     def __init__(self, *args, **kwargs):
+        """TODO """
+
         super().__init__(*args, **kwargs)
 
         self.query_dict = {}
@@ -191,6 +221,8 @@ class FilterForm(_NdrCoreForm):
 
     @property
     def helper(self):
+        """Creates and returns the form helper class with the layout-ed form fields. """
+
         helper = FormHelper()
         helper.form_method = "GET"
         helper.form_show_labels = False
@@ -219,6 +251,8 @@ class ContactForm(_NdrCoreForm):
     """TODO """
 
     def __init__(self, *args, **kwargs):
+        """TODO """
+
         super(ContactForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "POST"
@@ -244,20 +278,28 @@ class ContactForm(_NdrCoreForm):
 
 
 class TestForm(_NdrCoreForm):
+    """TODO """
+
     field_1 = forms.CharField()
     field_2 = forms.BooleanField()
     field_3 = forms.ChoiceField(choices=[('1', 'Choice'),('2', 'Choice 2'), ('3', 'Choice 3')])
 
 
 class MySubmit(BaseInput):
+    """TODO """
+
     input_type = "submit"
 
     def __init__(self, *args, **kwargs):
+        """TODO """
+
         self.field_classes = "btn btn btn-outline-secondary w-100"
         super().__init__(*args, **kwargs)
 
 
 def get_choices_from_tsv(dict_config):
+    """TODO """
+
     if "display_column" in dict_config and "search_column" in dict_config and "file" in dict_config:
         choices = list()
         with open(os.path.join(settings.STATIC_ROOT, dict_config["file"]), encoding='utf-8') as fd:
@@ -278,6 +320,8 @@ def get_choices_from_tsv(dict_config):
 
 
 def querydict_to_dict(query_dict):
+    """Translates query dict of form return to default dict and removes single value lists. """
+
     data = {}
     for key in query_dict.keys():
         v = query_dict.getlist(key)
