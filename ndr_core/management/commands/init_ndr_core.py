@@ -68,6 +68,8 @@ class Command(BaseCommand):
         logo_file = finders.find('ndr_core/app_init/logo.png')
         shutil.copyfile(logo_file, f'{app_name}/static/{app_name}/images/logo.png')
 
+        os.makedirs(f'{app_name}/static/{app_name}/sample_data/')
+
         # media directory
         if not os.path.exists('media/backgrounds/'):
             os.makedirs('media/backgrounds/')

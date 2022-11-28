@@ -7,7 +7,7 @@ from ndr_core.admin_views import create_search_fields, PageEditView, PageDeleteV
     ConfigureSettings, ApiConfigurationCreateView, ApiConfigurationEditView, SearchConfigurationCreateView, \
     SearchConfigurationEditView, SearchConfigurationDeleteView, SearchFieldConfigurationCreateView, \
     SearchFieldConfigurationEditView, SearchFieldConfigurationDeleteView, ApiConfigurationDeleteView, preview_image, \
-    ConfigureUI, init_ndr_core
+    ConfigureUI, init_ndr_core, SampleDataView
 from ndr_core.admin_views import NdrCoreDashboard, ManagePages, ConfigureApi, ConfigureSearch, ConfigureSearchFields, \
     PageCreateView
 from ndr_core.views import ApiTestView, NdrDownloadView
@@ -48,6 +48,9 @@ urlpatterns = [
     path('configure/search/fields/edit/<int:pk>/', SearchFieldConfigurationEditView.as_view(), name='edit_search_field'),
     path('configure/search/fields/delete/<int:pk>/', SearchFieldConfigurationDeleteView.as_view(), name='delete_search_field'),
     path('configure/search/fields/schema/<int:schema_pk>/', create_search_fields, name='create_fields_from_schema'),
+
+    # CONFIGURE DATA
+    path('configure/data/', SampleDataView.as_view(), name='configure_sample_data'),
 
     # Login / Logout
     path('login/', auth_views.LoginView.as_view(template_name='ndr_core/admin_views/login.html',

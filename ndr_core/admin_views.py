@@ -538,6 +538,17 @@ class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
         return super(SearchConfigurationDeleteView, self).form_valid(form)
 
 
+class SampleDataView(LoginRequiredMixin, View):
+    """ View to manage sample data jsons """
+
+    def get(self, request, *args, **kwargs):
+        data_dir = os.listdir('ndr/static/ndr/sample_data')
+        for data in data_dir:
+            print(data)
+        return render(self.request,
+                      template_name='ndr_core/admin_views/configure_sample_data.html',
+                      context={})
+
 def preview_image(request, img_config):
     """Creates a form preview image of a search form configuration. """
 

@@ -1,0 +1,55 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load django_tables2 %}
+
+{% block content %}
+    <h2>Configure Sample Data</h2>
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Options</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:create_api' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-file-arrow-up"></i>
+                        Upload Sample Data File
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Help
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Uploaded Files</h5>
+                <ul class="list-group">
+                    {% for api in apis %}
+                        <li class="list-group-item list-group-item-action d-flex py-2">
+                            <p class="p-0 m-0 flex-grow-1">
+                                <i class="fa-regular fa-code"></i> {{ api.api_label }} ({{ api.api_name }})
+                            </p>
+
+                            <p class="p-0 m-0">
+                                <a href="{% url 'ndr_core:edit_api' api.id %}" class="btn btn-sm btn-secondary">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </a>
+                                <a href="{% url 'ndr_core:delete_api' api.id %}" class="btn btn-sm btn-danger">
+                                    <i class="fa-regular fa-delete-left"></i>
+                                </a>
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info small" role="alert">
+        <i class="fa-regular fa-circle-info"></i>
+        An API consists of the definition of an API-Host and the protocol. Further it consists of definitions of what
+        is returned. You can create multiple API configurations to query multiple endpoints. Each Search form needs an
+        API to function.
+    </div>
+
+{% endblock %}

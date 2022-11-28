@@ -8,6 +8,7 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse, NoReverseMatch
+from django.utils.timezone import now
 
 from ndr_core.ndr_settings import NdrSettings
 
@@ -467,4 +468,20 @@ class NdrCoreCorrectedField(models.Model):
     """TODO """
 
     new_value = models.TextField()
+    """TODO """
+
+
+class UserMessage(models.Model):
+    """TODO """
+
+    message_subject = models.CharField(max_length=200)
+    """TODO """
+
+    message_text = models.TextField()
+    """TODO """
+
+    message_time = models.DateTimeField(auto_now_add=True)
+    """TODO """
+
+    message_ret_email = models.EmailField()
     """TODO """
