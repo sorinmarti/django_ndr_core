@@ -4,6 +4,37 @@
 
 {% block content %}
     <h2>Configure UI</h2>
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Options</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:create_search' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-layer-group"></i>
+                        Change Basic UI Style
+                    </a>
+                    <a href="{% url 'ndr_core:configure_search_fields' %}" class="list-group-item list-group-item-action py-2">
+                        Manage Search Fields
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'ui' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Help
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Current UI Settings</h5>
+                <div class="list-group">
+                    {% for api in apis %}
+                        <a href="#" class="list-group-item list-group-item-action">Create New</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 
     <form method="POST">
         {% csrf_token %}

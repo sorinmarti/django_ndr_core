@@ -1,33 +1,73 @@
 {% extends 'ndr_core/admin_views/base.html' %}
 {% load django_tables2 %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <h2>Configure Settings</h2>
-    <div class="alert alert-info small" role="alert">
+    <div class="card-deck">
+
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Options</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:configure_search_fields' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-table-list"></i>
+                        Create Custom Setting
+                    </a>
+                    <a href="{% url 'ndr_core:configure_search_fields' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-lock"></i>
+                        Set Admin Password
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'settings' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Help
+                    </a>
+                </div>
+                <p></p>
+                <h5 class="card-title">Danger Zone</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:configure_search_fields' %}" class="list-group-item list-group-item-danger py-2">
+                        <i class="fa-regular fa-table-list"></i>
+                        Reset to defaults
+                    </a>
+                    <a href="{% url 'ndr_core:configure_search_fields' %}" class="list-group-item list-group-item-danger py-2">
+                        <i class="fa-regular fa-table-list"></i>
+                        Delete NDR Application
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Basic Page Settings</h5>
+                <p class="card-text">
+                    These settings are not mandatory but recommended.
+                </p>
+                {% crispy basic_settings_form %}
+            </div>
+        </div>
 
     </div>
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Mail Settings</h5>
+                <p class="card-text">
+                    To use the contact form, you need to provide your mail settings. Only unauthenticated settings for now.
+                </p>
+                {% crispy contact_form %}
+            </div>
+        </div>
 
-    <h3>Basic Page Settings</h3>
-    <p>
-        <form method="POST">
-            {% csrf_token %}
-            {% render_table basic_settings_table %}
-            <button class="btn btn-primary" role="button">Save Changes</button>
-        </form>
-    </p>
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title"></h5>
 
-    <h3>UI Settings</h3>
-    <p>
+            </div>
+        </div>
+    </div>
 
-    </p>
-
-    <h3>Email/Contact Form Settings</h3>
-    <p>
-        <form method="POST">
-            {% csrf_token %}
-            {% render_table contact_settings_table %}
-            <button class="btn btn-primary" role="button">Save Changes</button>
-        </form>
-    </p>
 
 {% endblock %}

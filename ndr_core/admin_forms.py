@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django_select2 import forms as s2forms
 
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreSearchField, NdrCoreSearchConfiguration, \
-    NdrCoreFilterableListConfiguration
+    NdrCoreFilterableListConfiguration, NdrCoreValue
 
 
 class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
@@ -361,6 +361,38 @@ class SearchConfigurationEditForm(SearchConfigurationForm):
         helper.add_input(Submit('submit', 'Edit Search Configuration'))
         helper.add_input(Button('add_row', 'Add Row', css_class='btn btn-secondary'))
         helper.add_input(Button('remove_row', 'Remove Row', css_class='btn btn-secondary'))
+        return helper
+
+
+class SettingsForm(forms.Form):
+    """TODO """
+
+    settings_list = list()
+
+    def __init__(self, *args, **kwargs):
+        if 'settings' in kwargs:
+            self.settings_list = kwargs.pop('settings')
+
+        super(SettingsForm, self).__init__(*args, **kwargs)
+
+        for setting in self.settings_list:
+            try:
+                setting_obj = NdrCoreValue.objects.get(value_name=setting)
+                self.fields[setting] = forms.CharField(label=setting_obj.value_label,
+                                                       required=False,
+                                                       max_length=100,
+                                                       help_text=setting_obj.value_help_text)
+            except NdrCoreValue.DoesNotExist:
+                pass
+
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = FormHelper()
+        helper.form_method = "POST"
+        # layout = helper.layout = Layout()
+        helper.add_input(Submit('submit', 'Save'))
         return helper
 
 

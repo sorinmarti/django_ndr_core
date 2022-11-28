@@ -114,7 +114,7 @@ class NdrCoreApiConfiguration(models.Model):
     """The protocol used (http or https) """
 
     api_port = models.IntegerField(default=80,
-                                   help_text="TODO")
+                                   help_text="Port to connect to.")
     """The TCP port of the API """
 
     api_label = models.CharField(max_length=250,
@@ -125,7 +125,8 @@ class NdrCoreApiConfiguration(models.Model):
                                         help_text="Size of the result page (e.g. 'How many results at once')")
     """The query results will return a page of the results. You can define the page size"""
 
-    api_url_stub = models.CharField(default=None, null=True, blank=True, max_length=50)
+    api_url_stub = models.CharField(default=None, null=True, blank=True, max_length=50,
+                                    help_text="Static URL part after host, before API parameters.")
     """TODO"""
 
     def get_base_url(self):

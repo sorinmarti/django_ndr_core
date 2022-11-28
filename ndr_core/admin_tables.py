@@ -24,13 +24,20 @@ class PagesManageTable(PagesTable):
 
     @staticmethod
     def render_option_column(value, record):
-        return mark_safe('<a href="'+reverse('ndr_core:edit_page', kwargs={'pk': value})+'" class="btn btn-sm btn-primary">Edit</a>'
-                         '&nbsp;'
-                         '<a href="'+reverse('ndr_core:delete_page', kwargs={'pk': value})+'" class="btn btn-sm btn-danger">Delete</a>'
-                         '&nbsp;'
-                         '<a href="'+reverse('ndr_core:move_page_up', kwargs={'pk': value})+'" class="btn btn-sm btn-primary">Up</a>'
-                         '&nbsp;'
-                         '<a href="'+reverse(f'{NdrSettings.APP_NAME}:ndr_view', kwargs={'ndr_page': record.view_name})+'" class="btn btn-sm btn-secondary">View</a>')
+        ret_value = '<a href="'+reverse('ndr_core:edit_page', kwargs={'pk': value})+'" class="btn btn-sm btn-primary">Edit</a>'\
+                    '&nbsp;'\
+                    '<a href="'+reverse('ndr_core:delete_page', kwargs={'pk': value})+'" class="btn btn-sm btn-danger">Delete</a>'\
+                    '&nbsp;'\
+                    '<a href="'+reverse('ndr_core:move_page_up', kwargs={'pk': value})+'" class="btn btn-sm btn-primary">Up</a>'\
+                    '&nbsp;'
+
+        if NdrSettings.app_exists():
+            ret_value += '<a href="' + \
+                         reverse(f'{NdrSettings.APP_NAME}:ndr_view',
+                                 kwargs={'ndr_page': record.view_name}) + \
+                         '" class="btn btn-sm btn-secondary">View</a>'
+
+        return mark_safe(ret_value)
 
 
 class SearchConfigurationTable(tables.Table):
@@ -50,6 +57,7 @@ class SearchConfigurationTable(tables.Table):
         for field in value:
             ret_value += f'{field.field_row}, {field.field_column}, {field.field_size}<br/>'
         return mark_safe(f'<img src="data:image/png;base64, {image}" />')
+
 
 class SearchFieldTable(tables.Table):
     class Meta:
@@ -75,10 +83,3 @@ class ChangeSettingsTable(SettingsTable):
     @staticmethod
     def render_value_value(value, record):
         return mark_safe(f'<input type="text" name="save_{record.value_name}" value="{record.value_value}" />')
-
-
-class ApiTable(tables.Table):
-
-    class Meta:
-        model = NdrCoreApiConfiguration
-        fields = ('api_name', 'api_host', 'api_protocol', 'api_port', 'api_label', 'api_page_size')

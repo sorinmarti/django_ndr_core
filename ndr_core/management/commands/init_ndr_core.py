@@ -23,11 +23,6 @@ class Command(BaseCommand):
             self.stdout.write(f'ERROR: directory "{app_name}" already exists.')
             return
 
-        urls_file = finders.find('ndr_core/app_init/urls.py')
-        if not os.path.isfile(urls_file):
-            self.stdout.write(f'ERROR: static files to copy not found')
-            return
-
         # Create a new app
         call_command('startapp', app_name)
         self.stdout.write(f'Created new app "{app_name}"')
@@ -48,6 +43,7 @@ class Command(BaseCommand):
             self.stdout.write(f'Skipped creating new user "ndr_core_admin". Already exists.')
 
         # Copy urls.py
+        urls_file = finders.find('ndr_core/app_init/urls.py')
         shutil.copyfile(urls_file, f'{app_name}/urls.py')
 
         # html files

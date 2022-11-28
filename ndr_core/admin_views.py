@@ -16,12 +16,11 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from ndr_core.form_preview import get_image_from_raw_data
-from ndr_core.admin_forms import SearchConfigurationForm, PageCreateForm, \
+from ndr_core.admin_forms import SearchConfigurationForm, PageCreateForm, SettingsForm, \
     PageEditForm, ApiCreateForm, ApiEditForm, SearchFieldCreateForm, SearchFieldEditForm
 from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrCoreSearchField, NdrCoreSearchConfiguration, \
     NdrCoreValue, NdrCoreApiConfiguration, NdrCoreSearchFieldFormConfiguration, NdrCoreUiStyle, NdrCoreColorScheme
-from ndr_core.admin_tables import PagesTable, SearchConfigurationTable, SettingsTable, ChangeSettingsTable, \
-    PagesManageTable, SearchFieldTable, ApiTable
+from ndr_core.admin_tables import SearchFieldTable
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -31,15 +30,30 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        pages_table = PagesTable(data=NdrCorePage.objects.all().order_by('index'))
-        forms_table = SearchConfigurationTable(data=NdrCoreSearchConfiguration.objects.all())
-        settings_table = SettingsTable(data=NdrCoreValue.objects.all())
+        try:
+            ui_style = NdrCoreUiStyle.objects.get(name=NdrCoreValue.objects.get(value_name='ui_style').value_value).label
+        except NdrCoreValue.DoesNotExist:
+            ui_style = None
+
+        try:
+            color_scheme = NdrCoreColorScheme.objects.get(
+                scheme_name=NdrCoreValue.objects.get(value_name='ui_color_scheme').value_value).scheme_label
+        except NdrCoreValue.DoesNotExist:
+            color_scheme = None
 
         return render(self.request,
                       template_name='ndr_core/admin_views/dashboard.html',
-                      context={'pages_table': pages_table,
-                               'forms_table': forms_table,
-                               'settings_table': settings_table})
+                      context={'ndr_inizialized': NdrSettings.app_exists(),
+                               'ndr_registered': NdrSettings.app_registered(),
+                               'ndr_in_urls': NdrSettings.app_in_urls(),
+                               'numbers': {
+                                   'api': NdrCoreApiConfiguration.objects.all().count(),
+                                   'search': NdrCoreSearchConfiguration.objects.all().count(),
+                                   'page': NdrCorePage.objects.all().count(),
+                                   'messages': 0
+                               },
+                               'ui_style': ui_style,
+                               'color_scheme': color_scheme})
 
 
 class ManagePages(LoginRequiredMixin, View):
@@ -49,8 +63,7 @@ class ManagePages(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        pages_table = PagesManageTable(data=NdrCorePage.objects.all().order_by('index'))
-        context = {'pages_table': pages_table}
+        context = {'pages': NdrCorePage.objects.all().order_by('index')}
 
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_pages.html',
@@ -200,19 +213,17 @@ class ConfigureSettings(LoginRequiredMixin, View):
     def get_context_data():
         """Returns the context data for both GET and POST request. """
 
-        basic_settings = ChangeSettingsTable(data=NdrCoreValue.objects.filter(value_name__in=['project_title',
-                                                                                              'header_default_title',
-                                                                                              'header_description',
-                                                                                              'header_author']))
+        basic_settings = SettingsForm(settings=['project_title',
+                                                'header_default_title',
+                                                'header_description',
+                                                'header_author'])
+        contact_form = SettingsForm(settings=['contact_form_default_subject',
+                                              'email_config_host',
+                                              'contact_form_send_to_address',
+                                              'contact_form_send_from_address'])
 
-        contact_settings = ChangeSettingsTable(
-            data=NdrCoreValue.objects.filter(value_name__in=['contact_form_default_subject',
-                                                             'email_config_host',
-                                                             'email_config_timeout',
-                                                             'contact_form_send_to_address',
-                                                             'contact_form_send_from_address']))
-        context = {'basic_settings_table': basic_settings,
-                   'contact_settings_table': contact_settings}
+        context = {'basic_settings_form': basic_settings,
+                   'contact_form': contact_form}
 
         return context
 
@@ -223,8 +234,7 @@ class ConfigureApi(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        apis_table = ApiTable(data=NdrCoreApiConfiguration.objects.all().order_by('api_name'))
-        context = {'apis_table': apis_table}
+        context = {'apis': NdrCoreApiConfiguration.objects.all().order_by('api_name')}
 
         return render(self.request, template_name='ndr_core/admin_views/configure_api.html',
                       context=context)
@@ -236,8 +246,10 @@ class ConfigureSearch(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        search_config_table = SearchConfigurationTable(data=NdrCoreSearchConfiguration.objects.all())
-        context = {'search_config_table': search_config_table}
+        schemas = NdrCoreDataSchema.objects.all()
+        search_fields = NdrCoreSearchField.objects.all()
+        searches = NdrCoreSearchConfiguration.objects.all()
+        context = {'schemas': schemas, 'search_fields': search_fields, 'searches': searches}
 
         return render(self.request, template_name='ndr_core/admin_views/configure_search.html',
                       context=context)
@@ -541,3 +553,12 @@ def preview_image(request, img_config):
                 'text': NdrCoreSearchField.objects.get(id=int(config_row[3])).field_label})
     image_data = get_image_from_raw_data(data)
     return HttpResponse(image_data, content_type="image/png")
+
+
+def init_ndr_core(request):
+    if not NdrSettings.app_exists():
+        call_command('init_ndr_core')
+        messages.success(request, "NDR Core application initialized.")
+    else:
+        messages.error(request, "NDR Core application already exists.")
+    return redirect('ndr_core:dashboard')

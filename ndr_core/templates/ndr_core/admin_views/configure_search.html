@@ -3,13 +3,84 @@
 
 {% block content %}
     <h2>Configure Search Forms</h2>
-    <div class="alert alert-info small" role="alert">
-        Search Forms consist of an API configuration and a number of SearchFields
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Options</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:create_search' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-magnifying-glass"></i>
+                        Create New Search Configuration
+                    </a>
+                    <a href="{% url 'ndr_core:configure_search_fields' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-table-list"></i>
+                        Create New Search Field
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'search' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Help
+                    </a>
+                </div>
+
+                <p></p>
+                <h5 class="card-title">Search Fields From Schema</h5>
+                <div class="list-group">
+                    {% for schema in schemas %}
+                        <a href="#" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-table-list"></i>
+                            Create New Search Field
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Configured Searches</h5>
+                <ul class="list-group">
+                    {% for search in searches %}
+                        <li class="list-group-item list-group-item-action d-flex py-2">
+                            <p class="p-0 m-0 flex-grow-1">
+                                <i class="fa-regular fa-code"></i> {{ search.conf_label }} ({{ search.conf_name }})
+                            </p>
+
+                            <p class="p-0 m-0">
+                                <a href="#" class="btn btn-sm btn-secondary">
+                                    <i class="fa-regular fa-pen-to-square"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-danger">
+                                    <i class="fa-regular fa-delete-left"></i>
+                                </a>
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
 
-    {% render_table search_config_table %}
-    <p>
-        <a href="{% url 'ndr_core:create_search' %}" class="btn btn-primary" role="button">Create New Search Configuration</a>
-    </p>
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Search Fields</h5>
+                    {% for field in search_fields %}
+                        Field
+                    {% endfor %}
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title"></h5>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-info small" role="alert">
+        <i class="fa-regular fa-circle-info"></i>
+        Search Forms consist of an API configuration and a number of SearchFields
+    </div>
 
 {% endblock %}

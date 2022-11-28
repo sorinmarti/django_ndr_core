@@ -7,7 +7,7 @@ from ndr_core.admin_views import create_search_fields, PageEditView, PageDeleteV
     ConfigureSettings, ApiConfigurationCreateView, ApiConfigurationEditView, SearchConfigurationCreateView, \
     SearchConfigurationEditView, SearchConfigurationDeleteView, SearchFieldConfigurationCreateView, \
     SearchFieldConfigurationEditView, SearchFieldConfigurationDeleteView, ApiConfigurationDeleteView, preview_image, \
-    ConfigureUI
+    ConfigureUI, init_ndr_core
 from ndr_core.admin_views import NdrCoreDashboard, ManagePages, ConfigureApi, ConfigureSearch, ConfigureSearchFields, \
     PageCreateView
 from ndr_core.views import ApiTestView, NdrDownloadView
@@ -15,6 +15,8 @@ from ndr_core.views import ApiTestView, NdrDownloadView
 app_name = 'ndr_core'
 urlpatterns = [
     path('', NdrCoreDashboard.as_view(), name='dashboard'),
+
+    path('init/', init_ndr_core, name='init_ndr_core'),
 
     # PAGES
     path('configure/pages/', ManagePages.as_view(), name='configure_pages'),
@@ -54,6 +56,7 @@ urlpatterns = [
 
     # Help
     path('help/', TemplateView.as_view(template_name='ndr_core/admin_views/help.html'), name='help'),
+    path('help/jumptto/<str:chapter>/', TemplateView.as_view(template_name='ndr_core/admin_views/help.html'), name='help_chapter'),
 
     # Download URL for single DB entry
     path('download/<str:api_config>/<str:record_id>/', NdrDownloadView.as_view(), name='download_record'),
