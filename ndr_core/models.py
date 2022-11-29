@@ -119,7 +119,8 @@ class NdrCoreApiConfiguration(models.Model):
                                                     help_text="The protocol used (http or https)")
     """The protocol used (http or https) """
 
-    api_type = models.ForeignKey(NdrCoreApiImplementation, on_delete=models.CASCADE)
+    api_type = models.ForeignKey(NdrCoreApiImplementation, on_delete=models.CASCADE, null=True)
+    """TODO """
 
     api_port = models.IntegerField(default=80,
                                    help_text="Port to connect to.")
