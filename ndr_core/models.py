@@ -92,6 +92,11 @@ class NdrCoreSearchFieldFormConfiguration(models.Model):
         return f'{self.search_field.field_label} (R{self.field_row}/C{self.field_column}/S{self.field_size})'
 
 
+class NdrCoreApiImplementation(models.Model):
+    """TODO """
+    name = models.CharField(max_length=100)
+
+
 class NdrCoreApiConfiguration(models.Model):
     """An API configuration contains all necessary information to create a query to an API endpoint. """
 
@@ -114,6 +119,8 @@ class NdrCoreApiConfiguration(models.Model):
                                                     help_text="The protocol used (http or https)")
     """The protocol used (http or https) """
 
+    api_type = models.ForeignKey(NdrCoreApiImplementation, on_delete=models.CASCADE)
+
     api_port = models.IntegerField(default=80,
                                    help_text="Port to connect to.")
     """The TCP port of the API """
@@ -122,13 +129,17 @@ class NdrCoreApiConfiguration(models.Model):
                                  help_text="The API's label is the title of the queried repository")
     """The API's label is the title of the queried repository """
 
+    api_description = models.TextField(default='',
+                                       help_text="Description of this configuration")
+    """Description of this configuration."""
+
     api_page_size = models.IntegerField(default=10,
                                         help_text="Size of the result page (e.g. 'How many results at once')")
     """The query results will return a page of the results. You can define the page size"""
 
     api_url_stub = models.CharField(default=None, null=True, blank=True, max_length=50,
                                     help_text="Static URL part after host, before API parameters.")
-    """TODO"""
+    """Static URL part after host, before API parameters."""
 
     def get_base_url(self):
         """
@@ -182,7 +193,7 @@ class NdrCoreResultTemplateField(models.Model):
         VALUE_LIST = "values", "Value List"
 
     belongs_to = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE)
-    """"""
+    """TODO """
 
     target_field_name = models.CharField(max_length=100)
     """Field name of the resulting structured response which is used to render a result line"""
@@ -363,7 +374,7 @@ class NdrCoreColorScheme(models.Model):
     """Text color of secondary buttons."""
 
     second_button_border_color = ColorField()
-    """Border colorof secondary buttons."""
+    """Border color of secondary buttons."""
 
     link_color = ColorField()
     """Color for hrefs."""
