@@ -17,7 +17,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView
 
 from ndr_core.form_preview import get_image_from_raw_data
 from ndr_core.admin_forms import SearchConfigurationForm, PageCreateForm, SettingsForm, \
-    PageEditForm, ApiCreateForm, ApiEditForm, SearchFieldCreateForm, SearchFieldEditForm
+    PageEditForm, ApiCreateForm, ApiEditForm, SearchFieldCreateForm, SearchFieldEditForm, SettingCreateForm
 from ndr_core.models import NdrCorePage, NdrCoreDataSchema, NdrCoreSearchField, NdrCoreSearchConfiguration, \
     NdrCoreValue, NdrCoreApiConfiguration, NdrCoreSearchFieldFormConfiguration, NdrCoreUiStyle, NdrCoreColorScheme
 from ndr_core.admin_tables import SearchFieldTable
@@ -226,6 +226,73 @@ class ConfigureSettings(LoginRequiredMixin, View):
                    'contact_form': contact_form}
 
         return context
+
+
+class SettingCreateView(LoginRequiredMixin, CreateView):
+    """ View to create a new Custom Setting """
+
+    model = NdrCoreValue
+    form_class = SettingCreateForm
+    success_url = reverse_lazy('ndr_core:configure_settings')
+    template_name = 'ndr_core/admin_views/setting_create.html'
+
+
+class ConfigureImages(LoginRequiredMixin, View):
+    """View to add/edit/delete Images. """
+
+    def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
+        context = {}
+        return render(self.request, template_name='ndr_core/admin_views/configure_images.html',
+                      context=context)
+
+
+class ConfigureCorrections(LoginRequiredMixin, View):
+    """View to add/edit/delete Corrections. """
+
+    def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
+        context = {}
+        return render(self.request, template_name='ndr_core/admin_views/configure_corrections.html',
+                      context=context)
+
+
+class ConfigureMessages(LoginRequiredMixin, View):
+    """View to add/edit/delete Messages. """
+
+    def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
+        context = {}
+
+        return render(self.request, template_name='ndr_core/admin_views/configure_messages.html',
+                      context=context)
+
+
+class ConfigureColorPalettes(LoginRequiredMixin, View):
+    """View to add/edit/delete Color Palettes. """
+
+    def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
+        context = {}
+
+        return render(self.request, template_name='ndr_core/admin_views/configure_colors.html',
+                      context=context)
+
+
+class ConfigureUIElements(LoginRequiredMixin, View):
+    """View to add/edit/delete UI Elements. """
+
+    def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
+        context = {}
+
+        return render(self.request, template_name='ndr_core/admin_views/configure_ui_elements.html',
+                      context=context)
 
 
 class ConfigureApi(LoginRequiredMixin, View):
@@ -453,10 +520,10 @@ def create_search_fields(request, schema_pk):
             existing_fields.delete()
         call_command('loaddata', schema.fixture_name, app_label='ndr_core')
         messages.success(request, "The Search fields were created")
-        return redirect('ndr_core:configure_search_fields')
+        return redirect('ndr_core:configure_search')
     except NdrCoreDataSchema.DoesNotExist:
         messages.error(request, "The Schema was not found in the database")
-        return redirect('ndr_core:configure_search_fields')
+        return redirect('ndr_core:configure_search')
 
 
 @login_required

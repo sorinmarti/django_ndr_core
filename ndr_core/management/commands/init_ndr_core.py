@@ -91,7 +91,7 @@ class Command(BaseCommand):
                                                           api_host='localhost',
                                                           api_protocol=NdrCoreApiConfiguration.Protocol.HTTP,
                                                           api_port=8000,
-                                                          api_label='Test API',
+                                                          api_label='Local Test API',
                                                           api_page_size=10,
                                                           api_url_stub='ndr_core')
 

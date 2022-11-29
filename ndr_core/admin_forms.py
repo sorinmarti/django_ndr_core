@@ -1,7 +1,7 @@
 """Contains all forms used in the NDRCore admin interface."""
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Div, Field, Layout, HTML, Button
+from crispy_forms.layout import Submit, Div, Field, Layout, HTML, Button, ButtonHolder
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
@@ -27,6 +27,30 @@ class FilteredListWidget(s2forms.ModelSelect2MultipleWidget):
     search_fields = [
         'list_name__icontains'
     ]
+
+
+class SettingForm(forms.ModelForm):
+    """Base form to create or edit a custom Setting. """
+
+    class Meta:
+        """Configure the model form. Provide model class and form fields."""
+        model = NdrCoreValue
+        fields = ['value_name', 'value_label', 'value_help_text', 'value_value']
+
+    def __init__(self, *args, **kwargs):
+        """Init class and create form helper."""
+        super(SettingForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "POST"
+
+
+class SettingCreateForm(SettingForm):
+    """Form to create a custom setting. Extends the base form class and adds a 'create' button."""
+
+    def __init__(self, *args, **kwargs):
+        """Init the form and add the 'create' button."""
+        super(SettingCreateForm, self).__init__(*args, **kwargs)
+        self.helper.add_input(Submit('submit', 'Create New Setting'))
 
 
 class PageForm(forms.ModelForm):
@@ -120,7 +144,11 @@ class ApiForm(forms.ModelForm):
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreApiConfiguration
-        fields = ['api_name', 'api_host', 'api_protocol', 'api_port', 'api_label', 'api_page_size', 'api_url_stub']
+        fields = ['api_name', 'api_host', 'api_protocol', 'api_port', 'api_label',
+                  'api_page_size', 'api_url_stub', 'api_description']
+        widgets = {
+            'api_description': forms.TextInput(attrs={}),
+        }
 
     def __init__(self, *args, **kwargs):
         """This form will create the ApiConfiguration object but also translation objects to render the results.
@@ -133,7 +161,7 @@ class ApiForm(forms.ModelForm):
         for rendering_conf_row in range(10):
             required = False
             if rendering_conf_row == 0:
-                required = True
+                required = False
 
             target_field_name = forms.CharField(required=required, help_text="")
             field_label = forms.CharField(required=required, help_text="")
@@ -166,6 +194,11 @@ class ApiForm(forms.ModelForm):
                 Field('api_host', wrapper_class=f'col-md-4'),
                 Field('api_port', wrapper_class=f'col-md-2'),
                 Field('api_url_stub', wrapper_class=f'col-md-4'),
+                css_class='form-row')
+        )
+
+        layout.append(
+            Div(Field('api_description', wrapper_class=f'col-md-12'),
                 css_class='form-row')
         )
 
@@ -269,7 +302,7 @@ class SearchConfigurationForm(forms.ModelForm):
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreSearchConfiguration
-        fields = ['conf_name', 'api_configuration']
+        fields = ['conf_name', 'conf_label', 'api_configuration']
 
     def __init__(self, *args, **kwargs):
         super(SearchConfigurationForm, self).__init__(*args, **kwargs)
@@ -307,6 +340,7 @@ class SearchConfigurationForm(forms.ModelForm):
         layout = helper.layout = Layout()
 
         layout.append(Div(Field('conf_name', wrapper_class=f'col-md-12'), css_class='form-row'))
+        layout.append(Div(Field('conf_label', wrapper_class=f'col-md-12'), css_class='form-row'))
         layout.append(Div(Field('api_configuration', wrapper_class=f'col-md-12'), css_class='form-row'))
 
         form_row = Div(css_class='form-row', css_id=f'search_field_config_title_row')

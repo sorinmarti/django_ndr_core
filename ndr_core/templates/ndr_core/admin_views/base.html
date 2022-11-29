@@ -36,6 +36,9 @@
 
                             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                                 <ul class="navbar-nav">
+                                    <li class="nav-item{% if "/pages/" in request.path %} active{% endif %}">
+                                        <a class="nav-link" href="{% url 'ndr_core:configure_pages' %}">Manage Pages</a>
+                                    </li>
                                     <li class="nav-item dropdown{% if "/api/" in request.path or "/search/" in request.path  or "/data/" in request.path %} active{% endif %}">
                                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">Search & API</a>
                                         <div class="dropdown-menu">
@@ -48,16 +51,16 @@
                                         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Style & Colors</a>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="{% url 'ndr_core:ui_settings' %}">Change UI Style</a>
-                                            <a class="dropdown-item" href="#">Manage Color Palettes</a>
-                                            <a class="dropdown-item" href="#">Manage UI Elements</a>
-                                            <a class="dropdown-item" href="#">Manage Page Images</a>
+                                            <a class="dropdown-item" href="{% url 'ndr_core:configure_colors' %}">Manage Color Palettes</a>
+                                            <a class="dropdown-item" href="{% url 'ndr_core:configure_ui_elements' %}">Manage UI Elements</a>
+                                            <a class="dropdown-item" href="{% url 'ndr_core:configure_images' %}">Manage Page Images</a>
                                         </div>
                                     </li>
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">Maintenance</a>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="#">View Contact Messages</a>
-                                            <a class="dropdown-item" href="#">View Correction Suggestions</a>
+                                            <a class="dropdown-item" href="{% url 'ndr_core:configure_messages' %}">View Contact Messages</a>
+                                            <a class="dropdown-item" href="{% url 'ndr_core:configure_corrections' %}">View Correction Suggestions</a>
                                         </div>
                                     </li>
                                     <li class="nav-item{% if "/settings/" in request.path %} active{% endif %}">

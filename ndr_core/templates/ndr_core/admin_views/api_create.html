@@ -2,9 +2,14 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <h2>Create New API Configuration</h2>
-    {% crispy form %}
-
-    <h3>Return render preview</h3>
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <a href="{% url 'ndr_core:configure_api' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Create New API Configuration</h5>
+            {% crispy form %}
+        </div>
+    </div>
 
 {% endblock %}

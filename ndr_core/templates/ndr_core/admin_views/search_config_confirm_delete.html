@@ -2,9 +2,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <h2>Delete Search Configuration</h2>
-   <form method="post">{% csrf_token %}
-    <p>Are you sure you want to delete "{{ object }}"?</p>
-    <input type="submit" value="Confirm">
-</form>
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <a href="{% url 'ndr_core:configure_search' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Really delete Search Configuration?</h5>
+            <form method="post">{% csrf_token %}
+                <p>Are you sure you want to delete "{{ object }}"?</p>
+                <input type="submit" class="btn btn-danger" value="Confirm Delete">
+            </form>
+        </div>
+    </div>
 {% endblock %}

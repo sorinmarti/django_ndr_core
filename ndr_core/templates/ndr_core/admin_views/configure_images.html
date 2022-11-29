@@ -1,18 +1,16 @@
 {% extends 'ndr_core/admin_views/base.html' %}
-{% load render_table from django_tables2 %}
+{% load django_tables2 %}
 
 {% block content %}
-    <h2>Manage Pages</h2>
+    <h2>Manage Images</h2>
     <div class="card-deck">
         <div class="card bg-light mb-3">
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:create_page' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-file"></i> Create New Page
-                    </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'pages' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-circle-info"></i> Help
+                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Help
                     </a>
                 </div>
             </div>
@@ -20,22 +18,19 @@
 
         <div class="card bg-light mb-3">
             <div class="card-body">
-                <h5 class="card-title">Configured Pages</h5>
+                <h5 class="card-title">Gallery</h5>
                 <ul class="list-group">
-                    {% for page in pages %}
+                    {% for api in apis %}
                         <li class="list-group-item list-group-item-action d-flex py-2">
                             <p class="p-0 m-0 flex-grow-1">
-                                <i class="fa-regular fa-file"></i> {{ page.name }} ({{ page.get_page_type_display }})
+                                <i class="fa-regular fa-code"></i> {{ api.api_label }} ({{ api.api_name }})
                             </p>
 
                             <p class="p-0 m-0">
-                                <a href="{% url 'ndr_core:move_page_up' page.pk %}" class="btn btn-sm btn-secondary">
-                                   <i class="fa-regular fa-arrow-up"></i>
-                                </a>
-                                <a href="{% url 'ndr_core:edit_page' page.pk %}" class="btn btn-sm btn-secondary">
+                                <a href="{% url 'ndr_core:edit_api' api.id %}" class="btn btn-sm btn-secondary">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </a>
-                                <a href="{% url 'ndr_core:delete_page' page.pk %}" class="btn btn-sm btn-danger">
+                                <a href="{% url 'ndr_core:delete_api' api.id %}" class="btn btn-sm btn-danger">
                                     <i class="fa-regular fa-delete-left"></i>
                                 </a>
                             </p>
@@ -48,6 +43,6 @@
 
     <div class="alert alert-info small" role="alert">
         <i class="fa-regular fa-circle-info"></i>
-        Pages blabla
     </div>
+
 {% endblock %}

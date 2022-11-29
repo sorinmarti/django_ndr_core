@@ -3,8 +3,16 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <h2>Create New Page</h2>
-    {% crispy form %}
+
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <a href="{% url 'ndr_core:configure_pages' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Create New Page</h5>
+            {% crispy form %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block page_js %}
