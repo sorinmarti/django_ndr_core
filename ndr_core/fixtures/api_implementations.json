@@ -1,0 +1,20 @@
+[
+  {
+    "model": "ndr_core.NdrCoreApiImplementation",
+    "fields": {
+      "name": "ndr_core",
+      "label": "NDR Core API",
+      "url": "",
+      "description": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreApiImplementation",
+    "fields": {
+      "name": "hist_figures_api",
+      "label": "Historical Figures API",
+      "url": "https://api-ninjas.com/api/historicalfigures",
+      "description": ""
+    }
+  }
+]

@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreSearchField, \
     NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration
-from ndr_core.query import Query
+from ndr_core.api import ApiFactory
 
 
 class SearchConfigurationTestCase(TestCase):
@@ -51,13 +51,13 @@ class SearchConfigurationTestCase(TestCase):
 
     def test_basic_query(self):
         conf = NdrCoreSearchConfiguration.objects.get(api_configuration__api_name="asia_dir")
-        query = Query(conf.api_configuration, page=1)
+        query = ApiFactory(conf.api_configuration).get_query_class()(conf.api_configuration, page=1)
         query_string = query.get_simple_query('1234')
         self.assertEqual('http://asiadir.int:8080/query/basic?s=15&p=1&t=1234', query_string)
 
     def test_advanced_query(self):
         conf = NdrCoreSearchConfiguration.objects.get(api_configuration__api_name="asia_dir")
-        query = Query(conf.api_configuration, page=1)
+        query = ApiFactory(conf.api_configuration).get_query_class()(conf.api_configuration, page=1)
         query.set_value("first_name", "John")
         query.set_value("last_name", "Smith")
         query_string = query.get_advanced_query()

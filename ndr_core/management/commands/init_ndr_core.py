@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from django.contrib.staticfiles import finders
 
-from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration
+from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreApiImplementation
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -30,6 +30,7 @@ class Command(BaseCommand):
 
         # Load initial settings data
         call_command('loaddata', 'initial_values.json', app_label='ndr_core')
+        call_command('loaddata', 'api_implementations.json', app_label='ndr_core')
         call_command('loaddata', 'schemas.json', app_label='ndr_core')
         call_command('loaddata', 'base_styles.json', app_label='ndr_core')
         call_command('loaddata', 'color_palettes.json', app_label='ndr_core')
@@ -89,9 +90,12 @@ class Command(BaseCommand):
         # Test Search
         api_conf = NdrCoreApiConfiguration.objects.create(api_name='test_api',
                                                           api_host='localhost',
+                                                          api_type=NdrCoreApiImplementation.objects.get(name='ndr_core'),
                                                           api_protocol=NdrCoreApiConfiguration.Protocol.HTTP,
                                                           api_port=8000,
                                                           api_label='Local Test API',
+                                                          api_description='This configuration queries your local '
+                                                                          'installation for test results.',
                                                           api_page_size=10,
                                                           api_url_stub='ndr_core')
 

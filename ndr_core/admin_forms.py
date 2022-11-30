@@ -1,14 +1,14 @@
 """Contains all forms used in the NDRCore admin interface."""
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Div, Field, Layout, HTML, Button, ButtonHolder
+from crispy_forms.layout import Submit, Div, Field, Layout, HTML, Button, ButtonHolder, Row, Column
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django_select2 import forms as s2forms
 
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreSearchField, NdrCoreSearchConfiguration, \
-    NdrCoreFilterableListConfiguration, NdrCoreValue
+    NdrCoreFilterableListConfiguration, NdrCoreValue, NdrCoreColorScheme
 
 
 class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
@@ -296,6 +296,95 @@ class SearchFieldEditForm(SearchFieldForm):
         return helper
 
 
+class ColorPaletteForm(forms.ModelForm):
+    """Form to create or edit a palette. """
+
+    class Meta:
+        """Configure the model form. Provide model class and form fields."""
+        model = NdrCoreColorScheme
+        exclude = []
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        layout = helper.layout = Layout()
+        helper.form_method = "POST"
+
+        form_row = Row(
+                Column('scheme_name', css_class='form-group col-md-6 mb-0'),
+                Column('scheme_label', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'
+            )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('background_color', css_class='form-group col-md-3 mb-0'),
+            Column('text_color', css_class='form-group col-md-3 mb-0'),
+            Column('link_color', css_class='form-group col-md-3 mb-0'),
+
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('accent_color_1', css_class='form-group col-md-3 mb-0'),
+            Column('accent_color_2', css_class='form-group col-md-3 mb-0'),
+
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('button_color', css_class='form-group col-md-3 mb-0'),
+            Column('button_hover_color', css_class='form-group col-md-3 mb-0'),
+            Column('button_text_color', css_class='form-group col-md-3 mb-0'),
+            Column('button_border_color', css_class='form-group col-md-3 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('second_button_color', css_class='form-group col-md-3 mb-0'),
+            Column('second_button_hover_color', css_class='form-group col-md-3 mb-0'),
+            Column('second_button_text_color', css_class='form-group col-md-3 mb-0'),
+            Column('second_button_border_color', css_class='form-group col-md-3 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('info_color', css_class='form-group col-md-3 mb-0'),
+            Column('success_color', css_class='form-group col-md-3 mb-0'),
+            Column('error_color', css_class='form-group col-md-3 mb-0'),
+
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        return helper
+
+
+class ColorPaletteCreateForm(ColorPaletteForm):
+    """Form to create a color palette from. """
+
+    @property
+    def helper(self):
+        helper = super(ColorPaletteCreateForm, self).helper
+        # helper.add_input(Submit('submit', 'Create Color Palette'))
+        helper.layout.append(get_form_buttons('Create Color Palette'))
+        return helper
+
+
+class ColorPaletteEditForm(ColorPaletteForm):
+    """Form to edit a color palette. """
+
+    @property
+    def helper(self):
+        helper = super(ColorPaletteEditForm, self).helper
+        helper.add_input(Submit('submit', 'Save Color Palette'))
+        return helper
+
+
 class SearchConfigurationForm(forms.ModelForm):
     """Form to create or edit a search search configuration. """
 
@@ -438,3 +527,13 @@ class NdrCoreLoginForm(AuthenticationForm):
         self.helper = FormHelper()
         self.helper.form_method = "POST"
         self.helper.add_input(Submit('login', 'Login'))
+
+
+def get_form_buttons(submit_text):
+    bh = ButtonHolder(
+            Button('cancel', 'Cancel', css_class="btn btn-md btn-default",
+                   data_dismiss="modal"),
+            Submit('submit', submit_text, css_class='btn-default'),
+            css_class="modal-footer"
+        )
+    return bh

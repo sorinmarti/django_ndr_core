@@ -1,75 +1,63 @@
 {% extends 'ndr_core/admin_views/base.html' %}
 
 {% block content %}
-    <h2>Ndr core Help</h2>
-    <p>
-        This is a help page
-    </p>
-    <hr/>
+    <h2>NDR Core Help</h2>
+    <div class="card-deck">
+    <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">General</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:help_chapter' 'pages' %}" class="list-group-item list-group-item-action py-2{% if "/help/pages/" in request.path %} active{% endif %}">
+                        How To Create Pages
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'settings' %}" class="list-group-item list-group-item-action py-2{% if "/help/settings/" in request.path %} active{% endif %}">
+                        Page Settings
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'contact' %}" class="list-group-item list-group-item-action py-2{% if "/help/contact/" in request.path %} active{% endif %}">
+                        Contact Forms
+                    </a>
+                </div>
+            </div>
+        </div>
 
-    <h3>Basic Setup</h3>
-    <p>
-        In order to access this administration interface, you executed the 'init_ndr_core' command in your django
-        installation. With this, your installation has been initialized and a number of Settings have been set.
-        You can change these on the <a href="{% url 'ndr_core:configure_settings' %}">Settings Page</a>.
-    </p>
-    <h4>Change the basic look and feel</h4>
-    <p>
-        NDR core comes in different styles. Your <code>ndr/base.html</code> file extends a certain style.
-        You can change this to a different style or create your own.
-    </p>
-    <hr/>
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">API & Search</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item list-group-item-action py-2{% if "/help/api/" in request.path %} active{% endif %}">
+                        How To Configure an API
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'search' %}" class="list-group-item list-group-item-action py-2{% if "/help/search/" in request.path %} active{% endif %}">
+                        How To Configure a Search
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'test' %}" class="list-group-item list-group-item-action py-2{% if "/help/test/" in request.path %} active{% endif %}">
+                        How To Test Your Settings
+                    </a>
+                </div>
+            </div>
+        </div>
 
-    <h3>Template Pages</h3>
-    <p>
-        Template pages serve static content (such as a project description ar curated studies). When creating a Template
-        Page you choose a <code>view_name</code>. This is the path where this page will be served and the name of the
-        template file created in your installation.
-        Edit the file to provide the static content.
-    </p>
-    <hr/>
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">UI</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:help_chapter' 'ui_style' %}" class="list-group-item list-group-item-action py-2{% if "/help/ui_style/" in request.path %} active{% endif %}">
+                        How To Change Your UI Style
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'colors' %}" class="list-group-item list-group-item-action py-2{% if "/help/colors/" in request.path %} active{% endif %}">
+                        How to Change Colors
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'ui_advanced' %}" class="list-group-item list-group-item-action py-2{% if "/help/ui_advanced/" in request.path %} active{% endif %}">
+                        How To Create Your Own UI Style
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    {% if chapter %}
+        {% include 'ndr_core/admin_views/help/'|add:chapter|add:".html" %}
+    {% endif %}
 
-    <h3>Search Pages</h3>
-    <p>
-        Search Pages come in three types: Simple search, Custom search and Combined search. A simple search consists of
-        a single catch-all search field which searches all fields. The custom search consists of a number of search
-        fields which you can configure. The combined search shows two tabs, one containing the simple search, the other
-        one a custom search. The search forms need an API to connect to. This is the host where the search results are
-        served from. The following rules/restrictions apply:
-    </p>
-    <p>
-        <ul>
-            <li>A custom search needs a <a href="{% url 'ndr_core:configure_search' %}">Search Configuration</a>.
-                A search configuration is made up of different <a href="{% url 'ndr_core:configure_search_fields' %}">Search
-                Fields</a>. You'll have to create the search fields first and then add them to a search configuration.</li>
-            <li>Search Fields, Search Configurations and <a href="{% url 'ndr_core:configure_api' %}">API Configurations</a>
-                can be reused on different pages.</li>
-            <li>A simple search cannot be further configured. It is one field searching in all the data.</li>
-        </ul>
-    </p>
-    <hr/>
-
-
-    <h3>List Pages</h3>
-    <p>
-        A list page can display a list of data which can be filtered.
-    </p>
-    <hr/>
-
-
-    <h3>Contact Form</h3>
-    <p>
-        A Contact Form is a form where visitors can send you a message. The message will be sent to an e-mail address of
-        your choice. The following rules/restrictions apply:
-    </p>
-    <p>
-        <ul>
-            <li>You can have only one contact form in your installation</li>
-            <li>Go to the <a href="{% url 'ndr_core:configure_settings' %}">Settings Page</a> to configure your
-                E-Mail server to send them.</li>
-        </ul>
-    </p>
-    <hr/>
 
 {% endblock %}

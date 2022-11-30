@@ -94,7 +94,10 @@ class NdrCoreSearchFieldFormConfiguration(models.Model):
 
 class NdrCoreApiImplementation(models.Model):
     """TODO """
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
+    label = models.CharField(max_length=100, unique=True)
+    url = models.URLField(null=True)
+    description = models.TextField(default='blank')
 
 
 class NdrCoreApiConfiguration(models.Model):

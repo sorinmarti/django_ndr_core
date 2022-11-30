@@ -1,3 +1,9 @@
+.palette-display {
+    min-width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    border-color: black;
+}
 .card-text {
     font-size: small;
 }

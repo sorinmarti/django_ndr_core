@@ -25,19 +25,23 @@
                     {% for page in pages %}
                         <li class="list-group-item list-group-item-action d-flex py-2">
                             <p class="p-0 m-0 flex-grow-1">
-                                <i class="fa-regular fa-file"></i> {{ page.name }} ({{ page.get_page_type_display }})
+                                <i class="fa-regular fa-file"></i>
+                                <a href="">{{ page.name }}</a> <small>(Nav: {{ page.label }})</small><br/>
+                                <small>Type: {{ page.get_page_type_display }}, URL: {{ page.url }} </small>
                             </p>
 
                             <p class="p-0 m-0">
-                                <a href="{% url 'ndr_core:move_page_up' page.pk %}" class="btn btn-sm btn-secondary">
-                                   <i class="fa-regular fa-arrow-up"></i>
-                                </a>
-                                <a href="{% url 'ndr_core:edit_page' page.pk %}" class="btn btn-sm btn-secondary">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                </a>
-                                <a href="{% url 'ndr_core:delete_page' page.pk %}" class="btn btn-sm btn-danger">
-                                    <i class="fa-regular fa-delete-left"></i>
-                                </a>
+                                <div style="white-space: nowrap;">
+                                    <a href="{% url 'ndr_core:move_page_up' page.pk %}" class="btn btn-sm btn-secondary">
+                                       <i class="fa-regular fa-arrow-up"></i>
+                                    </a>
+                                    <a href="{% url 'ndr_core:edit_page' page.pk %}" class="btn btn-sm btn-secondary">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="{% url 'ndr_core:delete_page' page.pk %}" class="btn btn-sm btn-danger">
+                                        <i class="fa-regular fa-delete-left"></i>
+                                    </a>
+                                </div>
                             </p>
                         </li>
                     {% endfor %}
@@ -48,6 +52,6 @@
 
     <div class="alert alert-info small" role="alert">
         <i class="fa-regular fa-circle-info"></i>
-        Pages blabla
+        Your NDR Website consists of multiple pages with a type. You can configure them here.
     </div>
 {% endblock %}

@@ -1,10 +1,11 @@
+from abc import ABC, abstractmethod
 import json
 
 import requests
 from django.urls import reverse
 
 
-class Result:
+class BaseResult(ABC):
 
     TIMEOUT = -100
     REQUEST = -101
@@ -33,11 +34,11 @@ class Result:
             result = requests.get(self.query, timeout=(2, 5))
         except requests.exceptions.ConnectTimeout as e:
             self.error = "The connection timed out"
-            self.error_code = Result.TIMEOUT
+            self.error_code = BaseResult.TIMEOUT
             return
         except requests.exceptions.RequestException as e:
             self.error = "Query could not be requested"
-            self.error_code = Result.REQUEST
+            self.error_code = BaseResult.REQUEST
             return
 
         # If request was successful: load json object from it
@@ -50,11 +51,11 @@ class Result:
                 return
             except json.JSONDecodeError:
                 self.error = "Result could not be loaded"
-                self.error_code = Result.LOADED
+                self.error_code = BaseResult.LOADED
                 return
         else:
             self.error = f"The server returned status code: {result.status_code}"
-            self.error_code = Result.SERVER
+            self.error_code = BaseResult.SERVER
             return
 
     def organize_raw_result(self):
@@ -142,10 +143,10 @@ class Result:
 
             for transform_action in transformer:
                 key_parts = transform_action["source_field_name"].split(".")
-                desired_value = Result.safe_get(hit, key_parts)
+                desired_value = BaseResult.safe_get(hit, key_parts)
                 if desired_value is None and "dne_field_name" in transform_action:
                     key_parts = transform_action["dne_field_name"].split(".")
-                    desired_value = Result.safe_get(hit, key_parts)
+                    desired_value = BaseResult.safe_get(hit, key_parts)
                 if desired_value is None and "none_value" in transform_action:
                     desired_value = transform_action["none_value"]
 

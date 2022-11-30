@@ -8,11 +8,11 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:create_api' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:create_palette' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-palette"></i>
                         Create New Color Palette
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:help_chapter' 'colors' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
                         Help
                     </a>
@@ -30,13 +30,27 @@
                                 <i class="fa-regular fa-palette"></i> {{ palette.scheme_label }} ({{ palette.scheme_name }})
                             </p>
 
+                            <div class="row" style="margin-right: 20px;">
+                                <div class="border palette-display" style="background: {{ palette.background_color }};"></div>
+                                <div class="border palette-display" style="background: {{ palette.text_color }};"></div>
+                                <div class="border palette-display" style="background: {{ palette.button_color }};"></div>
+                                <div class="border palette-display" style="background: {{ palette.button_hover_color }};"></div>
+                                <div class="border palette-display" style="background: {{ palette.second_button_color }};"></div>
+                                <div class="border palette-display" style="background: {{ palette.second_button_hover_color }};"></div>
+                                <div class="border palette-display" style="background: {{ palette.link_color }};"></div>
+                                <div class="border palette-display" style="background: {{ palette.accent_color_1 }};"></div>
+                                <div class="border palette-display" style="background: {{ palette.accent_color_2 }};"></div>
+                            </div>
+
                             <p class="p-0 m-0">
-                                <a href="{% url 'ndr_core:edit_api' palette.id %}" class="btn btn-sm btn-secondary">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                </a>
-                                <a href="{% url 'ndr_core:delete_api' palette.id %}" class="btn btn-sm btn-danger">
-                                    <i class="fa-regular fa-delete-left"></i>
-                                </a>
+                                <div style="white-space: nowrap;">
+                                    <a href="{% url 'ndr_core:edit_palette' palette.id %}" class="btn btn-sm btn-secondary">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="{% url 'ndr_core:delete_palette' palette.id %}" class="btn btn-sm btn-danger">
+                                        <i class="fa-regular fa-delete-left"></i>
+                                    </a>
+                                </div>
                             </p>
                         </li>
                     {% endfor %}
@@ -47,9 +61,7 @@
 
     <div class="alert alert-info small" role="alert">
         <i class="fa-regular fa-circle-info"></i>
-        An API consists of the definition of an API-Host and the protocol. Further it consists of definitions of what
-        is returned. You can create multiple API configurations to query multiple endpoints. Each Search form needs an
-        API to function.
+        Colors Bla Bla
     </div>
 
 {% endblock %}

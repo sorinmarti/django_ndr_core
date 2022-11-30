@@ -9,9 +9,8 @@ from django.views.generic import TemplateView
 
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration
-from ndr_core.query import Query
+from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
-from ndr_core.result import Result
 
 
 def dispatch(request, ndr_page):
@@ -86,9 +85,10 @@ class NdrDownloadView(View):
     def get(self, request, *args, **kwargs):
         try:
             api_config = NdrCoreApiConfiguration.objects.get(api_name=self.kwargs['api_config'])
-            api = Query(api_config)
+            api_factory = ApiFactory(api_config)
+            api = api_factory.get_query_class()(api_config)
             query = api.get_record_query(self.kwargs['record_id'])
-            result = Result(api_config, query, self.request)
+            result = api_factory.get_result_class()(api_config, query, self.request)
             result.load_result(transform_result=False)
             return JsonResponse(result.raw_result)
         except NdrCoreApiConfiguration.DoesNotExist:
@@ -128,11 +128,13 @@ class SearchView(_NdrCoreView):
                 # If the form is valid: create a search query
                 if form.is_valid():
                     if requested_search == 'simple':
-                        query = Query(self.ndr_page.simple_api, page=request.GET.get("page", 1))
+                        api_factory = ApiFactory(self.ndr_page.simple_api)
+                        query = api_factory.get_query_class()(self.ndr_page.simple_api, page=request.GET.get("page", 1))
                         query_string = query.get_simple_query(request.GET.get('search_term', ''))
                     else:
                         search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
-                        query = Query(search_config.api_configuration, page=request.GET.get("page", 1))
+                        api_factory = ApiFactory(search_config.api_configuration)
+                        query = api_factory.get_query_class()(search_config.api_configuration, page=request.GET.get("page", 1))
                         for key in request.GET.keys():
                             if search_config.search_form_fields.filter(search_field__field_name=key).count() > 0:
                                 query.set_value(key, request.GET.get(key))
@@ -157,9 +159,10 @@ class SimpleSearchView(_NdrCoreView):
             form = SimpleSearchForm(request.GET, ndr_page=self.ndr_page)
 
             if "search_button_simple" in request.GET.keys():
-                query = Query(self.ndr_page.simple_api)
+                api_factory = ApiFactory(self.ndr_page.simple_api)
+                query = api_factory.get_query_class()(self.ndr_page.simple_api)
                 query_string = query.get_simple_query(request.GET.get('search_term', ''), request.GET.get("page", 1))
-                result = Result(self.ndr_page.simple_api, query_string, self.request)
+                result = api_factory.get_result_class()(self.ndr_page.simple_api, query_string, self.request)
                 result.load_result()
                 context.update({'api_config': self.ndr_page.simple_api})
                 context.update({'result': result})
