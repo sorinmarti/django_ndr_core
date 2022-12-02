@@ -8,11 +8,29 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item list-group-item-action py-2">
+                    {% if correction_enabled %}
+                        <a href="{% url 'ndr_core:set_correction_option' 'false' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-toggle-on"></i>
+                            Disable Correction Feature
+                        </a>
+                    {% else %}
+                        <a href="{% url 'ndr_core:set_correction_option' 'true' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-toggle-off"></i>
+                            Enable Correction Feature
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'ndr_core:set_correction_option' 'true' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-file-export"></i>
+                            Export All Corrections To TSV
+                        </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'corrections' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
                         Help
                     </a>
                 </div>
+                <p></p>
+                <h5 class="card-title">Settings</h5>
+                The correction Option is {% if correction_enabled %}<strong class="text-success">enabled</strong>{% else %}<strong class="text-danger">disabled</strong>{% endif %}.
             </div>
         </div>
 
@@ -43,6 +61,7 @@
 
     <div class="alert alert-info small" role="alert">
         <i class="fa-regular fa-circle-info"></i>
+        Users can mark returned results if they think they need corrections.
     </div>
 
 {% endblock %}

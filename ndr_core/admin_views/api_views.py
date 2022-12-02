@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
-from ndr_core.admin_forms import ApiCreateForm, ApiEditForm
+from ndr_core.admin_forms.api_forms import ApiCreateForm, ApiEditForm
 from ndr_core.models import NdrCoreApiConfiguration
 
 
@@ -21,10 +21,15 @@ class ConfigureApi(LoginRequiredMixin, View):
 
 
 class ApiConfigurationDetailView(LoginRequiredMixin, DetailView):
-    """TODO """
+    """ View to show details of an API configuration """
 
     model = NdrCoreApiConfiguration
     template_name = 'ndr_core/admin_views/configure_api.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ApiConfigurationDetailView, self).get_context_data(**kwargs)
+        context['apis'] = NdrCoreApiConfiguration.objects.all().order_by('api_name')
+        return context
 
 
 class ApiConfigurationCreateView(LoginRequiredMixin, CreateView):
@@ -37,11 +42,6 @@ class ApiConfigurationCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         response = super(ApiConfigurationCreateView, self).form_valid(form)
-
-        for row in range(20):
-            # TODO Check and create rendering fields
-            pass
-
         return response
 
 
@@ -55,11 +55,6 @@ class ApiConfigurationEditView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super(ApiConfigurationEditView, self).form_valid(form)
-
-        for row in range(20):
-            # TODO Check and create/update/delete rendering fields
-            pass
-
         return response
 
 

@@ -7,13 +7,13 @@
             <div class="card-body">
                 <h5 class="card-title">General</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:help_chapter' 'pages' %}" class="list-group-item list-group-item-action py-2{% if "/help/pages/" in request.path %} active{% endif %}">
-                        How To Create Pages
+                    <a href="{% url 'ndr_core:help_chapter' 'pages' %}" class="list-group-item small list-group-item-action py-2{% if "/help/pages/" in request.path %} active{% endif %}">
+                        NDR Core Pages
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'settings' %}" class="list-group-item list-group-item-action py-2{% if "/help/settings/" in request.path %} active{% endif %}">
-                        Page Settings
+                    <a href="{% url 'ndr_core:help_chapter' 'settings' %}" class="list-group-item small list-group-item-action py-2{% if "/help/settings/" in request.path %} active{% endif %}">
+                        Settings
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'contact' %}" class="list-group-item list-group-item-action py-2{% if "/help/contact/" in request.path %} active{% endif %}">
+                    <a href="{% url 'ndr_core:help_chapter' 'contact' %}" class="list-group-item small list-group-item-action py-2{% if "/help/contact/" in request.path %} active{% endif %}">
                         Contact Forms
                     </a>
                 </div>
@@ -24,14 +24,14 @@
             <div class="card-body">
                 <h5 class="card-title">API & Search</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item list-group-item-action py-2{% if "/help/api/" in request.path %} active{% endif %}">
-                        How To Configure an API
+                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item small list-group-item-action py-2{% if "/help/api/" in request.path %} active{% endif %}">
+                        API Configuration
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'search' %}" class="list-group-item list-group-item-action py-2{% if "/help/search/" in request.path %} active{% endif %}">
-                        How To Configure a Search
+                    <a href="{% url 'ndr_core:help_chapter' 'search' %}" class="list-group-item small list-group-item-action py-2{% if "/help/search/" in request.path %} active{% endif %}">
+                        Search Configuration
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'test' %}" class="list-group-item list-group-item-action py-2{% if "/help/test/" in request.path %} active{% endif %}">
-                        How To Test Your Settings
+                    <a href="{% url 'ndr_core:help_chapter' 'test' %}" class="list-group-item small list-group-item-action py-2{% if "/help/test/" in request.path %} active{% endif %}">
+                        Test Search
                     </a>
                 </div>
             </div>
@@ -41,14 +41,37 @@
             <div class="card-body">
                 <h5 class="card-title">UI</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:help_chapter' 'ui_style' %}" class="list-group-item list-group-item-action py-2{% if "/help/ui_style/" in request.path %} active{% endif %}">
-                        How To Change Your UI Style
+                    <a href="{% url 'ndr_core:help_chapter' 'ui_style' %}" class="list-group-item small list-group-item-action py-2{% if "/help/ui_style/" in request.path %} active{% endif %}">
+                        UI Style
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'colors' %}" class="list-group-item list-group-item-action py-2{% if "/help/colors/" in request.path %} active{% endif %}">
-                        How to Change Colors
+                    <a href="{% url 'ndr_core:help_chapter' 'colors' %}" class="list-group-item small list-group-item-action py-2{% if "/help/colors/" in request.path %} active{% endif %}">
+                        Color Palettes
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'ui_advanced' %}" class="list-group-item list-group-item-action py-2{% if "/help/ui_advanced/" in request.path %} active{% endif %}">
-                        How To Create Your Own UI Style
+                    <a href="{% url 'ndr_core:help_chapter' 'ui_elements' %}" class="list-group-item small list-group-item-action py-2{% if "/help/ui_elements/" in request.path %} active{% endif %}">
+                        UI Elements
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'images' %}" class="list-group-item small list-group-item-action py-2{% if "/help/images/" in request.path %} active{% endif %}">
+                        Images
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'ui_advanced' %}" class="list-group-item small list-group-item-action py-2{% if "/help/ui_advanced/" in request.path %} active{% endif %}">
+                        Create UI Styles
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Maintenance</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:help_chapter' 'messages' %}" class="list-group-item small list-group-item-action py-2{% if "/help/messages/" in request.path %} active{% endif %}">
+                        Your Inbox
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'corrections' %}" class="list-group-item small list-group-item-action py-2{% if "/help/corrections/" in request.path %} active{% endif %}">
+                        Corrections
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'none' %}" class="list-group-item small list-group-item-action py-2{% if "/help/none/" in request.path %} active{% endif %}">
+                        ???
                     </a>
                 </div>
             </div>

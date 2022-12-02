@@ -8,7 +8,15 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:help_chapter' 'messages' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-file-export"></i>
+                        Export Messages
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'messages' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-delete-left"></i>
+                        Delete All Messages
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'messages' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
                         Help
                     </a>

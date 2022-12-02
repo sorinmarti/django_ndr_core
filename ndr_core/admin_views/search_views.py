@@ -9,7 +9,7 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
 from ndr_core.form_preview import get_image_from_raw_data
-from ndr_core.admin_forms import SearchConfigurationForm, SearchFieldEditForm, SearchFieldCreateForm
+from ndr_core.admin_forms.search_forms import SearchConfigurationForm, SearchFieldEditForm, SearchFieldCreateForm
 from ndr_core.models import NdrCoreDataSchema, NdrCoreSearchField, NdrCoreSearchConfiguration, \
     NdrCoreSearchFieldFormConfiguration
 

@@ -1,18 +1,27 @@
 {% extends 'ndr_core/admin_views/base.html' %}
 {% load django_tables2 %}
+{% load ndr_utils %}
 
 {% block content %}
     <h2>Configure Sample Data</h2>
+
+    {% if not apis %}
+        <div class="alert alert-danger" role="alert">
+            <i class="fa-regular fa-circle-exclamation"></i>
+            Sample Data is associated with an <a href="{% url 'ndr_core:configure_api' %}">API Configuration</a>. Create a configuration first.
+        </div>
+    {% endif %}
+
     <div class="card-deck">
         <div class="card bg-light mb-3">
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:create_api' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:upload_sample_data' %}" class="list-group-item list-group-item-action py-2{% if not apis %} disabled{% endif %}">
                         <i class="fa-regular fa-file-arrow-up"></i>
                         Upload Sample Data File
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:help_chapter' 'test' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
                         Help
                     </a>
@@ -20,36 +29,52 @@
             </div>
         </div>
 
-        <div class="card bg-light mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Uploaded Files</h5>
-                <ul class="list-group">
-                    {% for api in apis %}
-                        <li class="list-group-item list-group-item-action d-flex py-2">
-                            <p class="p-0 m-0 flex-grow-1">
-                                <i class="fa-regular fa-code"></i> {{ api.api_label }} ({{ api.api_name }})
-                            </p>
+        <div class="card bg-light mb-3" style="max-height: 50vh;">
+            <div class="overflow-auto">
+                <div class="card-body">
+                    <h5 class="card-title">Uploaded Files</h5>
 
-                            <p class="p-0 m-0">
-                                <a href="{% url 'ndr_core:edit_api' api.id %}" class="btn btn-sm btn-secondary">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                </a>
-                                <a href="{% url 'ndr_core:delete_api' api.id %}" class="btn btn-sm btn-danger">
-                                    <i class="fa-regular fa-delete-left"></i>
-                                </a>
-                            </p>
-                        </li>
+                    {% for api in apis %}
+                        <h6 class="card-title">{{ api.api_label }}</h6>
+                        <ul class="list-group">
+                            {% for file in files|key_value:api.api_name %}
+                                <li class="list-group-item list-group-item-action d-flex py-2">
+                                    <p class="p-0 m-0 flex-grow-1">
+                                        <i class="fa-regular fa-file"></i>
+                                        <a href="{% url 'ndr_core:view_sample_data' api.pk file %}">{{ file }}</a>
+                                    </p>
+
+                                    <p class="p-0 m-0">
+                                        <a href="{% url 'ndr_core:delete_sample_data_file' api.pk file %}" class="btn btn-sm btn-danger">
+                                            <i class="fa-regular fa-delete-left"></i>
+                                        </a>
+                                    </p>
+                                </li>
+                            {% endfor %}
+                            {% if files|key_value:api.api_name|length == 0%}
+                                <li class="list-group-item list-group-item-action d-flex py-2">
+                                    <i>No files.</i>
+                                </li>
+                            {% endif %}
+                        </ul>
                     {% endfor %}
-                </ul>
+
+                </div>
             </div>
         </div>
     </div>
 
+    {% if file_contents %}
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <pre>{{ file_contents | linebreaks }}</pre>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="alert alert-info small" role="alert">
         <i class="fa-regular fa-circle-info"></i>
-        An API consists of the definition of an API-Host and the protocol. Further it consists of definitions of what
-        is returned. You can create multiple API configurations to query multiple endpoints. Each Search form needs an
-        API to function.
+        You can test the rendering of your results with sample data. Upload it here.
     </div>
 
 {% endblock %}

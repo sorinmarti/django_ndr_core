@@ -20,6 +20,15 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "correction_feature",
+      "value_label": "Correction Feature Enabled",
+      "value_help_text": "true if users can suggest corrections, false otherwise.",
+      "value_value": "true"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "contact_form_send_to_address",
       "value_label": "E-Mail address for Contact Form",
       "value_help_text": "Messages from the contact form are sent to this address",

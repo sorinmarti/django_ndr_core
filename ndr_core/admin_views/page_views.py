@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 
-from ndr_core.admin_forms import PageCreateForm, PageEditForm
+from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm
 from ndr_core.models import NdrCorePage
 from ndr_core.ndr_settings import NdrSettings
 
@@ -34,7 +34,12 @@ class PageDetailView(LoginRequiredMixin, DetailView):
     """TODO """
 
     model = NdrCorePage
-    template_name = 'ndr_core/admin_views/page_edit.html'
+    template_name = 'ndr_core/admin_views/configure_pages.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PageDetailView, self).get_context_data(**kwargs)
+        context['pages'] = NdrCorePage.objects.all().order_by('index')
+        return context
 
 
 class PageCreateView(LoginRequiredMixin, CreateView):

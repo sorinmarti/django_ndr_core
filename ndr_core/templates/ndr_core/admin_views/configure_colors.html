@@ -12,56 +12,169 @@
                         <i class="fa-regular fa-palette"></i>
                         Create New Color Palette
                     </a>
+                    <a href="{% url 'ndr_core:import_palette' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-file-import"></i>
+                        Import Color Palette
+                    </a>
                     <a href="{% url 'ndr_core:help_chapter' 'colors' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
                         Help
                     </a>
                 </div>
+                <p></p>
+                <h5 class="card-title">Settings</h5>
+                Your selected Palette is:<br/>
+                <div class="list-group-item list-group-item-action d-flex py-2">
+                    <p class="p-0 m-0 flex-grow-1">
+                        <i class="fa-regular fa-palette"></i> <a href="{% url 'ndr_core:view_palette' palette.pk %}">{{ palette.scheme_label }}</a>
+                    </p>
+
+                    <div class="row">
+                        <div class="border palette-display" style="background: {{ palette.background_color }};"></div>
+                        <div class="border palette-display" style="background: {{ palette.text_color }};"></div>
+                        <div class="border palette-display" style="background: {{ palette.button_color }};"></div>
+                        <div class="border palette-display" style="background: {{ palette.second_button_color }};"></div>
+                        <div class="border palette-display" style="background: {{ palette.link_color }};"></div>
+                        <div class="border palette-display" style="background: {{ palette.accent_color_1 }};"></div>
+                        <div class="border palette-display" style="background: {{ palette.accent_color_2 }};"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="card bg-light mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Configured Palettes</h5>
-                <ul class="list-group">
-                    {% for palette in palettes %}
-                        <li class="list-group-item list-group-item-action d-flex py-2">
-                            <p class="p-0 m-0 flex-grow-1">
-                                <i class="fa-regular fa-palette"></i> {{ palette.scheme_label }} ({{ palette.scheme_name }})
-                            </p>
+        <div class="card bg-light mb-3" style="max-height: 50vh;">
+            <div class="overflow-auto">
+                <div class="card-body">
+                    <h5 class="card-title">Configured Palettes</h5>
+                    <ul class="list-group">
+                        {% for palette in palettes %}
+                            <li class="list-group-item list-group-item-action d-flex py-2">
+                                <p class="p-0 m-0 flex-grow-1">
+                                    <i class="fa-regular fa-palette"></i> <a href="{% url 'ndr_core:view_palette' palette.pk %}">{{ palette.scheme_label }}</a>
+                                </p>
 
-                            <div class="row" style="margin-right: 20px;">
-                                <div class="border palette-display" style="background: {{ palette.background_color }};"></div>
-                                <div class="border palette-display" style="background: {{ palette.text_color }};"></div>
-                                <div class="border palette-display" style="background: {{ palette.button_color }};"></div>
-                                <div class="border palette-display" style="background: {{ palette.button_hover_color }};"></div>
-                                <div class="border palette-display" style="background: {{ palette.second_button_color }};"></div>
-                                <div class="border palette-display" style="background: {{ palette.second_button_hover_color }};"></div>
-                                <div class="border palette-display" style="background: {{ palette.link_color }};"></div>
-                                <div class="border palette-display" style="background: {{ palette.accent_color_1 }};"></div>
-                                <div class="border palette-display" style="background: {{ palette.accent_color_2 }};"></div>
-                            </div>
-
-                            <p class="p-0 m-0">
-                                <div style="white-space: nowrap;">
-                                    <a href="{% url 'ndr_core:edit_palette' palette.id %}" class="btn btn-sm btn-secondary">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                    </a>
-                                    <a href="{% url 'ndr_core:delete_palette' palette.id %}" class="btn btn-sm btn-danger">
-                                        <i class="fa-regular fa-delete-left"></i>
-                                    </a>
+                                <div class="row" style="margin-right: 20px;">
+                                    <div class="border palette-display" style="background: {{ palette.background_color }};"></div>
+                                    <div class="border palette-display" style="background: {{ palette.text_color }};"></div>
+                                    <div class="border palette-display" style="background: {{ palette.button_color }};"></div>
+                                    <div class="border palette-display" style="background: {{ palette.second_button_color }};"></div>
+                                    <div class="border palette-display" style="background: {{ palette.link_color }};"></div>
+                                    <div class="border palette-display" style="background: {{ palette.accent_color_1 }};"></div>
+                                    <div class="border palette-display" style="background: {{ palette.accent_color_2 }};"></div>
                                 </div>
-                            </p>
-                        </li>
-                    {% endfor %}
-                </ul>
+
+                                <p class="p-0 m-0">
+                                    <div style="white-space: nowrap;">
+                                        <a href="{% url 'ndr_core:edit_palette' palette.pk %}" class="btn btn-sm btn-secondary">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </a>
+                                        <a href="{% url 'ndr_core:delete_palette' palette.pk %}" class="btn btn-sm btn-danger">
+                                            <i class="fa-regular fa-delete-left"></i>
+                                        </a>
+                                        <a href="{% url 'ndr_core:export_palette' palette.pk %}" target="_blank" class="btn btn-sm btn-secondary">
+                                            <i class="fa-regular fa-file-export"></i>
+                                        </a>
+                                    </div>
+                                </p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
+    {% if object %}
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ object.scheme_label }}</h5>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-3">Navigation Label</div>
+                        <div class="col">{{ object.scheme_label }} <small>(This is displayed as the page's navigation label)</small></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">Page Name</div>
+                        <div class="col">{{ object.scheme_name }} <small>(This name is displayed as the page's Title)</small></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">Colors</div>
+                        <div class="col">
+                            <div class="container">
+                                <div class="row mt-3">
+                                    <div class="col-3 pl-0">BG Color</div>
+                                    <div class="col-3 pl-0">Text Color</div>
+                                    <div class="col-3 pl-0">Link Color</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 border palette-display" style="background: {{ object.background_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.text_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.link_color }};"></div>
+                                </div>
+
+                                 <div class="row mt-3">
+                                    <div class="col-3 pl-0">Accent 1</div>
+                                    <div class="col-3 pl-0">Accent2</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 border palette-display" style="background: {{ object.accent_color_1 }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.accent_color_2 }};"></div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-3 pl-0">Button Color</div>
+                                    <div class="col-3 pl-0">Button Text Color</div>
+                                    <div class="col-3 pl-0">Button Hover Color</div>
+                                    <div class="col-3 pl-0">Button Border Color</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 border palette-display" style="background: {{ object.button_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.button_text_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.button_hover_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.button_border_color }};"></div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-3 pl-0">2nd Button Color</div>
+                                    <div class="col-3 pl-0">2nd Button Text Color</div>
+                                    <div class="col-3 pl-0">2nd Button Hover Color</div>
+                                    <div class="col-3 pl-0">2nd Button Border Color</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 border palette-display" style="background: {{ object.second_button_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.second_button_text_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.second_button_hover_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.second_button_border_color }};"></div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-3 pl-0">Info Color</div>
+                                    <div class="col-3 pl-0">Success Color</div>
+                                    <div class="col-3 pl-0">Error Color</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 border palette-display" style="background: {{ object.info_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.success_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.error_color }};"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                {% if object.pk == palette.pk %}
+                    <a href="{% url 'ndr_core:choose_palette' object.pk %}" role="button" class="btn btn-secondary disabled">This Palette is your Page Palette</a>
+                {% else %}
+                    <a href="{% url 'ndr_core:choose_palette' object.pk %}" role="button" class="btn btn-warning">Set this Palette as your Page Palette</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
     <div class="alert alert-info small" role="alert">
         <i class="fa-regular fa-circle-info"></i>
-        Colors Bla Bla
+        Colors Palettes define how your page is colored. You can use existing palettes or create your own.
     </div>
 
 {% endblock %}

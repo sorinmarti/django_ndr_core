@@ -8,7 +8,6 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse, NoReverseMatch
-from django.utils.timezone import now
 
 from ndr_core.ndr_settings import NdrSettings
 
@@ -50,10 +49,14 @@ class NdrCoreSearchField(models.Model):
     """Sets a field to 'required' which means it can't be blank"""
 
     help_text = models.CharField(max_length=250,
+                                 blank=True,
+                                 default='',
                                  help_text="The help text which will be displayed in the form")
     """The help text which will be displayed in the form"""
 
     api_parameter = models.CharField(max_length=100,
+                                     blank=True,
+                                     default='',
                                      help_text="The name of the API parameter which is used to generate a query")
     """The name of the API parameter which is used to generate a query"""
 
@@ -94,10 +97,13 @@ class NdrCoreSearchFieldFormConfiguration(models.Model):
 
 class NdrCoreApiImplementation(models.Model):
     """TODO """
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, primary_key=True)
     label = models.CharField(max_length=100, unique=True)
     url = models.URLField(null=True)
     description = models.TextField(default='blank')
+
+    def __str__(self):
+        return self.label
 
 
 class NdrCoreApiConfiguration(models.Model):
@@ -109,7 +115,7 @@ class NdrCoreApiConfiguration(models.Model):
         HTTPS = 2, "https"
 
     api_name = models.CharField(max_length=100,
-                                unique=True,
+                                primary_key=True,
                                 help_text="The (form) name of the API. Can't contain special characters or spaces")
     """This name is used as identifier for the API Can't contain special characters or spaces"""
 
@@ -327,7 +333,7 @@ class NdrCoreUiStyle(models.Model):
     """A NDR Core page is styled a certain way. Navigation may be on top or to the left, fonts may be different and
     so on. Each UI Style provides a base.html and (most probably) a css file."""
 
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, primary_key=True)
     """Name of the style. Used as identifier. """
 
     label = models.CharField(max_length=100)
@@ -344,59 +350,66 @@ class NdrCoreColorScheme(models.Model):
     """The NDR Core UI styles get colored with a certain color scheme. The selected scheme is used to create a
     colors.css stylesheet file in your ndr installation. It gets regenerated when you change the selected scheme."""
 
-    scheme_name = models.CharField(unique=True, max_length=50)
+    scheme_name = models.CharField(primary_key=True,
+                                   max_length=50,
+                                   help_text='This name is used for export reference and as css file name. '
+                                             'No spaces and no special characters but underscores.')
     """The name of the color scheme. For display and reference."""
 
-    scheme_label = models.CharField(max_length=100)
+    scheme_label = models.CharField(max_length=100,
+                                    help_text='Human readable label of the scheme. Make it descriptive.')
     """Human readable label of the scheme """
 
-    background_color = ColorField()
+    background_color = ColorField(help_text='Basic background color of the whole page.')
     """Basic background color of the whole page."""
 
-    text_color = ColorField()
+    text_color = ColorField(help_text='Basic text color for the whole page.')
     """Basic text color for the whole page."""
 
-    button_color = ColorField()
-    """Basic color of primary buttons."""
+    button_color = ColorField(help_text='Background color of primary buttons.')
+    """Background color of primary buttons."""
 
-    button_hover_color = ColorField()
+    button_hover_color = ColorField(help_text='Hover color of primary buttons.')
     """Hover color of primary buttons."""
 
-    button_text_color = ColorField()
+    button_text_color = ColorField(help_text='Text color of primary buttons.')
     """Text color of primary buttons."""
 
-    button_border_color = ColorField()
+    button_border_color = ColorField(help_text='Border color of primary buttons.')
     """Border color of primary buttons."""
 
-    second_button_color = ColorField()
+    second_button_color = ColorField(help_text='Background color of secondary buttons.')
     """Basic color of secondary buttons."""
 
-    second_button_hover_color = ColorField()
-    """Hover cover of secondary buttons."""
+    second_button_hover_color = ColorField(help_text='Hover color of secondary buttons.')
+    """Hover color of secondary buttons."""
 
-    second_button_text_color = ColorField()
+    second_button_text_color = ColorField(help_text='Text color of secondary buttons.')
     """Text color of secondary buttons."""
 
-    second_button_border_color = ColorField()
+    second_button_border_color = ColorField(help_text='Border color of secondary buttons.')
     """Border color of secondary buttons."""
 
-    link_color = ColorField()
+    link_color = ColorField(help_text='Color for links.')
     """Color for hrefs."""
 
-    accent_color_1 = ColorField()
+    accent_color_1 = ColorField(help_text='Accent color 1. Used as navigation background and the like.')
     """Accent color 1."""
 
-    accent_color_2 = ColorField()
+    accent_color_2 = ColorField(help_text='Accent color 2. Used as element background and the like.')
     """Accent color 2."""
 
-    info_color = ColorField()
+    info_color = ColorField(help_text='Info color for alerts.')
     """Info color for alerts."""
 
-    success_color = ColorField()
+    success_color = ColorField(help_text='Success color for alerts.')
     """Success color for alerts."""
 
-    error_color = ColorField()
+    error_color = ColorField(help_text='Error color for alerts.')
     """Error color for alerts."""
+
+    def __str__(self):
+        return self.scheme_label
 
 
 class NdrCoreValue(models.Model):
@@ -406,7 +419,7 @@ class NdrCoreValue(models.Model):
      The list of values is given and gets loaded from a fixture when the management command 'init_ndr_core' is
      executed. Users can only manipulate the 'value_value' of each object."""
 
-    value_name = models.CharField(max_length=100, unique=True)
+    value_name = models.CharField(max_length=100, primary_key=True)
     """This is the identifier of a NdrCoreValue. In the source, each value gets loaded by searching for this name"""
 
     value_label = models.CharField(max_length=100)
@@ -500,3 +513,9 @@ class UserMessage(models.Model):
 
     message_ret_email = models.EmailField()
     """TODO """
+
+
+class NdrCoreUIElement(models.Model):
+    """TODO """
+
+    element_type = models.IntegerField()

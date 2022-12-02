@@ -9,178 +9,89 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:create_search' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-layer-group"></i>
-                        Change Basic UI Style
-                    </a>
-                    <a href="{% url 'ndr_core:configure_search_fields' %}" class="list-group-item list-group-item-action py-2">
-                        Manage Search Fields
-                    </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'ui' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:help_chapter' 'ui_style' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
                         Help
                     </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'ui_advanced' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Create Your Own Style
+                    </a>
+                </div>
+                <p></p>
+                <h5 class="card-title">Settings</h5>
+                Your UI Style is:<br/>
+                <div class="list-group-item list-group-item-action py-2">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-4">
+                                {% with 'ndr_core/images/admin/'|add:ui_style.filename|add:'.png' as image_static %}
+                                    <img src="{% static image_static %}" class="img-fluid" alt="Image 1">
+                                {% endwith %}
+                            </div>
+                            <div class="col-8">
+                                {{ ui_style.label }}<br/>
+                                <small>{{ ui_style.description }}</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card bg-light mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Current UI Settings</h5>
-                <div class="list-group">
-                    {% for api in apis %}
-                        <a href="#" class="list-group-item list-group-item-action">Create New</a>
-                    {% endfor %}
+        <div class="card bg-light mb-3" style="max-height: 50vh;">
+            <div class="overflow-auto">
+                <div class="card-body">
+                    <h5 class="card-title">Current UI Settings</h5>
+                    <div class="list-group">
+                        {% for ui_style in ui_styles %}
+                            <a href="{% url 'ndr_core:view_ui_style' ui_style.pk %}" class="list-group-item list-group-item-action">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            {% with 'ndr_core/images/admin/'|add:ui_style.filename|add:'.png' as image_static %}
+                                                <img src="{% static image_static %}" class="img-fluid" alt="Image 1">
+                                            {% endwith %}
+                                        </div>
+                                        <div class="col-8">
+                                            {{ ui_style.label }}<br/>
+                                            <small>{{ ui_style.description }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <form method="POST">
-        {% csrf_token %}
-        <h3>Basic Page Settings</h3>
-        <p>
-            Choose your desired UI style. A style defines the basic look and feel of your page.
-        </p>
-
-        <p>
-            <div class="container parent">
-                <div class="row">
-                    {% for style in ui_styles %}
-                        <div class='col text-center'>
-                            <div>
-                                <b>{{ style.label }}</b>
-                            </div>
-                            <input type="radio" name="ui_style" id="{{ style.filename }}" class="d-none imgbgchk" value="{{ style.name }}"{% if current_style == style.name %} checked="True"{% endif %}>
-                            <label for="{{ style.filename }}">
-                                {% with 'ndr_core/images/admin/'|add:style.filename|add:'.png' as image_static %}
-                                    <img src="{% static image_static %}" alt="Image 1">
-                                {% endwith %}
-                                <div class="tick_container">
-                                    <div class="tick"><i class="fa fa-check"></i></div>
-                                </div>
-                            </label>
-                            <div>
-                                {{ style.description }}
-                            </div>
-                        </div>
-                    {% endfor %}
+    {% if object %}
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ object.label }}</h5>
+                <p>{{ object.description }}</p>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-3">Base HTML template</div>
+                        <div class="col"><code>ndr_core/base/styles/base_{{ object.filename }}.html</code></div>
+                    </div>
                 </div>
             </div>
-        </p>
+            <div class="card-footer text-center">
+                {% if object.pk == ui_style.pk %}
+                    <a href="{% url 'ndr_core:choose_ui_settings' object.pk %}" role="button" class="btn btn-secondary disabled">This Style is your Page Style</a>
+                {% else %}
+                    <a href="{% url 'ndr_core:choose_ui_settings' object.pk %}" role="button" class="btn btn-warning">Set this Style as your Page Style</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 
-        <h3>Color Settings</h3>
-        <p>
-            Choose your desired color scheme. A color scheme defines the colors of your page, text and buttons.
-        </p>
-        <p>
-            <table class="table-bordered table-sm">
-                <tr>
-                    <th style="width: 20%">Scheme</th>
-                    <th style="width: 5%" class="small align-bottom">Page Background</th>
-                    <th style="width: 5%" class="small align-bottom">Text Color</th>
-                    <th style="width: 5%" class="small align-bottom">Button Color</th>
-                    <th style="width: 5%" class="small align-bottom">Button Hover Color</th>
-                    <th style="width: 5%" class="small align-bottom">Button Text Color</th>
-                    <th style="width: 5%" class="small align-bottom">Button Border Color</th>
-                    <th style="width: 5%" class="small align-bottom">2nd Button Color</th>
-                    <th style="width: 5%" class="small align-bottom">2nd Button Hover Color</th>
-                    <th style="width: 5%" class="small align-bottom">2nd Button Text Color</th>
-                    <th style="width: 5%" class="small align-bottom">2nd Button Border Color</th>
-                    <th style="width: 5%" class="small align-bottom">Link Color</th>
-                    <th style="width: 5%" class="small align-bottom">Accent Color 1</th>
-                    <th style="width: 5%" class="small align-bottom">Accent Color 2</th>
-                    <th style="width: 5%" class="small align-bottom">Info Color</th>
-                    <th style="width: 5%" class="small align-bottom">Success Color</th>
-                    <th style="width: 5%" class="small align-bottom">Error Color</th>
-                </tr>
-            {% for palette in palettes %}
-                <tr>
-                    <td>
-                        <input type="radio" name="ui_color_scheme" id="radio{{ palette.id }}" value="{{ palette.scheme_name }}" {% if current_palette == palette.scheme_name %} checked="True"{% endif %}/>
-                        <label for="radio{{ palette.id }}">{{  palette.scheme_label }}</label>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.background_color }};"></div>
-                        <small>{{ palette.background_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.text_color }};"></div>
-                        <small>{{ palette.text_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.button_color }};"></div>
-                        <small>{{ palette.button_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.button_hover_color }};"></div>
-                        <small>{{ palette.button_hover_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.button_text_color }};"></div>
-                        <small>{{ palette.button_text_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.button_border_color }};"></div>
-                        <small>{{ palette.button_border_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.second_button_color }};"></div>
-                        <small>{{ palette.second_button_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.second_button_hover_color }};"></div>
-                        <small>{{ palette.second_button_hover_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.second_button_text_color }};"></div>
-                        <small>{{ palette.second_button_text_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.second_button_border_color }};"></div>
-                        <small>{{ palette.second_button_border_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.link_color }};"></div>
-                        <small>{{ palette.link_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.accent_color_1 }};"></div>
-                        <small>{{ palette.accent_color_1 }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.accent_color_2 }};"></div>
-                        <small>{{ palette.accent_color_2 }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.info_color }};"></div>
-                        <small>{{ palette.info_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.success_color }};"></div>
-                        <small>{{ palette.success_color }}</small>
-                    </td>
-                    <td class="text-center">
-                        <div class="ndr-color" style="background-color: {{ palette.error_color }};"></div>
-                        <small>{{ palette.error_color }}</small>
-                    </td>
-                </tr>
-            {% endfor %}
-            </table>
-        </p>
+    <div class="alert alert-info small" role="alert">
+        <i class="fa-regular fa-circle-info"></i>
+        UI Styles define how your page is structured and where your base elements (such as the navigation) are.
+    </div>
 
-        <p>
-            <input data-jscolor="{
-                preset: 'dark',
-                closeButton: true,
-                closeText: 'OK'
-                }">
-        </p>
-
-        <input type="submit" class="btn btn-primary" role="button" value="Save Changes">
-    </form>
-{% endblock %}
-
-{% block page_js %}
-    <script src="{% static 'ndr_core/js/jscolor.min.js' %}"></script>
 {% endblock %}

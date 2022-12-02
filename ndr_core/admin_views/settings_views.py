@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
-from ndr_core.admin_forms import SettingsForm, SettingCreateForm
+from ndr_core.admin_forms.settings_forms import SettingsForm, SettingCreateForm
 from ndr_core.models import NdrCoreValue
 
 
