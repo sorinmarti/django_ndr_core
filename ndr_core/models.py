@@ -531,3 +531,16 @@ class NdrCoreUIElement(models.Model):
     """TODO """
 
     element_type = models.IntegerField()
+
+
+class NdrCoreSearchStatisticEntry(models.Model):
+    """TODO """
+
+    search_api = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE)
+    """TODO """
+
+    search_term = models.CharField()
+    """TODO """
+
+    search_time = models.DateTimeField()
+    """TODO """
