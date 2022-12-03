@@ -539,7 +539,7 @@ class NdrCoreSearchStatisticEntry(models.Model):
     search_api = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE)
     """TODO """
 
-    search_term = models.CharField()
+    search_term = models.CharField(max_length=100)
     """TODO """
 
     search_time = models.DateTimeField()
