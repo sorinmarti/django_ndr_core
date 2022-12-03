@@ -2,7 +2,7 @@
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Button, ButtonHolder
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 
 class NdrCoreLoginForm(AuthenticationForm):
@@ -13,6 +13,16 @@ class NdrCoreLoginForm(AuthenticationForm):
         self.helper = FormHelper()
         self.helper.form_method = "POST"
         self.helper.add_input(Submit('login', 'Login'))
+
+
+class NdrCoreChangePasswordForm(PasswordChangeForm):
+    """Takes Django's change password form and adds an input to it so it can be rendered with crispy forms """
+
+    def __init__(self, *args, **kwargs):
+        super(NdrCoreChangePasswordForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "POST"
+        self.helper.add_input(Submit('login', 'Change Password'))
 
 
 def get_form_buttons(submit_text):

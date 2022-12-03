@@ -51,11 +51,9 @@ class ApiForm(forms.ModelForm):
         )
         layout.append(form_row)
 
-        layout.append(
-            Row(
-                Column('api_description', css_class='form-group col-md-12 mb-0'),
-                css_class='form-row')
-        )
+        form_row = Row(
+            Column('api_description', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row')
         layout.append(form_row)
 
         # helper.form_show_labels = False

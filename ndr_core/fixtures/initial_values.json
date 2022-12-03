@@ -29,6 +29,15 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "statistics_feature",
+      "value_label": "Statistics Feature Enabled",
+      "value_help_text": "true if searches are logged.",
+      "value_value": "false"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "contact_form_send_to_address",
       "value_label": "E-Mail address for Contact Form",
       "value_help_text": "Messages from the contact form are sent to this address",

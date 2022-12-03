@@ -45,13 +45,15 @@ class SampleDataDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         file_contents = ""
-        file_name = f'{NdrSettings.APP_NAME}/static/{NdrSettings.APP_NAME}/sample_data/{self.object.api_name}/{self.kwargs["filename"]}'
-        if os.path.isfile(file_name):
-            with open(file_name, 'r') as f:
+        file_path = f'{NdrSettings.APP_NAME}/static/{NdrSettings.APP_NAME}/sample_data/{self.object.api_name}/{self.kwargs["filename"]}'
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as f:
                 json_result = json.load(f)
                 file_contents = json.dumps(json_result, indent=4)
 
         context = get_context_data()
+        context['object'] = self.object
+        context['file_name'] = self.kwargs["filename"]
         context['file_contents'] = file_contents
         return context
 

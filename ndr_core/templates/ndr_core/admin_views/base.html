@@ -61,9 +61,10 @@
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" href="{% url 'ndr_core:configure_messages' %}">View Contact Messages</a>
                                             <a class="dropdown-item" href="{% url 'ndr_core:configure_corrections' %}">View Correction Suggestions</a>
+                                            <a class="dropdown-item" href="{% url 'ndr_core:search_statistics' %}">View Search Statistics</a>
                                         </div>
                                     </li>
-                                    <li class="nav-item{% if "/settings/" in request.path %} active{% endif %}">
+                                    <li class="nav-item{% if "/configure/settings/" in request.path %} active{% endif %}">
                                         <a class="nav-link" href="{% url 'ndr_core:configure_settings' %}">Settings</a>
                                     </li>
                                     <li class="nav-item{% if "/help/" in request.path %} active{% endif %}">

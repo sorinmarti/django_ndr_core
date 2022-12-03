@@ -1,25 +1,84 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
+from django.core.serializers.base import DeserializationError
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, FormView
 
-from ndr_core.admin_forms.settings_forms import SettingsForm, SettingCreateForm
+from ndr_core.admin_forms.settings_forms import SettingsListForm, SettingCreateForm, SettingEditForm, SettingsImportForm
 from ndr_core.models import NdrCoreValue
 
+settings_group_list = {
+            'page': {
+                'name': 'page',
+                'title': 'Page Settings',
+                'help_text': 'These settings are not mandatory but recommended.',
+                'settings': ['project_title',
+                             'header_default_title']
+             },
+            'header': {
+                'name': 'header',
+                'title': 'Header Settings',
+                'help_text': 'These settings help search engines find you.',
+                'settings': ['header_description',
+                             'header_author']
+            },
+            'mail': {
+                'name': 'mail',
+                'title': 'Mail Settings',
+                'help_text': 'To use the contact form, you need to provide your mail settings. '
+                             'Only unauthenticated settings for now.',
+                'settings': ['contact_form_default_subject',
+                             'email_config_host',
+                             'contact_form_send_to_address',
+                             'contact_form_send_from_address']
+            },
+            'custom': {
+                'name': 'custom',
+                'title': 'Custom Settings',
+                'help_text': 'These are settings you created yourself.',
+                'settings': []
+            }
+        }
 
-class ConfigureSettings(LoginRequiredMixin, View):
-    """View to change value settings of NDR Core (such as HTML page title tags, etc.). """
+
+class ConfigureSettingsView(LoginRequiredMixin, TemplateView):
+    """View to view and change value settings of NDR Core (such as HTML page title tags, etc.). """
+
+    template_name = 'ndr_core/admin_views/configure_settings.html'
+
+    @staticmethod
+    def get_context_data():
+        """Returns the context data for both GET and POST request. """
+
+        context = {'settings_list': settings_group_list}
+        return context
+
+
+class SettingsDetailView(LoginRequiredMixin, View):
+    """Shows a group of settings to change in a form. """
+
+    template_name = 'ndr_core/admin_views/configure_settings.html'
+
+    def get_context_data(self):
+        settings_group = settings_group_list[self.kwargs['group']]
+        if settings_group['name'] == "custom":
+            settings_list = NdrCoreValue.objects.filter(is_user_value=True).values_list('value_name', flat=True)
+            settings_form = SettingsListForm(settings=settings_list,
+                                             is_custom_form=True)
+        else:
+            settings_form = SettingsListForm(settings=settings_group['settings'])
+        context = {'settings_list': settings_group_list,
+                   'object': settings_group,
+                   'form': settings_form}
+        return context
 
     def get(self, request, *args, **kwargs):
-        """GET request for this view. """
-
-        context = self.get_context_data()
-
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_settings.html',
-                      context=context)
+                      context=self.get_context_data())
 
     def post(self, request, *args, **kwargs):
         """POST request for this view. Gets executed when setting values are saved."""
@@ -27,6 +86,8 @@ class ConfigureSettings(LoginRequiredMixin, View):
         save_key = 'save_'
         for key in request.POST.keys():
             value = request.POST.get(key)
+            if value is None:
+                value = ''
             if key.startswith(save_key):
                 key = key[len(save_key):]
                 v_object = NdrCoreValue.objects.get(value_name=key)
@@ -34,28 +95,9 @@ class ConfigureSettings(LoginRequiredMixin, View):
                 v_object.save()
 
         messages.success(request, "Saved Changes")
-        context = self.get_context_data()
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_settings.html',
-                      context=context)
-
-    @staticmethod
-    def get_context_data():
-        """Returns the context data for both GET and POST request. """
-
-        basic_settings = SettingsForm(settings=['project_title',
-                                                'header_default_title',
-                                                'header_description',
-                                                'header_author'])
-        contact_form = SettingsForm(settings=['contact_form_default_subject',
-                                              'email_config_host',
-                                              'contact_form_send_to_address',
-                                              'contact_form_send_from_address'])
-
-        context = {'basic_settings_form': basic_settings,
-                   'contact_form': contact_form}
-
-        return context
+                      context=self.get_context_data())
 
 
 class SettingCreateView(LoginRequiredMixin, CreateView):
@@ -63,5 +105,54 @@ class SettingCreateView(LoginRequiredMixin, CreateView):
 
     model = NdrCoreValue
     form_class = SettingCreateForm
-    success_url = reverse_lazy('ndr_core:configure_settings')
+    success_url = reverse_lazy('ndr_core:view_settings', kwargs={'group': 'custom'})
     template_name = 'ndr_core/admin_views/setting_create.html'
+
+    def form_valid(self, form):
+        self.object = form.save(False)
+        self.object.is_user_value = True
+        self.object.save()
+        return super().form_valid(form)
+
+
+class SettingEditView(LoginRequiredMixin, UpdateView):
+    """ View to edit an existing user_setting """
+
+    model = NdrCoreValue
+    form_class = SettingEditForm
+    success_url = reverse_lazy('ndr_core:view_settings', kwargs={'group': 'custom'})
+    template_name = 'ndr_core/admin_views/setting_edit.html'
+
+
+class SettingDeleteView(LoginRequiredMixin, DeleteView):
+    """ View to delete a user setting from the database. Asks to confirm."""
+
+    model = NdrCoreValue
+    success_url = reverse_lazy('ndr_core:view_settings', kwargs={'group': 'custom'})
+    template_name = 'ndr_core/admin_views/setting_confirm_delete.html'
+
+    def form_valid(self, form):
+        return super(SettingDeleteView, self).form_valid(form)
+
+
+class SettingsImportView(LoginRequiredMixin, FormView):
+    """View to import a exported color palette. """
+
+    template_name = 'ndr_core/admin_views/settings_import.html'
+    form_class = SettingsImportForm
+    success_url = reverse_lazy('ndr_core:configure_settings')
+
+    def form_valid(self, form):
+        f = form.files['settings_file']
+
+        try:
+            my_string = f.read().decode('utf-8')
+            deserialized_object = serializers.deserialize("json", my_string)
+            for obj in deserialized_object:
+                if NdrCoreValue.objects.filter(value_name=obj.object.value_name).count() > 0:
+                    messages.info(self.request, f'The setting "{obj.object.value_name}" was updated')
+                print(obj.save())
+        except DeserializationError:
+            messages.error(self.request, 'Could not deserialize object.')
+
+        return super().form_valid(form)

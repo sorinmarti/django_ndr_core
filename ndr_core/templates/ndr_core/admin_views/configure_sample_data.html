@@ -36,7 +36,7 @@
 
                     {% for api in apis %}
                         <h6 class="card-title">{{ api.api_label }}</h6>
-                        <ul class="list-group">
+                        <ul class="list-group pb-3">
                             {% for file in files|key_value:api.api_name %}
                                 <li class="list-group-item list-group-item-action d-flex py-2">
                                     <p class="p-0 m-0 flex-grow-1">
@@ -67,6 +67,7 @@
     {% if file_contents %}
         <div class="card bg-light mb-3">
             <div class="card-body">
+                <h5>{{ object.api_label }}: {{ file_name }}</h5>
                 <pre>{{ file_contents | linebreaks }}</pre>
             </div>
         </div>

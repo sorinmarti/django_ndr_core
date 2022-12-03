@@ -419,17 +419,26 @@ class NdrCoreValue(models.Model):
      The list of values is given and gets loaded from a fixture when the management command 'init_ndr_core' is
      executed. Users can only manipulate the 'value_value' of each object."""
 
-    value_name = models.CharField(max_length=100, primary_key=True)
+    value_name = models.CharField(max_length=100, primary_key=True,
+                                  help_text='This is the identifier of a NdrCoreValue. '
+                                            'Can\'t contain special characters.' )
     """This is the identifier of a NdrCoreValue. In the source, each value gets loaded by searching for this name"""
 
-    value_label = models.CharField(max_length=100)
+    value_label = models.CharField(max_length=100,
+                                   help_text='This is a human readable label for the value. '
+                                             'It is used in the admin view forms.')
     """This is a human readable label for the value (e.g. its title)"""
 
-    value_help_text = models.CharField(max_length=250)
+    value_help_text = models.CharField(max_length=250,
+                                       help_text='This is the help text of the form field.')
     """This is the help text for a value which explains to users what it is for"""
 
-    value_value = models.CharField(max_length=100)
+    value_value = models.CharField(max_length=100,
+                                   help_text='This is the actual value which can be updated')
     """This is the actual value which can be updated by the user"""
+
+    is_user_value = models.BooleanField(default=False)
+    """Indicates if a value was created by a user"""
 
     @staticmethod
     def get_or_initialize(value_name, init_value=None, init_label=None):
@@ -441,6 +450,9 @@ class NdrCoreValue(models.Model):
             if init_label is None:
                 init_label = value_name
             return NdrCoreValue.objects.create(value_name=value_name, value_value=init_value, value_label=init_label)
+
+    def __str__(self):
+        return self.value_name
 
 
 class NdrCoreDataSchema(models.Model):

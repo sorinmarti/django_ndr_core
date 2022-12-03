@@ -14,7 +14,15 @@
                         <i class="fa-regular fa-table-list"></i>
                         Create Custom Setting
                     </a>
-                    <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:import_settings' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-file-import"></i>
+                        Import Settings
+                    </a>
+                    <a href="{% url 'ndr_core:export_settings' %}" class="list-group-item list-group-item-action py-2" target="_blank">
+                        <i class="fa-regular fa-file-export"></i>
+                        Export Settings
+                    </a>
+                    <a href="{% url 'ndr_core:change_password' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-lock"></i>
                         Set Admin Password
                     </a>
@@ -26,12 +34,12 @@
                 <p></p>
                 <h5 class="card-title">Danger Zone</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-danger py-2">
-                        <i class="fa-regular fa-table-list"></i>
+                    <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-danger py-2 disabled">
+                        <i class="fa-regular fa-exclamation-circle"></i>
                         Reset to defaults
                     </a>
-                    <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-danger py-2">
-                        <i class="fa-regular fa-table-list"></i>
+                    <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-danger py-2 disabled">
+                        <i class="fa-regular fa-exclamation-circle"></i>
                         Delete NDR Application
                     </a>
                 </div>
@@ -39,34 +47,38 @@
             </div>
         </div>
 
-        <div class="card bg-light mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Basic Page Settings</h5>
-                <p class="card-text">
-                    These settings are not mandatory but recommended.
-                </p>
-                {% crispy basic_settings_form %}
+        <div class="card bg-light mb-3" style="max-height: 50vh;">
+            <div class="overflow-auto">
+                <div class="card-body">
+                    <h5 class="card-title">Settings</h5>
+                    <ul class="list-group">
+                        {% for name, value in settings_list.items %}
+                            <li class="list-group-item list-group-item-action d-flex py-2 px-2">
+                                <p class="p-0 m-0 flex-grow-1">
+                                    <i class="fa-regular fa-bars"></i>
+                                    <a href="{% url 'ndr_core:view_settings' name %}">{{ value.title }}</a><br/>
+                                </p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
-
     </div>
-    <div class="card-deck">
+
+    {% if object %}
         <div class="card bg-light mb-3">
             <div class="card-body">
-                <h5 class="card-title">Mail Settings</h5>
-                <p class="card-text">
-                    To use the contact form, you need to provide your mail settings. Only unauthenticated settings for now.
-                </p>
-                {% crispy contact_form %}
+                <h5 class="card-title">{{ object.title }}</h5>
+                <p>{{ object.help_text }}</p>
+                {% crispy form %}
             </div>
         </div>
+    {% endif %}
 
-        <div class="card bg-light mb-3">
-            <div class="card-body">
-                <h5 class="card-title"></h5>
-
-            </div>
-        </div>
+    <div class="alert alert-info small" role="alert">
+        <i class="fa-regular fa-circle-info"></i>
+        View and Change Various Settings.
     </div>
 
 

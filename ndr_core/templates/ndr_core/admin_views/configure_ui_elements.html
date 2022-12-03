@@ -8,6 +8,18 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
+                    <a href="{% url 'ndr_core:create_ui_element' 'carousel' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-plus-circle"></i>
+                        Create new Carousel
+                    </a>
+                    <a href="{% url 'ndr_core:create_ui_element' 'card' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-plus-circle"></i>
+                        Create New Card
+                    </a>
+                    <a href="{% url 'ndr_core:create_ui_element' 'jumbotron' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-plus-circle"></i>
+                        Create New Jumbotron
+                    </a>
                     <a href="{% url 'ndr_core:help_chapter' 'ui_elements' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
                         Help
@@ -18,7 +30,7 @@
 
         <div class="card bg-light mb-3">
             <div class="card-body">
-                <h5 class="card-title">Open Suggestions</h5>
+                <h5 class="card-title">Configured Elements</h5>
                 <ul class="list-group">
                     {% for api in apis %}
                         <li class="list-group-item list-group-item-action d-flex py-2">

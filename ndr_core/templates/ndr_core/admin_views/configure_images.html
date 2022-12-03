@@ -1,5 +1,6 @@
 {% extends 'ndr_core/admin_views/base.html' %}
 {% load django_tables2 %}
+{% load static %}
 
 {% block content %}
     <h2>Manage Images</h2>
@@ -8,34 +9,52 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
+                    <a href="{% url 'ndr_core:import_logo' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-copyright"></i>
+                        Change Logo Image
+                    </a>
+                    <a href="{% url 'ndr_core:import_image' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-file-import"></i>
+                        Upload Image
+                    </a>
                     <a href="{% url 'ndr_core:help_chapter' 'images' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
                         Help
                     </a>
+                </div>
+                <p></p>
+                <h5 class="card-title">Logo Image</h5>
+                <div class="col-12">
+                    <img src="{% static logo_path %}" class="img-fluid" />
                 </div>
             </div>
         </div>
 
         <div class="card bg-light mb-3">
             <div class="card-body">
-                <h5 class="card-title">Gallery</h5>
+                <h5 class="card-title">Image Groups</h5>
                 <ul class="list-group">
-                    {% for api in apis %}
-                        <li class="list-group-item list-group-item-action d-flex py-2">
-                            <p class="p-0 m-0 flex-grow-1">
-                                <i class="fa-regular fa-code"></i> {{ api.api_label }} ({{ api.api_name }})
-                            </p>
-
-                            <p class="p-0 m-0">
-                                <a href="{% url 'ndr_core:edit_api' api.id %}" class="btn btn-sm btn-secondary">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                </a>
-                                <a href="{% url 'ndr_core:delete_api' api.id %}" class="btn btn-sm btn-danger">
-                                    <i class="fa-regular fa-delete-left"></i>
-                                </a>
-                            </p>
-                        </li>
-                    {% endfor %}
+                    <li class="list-group-item list-group-item-action d-flex py-2">
+                        <p class="p-0 m-0 flex-grow-1">
+                            <i class="fa-regular fa-image"></i>
+                            <a href="{% url 'ndr_core:view_images' 'bg' %}">Background Images</a><br/>
+                            <small>Can be used as jumbotron or page backgrounds. Depends on UI Style.</small>
+                        </p>
+                    </li>
+                    <li class="list-group-item list-group-item-action d-flex py-2">
+                        <p class="p-0 m-0 flex-grow-1">
+                            <i class="fa-regular fa-image"></i>
+                            <a href="{% url 'ndr_core:view_images' 'elements' %}">Element Images</a><br/>
+                            <small>Can be used as carousel or card images. Depends on UI Style.</small>
+                        </p>
+                    </li>
+                    <li class="list-group-item list-group-item-action d-flex py-2">
+                        <p class="p-0 m-0 flex-grow-1">
+                            <i class="fa-regular fa-image"></i>
+                            <a href="{% url 'ndr_core:view_images' 'people' %}">People Images</a><br/>
+                            <small>Can be used to create a 'about us' page.</small>
+                        </p>
+                    </li>
                 </ul>
             </div>
         </div>
