@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreSearchField, \
     NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration
-from ndr_core.api import ApiFactory
+from ndr_core.api_factory import ApiFactory
 
 
 class SearchConfigurationTestCase(TestCase):
