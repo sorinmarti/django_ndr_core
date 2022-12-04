@@ -3,5 +3,6 @@ Django~=4.1.1
 django-crispy-forms~=1.14.0
 django-tables2~=2.4.1
 django_select2~=8.0.0
+django-ckeditor~=6.5.1
 Pillow==9.3.0
 geoip2~=4.6.0
