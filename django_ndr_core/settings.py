@@ -34,8 +34,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # 'ndr',
     'ndr_core',
-    #'ndr',
     'django_tables2',
     'crispy_forms',
     'django_select2',
@@ -159,3 +159,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
 CKEDITOR_UPLOAD_PATH = 'uploads/'
+
+GEOIP_PATH = os.path.join(BASE_DIR, 'geoip/')

@@ -2,9 +2,4 @@ requests~=2.28.1
 Django~=4.1.1
 django-crispy-forms~=1.14.0
 Pillow==9.3.0
-django-ckeditor~=6.5.1
-django-recaptcha~=3.0.0
-django-tables2~=2.4.1
-django-select2~=8.0.0
-django-colorfield~=0.7.2
-fontawesomefree~=6.2.1
+geoip2~=4.6.0

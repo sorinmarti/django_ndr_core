@@ -5,6 +5,7 @@ from django.core.management import call_command
 from django.shortcuts import render, redirect
 from django.views import View
 
+from ndr_core.geo_ip_utils import get_geolocation
 from ndr_core.models import NdrCorePage, NdrCoreSearchConfiguration, NdrCoreValue, NdrCoreApiConfiguration, \
     NdrCoreUiStyle, NdrCoreColorScheme
 from ndr_core.ndr_settings import NdrSettings
@@ -51,6 +52,24 @@ class HelpView(LoginRequiredMixin, View):
         return render(self.request,
                       template_name='ndr_core/admin_views/help.html',
                       context={'chapter': chapter})
+
+
+class StatisticsView(LoginRequiredMixin, View):
+    """TODO """
+
+    def get(self, request, *args, **kwargs):
+        context = {'statistics_enabled': True if NdrCoreValue.objects.get(
+            value_name='statistics_feature').value_value == "true" else False}
+        return render(self.request,
+                      template_name='ndr_core/admin_views/view_statistics.html',
+                      context=context)
+
+
+def set_statistics_option(request, option):
+    value = NdrCoreValue.objects.get(value_name='statistics_feature')
+    value.value_value = option
+    value.save()
+    return redirect('ndr_core:search_statistics')
 
 
 def init_ndr_core(request):

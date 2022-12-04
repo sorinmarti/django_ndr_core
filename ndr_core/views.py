@@ -7,8 +7,9 @@ from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 
+from ndr_core.geo_ip_utils import get_user_ip, get_geolocation
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
-from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration
+from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreValue, NdrCoreSearchStatisticEntry
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
 
@@ -127,18 +128,34 @@ class SearchView(_NdrCoreView):
                 form = AdvancedSearchForm(request.GET, ndr_page=self.ndr_page)
                 # If the form is valid: create a search query
                 if form.is_valid():
+                    statistics_enabled = NdrCoreValue.get_or_initialize("statistics_feature", init_value="false").value_value == "true"
+                    statistics_api = None
+
                     if requested_search == 'simple':
+                        statistics_api = self.ndr_page.simple_api
                         api_factory = ApiFactory(self.ndr_page.simple_api)
                         query = api_factory.get_query_class()(self.ndr_page.simple_api, page=request.GET.get("page", 1))
-                        query_string = query.get_simple_query(request.GET.get('search_term', ''))
+                        search_term = request.GET.get('search_term', '')
+                        query_string = query.get_simple_query(search_term)
                     else:
                         search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
+                        statistics_api = search_config.api_configuration
                         api_factory = ApiFactory(search_config.api_configuration)
                         query = api_factory.get_query_class()(search_config.api_configuration, page=request.GET.get("page", 1))
+                        search_term = ''
                         for key in request.GET.keys():
                             if search_config.search_form_fields.filter(search_field__field_name=key).count() > 0:
                                 query.set_value(key, request.GET.get(key))
+                                search_term += f"{key}={request.GET.get(key)}, "
                         query_string = query.get_advanced_query()
+
+                    if statistics_enabled:
+                        ip = get_user_ip(request)
+                        location = get_geolocation(ip)
+                        NdrCoreSearchStatisticEntry.objects.create(search_api=statistics_api,
+                                                                   search_term=search_term,
+                                                                   search_location=location)
+
                     print(query_string)
             else:
                 print("No search")

@@ -1,0 +1,99 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load django_tables2 %}
+{% load ndr_utils %}
+
+{% block content %}
+    <h2>View Statistics</h2>
+
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Options</h5>
+                <div class="list-group">
+                    {% if statistics_enabled %}
+                        <a href="{% url 'ndr_core:set_statistics_option' 'false' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-toggle-on"></i>
+                            Disable Statistics Feature
+                        </a>
+                    {% else %}
+                        <a href="{% url 'ndr_core:set_statistics_option' 'true' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-toggle-off"></i>
+                            Enable Statistics Feature
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'ndr_core:upload_sample_data' %}" class="list-group-item list-group-item-action py-2{% if not apis %} disabled{% endif %}">
+                        <i class="fa-regular fa-file-arrow-up"></i>
+                        Reset Statistics
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'test' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Help
+                    </a>
+                </div>
+                <p></p>
+                <h5 class="card-title">Settings</h5>
+                The Statistics Option is {% if statistics_enabled %}<strong class="text-success">enabled</strong>{% else %}<strong class="text-danger">disabled</strong>{% endif %}.
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3" style="max-height: 50vh;">
+            <div class="overflow-auto">
+                <div class="card-body">
+                    {% if statistics_enabled %}
+                        <h5 class="card-title">Summary</h5>
+                        <p>Every time a user searches for something, the search term is logged.</p>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col">
+                                    Searches this month
+                                </div>
+                                <div class="col">
+                                    327
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    Searches this year
+                                </div>
+                                <div class="col">
+                                    23456
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    Total searches
+                                </div>
+                                <div class="col">
+                                    45678
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <h5 class="card-title">Enable Statistics</h5>
+                        <div class="alert alert-warning small" role="alert">
+                            <i class="fa-regular fa-exclamation-circle"></i>
+                            The statistic option is disabled by default. Your NDR Core installation
+                            uses a simple file database (sqlite) by default which may cause some
+                            features to slow down. You might consider switching to MySQL or Postgres
+                            before enabling this feature when your site expects a lot of traffic.
+                        </div>
+                        No information is logged, when a user performs a search.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-light mb-3">
+        <div class="card-body">
+            <h5>Searches</h5>
+            TODO
+        </div>
+    </div>
+
+    <div class="alert alert-info small" role="alert">
+        <i class="fa-regular fa-circle-info"></i>
+        This page shows you what the visitors search for.
+    </div>
+
+{% endblock %}

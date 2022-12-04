@@ -534,13 +534,17 @@ class NdrCoreUIElement(models.Model):
 
 
 class NdrCoreSearchStatisticEntry(models.Model):
-    """TODO """
+    """Every time a search is executed, a NdrCoreSearchStatisticEntry object is created if the setting
+    'statistics_feature' is set to 'true' """
 
     search_api = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE)
-    """TODO """
+    """The API which was queried in the search. """
 
     search_term = models.CharField(max_length=100)
-    """TODO """
+    """The search term(s) which have been searched. """
 
-    search_time = models.DateTimeField()
-    """TODO """
+    search_time = models.DateTimeField(auto_now=True)
+    """The time the user searched. """
+
+    search_location = models.CharField(max_length=20, null=True)
+    """The location the user searched from. """
