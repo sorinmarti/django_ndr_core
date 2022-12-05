@@ -1,14 +1,16 @@
 from django.test import TestCase
 
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreSearchField, \
-    NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration
+    NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration, NdrCoreApiImplementation
 from ndr_core.api_factory import ApiFactory
 
 
 class SearchConfigurationTestCase(TestCase):
 
     def setUp(self):
+        api_type = NdrCoreApiImplementation.objects.create(name="ndr_core")
         api_conf = NdrCoreApiConfiguration.objects.create(api_name='asia_dir',
+                                                          api_type=api_type,
                                                           api_host='asiadir.int',
                                                           api_protocol=NdrCoreApiConfiguration.Protocol.HTTP,
                                                           api_port=8080,
