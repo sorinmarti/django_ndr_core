@@ -5,15 +5,25 @@
             <p class="card-text">
                 Your web site consists of a number of pages. A page has a <strong>title</strong>, a <strong>navigation
                 label</strong>, a <strong>view name</strong> and a <strong>type</strong>. Depending on the type, a
-                number of additional parameters may be specified.
+                number of additional parameters may be specified. When you
             </p>
             <p class="card-text">
                 <ul class="card-text">
-                    <li>The <strong>title</strong> is displayed on the top of your page.</li>
-                    <li>The <strong>navigation label</strong> is displayed as part of your navigation.</li>
-                    <li>The <strong>type</strong> defines what your page is able to do (for example: show text,
-                        provide a search form, show a list, etc.).</li>
-                    <li>The <strong>view name</strong> ist the URL part which is used to display your page.</li>
+                    <li>
+                        The <strong>title</strong> is displayed on the top of your page. (Or in a different location,
+                        depending on your <a href="{% url 'ndr_core:help_chapter' 'ui_style' %}">UI-Style</a>.)
+                    </li>
+                    <li>
+                        The <strong>navigation label</strong> is displayed as part of your navigation.
+                    </li>
+                    <li>
+                        The <strong>type</strong> defines what your page is able to do (for example: show text,
+                        provide a search form, show a list, etc.).
+                    </li>
+                    <li>
+                        The <strong>view name</strong> ist the URL part which is used to display your page. All created
+                        pages have a URL in the form: https://yourhost.org/p/<span class="text-danger">view_name</span>/
+                    </li>
                 </ul>
             </p>
 
