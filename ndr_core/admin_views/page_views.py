@@ -119,8 +119,6 @@ class PageEditView(LoginRequiredMixin, UpdateView):
 
         old_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{original_instance.view_name}.html'
         new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{updated_instance.view_name}.html'
-        print(old_filename)
-        print(new_filename)
 
         if old_filename != new_filename:
             os.rename(old_filename, new_filename)

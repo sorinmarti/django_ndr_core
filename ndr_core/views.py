@@ -103,7 +103,6 @@ class NdrTemplateView(_NdrCoreView):
                     element_html_string = render_to_string(f'ndr_core/ui_elements/{template}.html',
                                                            request=self.request, context={'data': element})
 
-
                     rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', element_html_string)
                     context['rendered_text'] = rendered_text
                 except NdrCoreUIElement.DoesNotExist:
