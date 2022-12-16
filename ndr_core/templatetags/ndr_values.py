@@ -9,6 +9,6 @@ register = template.Library()
 def get_config_value(name):
     try:
         value = NdrCoreValue.objects.get(value_name=name)
-        return value.value_value
+        return value.get_value()
     except NdrCoreValue.DoesNotExist:
         return None

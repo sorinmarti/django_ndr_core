@@ -1,5 +1,6 @@
 {% extends 'ndr_core/admin_views/base.html' %}
 {% load render_table from django_tables2 %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <h2><i class="fa-regular fa-file"></i> Manage Pages</h2>
@@ -83,11 +84,11 @@
         </div>
     {% endif %}
 
-    {% if footer %}
+    {% if footer_form %}
         <div class="card bg-light mb-3">
             <div class="card-body">
                 <h5 class="card-title">Manage Page Footer</h5>
-
+                {% crispy footer_form %}
             </div>
         </div>
     {% endif %}

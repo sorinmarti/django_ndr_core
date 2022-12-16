@@ -495,8 +495,32 @@ class NdrCoreValue(models.Model):
     is_user_value = models.BooleanField(default=False)
     """Indicates if a value was created by a user"""
 
+    def get_value(self):
+        if self.value_type == NdrCoreValue.ValueType.STRING or self.value_type == NdrCoreValue.ValueType.LIST:
+            return self.value_value
+        if self.value_type == NdrCoreValue.ValueType.INTEGER:
+            try:
+                return int(self.value_value)
+            except (TypeError, ValueError):
+                return 0
+        if self.value_type == NdrCoreValue.ValueType.BOOLEAN:
+            if self.value_value.lower() == 'true':
+                return True
+            else:
+                return False
+
+    def get_options(self):
+        if self.value_type == NdrCoreValue.ValueType.LIST:
+            options = list()
+            option_tuples = self.value_options.split(";")
+            for ot in option_tuples:
+                options.append(ot.split(','))
+            return options
+        return None
+
+
     @staticmethod
-    def get_or_initialize(value_name, init_value=None, init_label=None):
+    def get_or_initialize(value_name, init_value=None, init_label=None, init_type=ValueType.STRING):
         try:
             return NdrCoreValue.objects.get(value_name=value_name)
         except NdrCoreValue.DoesNotExist:
@@ -504,7 +528,10 @@ class NdrCoreValue(models.Model):
                 init_value = ''
             if init_label is None:
                 init_label = value_name
-            return NdrCoreValue.objects.create(value_name=value_name, value_value=init_value, value_label=init_label)
+            return NdrCoreValue.objects.create(value_name=value_name,
+                                               value_value=init_value,
+                                               value_label=init_label,
+                                               value_type=init_type)
 
     def __str__(self):
         return self.value_name

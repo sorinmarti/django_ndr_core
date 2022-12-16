@@ -3,8 +3,9 @@ from crispy_forms.layout import Layout, Row, Column
 from django import forms
 from django_select2 import forms as s2forms
 
+from ndr_core.admin_forms.settings_forms import SettingsListForm
 from ndr_core.admin_forms.admin_forms import get_form_buttons
-from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreFilterableListConfiguration, NdrCorePage
+from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreFilterableListConfiguration, NdrCorePage, NdrCoreValue
 
 
 class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
@@ -163,3 +164,17 @@ class PageEditForm(PageForm):
         helper = super(PageEditForm, self).helper
         helper.layout.append(get_form_buttons('Save Page'))
         return helper
+
+
+class FooterForm(SettingsListForm):
+
+    def __init__(self, *args, **kwargs):
+        kwargs['settings'] = ["footer_show_partners", "footer_show_main_navigation"]
+
+        """show_partners = NdrCoreValue.get_or_initialize("footer_show_partners",
+                                                       init_type=NdrCoreValue.ValueType.BOOLEAN, init_value='true')
+
+        show_navigation = NdrCoreValue.get_or_initialize("footer_show_main_navigation",
+                                                         init_type=NdrCoreValue.ValueType.BOOLEAN, init_value='true')"""
+
+        super(FooterForm, self).__init__(*args, **kwargs)

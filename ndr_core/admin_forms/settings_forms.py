@@ -22,19 +22,31 @@ class SettingsListForm(forms.Form):
 
         initial_values = {}
         for setting in self.settings_list:
-            try:
-                setting_obj = NdrCoreValue.objects.get(value_name=setting)
-                label = setting_obj.value_label
-                if self.is_custom_form:
-                    label = f"{setting_obj.value_name}: {setting_obj.value_label}"
+            setting_obj = NdrCoreValue.get_or_initialize(setting)
+            label = setting_obj.value_label
+            if self.is_custom_form:
+                label = f"{setting_obj.value_name}: {setting_obj.value_label}"
+
+            if setting_obj.value_type == NdrCoreValue.ValueType.STRING:
                 self.fields[f"save_{setting}"] = forms.CharField(label=label,
                                                                  required=False,
                                                                  max_length=100,
                                                                  help_text=setting_obj.value_help_text)
+            elif setting_obj.value_type == NdrCoreValue.ValueType.INTEGER:
+                self.fields[f"save_{setting}"] = forms.IntegerField(label=label,
+                                                                    required=False,
+                                                                    help_text=setting_obj.value_help_text)
+            elif setting_obj.value_type == NdrCoreValue.ValueType.BOOLEAN:
+                self.fields[f"save_{setting}"] = forms.BooleanField(label=label,
+                                                                    required=False,
+                                                                    help_text=setting_obj.value_help_text)
+            elif setting_obj.value_type == NdrCoreValue.ValueType.LIST:
+                self.fields[f"save_{setting}"] = forms.ChoiceField(label=label,
+                                                                   required=False,
+                                                                   choices=setting_obj.get_options(),
+                                                                   help_text=setting_obj.value_help_text)
 
-                initial_values[f"save_{setting}"] = setting_obj.value_value
-            except NdrCoreValue.DoesNotExist:
-                pass
+            initial_values[f"save_{setting}"] = setting_obj.value_value
 
             self.initial = initial_values
 

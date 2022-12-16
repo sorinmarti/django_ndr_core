@@ -11,7 +11,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 
-from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm
+from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm
 from ndr_core.models import NdrCorePage
 from ndr_core.ndr_settings import NdrSettings
 
@@ -37,7 +37,7 @@ class ManagePageFooter(LoginRequiredMixin, View):
         """GET request for this view. """
 
         context = {'pages': NdrCorePage.objects.all().order_by('index'),
-                   'footer': True}
+                   'footer_form': FooterForm()}
 
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_pages.html',

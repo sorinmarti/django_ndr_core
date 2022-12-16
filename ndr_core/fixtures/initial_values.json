@@ -2,6 +2,26 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "footer_show_partners",
+      "value_label": "Show partner images",
+      "value_help_text": "Add partnering institution logos to your images to display and link them.",
+      "value_type": 3,
+      "value_value": "true"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "footer_show_main_navigation",
+      "value_label": "Show navigation",
+      "value_help_text": "Show main navigation links in footer.",
+      "value_type": 3,
+      "value_value": "true"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "ui_style",
       "value_label": "UI Style",
       "value_help_text": "UI Style",
@@ -43,7 +63,7 @@
       "value_help_text": "Messages from the contact form are sent to this address",
       "value_value": "keep",
       "value_type": 4,
-      "value_options": "(forward,Forward messages),(keep,Keep messages on server)"
+      "value_options": "(forward,Forward messages);(keep,Keep messages on server)"
     }
   },
   {
