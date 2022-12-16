@@ -461,20 +461,21 @@ class NdrCoreValue(models.Model):
      The list of values is given and gets loaded from a fixture when the management command 'init_ndr_core' is
      executed. Users can only manipulate the 'value_value' of each object."""
 
-    class ValueType(models.IntegerChoices):
-        STRING = 1, "String"
-        INTEGER = 2, "Integer"
-        BOOLEAN = 3, "Boolean"
-        LIST = 4, "List"
+    class ValueType(models.TextChoices):
+        STRING = "string", "String"
+        INTEGER = "integer", "Integer"
+        BOOLEAN = "boolean", "Boolean"
+        LIST = "list", "List"
 
     value_name = models.CharField(max_length=100, primary_key=True,
                                   help_text='This is the identifier of a NdrCoreValue. '
                                             'Can\'t contain special characters.' )
     """This is the identifier of a NdrCoreValue. In the source, each value gets loaded by searching for this name"""
 
-    value_type = models.IntegerField(choices=ValueType.choices,
-                                     help_text="The type of your value",
-                                     default=ValueType.STRING)
+    value_type = models.CharField(choices=ValueType.choices,
+                                  max_length=10,
+                                  help_text="The type of your value",
+                                  default=ValueType.STRING)
 
     value_label = models.CharField(max_length=100,
                                    help_text='This is a human readable label for the value. '
@@ -496,6 +497,7 @@ class NdrCoreValue(models.Model):
     """Indicates if a value was created by a user"""
 
     def get_value(self):
+        """Returns the valued which is always saved as string as the proper type. """
         if self.value_type == NdrCoreValue.ValueType.STRING or self.value_type == NdrCoreValue.ValueType.LIST:
             return self.value_value
         if self.value_type == NdrCoreValue.ValueType.INTEGER:
@@ -510,6 +512,7 @@ class NdrCoreValue(models.Model):
                 return False
 
     def get_options(self):
+        """For lists there are options, saved as string in the form: (key1,value1);(key2,value2)"""
         if self.value_type == NdrCoreValue.ValueType.LIST:
             options = list()
             option_tuples = self.value_options.split(";")
@@ -518,9 +521,9 @@ class NdrCoreValue(models.Model):
             return options
         return None
 
-
     @staticmethod
     def get_or_initialize(value_name, init_value=None, init_label=None, init_type=ValueType.STRING):
+        """Returns or creates an NdrCoreValue object. """
         try:
             return NdrCoreValue.objects.get(value_name=value_name)
         except NdrCoreValue.DoesNotExist:
@@ -609,10 +612,10 @@ class NdrCoreUserMessage(models.Model):
     """TODO """
 
     message_archived = models.BooleanField(default=False)
-    """TODO """
+    """Indicates if the message has been archived.  """
 
     message_forwarded = models.BooleanField(default=False)
-    """TODO """
+    """Indicates if the messagge has been forwarded to a specified e-mail address. """
 
     def __str__(self):
         return f"{self.message_subject} (from: {self.message_ret_email})"

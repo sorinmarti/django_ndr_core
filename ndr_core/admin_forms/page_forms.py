@@ -169,12 +169,6 @@ class PageEditForm(PageForm):
 class FooterForm(SettingsListForm):
 
     def __init__(self, *args, **kwargs):
-        kwargs['settings'] = ["footer_show_partners", "footer_show_main_navigation"]
-
-        """show_partners = NdrCoreValue.get_or_initialize("footer_show_partners",
-                                                       init_type=NdrCoreValue.ValueType.BOOLEAN, init_value='true')
-
-        show_navigation = NdrCoreValue.get_or_initialize("footer_show_main_navigation",
-                                                         init_type=NdrCoreValue.ValueType.BOOLEAN, init_value='true')"""
+        kwargs['settings'] = ["footer_show_partners", "footer_show_main_navigation", "footer_copyright_text"]
 
         super(FooterForm, self).__init__(*args, **kwargs)

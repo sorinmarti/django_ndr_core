@@ -5,7 +5,7 @@
       "value_name": "footer_show_partners",
       "value_label": "Show partner images",
       "value_help_text": "Add partnering institution logos to your images to display and link them.",
-      "value_type": 3,
+      "value_type": "boolean",
       "value_value": "true"
     }
   },
@@ -15,8 +15,17 @@
       "value_name": "footer_show_main_navigation",
       "value_label": "Show navigation",
       "value_help_text": "Show main navigation links in footer.",
-      "value_type": 3,
+      "value_type": "boolean",
       "value_value": "true"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "footer_copyright_text",
+      "value_label": "Copyright text",
+      "value_help_text": "Small text at the bottom of the footer",
+      "value_value": "powered by NDR Core"
     }
   },
   {
@@ -62,7 +71,7 @@
       "value_label": "E-Mail address for Contact Form",
       "value_help_text": "Messages from the contact form are sent to this address",
       "value_value": "keep",
-      "value_type": 4,
+      "value_type": "list",
       "value_options": "(forward,Forward messages);(keep,Keep messages on server)"
     }
   },
