@@ -2,11 +2,12 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
-from ndr_core.admin_views.export_views import export_color_palette, export_settings
+from ndr_core.admin_views.result_views import ConfigureResultsView, ResultsConfigurationDetailView
+from ndr_core.admin_views.export_views import export_color_palette, export_settings, export_messages
 from ndr_core.admin_views.admin_views import NdrCoreDashboard, init_ndr_core, HelpView, StatisticsView, \
     set_statistics_option
 from ndr_core.admin_views.page_views import ManagePages, PageCreateView, PageEditView, PageDeleteView, PageDetailView, \
-    move_page_up
+    move_page_up, ManagePageFooter
 from ndr_core.admin_views.api_views import ConfigureApi, ApiConfigurationCreateView, ApiConfigurationEditView, \
     ApiConfigurationDeleteView, ApiConfigurationDetailView
 from ndr_core.admin_views.search_views import ConfigureSearch, SearchConfigurationCreateView, \
@@ -15,13 +16,15 @@ from ndr_core.admin_views.search_views import ConfigureSearch, SearchConfigurati
 from ndr_core.admin_views.color_views import ConfigureColorPalettes, ColorPaletteCreateView, ColorPaletteEditView, \
     ColorPaletteDeleteView, ColorPaletteImportView, ColorPaletteDetailView, choose_color_palette
 from ndr_core.admin_views.corrections_views import ConfigureCorrections, set_correction_option
-from ndr_core.admin_views.images_views import ConfigureImages, ImagesGroupView, LogoUploadView, ImagesUploadView
+from ndr_core.admin_views.images_views import ConfigureImages, ImagesGroupView, LogoUploadView, ImagesCreateView, \
+    ImagesEditView, ImagesDeleteView
 from ndr_core.admin_views.settings_views import ConfigureSettingsView, SettingCreateView, SettingsDetailView, \
     SettingEditView, SettingDeleteView, SettingsImportView
 from ndr_core.admin_views.ui_style_views import ConfigureUI, choose_ui_style, UIStyleDetailView
 from ndr_core.admin_views.ui_element_views import ConfigureUIElements, UIElementDetailView, UIElementCreateView, \
     UIElementEditView, UIElementDeleteView
-from ndr_core.admin_views.messages_views import ConfigureMessages
+from ndr_core.admin_views.messages_views import ConfigureMessages, MessagesView, MessagesDeleteView, \
+    delete_all_messages, archive_message, ArchivedMessages
 from ndr_core.admin_views.sample_data_views import SampleDataView, SampleDataDetailView, SampleDataUploadView, \
     SampleDataDeleteView
 
@@ -36,6 +39,7 @@ urlpatterns = [
 
     # PAGES
     path('configure/pages/', ManagePages.as_view(), name='configure_pages'),
+    path('configure/pages/footer/', ManagePageFooter.as_view(), name='page_footer'),
     path('configure/pages/view/<int:pk>/', PageDetailView.as_view(), name='view_page'),
     path('configure/pages/create/new/', PageCreateView.as_view(), name='create_page'),
     path('configure/pages/edit/<int:pk>/', PageEditView.as_view(), name='edit_page'),
@@ -60,10 +64,18 @@ urlpatterns = [
     path('configure/images/', ConfigureImages.as_view(), name='configure_images'),
     path('configure/images/view/<str:group>/', ImagesGroupView.as_view(), name='view_images'),
     path('configure/images/change/logo/', LogoUploadView.as_view(), name='import_logo'),
-    path('configure/images/upload/image/', ImagesUploadView.as_view(), name='import_image'),
+    path('configure/images/create/new/', ImagesCreateView.as_view(), name='create_image'),
+    path('configure/images/edit/<int:pk>/', ImagesEditView.as_view(), name='edit_image'),
+    path('configure/images/delete/<int:pk>/', ImagesDeleteView.as_view(), name='delete_image'),
 
     # USER MESSAGES
     path('configure/messages/', ConfigureMessages.as_view(), name='configure_messages'),
+    path('configure/messages/archived/', ArchivedMessages.as_view(), name='archived_messages'),
+    path('configure/messages/view/<int:pk>/', MessagesView.as_view(), name='view_message'),
+    path('configure/messages/delete/<int:pk>/', MessagesDeleteView.as_view(), name='delete_message'),
+    path('configure/messages/archive/<int:pk>/', archive_message, name='archive_message'),
+    path('configure/messages/export/', export_messages, name='export_messages'),
+    path('configure/messages/delete/all/', delete_all_messages, name='delete_all_messages'),
 
     # CORRECTIONS
     path('configure/corrections/', ConfigureCorrections.as_view(), name='configure_corrections'),
@@ -82,7 +94,7 @@ urlpatterns = [
     # UI ELEMENTS
     path('configure/ui_elements/', ConfigureUIElements.as_view(), name='configure_ui_elements'),
     path('configure/ui_elements/view/<str:pk>/', UIElementDetailView.as_view(), name='view_ui_element'),
-    path('configure/ui_elements/create/new/<str:type>', UIElementCreateView.as_view(), name='create_ui_element'),
+    path('configure/ui_elements/create/new/<str:type>/', UIElementCreateView.as_view(), name='create_ui_element'),
     path('configure/ui_elements/edit/<str:pk>/', UIElementEditView.as_view(), name='edit_ui_element'),
     path('configure/ui_elements/delete/<str:pk>/', UIElementDeleteView.as_view(), name='delete_ui_element'),
 
@@ -111,6 +123,10 @@ urlpatterns = [
     path('configure/data/view/<str:pk>/<str:filename>/', SampleDataDetailView.as_view(), name='view_sample_data'),
     path('configure/data/delete/<str:pk>/<str:filename>/', SampleDataDeleteView.as_view(), name='delete_sample_data_file'),
     path('configure/data/upload/', SampleDataUploadView.as_view(), name='upload_sample_data'),
+
+    # RESULTS
+    path('configure/results/', ConfigureResultsView.as_view(), name='configure_results'),
+    path('configure/results/<str:search_config>/', ResultsConfigurationDetailView.as_view(), name='configure_result'),
 
     # SEARCH STATS
     path('search/statistics/', StatisticsView.as_view(), name='search_statistics'),

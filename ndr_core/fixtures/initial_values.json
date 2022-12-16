@@ -38,6 +38,17 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "messages_behaviour",
+      "value_label": "E-Mail address for Contact Form",
+      "value_help_text": "Messages from the contact form are sent to this address",
+      "value_value": "keep",
+      "value_type": 4,
+      "value_options": "(forward,Forward messages),(keep,Keep messages on server)"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "contact_form_send_to_address",
       "value_label": "E-Mail address for Contact Form",
       "value_help_text": "Messages from the contact form are sent to this address",

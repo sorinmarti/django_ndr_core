@@ -5,7 +5,7 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.shortcuts import redirect
 
-from ndr_core.models import NdrCoreColorScheme, NdrCoreValue
+from ndr_core.models import NdrCoreColorScheme, NdrCoreValue, NdrCoreUserMessage
 
 
 def export_color_palette(request, pk):
@@ -24,6 +24,14 @@ def export_color_palette(request, pk):
 def export_settings(request):
     """TODO """
     ndr_object = NdrCoreValue.objects.all()
+    data = serializers.serialize("json", ndr_object)
+    data_json = json.loads(data)
+    return JsonResponse(data_json, safe=False)
+
+
+def export_messages(request):
+    """TODO """
+    ndr_object = NdrCoreUserMessage.objects.all()
     data = serializers.serialize("json", ndr_object)
     data_json = json.loads(data)
     return JsonResponse(data_json, safe=False)

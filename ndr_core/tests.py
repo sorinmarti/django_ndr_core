@@ -9,6 +9,7 @@ class SearchConfigurationTestCase(TestCase):
 
     def setUp(self):
         api_type = NdrCoreApiImplementation.objects.create(name="ndr_core")
+
         api_conf = NdrCoreApiConfiguration.objects.create(api_name='asia_dir',
                                                           api_type=api_type,
                                                           api_host='asiadir.int',

@@ -2,19 +2,31 @@
 {% load django_tables2 %}
 
 {% block content %}
-    <h2>Manage Messages</h2>
+    <h2><i class="fa-regular fa-inbox"></i> Manage Messages</h2>
     <div class="card-deck">
         <div class="card bg-light mb-3">
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:help_chapter' 'messages' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:configure_messages' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-envelope"></i>
+                        New Messages
+                    </a>
+                    <a href="{% url 'ndr_core:archived_messages' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-box-archive"></i>
+                        Archived Messages
+                    </a>
+                    <a href="{% url 'ndr_core:export_messages' %}" target="_blank" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-file-export"></i>
                         Export Messages
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'messages' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:delete_all_messages' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-delete-left"></i>
                         Delete All Messages
+                    </a>
+                    <a href="{% url 'ndr_core:view_settings' 'mail' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-gear"></i>
+                        Message Settings
                     </a>
                     <a href="{% url 'ndr_core:help_chapter' 'messages' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
@@ -26,19 +38,21 @@
 
         <div class="card bg-light mb-3">
             <div class="card-body">
-                <h5 class="card-title">Inbox</h5>
+                {%  if 'archived' in request.path %}
+                    <h5 class="card-title">Archived Messages</h5>
+                {% else %}
+                        <h5 class="card-title">Inbox</h5>
+                {% endif %}
                 <ul class="list-group">
-                    {% for api in apis %}
+                    {% for message in ndr_messages %}
                         <li class="list-group-item list-group-item-action d-flex py-2">
                             <p class="p-0 m-0 flex-grow-1">
-                                <i class="fa-regular fa-code"></i> {{ api.api_label }} ({{ api.api_name }})
+                                <i class="fa-regular fa-message"></i>
+                                <a href="{% url 'ndr_core:view_message' message.pk %}" >{{ message.message_subject }}</a>
                             </p>
 
                             <p class="p-0 m-0">
-                                <a href="{% url 'ndr_core:edit_api' api.id %}" class="btn btn-sm btn-secondary">
-                                    <i class="fa-regular fa-pen-to-square"></i>
-                                </a>
-                                <a href="{% url 'ndr_core:delete_api' api.id %}" class="btn btn-sm btn-danger">
+                                <a href="{% url 'ndr_core:delete_message' message.pk %}" class="btn btn-sm btn-danger">
                                     <i class="fa-regular fa-delete-left"></i>
                                 </a>
                             </p>
@@ -49,8 +63,37 @@
         </div>
     </div>
 
+    {% if object %}
+         <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Message: {{ object.message_subject }}</h5>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-2 border p-3"><i>From:</i></div>
+                        <div class="col-10 border p-3">{{ object.message_ret_email }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2 border p-3"><i>Date/Time:</i></div>
+                        <div class="col-10 border p-3">{{ object.message_time }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2 border p-3"><i>Message:</i></div>
+                        <div class="col-10 border p-3">{{ object.message_text|linebreaks }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{% url 'ndr_core:archive_message' object.pk %}" role="button" class="btn btn-primary">Archive Message</a>
+                <a href="mailto:{{ object.message_ret_email }}" target="_blank" role="button" class="btn btn-primary">Answer Message</a>
+                <a href="{% url 'ndr_core:delete_message' object.pk %}" role="button" class="btn btn-danger">Delete Message</a>
+            </div>
+        </div>
+    {% endif %}
+
     <div class="alert alert-info small" role="alert">
         <i class="fa-regular fa-circle-info"></i>
+        You can manage your messages in the administration interface (here) or have them forwarded to a specified
+        e-mail address. Go to Message Settings to set this up.
     </div>
 
 {% endblock %}

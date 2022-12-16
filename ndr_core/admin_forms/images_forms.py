@@ -3,15 +3,15 @@ from crispy_forms.layout import Layout, Row, Column
 from django import forms
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons
-from ndr_core.models import NdrCoreApiConfiguration
+from ndr_core.models import NdrCoreApiConfiguration, NdrCoreImage
 
 
-class ImageUploadForm(forms.Form):
-    """Form to upload sample data. """
+class ImageForm(forms.ModelForm):
+    """Form to upload image data. """
 
-    group_to_upload_to = forms.ChoiceField(choices=[('1', 'one')],
-                                           help_text='TODO')
-    upload_file = forms.FileField(help_text='TODO')
+    class Meta:
+        model = NdrCoreImage
+        exclude = []
 
     @property
     def helper(self):
@@ -21,13 +21,45 @@ class ImageUploadForm(forms.Form):
         layout = helper.layout = Layout()
 
         form_row = Row(
-            Column('group_to_upload_to', css_class='form-group col-md-6 mb-0'),
-            Column('upload_file', css_class='form-group col-md-6 mb-0'),
+            Column('image_group', css_class='form-group col-md-6 mb-0'),
+            Column('image', css_class='form-group col-md-6 mb-0'),
             css_class='form-row'
         )
         layout.append(form_row)
 
+        form_row = Row(
+            Column('title', css_class='form-group col-md-6 mb-0'),
+            Column('caption', css_class='form-group col-md-6 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('citation', css_class='form-group col-md-6 mb-0'),
+            Column('url', css_class='form-group col-md-6 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+        return helper
+
+
+class ImageCreateForm(ImageForm):
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = super(ImageCreateForm, self).helper
         helper.layout.append(get_form_buttons('Upload Image'))
+        return helper
+
+
+class ImageEditForm(ImageForm):
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = super(ImageEditForm, self).helper
+        helper.layout.append(get_form_buttons('Save Image'))
         return helper
 
 

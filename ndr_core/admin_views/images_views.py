@@ -1,16 +1,12 @@
-import os
-import re
-
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.staticfiles import finders
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
+from django.views.generic import CreateView, UpdateView, DeleteView, FormView
 
-from ndr_core.admin_forms.images_forms import ImageUploadForm, LogoUploadForm
-from ndr_core.models import NdrCoreColorScheme, NdrCoreValue, NdrCoreUiStyle
+from ndr_core.admin_forms.images_forms import ImageCreateForm, LogoUploadForm, ImageEditForm
+from ndr_core.models import NdrCoreImage
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -32,6 +28,14 @@ class ImagesGroupView(LoginRequiredMixin, View):
 
     def get_context_data(self):
         context = {'logo_path': f'{NdrSettings.APP_NAME}/images/logo.png'}
+        group = self.kwargs['group']
+
+        print(NdrCoreImage.ImageGroup.values)
+        if group in NdrCoreImage.ImageGroup.values:
+            images = NdrCoreImage.objects.filter(image_group=group)
+            context['images'] = images
+            context['title'] = NdrCoreImage.ImageGroup.get_label_by_value(group, NdrCoreImage.ImageGroup.choices)
+
         return context
 
     def get(self, request, *args, **kwargs):
@@ -40,23 +44,56 @@ class ImagesGroupView(LoginRequiredMixin, View):
                       context=self.get_context_data())
 
 
-class ImagesUploadView(LoginRequiredMixin, FormView):
-    """ View to upload sample json data to an API configuration. """
+class ImagesCreateView(LoginRequiredMixin, CreateView):
+    """ View to create a image """
 
-    template_name = 'ndr_core/admin_views/image_upload.html'
-    form_class = ImageUploadForm
+    model = NdrCoreImage
+    form_class = ImageCreateForm
     success_url = reverse_lazy('ndr_core:configure_images')
+    template_name = 'ndr_core/admin_views/image_create.html'
 
     def form_valid(self, form):
-        return super().form_valid(form)
+        response = super(ImagesCreateView, self).form_valid(form)
+        return response
+
+
+class ImagesEditView(LoginRequiredMixin, UpdateView):
+    """ View to edit an existing image """
+
+    model = NdrCoreImage
+    form_class = ImageEditForm
+    success_url = reverse_lazy('ndr_core:configure_images')
+    template_name = 'ndr_core/admin_views/image_edit.html'
+
+    def form_valid(self, form):
+        response = super(ImagesEditView, self).form_valid(form)
+        return response
+
+
+class ImagesDeleteView(LoginRequiredMixin, DeleteView):
+    """ View to delete an image from the database. Asks to confirm."""
+
+    model = NdrCoreImage
+    success_url = reverse_lazy('ndr_core:configure_images')
+    template_name = 'ndr_core/admin_views/image_confirm_delete.html'
+
+    def form_valid(self, form):
+        return super(ImagesDeleteView, self).form_valid(form)
 
 
 class LogoUploadView(LoginRequiredMixin, FormView):
-    """ View to upload sample json data to an API configuration. """
+    """ View to upload a new logo image. """
 
     template_name = 'ndr_core/admin_views/logo_upload.html'
     form_class = LogoUploadForm
     success_url = reverse_lazy('ndr_core:configure_images')
 
     def form_valid(self, form):
+        file_path = f"{NdrSettings.APP_NAME}/static/{NdrSettings.APP_NAME}/images/logo.png"
+        f = form.files['upload_file']
+
+        with open(file_path, 'wb+') as destination:
+            for chunk in f.chunks():
+                destination.write(chunk)
+        messages.success(self.request, 'Changed logo file (You may need to reload this page).')
         return super().form_valid(form)

@@ -68,15 +68,16 @@
             {% endblock %}
 
             {% block content %}
-                {{ page.template_text|safe }}
+                {{ rendered_text|safe }}
             {% endblock %}
 
         </div>
 
-    {% block footer %}
-        NDR core
-    {% endblock %}
-
+        <div class="container">
+            {% block footer %}
+                NDR Footer
+            {% endblock %}
+        </div>
 
 
         <script src="{% static 'ndr_core/js/popper.min.js' %}"></script>

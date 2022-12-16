@@ -1,9 +1,10 @@
 {% extends 'ndr_core/admin_views/base.html' %}
 {% load django_tables2 %}
 {% load static %}
+{% load ndr_utils %}
 
 {% block content %}
-    <h2>Manage Images</h2>
+    <h2><i class="fa-regular fa-images"></i> Manage Images</h2>
     <div class="card-deck">
         <div class="card bg-light mb-3">
             <div class="card-body">
@@ -13,7 +14,7 @@
                         <i class="fa-regular fa-copyright"></i>
                         Change Logo Image
                     </a>
-                    <a href="{% url 'ndr_core:import_image' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:create_image' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-file-import"></i>
                         Upload Image
                     </a>
@@ -37,7 +38,7 @@
                     <li class="list-group-item list-group-item-action d-flex py-2">
                         <p class="p-0 m-0 flex-grow-1">
                             <i class="fa-regular fa-image"></i>
-                            <a href="{% url 'ndr_core:view_images' 'bg' %}">Background Images</a><br/>
+                            <a href="{% url 'ndr_core:view_images' 'backgrounds' %}">Background Images</a><br/>
                             <small>Can be used as jumbotron or page backgrounds. Depends on UI Style.</small>
                         </p>
                     </li>
@@ -51,6 +52,20 @@
                     <li class="list-group-item list-group-item-action d-flex py-2">
                         <p class="p-0 m-0 flex-grow-1">
                             <i class="fa-regular fa-image"></i>
+                            <a href="{% url 'ndr_core:view_images' 'logos' %}">Logo Images</a><br/>
+                            <small>Can be used as footer images, etc.</small>
+                        </p>
+                    </li>
+                    <li class="list-group-item list-group-item-action d-flex py-2">
+                        <p class="p-0 m-0 flex-grow-1">
+                            <i class="fa-regular fa-image"></i>
+                            <a href="{% url 'ndr_core:view_images' 'figures' %}">Figure Images</a><br/>
+                            <small>Can be used as figures with a caption.</small>
+                        </p>
+                    </li>
+                    <li class="list-group-item list-group-item-action d-flex py-2">
+                        <p class="p-0 m-0 flex-grow-1">
+                            <i class="fa-regular fa-image"></i>
                             <a href="{% url 'ndr_core:view_images' 'people' %}">People Images</a><br/>
                             <small>Can be used to create a 'about us' page.</small>
                         </p>
@@ -59,6 +74,56 @@
             </div>
         </div>
     </div>
+
+    {% if images is not None %}
+       <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ title }}</h5>
+                {% if images|length == 0 %}
+                    <div class="alert alert-info small" role="alert">
+                        <i class="fa-regular fa-circle-info"></i>
+                        There are no images in this group. Choose 'Upload Image' to create one.
+                    </div>
+                {% else %}
+                    <div class="container">
+                        {% for image in images %}
+                            {% if forloop.counter0|divisibleby:4 %}
+                                <div class="row">
+                            {% endif %}
+
+                            <div class="col-3 border">
+                                {% if image.title %}
+                                    {{ image.title }}<br/>
+                                {% else %}
+                                    <i>No Title</i><br/>
+                                {% endif %}
+                                <img src="{{ image.image.url }}" class="img-thumbnail" />
+                                {% if image.caption %}
+                                    <small>{{ image.caption }}</small><br/>
+                                {% else %}
+                                    <small><i>No caption</i></small><br/>
+                                {% endif %}
+                                <p class="p-0 m-0">
+                                    <div style="white-space: nowrap;">
+                                        <a href="{% url 'ndr_core:edit_image' image.pk %}" class="btn btn-sm btn-secondary">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </a>
+                                        <a href="{% url 'ndr_core:delete_image' image.pk %}" class="btn btn-sm btn-danger">
+                                            <i class="fa-regular fa-delete-left"></i>
+                                        </a>
+                                     </div>
+                                </p>
+                            </div>
+
+                            {% if forloop.counter0|modulo:4 == 3 %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
 
     <div class="alert alert-info small" role="alert">
         <i class="fa-regular fa-circle-info"></i>

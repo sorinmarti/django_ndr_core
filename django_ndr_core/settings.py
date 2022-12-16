@@ -28,13 +28,13 @@ SECRET_KEY = 'django-insecure-@hrqka8uuagm(@gsfh=%wb+#cs@qsfo29trnya%m)=c2-hv70@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    # 'ndr',
+    'ndr',
     'ndr_core',
     'django_tables2',
     'crispy_forms',
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'captcha',
     'colorfield',
     'fontawesomefree',
+    'django.forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -140,6 +141,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = reverse_lazy('ndr_core:login')
 LOGOUT_URL = reverse_lazy('ndr_core:logout')
 LOGIN_REDIRECT_URL = reverse_lazy('ndr_core:dashboard')
+
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"

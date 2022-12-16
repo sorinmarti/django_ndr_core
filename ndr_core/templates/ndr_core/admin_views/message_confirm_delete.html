@@ -1,0 +1,17 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <a href="{% url 'ndr_core:configure_messages' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Really delete Message?</h5>
+            <form method="post">{% csrf_token %}
+                <p>Are you sure you want to delete "{{ object }}"?</p>
+                <input type="submit" class="btn btn-danger" value="Confirm Delete">
+            </form>
+        </div>
+    </div>
+{% endblock %}

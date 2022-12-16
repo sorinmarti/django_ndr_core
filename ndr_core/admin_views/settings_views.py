@@ -18,6 +18,12 @@ settings_group_list = {
                 'settings': ['project_title',
                              'header_default_title']
              },
+            'language': {
+                'name': 'language',
+                'title': 'Language Settings',
+                'help_text': 'Language for the UI.',
+                'settings': []
+            },
             'header': {
                 'name': 'header',
                 'title': 'Header Settings',

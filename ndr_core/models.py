@@ -29,7 +29,7 @@ class NdrCoreSearchField(models.Model):
         """This field produces a dropdown or multi select field"""
 
     field_name = models.CharField(max_length=100,
-                                  unique=True,
+                                  primary_key=True,
                                   help_text="Choose a name for the field. Can't contain spaces or special characters"
                                             "and must be unique")
     """The field_name is used as the HTML form name"""
@@ -80,7 +80,8 @@ class NdrCoreSearchFieldFormConfiguration(models.Model):
                                      help_text="The search field to place in a form")
     """The search field to place in a form"""
 
-    field_row = models.IntegerField(help_text="The row in the form. Starts with 1.")
+    field_row = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(20)],
+                                    help_text="The row in the form. Starts with 1.")
     """The row in the form. Starts with 1. """
 
     field_column = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)],
@@ -96,11 +97,19 @@ class NdrCoreSearchFieldFormConfiguration(models.Model):
 
 
 class NdrCoreApiImplementation(models.Model):
-    """TODO """
+    """NDR Core has different API implementations to target different APIS. They are saved in this model. """
+
     name = models.CharField(max_length=100, primary_key=True)
+    """Name of the API implementation. Used as identifier, can't contain special characters. """
+
     label = models.CharField(max_length=100, unique=True)
-    url = models.URLField(null=True)
+    """Display Label of the implementation. """
+
+    url = models.URLField(null=True, blank='True')
+    """URL of API homepage or documentation. """
+
     description = models.TextField(default='blank')
+    """Description of this implementation. """
 
     def __str__(self):
         return self.label
@@ -115,41 +124,63 @@ class NdrCoreApiConfiguration(models.Model):
         HTTPS = 2, "https"
 
     api_name = models.CharField(max_length=100,
+                                verbose_name="API Name",
                                 primary_key=True,
-                                help_text="The (form) name of the API. Can't contain special characters or spaces")
+                                help_text="The (form) name of the API. Can't contain special characters or spaces.")
     """This name is used as identifier for the API Can't contain special characters or spaces"""
 
     api_host = models.CharField(max_length=100,
+                                verbose_name="API Host",
                                 help_text="The API host (domain only, e.g. my-api-host.org)")
     """The API host (domain only, e.g. my-api-host.org) """
 
     api_protocol = models.PositiveSmallIntegerField(choices=Protocol.choices,
+                                                    verbose_name="Protocol",
                                                     default=Protocol.HTTPS,
                                                     help_text="The protocol used (http or https)")
     """The protocol used (http or https) """
 
-    api_type = models.ForeignKey(NdrCoreApiImplementation, on_delete=models.CASCADE)
-    """TODO """
+    api_type = models.ForeignKey(NdrCoreApiImplementation, on_delete=models.CASCADE,
+                                 verbose_name="API Type",
+                                 help_text="Choose the API implementation of your configuration.")
+    """Refers to the API implementation used for this configuration."""
 
     api_port = models.IntegerField(default=80,
+                                   verbose_name="Port",
                                    help_text="Port to connect to.")
     """The TCP port of the API """
 
     api_label = models.CharField(max_length=250,
-                                 help_text="The API's label is the title of the queried repository")
+                                 verbose_name="Displayable Label",
+                                 help_text="The API's label is the title of the queried repository. "
+                                           "Choose a short descriptive title.")
     """The API's label is the title of the queried repository """
 
     api_description = models.TextField(default='',
+                                       verbose_name="Description",
                                        help_text="Description of this configuration")
     """Description of this configuration."""
 
     api_page_size = models.IntegerField(default=10,
+                                        verbose_name="Page Size",
                                         help_text="Size of the result page (e.g. 'How many results at once')")
     """The query results will return a page of the results. You can define the page size"""
 
     api_url_stub = models.CharField(default=None, null=True, blank=True, max_length=50,
+                                    verbose_name="URL stub",
                                     help_text="Static URL part after host, before API parameters.")
     """Static URL part after host, before API parameters."""
+
+    api_user_name = models.CharField(max_length=50, blank=True,
+                                     default='',
+                                     help_text="")
+    """TODO """
+
+    api_password = models.CharField(max_length=50, blank=True, default='')
+    """TODO """
+
+    api_auth_key = models.CharField(max_length=512, blank=True, default='')
+    """TODO """
 
     def get_base_url(self):
         """
@@ -166,10 +197,10 @@ class NdrCoreApiConfiguration(models.Model):
 
 
 class NdrCoreSearchConfiguration(models.Model):
-    """ A search configuration contains TODO """
+    """ A search configuration describes a configured search form which targets a specified API configuration. """
 
     conf_name = models.CharField(max_length=100,
-                                 unique=True,
+                                 primary_key=True,
                                  help_text="Name of this search configuration. "
                                            "Can't contain spaces or special characters.")
     """Name of the search configuration. Can't contain spaces or special characters. Can't be 'simple' """
@@ -182,7 +213,7 @@ class NdrCoreSearchConfiguration(models.Model):
     api_configuration = models.ForeignKey(NdrCoreApiConfiguration,
                                           on_delete=models.CASCADE,
                                           help_text="The API to query")
-    """The API to query """
+    """The API to send the query to """
 
     search_form_fields = models.ManyToManyField(NdrCoreSearchFieldFormConfiguration,
                                                 help_text="Fields associated with this configuration")
@@ -193,16 +224,17 @@ class NdrCoreSearchConfiguration(models.Model):
 
 
 class NdrCoreResultTemplateField(models.Model):
-    """TODO """
+    """An NdrCoreResultTemplateField maps a json-result-value to a template-value """
 
     class Renderer(models.IntegerChoices):
-        GEONAMES = 1, "geonames.org"
+        URL = 1, "url-link"
+        GEONAMES = 2, "geonames.org"
 
     class Container(models.TextChoices):
         OPTIONS = "options", "Options"
         VALUE_LIST = "values", "Value List"
 
-    belongs_to = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE)
+    belongs_to = models.ForeignKey(NdrCoreSearchConfiguration, on_delete=models.CASCADE)
     """TODO """
 
     target_field_name = models.CharField(max_length=100)
@@ -220,7 +252,7 @@ class NdrCoreResultTemplateField(models.Model):
     field_label = models.CharField(max_length=100, null=True, blank=True)
     """TODO """
 
-    field_container = models.CharField(max_length=100)
+    field_container = models.CharField(max_length=100, choices=Container.choices)
     """TODO """
 
     field_renderer = models.IntegerField(choices=Renderer.choices, null=True, blank=True)
@@ -262,6 +294,12 @@ class NdrCorePage(models.Model):
 
         FILTER_LIST = 6, "Filterable List"
         """A filter list page shows a list of data which can be filtered down"""
+
+        FLIP_BOOK = 7, "Flip Book"
+        """TODO """
+
+        ABOUT_PAGE = 8, "About Us Page"
+        """TODO """
 
     view_name = models.CharField(max_length=200,
                                  help_text='The url part of your page (e.g. https://yourdomain.org/p/view_name)',
@@ -309,6 +347,10 @@ class NdrCorePage(models.Model):
     template_text = RichTextUploadingField(null=True, blank=True,
                                            help_text='Text for your template page')
     """Template Pages can be filled with RichText content (instead of 'manual' HTML). """
+
+    children = models.ManyToManyField('NdrCorePage', null=True, blank=True)
+    """Any NDR Core page might have children. Currently used for flip book. In the future to be used as navigation 
+    hierarchy."""
 
     def url(self):
         """Returns the url of a given page or '#' if none is found"""
@@ -419,10 +461,20 @@ class NdrCoreValue(models.Model):
      The list of values is given and gets loaded from a fixture when the management command 'init_ndr_core' is
      executed. Users can only manipulate the 'value_value' of each object."""
 
+    class ValueType(models.IntegerChoices):
+        STRING = 1, "String"
+        INTEGER = 2, "Integer"
+        BOOLEAN = 3, "Boolean"
+        LIST = 4, "List"
+
     value_name = models.CharField(max_length=100, primary_key=True,
                                   help_text='This is the identifier of a NdrCoreValue. '
                                             'Can\'t contain special characters.' )
     """This is the identifier of a NdrCoreValue. In the source, each value gets loaded by searching for this name"""
+
+    value_type = models.IntegerField(choices=ValueType.choices,
+                                     help_text="The type of your value",
+                                     default=ValueType.STRING)
 
     value_label = models.CharField(max_length=100,
                                    help_text='This is a human readable label for the value. '
@@ -436,6 +488,9 @@ class NdrCoreValue(models.Model):
     value_value = models.CharField(max_length=100,
                                    help_text='This is the actual value which can be updated')
     """This is the actual value which can be updated by the user"""
+
+    value_options = models.CharField(max_length=200, default='',
+                                     help_text='Used for value_type LIST: comma-separated list')
 
     is_user_value = models.BooleanField(default=False)
     """Indicates if a value was created by a user"""
@@ -511,8 +566,8 @@ class NdrCoreCorrectedField(models.Model):
     """TODO """
 
 
-class UserMessage(models.Model):
-    """TODO """
+class NdrCoreUserMessage(models.Model):
+    """If the contact form is sent, a user message object is created. """
 
     message_subject = models.CharField(max_length=200)
     """TODO """
@@ -526,11 +581,14 @@ class UserMessage(models.Model):
     message_ret_email = models.EmailField()
     """TODO """
 
-
-class NdrCoreUIElement(models.Model):
+    message_archived = models.BooleanField(default=False)
     """TODO """
 
-    element_type = models.IntegerField()
+    message_forwarded = models.BooleanField(default=False)
+    """TODO """
+
+    def __str__(self):
+        return f"{self.message_subject} (from: {self.message_ret_email})"
 
 
 class NdrCoreSearchStatisticEntry(models.Model):
@@ -548,3 +606,126 @@ class NdrCoreSearchStatisticEntry(models.Model):
 
     search_location = models.CharField(max_length=20, null=True)
     """The location the user searched from. """
+
+
+class NdrCoreImage(models.Model):
+    """ Directory of all images used outside the ckeditor and the logo. """
+
+    class ImageGroup(models.TextChoices):
+        BGS = "backgrounds", "Background Images"
+        ELEMENTS = "elements", "Element Images"
+        FIGURES = "figures", "Figures"
+        LOGOS = "logos", "Logos"
+        PEOPLE = "people", "People"
+
+        @staticmethod
+        def get_label_by_value(group_value, choices):
+            for choice in choices:
+                if choice[0] == group_value:
+                    return choice[1]
+
+    title = models.CharField(max_length=200, blank=True, default='',
+                             help_text='Title of the image.')
+    """Title of the image"""
+
+    caption = models.CharField(max_length=200, blank=True, default='',
+                               help_text='Caption of the image.')
+    """Caption of the image"""
+
+    citation = models.CharField(max_length=200, blank=True, default='',
+                                help_text='Citation text of the image.')
+
+    """Caption of the image"""
+    url = models.URLField(null=True, blank=True, default=None,
+                          help_text='URL to image or source')
+    """URL to image or source"""
+
+    image = models.ImageField(upload_to='images',
+                              help_text='TODO')
+    """Actual image"""
+
+    image_group = models.CharField(max_length=100, choices=ImageGroup.choices)
+    """Group the image belongs to"""
+
+    def __str__(self):
+        return self.title
+
+
+class NdrCoreUIElement(models.Model):
+    """ UI Element """
+
+    class UIElementType(models.TextChoices):
+        CARD = "card", "Card"
+        SLIDESHOW = "slides", "Slideshow"
+        CAROUSEL = "carousel", "Carousel"
+        JUMBOTRON = "jumbotron", "Jumbotron"
+
+        def get_info_text(self):
+            if self.value == "CARD":
+                return "Card Info"
+            return ""
+
+        def get_(self):
+            pass
+
+    type = models.CharField(max_length=100,
+                            choices=UIElementType.choices)
+    """Type of the element. Decides how it is rendered. """
+
+    title = models.CharField(max_length=100,
+                             help_text='Title of the element for your reference.')
+    """TODO """
+
+    use_image_conf = models.BooleanField(default=True,
+                                         help_text='Use the image\'s title, caption and URL?')
+    """TODO """
+
+    show_indicators = models.BooleanField(default=True,
+                                          help_text='Show the indicators for slideshows and carousels?')
+    """TODO """
+
+    show_title = models.BooleanField(default=True,
+                                     help_text='Show the title?')
+    """TODO """
+
+    show_text = models.BooleanField(default=True,
+                                    help_text='Show the element\'s text?')
+    """TODO """
+
+    show_image = models.BooleanField(default=True,
+                                     help_text='Show the images?')
+    """TODO """
+
+    link_element = models.BooleanField(default=True,
+                                       help_text='Link the elements to the supplied url?')
+    """TODO """
+
+    autoplay = models.BooleanField(default=False,
+                                   help_text='Autoplay carousels and slideshows?')
+    """TODO """
+
+    def items(self):
+        """TODO """
+        return self.ndrcoreuielementitem_set.all().order_by('order_idx')
+
+
+class NdrCoreUiElementItem(models.Model):
+    """TODO """
+
+    belongs_to = models.ForeignKey(NdrCoreUIElement, on_delete=models.CASCADE)
+    """TODO """
+
+    order_idx = models.IntegerField()
+    """TODO """
+
+    ndr_image = models.ForeignKey(NdrCoreImage, on_delete=models.CASCADE, null=True)
+    """TODO """
+
+    title = models.CharField(max_length=100, blank=True)
+    """TODO """
+
+    text = models.TextField(blank=True)
+    """TODO """
+
+    url = models.URLField(blank=True)
+    """TODO """

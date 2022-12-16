@@ -68,3 +68,8 @@
    -webkit-transform: rotate(90deg);
    transform: rotate(90deg);
 }
+
+.image-picker-test {
+    width: 200px;
+
+}

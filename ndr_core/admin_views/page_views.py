@@ -30,6 +30,20 @@ class ManagePages(LoginRequiredMixin, View):
                       context=context)
 
 
+class ManagePageFooter(LoginRequiredMixin, View):
+    """TODO """
+
+    def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
+        context = {'pages': NdrCorePage.objects.all().order_by('index'),
+                   'footer': True}
+
+        return render(self.request,
+                      template_name='ndr_core/admin_views/configure_pages.html',
+                      context=context)
+
+
 class PageDetailView(LoginRequiredMixin, DetailView):
     """TODO """
 
@@ -82,6 +96,9 @@ class PageCreateView(LoginRequiredMixin, CreateView):
                 shutil.copyfile(base_file, new_filename)
             elif self.object.page_type == self.object.PageType.CONTACT:
                 base_file = finders.find('ndr_core/app_init/contact.html')
+                shutil.copyfile(base_file, new_filename)
+            elif self.object.page_type == self.object.PageType.FLIP_BOOK:
+                base_file = finders.find('ndr_core/app_init/flip_book.html')
                 shutil.copyfile(base_file, new_filename)
         return response
 

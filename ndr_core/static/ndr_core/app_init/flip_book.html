@@ -1,0 +1,14 @@
+{% extends 'ndr/base.html' %}
+
+{% block page_title %}
+    <h1>
+        {{ page.name }}
+         <nav class="sub-nav mb-4 float-right">
+            <a class="btn btn-sm btn-outline-dark" href="{{ prev.url }}">{{ prev.label }}</a>
+            <a class="btn btn-sm btn-outline-secondary" href="{{ next.url }}"> {{ next.label }}</a>
+        </nav>
+    </h1>
+{% endblock %}
+
+{# block content #}
+{# endblock #}

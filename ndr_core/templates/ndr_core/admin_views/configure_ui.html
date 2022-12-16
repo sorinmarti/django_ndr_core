@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block content %}
-    <h2>Configure UI</h2>
+    <h2><i class="fa-regular fa-window-maximize"></i> Change UI Style</h2>
     <div class="card-deck">
         <div class="card bg-light mb-3">
             <div class="card-body">
@@ -42,7 +42,7 @@
         <div class="card bg-light mb-3" style="max-height: 50vh;">
             <div class="overflow-auto">
                 <div class="card-body">
-                    <h5 class="card-title">Current UI Settings</h5>
+                    <h5 class="card-title">Available UI Styles</h5>
                     <div class="list-group">
                         {% for ui_style in ui_styles %}
                             <a href="{% url 'ndr_core:view_ui_style' ui_style.pk %}" class="list-group-item list-group-item-action">

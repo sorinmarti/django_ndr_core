@@ -18,3 +18,7 @@ def key_value(data_dict, key):
         return data_dict[key]
     except KeyError:
         return ''
+
+@register.filter
+def modulo(num, val):
+    return num % val

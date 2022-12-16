@@ -4,13 +4,14 @@ import os
 from captcha.fields import ReCaptchaField
 from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Row, Column, Div, BaseInput
+from crispy_forms.layout import Layout, Field, Row, Column, Div, BaseInput, ButtonHolder, Submit
 from django import forms
 from django.conf import settings
 from django.db.models import Max
+from django.forms import ModelForm
 from django.utils.safestring import mark_safe
 
-from ndr_core.models import NdrCoreValue, NdrCorePage
+from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreUserMessage
 from ndr_core.widgets import CustomSelect
 
 
@@ -23,6 +24,8 @@ class _NdrCoreForm(forms.Form):
         """Init the form class. Save the ndr page if it is provided."""
         if 'ndr_page' in kwargs:
             self.ndr_page = kwargs.pop('ndr_page')
+        if 'instance' in kwargs:
+            kwargs.pop('instance')
 
         super(forms.Form, self).__init__(*args, **kwargs)
 
@@ -247,42 +250,59 @@ class FilterForm(_NdrCoreForm):
         return helper
 
 
-class ContactForm(_NdrCoreForm):
+class ContactForm(ModelForm, _NdrCoreForm):
     """TODO """
 
-    def __init__(self, *args, **kwargs):
-        """TODO """
-
-        super(ContactForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = "POST"
-        self.helper.add_input(MySubmit('submit', 'Send Message'))
-
-        self.fields['subject'].initial = NdrCoreValue.objects.get(value_name='contact_form_default_subject').value_value
-
-    subject = forms.CharField(label='Subject',
-                              initial='',
-                              help_text="You can change the subject.",
-                              required=True)
-
-    email = forms.EmailField(label='Your E-Mail Address',
-                             help_text="We are going to reply to this e-mail address.",
-                             required=True)
-
-    message = forms.CharField(label="Message",
-                              help_text='Please be as specific as you can in your message. '
-                                        'It will help us to answer your questions!',
-                              widget=forms.Textarea)
-
     captcha = ReCaptchaField()
+
+    class Meta:
+        """Configure the model form. Provide model class and form fields."""
+        model = NdrCoreUserMessage
+        exclude = []
+
+    def __init__(self, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+        # self.fields['subject'].initial = NdrCoreValue.objects.get(value_name='contact_form_default_subject').value_value
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_method = "POST"
+        layout = helper.layout = Layout()
+
+        form_row = Row(
+            Column('message_subject', css_class='form-group col-md-6 mb-0'),
+            Column('message_ret_email', css_class='form-group col-md-6 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('message_text', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('captcha', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        bh = ButtonHolder(
+            Submit('submit', "Send Message", css_class='btn-default'),
+            css_class="modal-footer"
+        )
+        layout.append(bh)
+
+        return helper
 
 
 class TestForm(_NdrCoreForm):
     """TODO """
-
     field_1 = forms.CharField()
     field_2 = forms.BooleanField()
-    field_3 = forms.ChoiceField(choices=[('1', 'Choice'),('2', 'Choice 2'), ('3', 'Choice 3')])
+    field_3 = forms.ChoiceField(choices=[('1', 'Choice'), ('2', 'Choice 2'), ('3', 'Choice 3')])
 
 
 class MySubmit(BaseInput):

@@ -7,9 +7,65 @@
             <a href="{% url 'ndr_core:configure_ui_elements' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
         </div>
         <div class="card-body">
-            <h5 class="card-title">Create New UI Element</h5>
+            <h5 class="card-title">{{ view_title }}</h5>
             {% crispy form %}
         </div>
     </div>
+
+{% endblock %}
+
+{% block page_js %}
+    <script>
+        $(document).ready(function() {
+            $("select").imagepicker({'hide_select': true, 'show_label': false});
+
+            ////////////
+            // CARD FORM
+            // Hide Item title, text and URL
+            $('#div_id_card_item_title').hide();
+            $('#div_id_card_item_text').hide();
+            $('#div_id_card_item_url').hide();
+
+            //
+            let image_checkbox = $('#id_show_image');
+            image_checkbox.click(function () {
+                if($(this).prop("checked") == true){
+                    $('#div_id_card_item_image').show();
+                    $('#div_id_use_image_conf').show();
+
+                    if($('#id_use_image_conf').prop("checked") == true) {
+                        $('#div_id_card_item_title').hide();
+                        $('#div_id_card_item_text').hide();
+                        $('#div_id_card_item_url').hide();
+                    }
+                    else {
+                        $('#div_id_card_item_title').show();
+                        $('#div_id_card_item_text').show();
+                        $('#div_id_card_item_url').show();
+                    }
+                }
+                else {
+                    $('#div_id_card_item_image').hide();
+                    $('#div_id_use_image_conf').hide();
+                    $('#div_id_card_item_title').show();
+                    $('#div_id_card_item_text').show();
+                    $('#div_id_card_item_url').show();
+                }
+            });
+            let use_image_props_checkbox = $('#id_use_image_conf');
+            use_image_props_checkbox.click(function () {
+                if($(this).prop("checked") == true){
+                    $('#div_id_card_item_title').hide();
+                    $('#div_id_card_item_text').hide();
+                    $('#div_id_card_item_url').hide();
+                }
+                else {
+                    $('#div_id_card_item_title').show();
+                    $('#div_id_card_item_text').show();
+                    $('#div_id_card_item_url').show();
+                }
+            });
+        });
+    </script>
 
 {% endblock %}

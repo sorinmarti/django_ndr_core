@@ -1,15 +1,21 @@
 import json
+import re
 
+from django.contrib import messages
 from django.contrib.staticfiles import finders
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import HttpResponseNotFound, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.template.loader import render_to_string
+from django.urls import reverse, reverse_lazy
 
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
+from django.views.generic.edit import FormMixin, CreateView
 
 from ndr_core.geo_ip_utils import get_user_ip, get_geolocation
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
-from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreValue, NdrCoreSearchStatisticEntry
+from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreValue, NdrCoreSearchStatisticEntry,\
+    NdrCoreUserMessage, NdrCoreImage, NdrCoreUIElement
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
 
@@ -43,6 +49,12 @@ def dispatch(request, ndr_page):
         elif page.page_type == page.PageType.CONTACT:
             return ContactView.as_view(template_name=f'ndr/{page.view_name}.html',
                                        ndr_page=page)(request)
+        elif page.page_type == page.PageType.FLIP_BOOK:
+            return FlipBookView.as_view(template_name=f'ndr/{page.view_name}.html',
+                                        ndr_page=page)(request)
+        elif page.page_type == page.PageType.ABOUT_PAGE:
+            return AboutUsView.as_view(template_name=f'ndr/{page.view_name}.html',
+                                       ndr_page=page)(request)
         else:
             return HttpResponseNotFound("Page Type Not Found")
     except NdrCorePage.DoesNotExist:
@@ -59,17 +71,46 @@ class _NdrCoreView(View):
         super().__init__(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data()
-        return render(request, self.template_name, context)
+        return render(request, self.template_name, self.get_ndr_context_data())
 
-    def get_context_data(self, **kwargs):
-        context = {'page': self.ndr_page, 'navigation': NdrCorePage.objects.all().order_by('index')}
+    def get_ndr_context_data(self):
+        context = {'page': self.ndr_page, 'navigation': NdrCorePage.objects.all().order_by('index'),
+                   'my_data': {
+                       'slides': NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS),
+                       'show_indicators': True,
+                       'show_title': True,
+                       'show_caption': True
+                   }}
         return context
 
 
 class NdrTemplateView(_NdrCoreView):
     """Basic template view. (Is currently the same as _NdrCoreView) """
-    pass
+
+    def get_ndr_context_data(self):
+        context = super(NdrTemplateView, self).get_ndr_context_data()
+        page_text = context['page'].template_text
+
+        # Search for ui-elements to insert
+        if page_text is not None and page_text != '':
+            rendered_text = page_text
+            match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron)\|([0-9]*)(\]\])', rendered_text)
+            while match:
+                template = match.groups()[1]
+                element_id = match.groups()[2]
+                try:
+                    element = NdrCoreUIElement.objects.get(id=int(element_id))
+                    element_html_string = render_to_string(f'ndr_core/ui_elements/{template}.html',
+                                                           request=self.request, context={'data': element})
+
+
+                    rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', element_html_string)
+                    context['rendered_text'] = rendered_text
+                except NdrCoreUIElement.DoesNotExist:
+                    pass  # TODO
+
+                match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron)\|([0-9]*)(\]\])', rendered_text)
+        return context
 
 
 class NdrTestView(_NdrCoreView):
@@ -104,7 +145,7 @@ class FilterListView(_NdrCoreView):
         choices = list()
         search_metadata = {}
 
-        context = self.get_context_data()
+        context = self.get_ndr_context_data()
         context.update({'results': choices, 'form': form, 'meta': search_metadata})
         return render(request, self.template_name, context)
 
@@ -160,7 +201,7 @@ class SearchView(_NdrCoreView):
             else:
                 print("No search")
 
-        context = self.get_context_data()
+        context = self.get_ndr_context_data()
         context.update({'form': form, 'requested_search': requested_search})
         return render(request, self.template_name, context)
 
@@ -170,7 +211,7 @@ class SimpleSearchView(_NdrCoreView):
 
     def get(self, request, *args, **kwargs):
         form = SimpleSearchForm(ndr_page=self.ndr_page)
-        context = self.get_context_data()
+        context = self.get_ndr_context_data()
 
         if request.method == "GET":
             form = SimpleSearchForm(request.GET, ndr_page=self.ndr_page)
@@ -188,19 +229,45 @@ class SimpleSearchView(_NdrCoreView):
         return render(request, self.template_name, context)
 
 
-class ContactView(_NdrCoreView):
-    """TODO """
+class ContactView(CreateView, _NdrCoreView):
+    """A view to show a contact form """
+
+    model = NdrCoreUserMessage
+    form_class = ContactForm
+    success_url = reverse_lazy('ndr:ndr_view', kwargs={'ndr_page': 'contact'})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(self.get_ndr_context_data())
+        return context
+
+    def form_valid(self, form):
+        # TODO SEND EMAIL AND/OR CREATE USER MESSAGE OBJECT
+
+        print("Send Email?")
+        messages.success(self.request, "Thank you! The message has been sent.")
+        return super().form_valid(form)
+
+
+class AboutUsView(_NdrCoreView):
+    """A view to show an about us page. """
+
+    def get_context_data(self, **kwargs):
+        context = {}
+        context.update(self.get_ndr_context_data())
+        return context
 
     def get(self, request, *args, **kwargs):
-        form = ContactForm()
+        pass
 
-        if request.method == "GET":
-            if form.is_valid():
-                pass
 
-        context = self.get_context_data()
-        context.update({'form': form})
-        return render(request, self.template_name, context)
+class FlipBookView(_NdrCoreView):
+    """A view to show a set of pages with 'back' and 'forward' buttons. """
+
+    def get_context_data(self, **kwargs):
+        context = {}
+        context.update(self.get_ndr_context_data())
+        return context
 
 
 class ApiTestView(View):
@@ -208,7 +275,6 @@ class ApiTestView(View):
 
     def get(self, request, *args, **kwargs):
         api_request = self.kwargs['api_request']
-        print(api_request)
         json_response = {}
 
         if api_request == 'basic':
