@@ -42,9 +42,11 @@
                                         <a href="{% url 'ndr_core:edit_page' page.pk %}" class="btn btn-sm btn-secondary">
                                             <i class="fa-regular fa-pen-to-square"></i>
                                         </a>
-                                        <a href="{% url 'ndr_core:delete_page' page.pk %}" class="btn btn-sm btn-danger">
-                                            <i class="fa-regular fa-delete-left"></i>
-                                        </a>
+                                        {% if not page.view_name == 'index' %}
+                                            <a href="{% url 'ndr_core:delete_page' page.pk %}" class="btn btn-sm btn-danger">
+                                                <i class="fa-regular fa-delete-left"></i>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </p>
                             </li>
