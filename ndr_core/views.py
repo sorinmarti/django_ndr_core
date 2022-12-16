@@ -107,9 +107,10 @@ class NdrTemplateView(_NdrCoreView):
                     rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', element_html_string)
                     context['rendered_text'] = rendered_text
                 except NdrCoreUIElement.DoesNotExist:
-                    pass  # TODO
+                    rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', "ERROR loading UI element")
 
                 match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron)\|([0-9]*)(\]\])', rendered_text)
+
         return context
 
 

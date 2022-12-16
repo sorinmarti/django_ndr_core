@@ -151,6 +151,12 @@ class PageCreateForm(PageForm):
 class PageEditForm(PageForm):
     """Form to edit a page. Extends the base form class and adds an 'edit' button."""
 
+    def __init__(self, **kwargs):
+        super(PageEditForm, self).__init__(**kwargs)
+        if self.initial["view_name"] == "index":
+            self.fields['view_name'].disabled = True
+            self.fields['view_name'].help_text = "This is your landing page you can\'t change its view name."
+
     @property
     def helper(self):
         """Creates and returns the form helper property."""

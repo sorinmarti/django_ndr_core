@@ -113,8 +113,17 @@ class PageEditView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         """Overwrites form_valid function of CreateView. Sets the index of the newly created page object and creates
-        a template to save in the ndr apps template folder.
-            TODO Recreate the template"""
+        a template to save in the ndr apps template folder."""
+        updated_instance = form.save(commit=False)
+        original_instance = NdrCorePage.objects.get(pk=updated_instance.pk)
+
+        old_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{original_instance.view_name}.html'
+        new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{updated_instance.view_name}.html'
+        print(old_filename)
+        print(new_filename)
+
+        if old_filename != new_filename:
+            os.rename(old_filename, new_filename)
 
         response = super(PageEditView, self).form_valid(form)
         return response
