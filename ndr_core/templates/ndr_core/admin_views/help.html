@@ -16,6 +16,9 @@
                     <a href="{% url 'ndr_core:help_chapter' 'contact' %}" class="list-group-item small list-group-item-action py-2{% if "/help/contact/" in request.path %} active{% endif %}">
                         Contact Forms
                     </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'about' %}" class="list-group-item small list-group-item-action py-2{% if "/help/about/" in request.path %} active{% endif %}">
+                        About Page
+                    </a>
                 </div>
             </div>
         </div>
