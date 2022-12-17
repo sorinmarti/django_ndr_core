@@ -73,3 +73,11 @@
     width: 200px;
 
 }
+
+.bg-selected {
+    background: #cccccc;
+}
+
+.bg-selected:hover {
+    background: #cccccc;
+}

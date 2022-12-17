@@ -35,41 +35,15 @@
             <div class="card-body">
                 <h5 class="card-title">Image Groups</h5>
                 <ul class="list-group">
-                    <li class="list-group-item list-group-item-action d-flex py-2">
-                        <p class="p-0 m-0 flex-grow-1">
-                            <i class="fa-regular fa-image"></i>
-                            <a href="{% url 'ndr_core:view_images' 'backgrounds' %}">Background Images</a><br/>
-                            <small>Can be used as jumbotron or page backgrounds. Depends on UI Style.</small>
-                        </p>
-                    </li>
-                    <li class="list-group-item list-group-item-action d-flex py-2">
-                        <p class="p-0 m-0 flex-grow-1">
-                            <i class="fa-regular fa-image"></i>
-                            <a href="{% url 'ndr_core:view_images' 'elements' %}">Element Images</a><br/>
-                            <small>Can be used as carousel or card images. Depends on UI Style.</small>
-                        </p>
-                    </li>
-                    <li class="list-group-item list-group-item-action d-flex py-2">
-                        <p class="p-0 m-0 flex-grow-1">
-                            <i class="fa-regular fa-image"></i>
-                            <a href="{% url 'ndr_core:view_images' 'logos' %}">Footer Partner Images</a><br/>
-                            <small>Upload logos of your partner organisations and link them in the footer.</small>
-                        </p>
-                    </li>
-                    <li class="list-group-item list-group-item-action d-flex py-2">
-                        <p class="p-0 m-0 flex-grow-1">
-                            <i class="fa-regular fa-image"></i>
-                            <a href="{% url 'ndr_core:view_images' 'figures' %}">Figure Images</a><br/>
-                            <small>Can be used as figures with a caption.</small>
-                        </p>
-                    </li>
-                    <li class="list-group-item list-group-item-action d-flex py-2">
-                        <p class="p-0 m-0 flex-grow-1">
-                            <i class="fa-regular fa-image"></i>
-                            <a href="{% url 'ndr_core:view_images' 'people' %}">People Images</a><br/>
-                            <small>Can be used to create a 'about us' page.</small>
-                        </p>
-                    </li>
+                    {% for group in groups %}
+                        <li class="list-group-item list-group-item-action d-flex py-2{% if request.resolver_match.kwargs.group == group.name %} bg-selected {% endif%}">
+                            <p class="p-0 m-0 flex-grow-1">
+                                <i class="fa-regular fa-image"></i>
+                                <a href="{% url 'ndr_core:view_images' group.name %}">{{ group.label }}</a><br/>
+                                <small>{{ group.help_text }}</small>
+                            </p>
+                        </li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>
@@ -124,6 +98,9 @@
                                 </div>
                             {% endif %}
                         {% endfor %}
+                        {% if images|length|modulo:4 != 0 %}
+                            </div>
+                        {% endif %}
                     </div>
                 {% endif %}
             </div>

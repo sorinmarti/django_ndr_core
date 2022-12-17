@@ -660,9 +660,9 @@ class NdrCoreImage(models.Model):
 
     class ImageGroup(models.TextChoices):
         BGS = "backgrounds", "Background Images"
-        ELEMENTS = "elements", "Element Images"
+        ELEMENTS = "elements", "Slideshow Images"
         FIGURES = "figures", "Figures"
-        LOGOS = "logos", "Partner Logos"
+        LOGOS = "logos", "Partner Images"
         PEOPLE = "people", "People"
 
         @staticmethod
@@ -706,9 +706,6 @@ class NdrCoreImage(models.Model):
 
     def __str__(self):
         return self.title
-
-    class Meta:
-        unique_together = ('image_group', 'index_in_group')
 
 
 class NdrCoreUIElement(models.Model):

@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Max
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, FormView
@@ -11,6 +11,24 @@ from ndr_core.admin_forms.images_forms import ImageCreateForm, LogoUploadForm, I
 from ndr_core.models import NdrCoreImage
 from ndr_core.ndr_settings import NdrSettings
 
+image_groups = [
+    {'name': 'figures',
+     'label': 'Figure Images',
+     'help_text': 'Upload images to be displayed in your text with captions and source information..'},
+    {'name': 'logos',
+     'label': 'Footer Partner Images',
+     'help_text': 'Upload logos of your partner organisations and link them in the footer.'},
+    {'name': 'people',
+     'label': 'People Images',
+     'help_text': 'Upload team members to create an "About Us" page.'},
+    {'name': 'backgrounds',
+     'label': 'Background Images',
+     'help_text': 'Upload Images to be used as backgrounds of banners.'},
+    {'name': 'elements',
+     'label': 'Slideshow Images',
+     'help_text': 'Upload Images to create slideshows from'},
+]
+
 
 class ConfigureImages(LoginRequiredMixin, View):
     """View to add/edit/delete Images. """
@@ -18,7 +36,8 @@ class ConfigureImages(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        context = {'logo_path': f'{NdrSettings.APP_NAME}/images/logo.png'}
+        context = {'logo_path': f'{NdrSettings.APP_NAME}/images/logo.png',
+                   'groups': image_groups}
         return render(self.request, template_name='ndr_core/admin_views/configure_images.html',
                       context=context)
 
@@ -29,12 +48,13 @@ class ImagesGroupView(LoginRequiredMixin, View):
     template_name = 'ndr_core/admin_views/configure_images.html'
 
     def get_context_data(self):
-        context = {'logo_path': f'{NdrSettings.APP_NAME}/images/logo.png'}
+        context = {'logo_path': f'{NdrSettings.APP_NAME}/images/logo.png',
+                   'groups': image_groups}
         group = self.kwargs['group']
 
         print(NdrCoreImage.ImageGroup.values)
         if group in NdrCoreImage.ImageGroup.values:
-            images = NdrCoreImage.objects.filter(image_group=group)
+            images = NdrCoreImage.objects.filter(image_group=group).order_by('index_in_group')
             context['images'] = images
             context['title'] = NdrCoreImage.ImageGroup.get_label_by_value(group, NdrCoreImage.ImageGroup.choices)
 
@@ -131,4 +151,4 @@ def move_image_up(request, pk):
     except NdrCoreImage.DoesNotExist:
         messages.error(request, "Image does not exist")
 
-    return NdrCoreImage('ndr_core:configure_images')
+    return redirect('ndr_core:view_images', group=image.image_group)

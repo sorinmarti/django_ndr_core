@@ -72,9 +72,13 @@
             <div class="row align-items-center">
                 {% for partner in partners %}
                     <div class="col-sm text-center">
-                         <a href="{{ partner.url }}">
-                        <img src="{{ partner.image.url }}" class="img-fluid">
-                        </a>
+                        {% if partner.url %}
+                            <a href="{{ partner.url }}">
+                                <img src="{{ partner.image.url }}" class="img-fluid">
+                            </a>
+                        {% else %}
+                            <img src="{{ partner.image.url }}" class="img-fluid">
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
