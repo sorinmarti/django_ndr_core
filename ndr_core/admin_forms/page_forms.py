@@ -182,7 +182,7 @@ class FooterForm(SettingsListForm):
         form_row = Row(
             Column('save_footer_show_partners', css_class='form-group col-md-10 mb-0'),
             Column(HTML(f'<a href="{reverse("ndr_core:view_images", kwargs={"group": "logos"})}" class="btn btn-sm btn-secondary">Manage Partner Logos</a>'),
-                   css_class='form-group col-md-2 mb-0'),
+                   css_class='form-group col-md-2 mb-0 text-right'),
             css_class='form-row'
         )
         layout.append(form_row)
@@ -195,8 +195,8 @@ class FooterForm(SettingsListForm):
 
         form_row = Row(
             Column('save_footer_show_socials', css_class='form-group col-md-10 mb-0'),
-            Column(HTML(f'<a href="{reverse("ndr_core:view_settings", kwargs={"group": "mail"})}" class="btn btn-sm btn-secondary">Manage Social Links</a>'),
-                   css_class='form-group col-md-2 mb-0'),
+            Column(HTML(f'<a href="{reverse("ndr_core:view_settings", kwargs={"group": "socials"})}" class="btn btn-sm btn-secondary">Manage Social Links</a>'),
+                   css_class='form-group col-md-2 mb-0 text-right'),
             css_class='form-row'
         )
         layout.append(form_row)
