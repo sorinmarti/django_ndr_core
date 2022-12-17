@@ -515,7 +515,8 @@ class NdrCoreValue(models.Model):
 
     def get_value(self):
         """Returns the valued which is always saved as string as the proper type. """
-        if self.value_type == NdrCoreValue.ValueType.STRING or self.value_type == NdrCoreValue.ValueType.LIST:
+        if self.value_type == NdrCoreValue.ValueType.STRING or self.value_type == NdrCoreValue.ValueType.LIST or \
+                self.value_type == NdrCoreValue.ValueType.URL:
             return self.value_value
         if self.value_type == NdrCoreValue.ValueType.INTEGER:
             try:

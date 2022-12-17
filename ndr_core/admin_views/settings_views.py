@@ -43,7 +43,8 @@ settings_group_list = {
                 'title': 'Mail Settings',
                 'help_text': 'To use the contact form, you need to provide your mail settings. '
                              'Only unauthenticated settings for now.',
-                'settings': ['contact_form_default_subject',
+                'settings': ['messages_behaviour',
+                             'contact_form_default_subject',
                              'email_config_host',
                              'contact_form_send_to_address',
                              'contact_form_send_from_address']
