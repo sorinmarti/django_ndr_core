@@ -115,8 +115,8 @@ urlpatterns = [
 
     # SEARCH FIELDS
     path('configure/search/fields/create/new/', SearchFieldConfigurationCreateView.as_view(), name='create_search_field'),
-    path('configure/search/fields/edit/<int:pk>/', SearchFieldConfigurationEditView.as_view(), name='edit_search_field'),
-    path('configure/search/fields/delete/<int:pk>/', SearchFieldConfigurationDeleteView.as_view(), name='delete_search_field'),
+    path('configure/search/fields/edit/<str:pk>/', SearchFieldConfigurationEditView.as_view(), name='edit_search_field'),
+    path('configure/search/fields/delete/<str:pk>/', SearchFieldConfigurationDeleteView.as_view(), name='delete_search_field'),
     path('configure/search/fields/schema/<int:schema_pk>/', create_search_fields, name='create_fields_from_schema'),
 
     # CONFIGURE DATA
