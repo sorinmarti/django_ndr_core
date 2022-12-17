@@ -75,12 +75,8 @@ class _NdrCoreView(View):
 
     def get_ndr_context_data(self):
         context = {'page': self.ndr_page, 'navigation': NdrCorePage.objects.all().order_by('index'),
-                   'my_data': {
-                       'slides': NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS),
-                       'show_indicators': True,
-                       'show_title': True,
-                       'show_caption': True
-                   }}
+                   'partners': NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.LOGOS)
+                   }
         return context
 
 
@@ -104,12 +100,15 @@ class NdrTemplateView(_NdrCoreView):
                                                            request=self.request, context={'data': element})
 
                     rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', element_html_string)
-                    context['rendered_text'] = rendered_text
+
                 except NdrCoreUIElement.DoesNotExist:
                     rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', "ERROR loading UI element")
 
                 match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron)\|([0-9]*)(\]\])', rendered_text)
-
+            context['rendered_text'] = rendered_text
+        else:
+            context['rendered_text'] = ''
+            
         return context
 
 
