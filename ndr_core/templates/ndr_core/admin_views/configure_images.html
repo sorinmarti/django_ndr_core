@@ -105,6 +105,11 @@
                                 {% endif %}
                                 <p class="p-0 m-0">
                                     <div style="white-space: nowrap;">
+                                        {% if not forloop.first %}
+                                            <a href="{% url 'ndr_core:move_image_up' image.pk %}" class="btn btn-sm btn-secondary">
+                                                <i class="fa-regular fa-arrow-left"></i>
+                                            </a>
+                                        {% endif %}
                                         <a href="{% url 'ndr_core:edit_image' image.pk %}" class="btn btn-sm btn-secondary">
                                             <i class="fa-regular fa-pen-to-square"></i>
                                         </a>

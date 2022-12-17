@@ -692,10 +692,22 @@ class NdrCoreImage(models.Model):
     """Actual image"""
 
     image_group = models.CharField(max_length=100, choices=ImageGroup.choices)
-    """Group the image belongs to"""
+    """Group the image belongs to. """
+
+    index_in_group = models.IntegerField(default=0)
+    """For ordering the images within the group. """
+
+    image_active = models.BooleanField(default=True)
+    """To indicate that this image is not to be used in automatic collections."""
+
+    def get_absolute_url(self):
+        return reverse('ndr_core:view_images', kwargs={'pk': self.pk})
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        unique_together = ('image_group', 'index_in_group')
 
 
 class NdrCoreUIElement(models.Model):
@@ -754,6 +766,9 @@ class NdrCoreUIElement(models.Model):
     def items(self):
         """TODO """
         return self.ndrcoreuielementitem_set.all().order_by('order_idx')
+
+    def get_absolute_url(self):
+        return reverse('ndr_core:view_ui_element', kwargs={'pk': self.pk})
 
 
 class NdrCoreUiElementItem(models.Model):

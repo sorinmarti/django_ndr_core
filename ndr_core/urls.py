@@ -17,7 +17,7 @@ from ndr_core.admin_views.color_views import ConfigureColorPalettes, ColorPalett
     ColorPaletteDeleteView, ColorPaletteImportView, ColorPaletteDetailView, choose_color_palette
 from ndr_core.admin_views.corrections_views import ConfigureCorrections, set_correction_option
 from ndr_core.admin_views.images_views import ConfigureImages, ImagesGroupView, LogoUploadView, ImagesCreateView, \
-    ImagesEditView, ImagesDeleteView
+    ImagesEditView, ImagesDeleteView, move_image_up
 from ndr_core.admin_views.settings_views import ConfigureSettingsView, SettingCreateView, SettingsDetailView, \
     SettingEditView, SettingDeleteView, SettingsImportView
 from ndr_core.admin_views.ui_style_views import ConfigureUI, choose_ui_style, UIStyleDetailView
@@ -67,6 +67,7 @@ urlpatterns = [
     path('configure/images/create/new/', ImagesCreateView.as_view(), name='create_image'),
     path('configure/images/edit/<int:pk>/', ImagesEditView.as_view(), name='edit_image'),
     path('configure/images/delete/<int:pk>/', ImagesDeleteView.as_view(), name='delete_image'),
+    path('configure/images/move/up/<int:pk>/', move_image_up, name='move_image_up'),
 
     # USER MESSAGES
     path('configure/messages/', ConfigureMessages.as_view(), name='configure_messages'),

@@ -1,5 +1,7 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Max
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -54,6 +56,12 @@ class ImagesCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         response = super(ImagesCreateView, self).form_valid(form)
+
+        max_index = NdrCoreImage.objects.aggregate(Max('index_in_group'))
+        new_index = max_index["index_in_group__max"] + 1
+        self.object.index_in_group = new_index
+        self.object.save()
+
         return response
 
 
@@ -97,3 +105,31 @@ class LogoUploadView(LoginRequiredMixin, FormView):
                 destination.write(chunk)
         messages.success(self.request, 'Changed logo file (You may need to reload this page).')
         return super().form_valid(form)
+
+
+@login_required
+def move_image_up(request, pk):
+    """ NdrCoreImages have an index to determine in which order they are displayed.
+    This function moves up a page in the order.
+
+    :param request: The page's request object
+    :param pk: The primary key of the NdrCorePage to move up
+    :return: A redirect response to to 'configure_images'
+    """
+
+    try:
+        image = NdrCoreImage.objects.get(id=pk)
+        if image.index_in_group > 0:
+            other_image = NdrCoreImage.objects.get(index_in_group=image.index_in_group-1,
+                                                   image_group=image.image_group)
+            old_index = image.index_in_group
+            image.index_in_group = image.index_in_group - 1
+            image.save()
+            other_image.index_in_group = old_index
+            other_image.save()
+        else:
+            messages.warning(request, "Image is already on top")
+    except NdrCoreImage.DoesNotExist:
+        messages.error(request, "Image does not exist")
+
+    return NdrCoreImage('ndr_core:configure_images')
