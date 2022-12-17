@@ -662,7 +662,7 @@ class NdrCoreImage(models.Model):
         BGS = "backgrounds", "Background Images"
         ELEMENTS = "elements", "Element Images"
         FIGURES = "figures", "Figures"
-        LOGOS = "logos", "Logos"
+        LOGOS = "logos", "Partner Logos"
         PEOPLE = "people", "People"
 
         @staticmethod
@@ -681,8 +681,8 @@ class NdrCoreImage(models.Model):
 
     citation = models.CharField(max_length=200, blank=True, default='',
                                 help_text='Citation text of the image.')
+    """Source of the image"""
 
-    """Caption of the image"""
     url = models.URLField(null=True, blank=True, default=None,
                           help_text='URL to image or source')
     """URL to image or source"""
@@ -691,7 +691,8 @@ class NdrCoreImage(models.Model):
                               help_text='TODO')
     """Actual image"""
 
-    image_group = models.CharField(max_length=100, choices=ImageGroup.choices)
+    image_group = models.CharField(max_length=100,
+                                   choices=ImageGroup.choices)
     """Group the image belongs to. """
 
     index_in_group = models.IntegerField(default=0)
@@ -701,7 +702,7 @@ class NdrCoreImage(models.Model):
     """To indicate that this image is not to be used in automatic collections."""
 
     def get_absolute_url(self):
-        return reverse('ndr_core:view_images', kwargs={'pk': self.pk})
+        return reverse('ndr_core:view_images', kwargs={'group': self.image_group})
 
     def __str__(self):
         return self.title

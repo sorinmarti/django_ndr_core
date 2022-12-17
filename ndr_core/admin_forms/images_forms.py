@@ -3,7 +3,7 @@ from crispy_forms.layout import Layout, Row, Column
 from django import forms
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons
-from ndr_core.models import NdrCoreApiConfiguration, NdrCoreImage
+from ndr_core.models import NdrCoreImage
 
 
 class ImageForm(forms.ModelForm):
@@ -11,7 +11,7 @@ class ImageForm(forms.ModelForm):
 
     class Meta:
         model = NdrCoreImage
-        exclude = []
+        fields = ['image_group', 'image', 'title', 'caption', 'citation', 'url']
 
     @property
     def helper(self):

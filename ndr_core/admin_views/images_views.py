@@ -51,13 +51,12 @@ class ImagesCreateView(LoginRequiredMixin, CreateView):
 
     model = NdrCoreImage
     form_class = ImageCreateForm
-    success_url = reverse_lazy('ndr_core:configure_images')
+    # success_url = reverse_lazy('ndr_core:configure_images')
     template_name = 'ndr_core/admin_views/image_create.html'
 
     def form_valid(self, form):
         response = super(ImagesCreateView, self).form_valid(form)
-
-        max_index = NdrCoreImage.objects.aggregate(Max('index_in_group'))
+        max_index = NdrCoreImage.objects.filter(image_group=self.object.image_group).aggregate(Max('index_in_group'))
         new_index = max_index["index_in_group__max"] + 1
         self.object.index_in_group = new_index
         self.object.save()
