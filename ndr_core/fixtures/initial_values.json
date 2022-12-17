@@ -13,6 +13,24 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "search_simple_field_label",
+      "value_label": "Simple Search Field label",
+      "value_help_text": "Label for the text field used to enter the simple search term.",
+      "value_value": "Search Term"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "search_simple_help_text",
+      "value_label": "Simple Search Field Help Text",
+      "value_help_text": "Help text for the text field used to enter the simple search term.",
+      "value_value": "Search for anything!"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "footer_show_partners",
       "value_label": "Show partner images",
       "value_help_text": "Add partnering institution logos to your images to display and link them.",
@@ -160,7 +178,7 @@
       "value_name": "contact_form_default_subject",
       "value_label": "Default Subject",
       "value_help_text": "Default message subject",
-      "value_value": ""
+      "value_value": "Question about..."
     }
   },
   {

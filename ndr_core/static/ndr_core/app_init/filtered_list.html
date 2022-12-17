@@ -1,4 +1,5 @@
 {% extends 'ndr/base.html' %}
+{% load i18n %}
 
 {# block page_title #}
 {# endblock #}
@@ -10,7 +11,11 @@
     <!-- Filter form -->
     {% crispy form %}
 
-    <div class="mb-2">Showing {{ meta.total }} sub-collections. Showing page {{ meta.page }} of {{ meta.num_pages }}.</div>
+    <div class="mb-2">
+        {% blocktrans %}
+            Showing {{ meta.total }} items. Showing page {{ meta.page }} of {{ meta.num_pages }}.
+        {% endblocktrans %}
+    </div>
 
     {% for result in results %}
         {# show_source_card result #}

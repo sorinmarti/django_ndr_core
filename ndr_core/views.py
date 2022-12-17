@@ -198,7 +198,7 @@ class SearchView(_NdrCoreView):
 
                     print(query_string)
             else:
-                print("No search")
+                print("No search")  # TODO
 
         context = self.get_ndr_context_data()
         context.update({'form': form, 'requested_search': requested_search})

@@ -1,5 +1,6 @@
 {% extends 'ndr/base.html' %}
 {% load crispy_forms_tags %}
+{% load i18n %}
 
 <!-- You can overwrite the page title -->
 {# block page_title #}
@@ -14,15 +15,24 @@
 {% block generated_content %}
 
     {% if result %}
-        <h4 class="mt-4">Search Results
+        <h4 class="mt-4">
+            {% translate 'Search Results' %}
             <div class="btn-group float-right">
-                <a href="#" type="button" class="btn btn-sm btn-outline-secondary ">refine search</a>
-                <a href="#" type="button" class="btn btn-sm btn-outline-secondary float-right">start a new search</a>
+                <a href="#" type="button" class="btn btn-sm btn-outline-secondary ">
+                    {% translate 'refine search' %}
+                </a>
+                <a href="#" type="button" class="btn btn-sm btn-outline-secondary float-right">
+                    {% translate 'start a search' %}
+                </a>
             </div>
         </h4>
         {% include 'ndr_core/messages.html' %}
 
-        <div class="mb-2">Your search returned {{ meta.total }} results, showing page {{ meta.page }} of {{ meta.num_pages }}.</div>
+        <div class="mb-2">
+            {% blocktrans %}
+                Your search returned {{ meta.total }} results, showing page {{ meta.page }} of {{ meta.num_pages }}.
+            {% endblocktrans %}
+        </div>
 
         {% for result_line in result %}
 

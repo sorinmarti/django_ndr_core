@@ -1,5 +1,6 @@
 {% extends 'ndr/base.html' %}
 {% load crispy_forms_tags %}
+{% load i18n %}
 
 {# block page_title #}
 {# endblock #}
@@ -8,7 +9,7 @@
 {# endblock #}
 
 {% block generated_content %}
-    <h5 class="pb-3 mb-3 border-bottom"> Fill in the form below to contact us with any queries.  </h5>
+    <p class="pb-3 mb-3"> {% translate 'Fill in the form below to contact us with any queries.' %}  </p>
 
     <div>
         {% crispy form %}

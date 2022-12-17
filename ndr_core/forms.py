@@ -10,6 +10,7 @@ from django.conf import settings
 from django.db.models import Max
 from django.forms import ModelForm
 from django.utils.safestring import mark_safe
+from django.utils.translation import gettext_lazy as _
 
 from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreUserMessage
 from ndr_core.widgets import CustomSelect
@@ -37,13 +38,15 @@ class _NdrCoreSearchForm(_NdrCoreForm):
     def init_simple_search_fields(self):
         """Create form fields for simple search. """
 
-        self.fields['search_term'] = forms.CharField(label='Search Term',
+        self.fields['search_term'] = forms.CharField(label=NdrCoreValue.get_or_initialize("search_simple_field_label",
+                                                                                          init_value="Search Term"),
                                                      required=False,
                                                      max_length=100,
-                                                     help_text="Search for anything!")
+                                                     help_text=NdrCoreValue.get_or_initialize("search_simple_help_text",
+                                                                                              init_value="Search for anything!"))
 
-        self.fields['and_or_field'] = forms.ChoiceField(label='And or Or Search',
-                                                        choices=[('and', 'AND search'), ('or', 'OR search')],
+        self.fields['and_or_field'] = forms.ChoiceField(label=_('And or Or Search'),
+                                                        choices=[('and', _('AND search')), ('or', _('OR search'))],
                                                         required=False,
                                                         )
 
@@ -65,7 +68,7 @@ class _NdrCoreSearchForm(_NdrCoreForm):
                     ),
                 Div(
                     Div(
-                        MySubmit(f'search_button_{conf_name}', 'Search'),
+                        MySubmit(f'search_button_{conf_name}', _('Search')),
                         css_class="text-right"
                     ),
                     css_class="col-md-4"
@@ -155,7 +158,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
 
         tabs = TabHolder(css_id='id_tabs')
         if self.ndr_page.page_type == NdrCorePage.PageType.COMBINED_SEARCH:
-            tab_simple = Tab('Simple Search', css_id='simple')
+            tab_simple = Tab(_('Simple Search'), css_id='simple')
             search_field, type_field = self.get_simple_search_layout_fields()
             tab_simple.append(Div(search_field, css_class='form-row'))
             tab_simple.append(Div(type_field, css_class='form-row'))
@@ -238,8 +241,8 @@ class FilterForm(_NdrCoreForm):
             ),
             Column(
                 Div(
-                    MySubmit('filter', 'Filter'),
-                    MySubmit('show_all', 'Show all'),
+                    MySubmit('filter', _('Filter')),
+                    MySubmit('show_all', _('Show all')),
                     css_class="btn-group d-flex"
                 ),
                 css_class=f'col-md-2'
@@ -262,7 +265,11 @@ class ContactForm(ModelForm, _NdrCoreForm):
 
     def __init__(self, *args, **kwargs):
         super(ContactForm, self).__init__(*args, **kwargs)
-        # self.fields['subject'].initial = NdrCoreValue.objects.get(value_name='contact_form_default_subject').value_value
+
+        self.fields['message_subject'].initial = NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').get_value()
+        self.fields['message_subject'].label = _('Message Subject')
+        self.fields['message_ret_email'].label = _('Your E-Mail address')
+        self.fields['message_text'].label = _('Message Text')
 
     @property
     def helper(self):

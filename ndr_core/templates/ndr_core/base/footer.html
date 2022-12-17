@@ -1,5 +1,6 @@
 {% load static %}
 {% load ndr_values %}
+{% load i18n %}
 
 {% config_value 'footer_show_partners' as show_partners %}
 {% config_value 'footer_show_main_navigation' as show_navigation %}
@@ -28,7 +29,7 @@
 
             <div>
                 {% if show_socials %}
-                    Connect
+                    {% translate 'Connect' %}
                     <div class="col-0">
                         <div class="">
                             {% config_value 'socials_twitter' as socials_twitter %}

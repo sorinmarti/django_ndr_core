@@ -22,7 +22,7 @@ settings_group_list = {
                 'name': 'language',
                 'title': 'Language Settings',
                 'help_text': 'Language for the UI.',
-                'settings': []
+                'settings': ['ndr_language']
             },
             'header': {
                 'name': 'header',
@@ -30,6 +30,13 @@ settings_group_list = {
                 'help_text': 'These settings help search engines find you.',
                 'settings': ['header_description',
                              'header_author']
+            },
+            'search': {
+                'name': 'search',
+                'title': 'Search Settings',
+                'help_text': 'Settings for your search',
+                'settings': ['search_simple_field_label',
+                             'search_simple_help_text']
             },
             'mail': {
                 'name': 'mail',
