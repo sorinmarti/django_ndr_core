@@ -1,6 +1,7 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Row, Column
+from crispy_forms.layout import Layout, Row, Column, Button, HTML
 from django import forms
+from django.urls import reverse
 from django_select2 import forms as s2forms
 
 from ndr_core.admin_forms.settings_forms import SettingsListForm
@@ -170,5 +171,31 @@ class FooterForm(SettingsListForm):
 
     def __init__(self, *args, **kwargs):
         kwargs['settings'] = ["footer_show_partners", "footer_show_main_navigation", "footer_copyright_text"]
-
         super(FooterForm, self).__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = super(FooterForm, self).helper
+        layout = helper.layout = Layout()
+
+        form_row = Row(
+            Column('save_footer_show_partners', css_class='form-group col-md-10 mb-0'),
+            Column(HTML(f'<a href="{reverse("ndr_core:view_images", kwargs={"group": "logos"})}" class="btn btn-sm btn-secondary">Manage Partner Logos</a>'),
+                   css_class='form-group col-md-2 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('save_footer_show_main_navigation', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('save_footer_copyright_text', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+        layout.append(get_form_buttons('Save Settings'))
+        return helper

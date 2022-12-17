@@ -81,6 +81,11 @@
                     </div>
                 </div>
             </div>
+            <div class="card-footer">
+                <a href="{% url 'ndr_core:edit_page' object.pk %}" class="btn btn-secondary">Edit</a>
+                <a href="{% url 'ndr_core:move_page_up' object.pk %}" class="btn btn-secondary">Move Up</a>
+                <a href="{% url 'ndr_core:delete_page' object.pk %}" class="btn btn-danger">Delete</a>
+            </div>
         </div>
     {% endif %}
 
