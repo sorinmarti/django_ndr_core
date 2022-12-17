@@ -41,6 +41,16 @@ settings_group_list = {
                              'contact_form_send_to_address',
                              'contact_form_send_from_address']
             },
+            'socials': {
+                'name': 'socials',
+                'title': 'Social Media',
+                'help_text': 'If you fill in the social media links and activate social media links in your footer '
+                             'configuration, they will be displayed in your footer.',
+                'settings': ['socials_twitter',
+                             'socials_instagram',
+                             'socials_facebook',
+                             'socials_mastodon']
+            },
             'custom': {
                 'name': 'custom',
                 'title': 'Custom Settings',

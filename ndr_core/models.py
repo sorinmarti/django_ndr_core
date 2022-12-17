@@ -466,6 +466,7 @@ class NdrCoreValue(models.Model):
         INTEGER = "integer", "Integer"
         BOOLEAN = "boolean", "Boolean"
         LIST = "list", "List"
+        URL = "url", "URL"
 
     value_name = models.CharField(max_length=100, primary_key=True,
                                   help_text='This is the identifier of a NdrCoreValue. '

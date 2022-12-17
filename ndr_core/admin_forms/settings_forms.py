@@ -46,6 +46,10 @@ class SettingsListForm(forms.Form):
                                                                    required=False,
                                                                    choices=setting_obj.get_options(),
                                                                    help_text=setting_obj.value_help_text)
+            elif setting_obj.value_type == NdrCoreValue.ValueType.URL:
+                self.fields[f"save_{setting}"] = forms.URLField(label=label,
+                                                                required=False,
+                                                                help_text=setting_obj.value_help_text)
 
             initial_values[f"save_{setting}"] = setting_obj.get_value()
 

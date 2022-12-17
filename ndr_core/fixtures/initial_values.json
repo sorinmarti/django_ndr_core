@@ -2,6 +2,17 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "ndr_language",
+      "value_label": "UI language",
+      "value_help_text": "UI language of the frontend. The administration interface is english only.",
+      "value_type": "list",
+      "value_value": "en",
+      "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano)"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "footer_show_partners",
       "value_label": "Show partner images",
       "value_help_text": "Add partnering institution logos to your images to display and link them.",
@@ -22,10 +33,60 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "footer_show_socials",
+      "value_label": "Show Social Networks",
+      "value_help_text": "Show social networks icons with links to your pages.",
+      "value_type": "boolean",
+      "value_value": "true"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "footer_copyright_text",
       "value_label": "Copyright text",
       "value_help_text": "Small text at the bottom of the footer",
       "value_value": "powered by NDR Core"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "socials_twitter",
+      "value_label": "Twitter Link",
+      "value_help_text": "Link to your Twitter account.",
+      "value_type": "url",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "socials_instagram",
+      "value_label": "Instagram Link",
+      "value_help_text": "Link to your Instagram account.",
+      "value_type": "url",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "socials_facebook",
+      "value_label": "Facebook Link",
+      "value_help_text": "Link to your Facebook account.",
+      "value_type": "url",
+      "value_value": ""
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "socials_mastodon",
+      "value_label": "Mastodon Link",
+      "value_help_text": "Link to your Mastodon account.",
+      "value_type": "url",
+      "value_value": ""
     }
   },
   {

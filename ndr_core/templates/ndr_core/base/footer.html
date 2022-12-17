@@ -3,61 +3,74 @@
 
 {% config_value 'footer_show_partners' as show_partners %}
 {% config_value 'footer_show_main_navigation' as show_navigation %}
+{% config_value 'footer_show_socials' as show_socials %}
 {% config_value 'footer_copyright_text' as footer_copyright_text %}
 
-<footer class="pt-5">
+<footer class="pt-3 pb-3 mt-3 accent-1-bg">
     <div class="container">
         <div class="row">
-            <div class="col-1">
+            <div class="col-2">
                     <a class="blog-header-logo text-dark" href="/">
                         <img src="/static/ndr/images/logo.png" class="img-fluid">
                     </a>
             </div>
-            <div class="col-5 offset-md-1">
+            <div class="col-6 offset-2">
                 {% if show_navigation %}
                     <ul class="navbar-nav mr-auto navbar-ul-items">
                         {% for nav_item in navigation %}
-                            <li class="nav-item-bottom">
-                                <a class="link-bottom" href="/">Home</a>
+                            <li class="nav-item">
+                                <a href="{{ nav_item.url }}" target="_blank">{{ nav_item.label }}</a>
                             </li>
                         {% endfor %}
                     </ul>
                 {% endif %}
             </div>
 
-
-
-          <div>Connect
-              <div class="col-0">
-                          <div class="">
-                              <a class="link-bottom" href="https://twitter.com/Europainstitut" target="_blank">
-                                <svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="18px" height="18px">
-                                    <path d="M28,6.937c-0.957,0.425-1.985,0.711-3.064,0.84c1.102-0.66,1.947-1.705,2.345-2.951c-1.03,0.611-2.172,1.055-3.388,1.295 c-0.973-1.037-2.359-1.685-3.893-1.685c-2.946,0-5.334,2.389-5.334,5.334c0,0.418,0.048,0.826,0.138,1.215 c-4.433-0.222-8.363-2.346-10.995-5.574C3.351,6.199,3.088,7.115,3.088,8.094c0,1.85,0.941,3.483,2.372,4.439 c-0.874-0.028-1.697-0.268-2.416-0.667c0,0.023,0,0.044,0,0.067c0,2.585,1.838,4.741,4.279,5.23 c-0.447,0.122-0.919,0.187-1.406,0.187c-0.343,0-0.678-0.034-1.003-0.095c0.679,2.119,2.649,3.662,4.983,3.705 c-1.825,1.431-4.125,2.284-6.625,2.284c-0.43,0-0.855-0.025-1.273-0.075c2.361,1.513,5.164,2.396,8.177,2.396 c9.812,0,15.176-8.128,15.176-15.177c0-0.231-0.005-0.461-0.015-0.69C26.38,8.945,27.285,8.006,28,6.937z"></path>
-                                </svg></a>
-                              <a class="link-bottom" href="https://www.instagram.com/europainstitutbasel/" target="_blank">
-                    <svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="18px" height="18px">
-                               <path d="M 9.9980469 3 C 6.1390469 3 3 6.1419531 3 10.001953 L 3 20.001953 C 3 23.860953 6.1419531 27 10.001953 27 L 20.001953 27 C 23.860953 27 27 23.858047 27 19.998047 L 27 9.9980469 C 27 6.1390469 23.858047 3 19.998047 3 L 9.9980469 3 z M 22 7 C 22.552 7 23 7.448 23 8 C 23 8.552 22.552 9 22 9 C 21.448 9 21 8.552 21 8 C 21 7.448 21.448 7 22 7 z M 15 9 C 18.309 9 21 11.691 21 15 C 21 18.309 18.309 21 15 21 C 11.691 21 9 18.309 9 15 C 9 11.691 11.691 9 15 9 z M 15 11 A 4 4 0 0 0 11 15 A 4 4 0 0 0 15 19 A 4 4 0 0 0 19 15 A 4 4 0 0 0 15 11 z"></path>
-                              </svg></a>
-                                <a class="link-bottom" href="https://www.facebook.com/europainstitutbasel/" target="_blank">
-                              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" x="0px" y="0px" width="18px" height="18px" viewBox="0 0 50 50" style="null" class="icon icons8-Facebook-Filled">    <path d="M40,0H10C4.486,0,0,4.486,0,10v30c0,5.514,4.486,10,10,10h30c5.514,0,10-4.486,10-10V10C50,4.486,45.514,0,40,0z M39,17h-3 c-2.145,0-3,0.504-3,2v3h6l-1,6h-5v20h-7V28h-3v-6h3v-3c0-4.677,1.581-8,7-8c2.902,0,6,1,6,1V17z"></path></svg>
+            <div>
+                {% if show_socials %}
+                    Connect
+                    <div class="col-0">
+                        <div class="">
+                            {% config_value 'socials_twitter' as socials_twitter %}
+                            {% if socials_twitter %}
+                                <a class="link-bottom" href="{{ socials_twitter }}" target="_blank">
+                                    <i class="fa-brands fa-twitter"></i>
                                 </a>
-                          </div>
+                            {% endif %}
 
+                            {% config_value 'socials_instagram' as socials_instagram %}
+                            {% if socials_instagram %}
+                                <a class="link-bottom" href="{{ socials_instagram }}" target="_blank">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </a>
+                            {% endif %}
 
+                            {% config_value 'socials_facebook' as socials_facebook %}
+                            {% if socials_facebook %}
+                                <a class="link-bottom" href="{{ socials_facebook }}" target="_blank">
+                                    <i class="fa-brands fa-facebook"></i>
+                                </a>
+                            {% endif %}
 
-                  </div>
-
-
-          </div>
+                            {% config_value 'socials_mastodon' as socials_mastodon %}
+                            {% if socials_mastodon %}
+                                <a class="link-bottom" href="{{ socials_mastodon }}" target="_blank">
+                                    <i class="fa-brands fa-mastodon"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
             </div>
-            </div>
+        </div>
+    </div>
 </footer>
 {% if show_partners %}
     <footer>
-        <div class="container">
+        <div class="container pt-5">
             <div class="row align-items-center">
                 {% for partner in partners %}
-                    <div class="col-sm">
+                    <div class="col-sm text-center">
                          <a href="{{ partner.url }}">
                         <img src="{{ partner.image.url }}" class="img-fluid">
                         </a>
@@ -66,6 +79,6 @@
             </div>
         </div>
 
-        <p class="text-muted"><br/>{{ footer_copyright_text }}</p>
+        <p class="text-muted font-italic small text-center">{{ footer_copyright_text }}</p>
     </footer>
 {% endif %}

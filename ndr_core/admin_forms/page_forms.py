@@ -170,7 +170,8 @@ class PageEditForm(PageForm):
 class FooterForm(SettingsListForm):
 
     def __init__(self, *args, **kwargs):
-        kwargs['settings'] = ["footer_show_partners", "footer_show_main_navigation", "footer_copyright_text"]
+        kwargs['settings'] = ["footer_show_partners", "footer_show_main_navigation", "footer_show_socials",
+                              "footer_copyright_text"]
         super(FooterForm, self).__init__(*args, **kwargs)
 
     @property
@@ -188,6 +189,14 @@ class FooterForm(SettingsListForm):
 
         form_row = Row(
             Column('save_footer_show_main_navigation', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('save_footer_show_socials', css_class='form-group col-md-10 mb-0'),
+            Column(HTML(f'<a href="{reverse("ndr_core:view_settings", kwargs={"group": "mail"})}" class="btn btn-sm btn-secondary">Manage Social Links</a>'),
+                   css_class='form-group col-md-2 mb-0'),
             css_class='form-row'
         )
         layout.append(form_row)
