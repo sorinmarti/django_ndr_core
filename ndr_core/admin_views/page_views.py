@@ -100,6 +100,9 @@ class PageCreateView(LoginRequiredMixin, CreateView):
             elif self.object.page_type == self.object.PageType.FLIP_BOOK:
                 base_file = finders.find('ndr_core/app_init/flip_book.html')
                 shutil.copyfile(base_file, new_filename)
+            elif self.object.page_type == self.object.PageType.ABOUT_PAGE:
+                base_file = finders.find('ndr_core/app_init/about.html')
+                shutil.copyfile(base_file, new_filename)
         return response
 
 
