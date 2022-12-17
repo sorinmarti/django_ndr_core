@@ -111,6 +111,22 @@ class NdrCoreApiImplementation(models.Model):
     description = models.TextField(default='blank')
     """Description of this implementation. """
 
+    supports_simple = models.BooleanField(default=True)
+    """True if the API supports a catch all search with a simple search term. """
+
+    supports_simple_and_or = models.BooleanField(default=True)
+    """True if the API supports an AND and OR option for the simple search. """
+
+    supports_advanced = models.BooleanField(default=True)
+    """True if the API supports a field based search where different search values can be searched for different 
+    fields."""
+
+    supports_lists = models.BooleanField(default=True)
+    """True if the API supports static lists which can be requested by an API query. """
+
+    supports_facets = models.BooleanField(default=False)
+    """True if the different values of a result are grouped in filter options. """
+
     def __str__(self):
         return self.label
 
