@@ -649,7 +649,7 @@ class NdrCoreSearchStatisticEntry(models.Model):
     search_term = models.CharField(max_length=100)
     """The search term(s) which have been searched. """
 
-    search_time = models.DateTimeField(auto_now=True)
+    search_time = models.DateTimeField(auto_now_add=True)
     """The time the user searched. """
 
     search_location = models.CharField(max_length=20, null=True)

@@ -12,7 +12,6 @@ from django.views import View
 from django.views.generic import TemplateView, FormView
 from django.views.generic.edit import FormMixin, CreateView
 
-from ndr_core.geo_ip_utils import get_user_ip, get_geolocation
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreValue, NdrCoreSearchStatisticEntry,\
     NdrCoreUserMessage, NdrCoreImage, NdrCoreUIElement
@@ -168,8 +167,6 @@ class SearchView(_NdrCoreView):
                 form = AdvancedSearchForm(request.GET, ndr_page=self.ndr_page)
                 # If the form is valid: create a search query
                 if form.is_valid():
-                    statistics_enabled = NdrCoreValue.get_or_initialize("statistics_feature", init_value="false").value_value == "true"
-                    statistics_api = None
 
                     if requested_search == 'simple':
                         statistics_api = self.ndr_page.simple_api
@@ -177,6 +174,7 @@ class SearchView(_NdrCoreView):
                         query = api_factory.get_query_class()(self.ndr_page.simple_api, page=request.GET.get("page", 1))
                         search_term = request.GET.get('search_term', '')
                         query_string = query.get_simple_query(search_term)
+                        query.log_search(request, search_term)
                     else:
                         search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
                         statistics_api = search_config.api_configuration
@@ -188,15 +186,7 @@ class SearchView(_NdrCoreView):
                                 query.set_value(key, request.GET.get(key))
                                 search_term += f"{key}={request.GET.get(key)}, "
                         query_string = query.get_advanced_query()
-
-                    if statistics_enabled:
-                        ip = get_user_ip(request)
-                        location = get_geolocation(ip)
-                        NdrCoreSearchStatisticEntry.objects.create(search_api=statistics_api,
-                                                                   search_term=search_term,
-                                                                   search_location=location)
-
-                    print(query_string)
+                        query.log_search(request, search_term)
             else:
                 print("No search")  # TODO
 
@@ -221,6 +211,7 @@ class SimpleSearchView(_NdrCoreView):
                 query_string = query.get_simple_query(request.GET.get('search_term', ''), request.GET.get("page", 1))
                 result = api_factory.get_result_class()(self.ndr_page.simple_api, query_string, self.request)
                 result.load_result()
+                query.log_search(request, request.GET.get('search_term', ''))
                 context.update({'api_config': self.ndr_page.simple_api})
                 context.update({'result': result})
 

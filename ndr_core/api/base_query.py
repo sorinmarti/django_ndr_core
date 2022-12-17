@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 
+from ndr_core.geo_ip_utils import get_user_ip, get_geolocation
+from ndr_core.models import NdrCoreValue, NdrCoreSearchStatisticEntry
+
 
 class BaseQuery(ABC):
     """TODO """
@@ -50,3 +53,12 @@ class BaseQuery(ABC):
 
     def set_value(self, field_name, value):
         self.values[field_name] = value
+
+    def log_search(self, request, search_term):
+        if NdrCoreValue.get_or_initialize('statistics_feature').get_value():
+            ip = get_user_ip(request)
+            location = get_geolocation(ip)
+
+            NdrCoreSearchStatisticEntry.objects.create(search_api=self.api_config,
+                                                       search_term=search_term,
+                                                       search_location=location)  # TODO

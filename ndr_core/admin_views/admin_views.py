@@ -7,8 +7,9 @@ from django.views import View
 
 from ndr_core.geo_ip_utils import get_geolocation
 from ndr_core.models import NdrCorePage, NdrCoreSearchConfiguration, NdrCoreValue, NdrCoreApiConfiguration, \
-    NdrCoreUiStyle, NdrCoreColorScheme
+    NdrCoreUiStyle, NdrCoreColorScheme, NdrCoreSearchStatisticEntry
 from ndr_core.ndr_settings import NdrSettings
+from ndr_core.tables import StatisticsTable
 
 
 class NdrCoreDashboard(LoginRequiredMixin, View):
@@ -59,7 +60,8 @@ class StatisticsView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         context = {'statistics_enabled': True if NdrCoreValue.objects.get(
-            value_name='statistics_feature').value_value == "true" else False}
+            value_name='statistics_feature').value_value == "true" else False,
+                   'table': StatisticsTable(data=NdrCoreSearchStatisticEntry.objects.all())}
         return render(self.request,
                       template_name='ndr_core/admin_views/view_statistics.html',
                       context=context)

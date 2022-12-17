@@ -131,6 +131,7 @@
       "value_name": "correction_feature",
       "value_label": "Correction Feature Enabled",
       "value_help_text": "true if users can suggest corrections, false otherwise.",
+      "value_type": "boolean",
       "value_value": "true"
     }
   },
@@ -140,6 +141,7 @@
       "value_name": "statistics_feature",
       "value_label": "Statistics Feature Enabled",
       "value_help_text": "true if searches are logged.",
+      "value_type": "boolean",
       "value_value": "false"
     }
   },
