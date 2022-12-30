@@ -2,7 +2,55 @@
     <div class="card bg-light mb-3">
         <div class="card-body">
             <h5 class="card-title">About Page</h5>
-            xxx
+             <p class="card-text">
+                Most project pages feature an "About out the Project" page. You can create such a page automatically
+                by selecting this page type when creating a page.
+            </p>
+            <h6>How To Create An "About" page</h6>
+            <p class="card-text">
+                <ul class="card-text">
+                    <li>
+                        Go to <a href="{% url 'ndr_core:configure_images' %}">Style & Colors > Manage Page Images</a>
+                        and upload images from your project members to the image group "People Images". Choose the name
+                        of the person as image title and their role in the project as caption.
+                    </li>
+                    <li>
+                        Go To <a href="{% url 'ndr_core:create_page' %}">Manage Pages > Create New Page</a> to create
+                        a new page.
+                    </li>
+                    <li>
+                        Choose "About Us Page" as type.
+                    </li>
+                    <li>
+                        Fill in your project description in the "Template text" field.
+                    </li>
+                    <li>
+                        Fill out the necessary fields. For example: "About Us" as page title "About" as navigation
+                        label and "about" as view name.
+                    </li>
+                    <li>
+                        Create the page.
+                    </li>
+                </ul>
+            </p>
+            <h6>Features of an About Page</h6>
+            <p class="card-text">
+                 Once created, an about page shows your template text and a list of people involved in your project.
+                 They are displayed as card elements featuring their name and their role in the project.
+            </p>
+            <h6>See also</h6>
+             <p class="card-text">
+                <i>
+                    (Administration pages in <span class="bg-primary text-white">blue</span>, help pages in
+                    <span class="bg-secondary text-white">grey</span>, external links in
+                    <span class="bg-warning">yellow</span>)
+                </i>
+            </p>
+            <p class="card-text">
+                <a href="{% url 'ndr_core:configure_pages' %}" class="btn btn-sm btn-primary" role="button">Manage Pages</a>
+                <a href="{% url 'ndr_core:configure_images' %}" class="btn btn-sm btn-primary" role="button">Manage Page Images</a>
+                <a href="{% url 'ndr_core:create_page' %}" class="btn btn-sm btn-primary" role="button">Create New Page</a>
+            </p>
         </div>
     </div>
 </div>

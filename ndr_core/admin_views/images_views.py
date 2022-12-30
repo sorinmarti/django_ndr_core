@@ -116,7 +116,7 @@ class LogoUploadView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('ndr_core:configure_images')
 
     def form_valid(self, form):
-        file_path = f"{NdrSettings.APP_NAME}/static/{NdrSettings.APP_NAME}/images/logo.png"
+        file_path = f"{NdrSettings.get_images_path()}/logo.png"
         f = form.files['upload_file']
 
         with open(file_path, 'wb+') as destination:

@@ -49,29 +49,29 @@ class Command(BaseCommand):
 
         # html files
         base_file = finders.find('ndr_core/app_init/base.html')
-        shutil.copyfile(base_file, f'{app_name}/templates/{app_name}/base.html')
+        shutil.copyfile(base_file, f'{NdrSettings.get_templates_path()}/base.html')
 
         index_file = finders.find('ndr_core/app_init/index.html')
-        shutil.copyfile(index_file, f'{app_name}/templates/{app_name}/index.html')
+        shutil.copyfile(index_file, f'{NdrSettings.get_templates_path()}/index.html')
 
         search_file = finders.find('ndr_core/app_init/search.html')
-        shutil.copyfile(search_file, f'{app_name}/templates/{app_name}/search.html')
+        shutil.copyfile(search_file, f'{NdrSettings.get_templates_path()}/search.html')
 
         test_file = finders.find('ndr_core/app_init/test.html')
-        shutil.copyfile(test_file, f'{app_name}/templates/{app_name}/test.html')
+        shutil.copyfile(test_file, f'{NdrSettings.get_templates_path()}/test.html')
 
         # static files
-        os.makedirs(f'{app_name}/static/{app_name}/css/')
+        os.makedirs(f'{NdrSettings.get_css_path()}/')
         css_file = finders.find('ndr_core/app_init/style.css')
-        shutil.copyfile(css_file, f'{app_name}/static/{app_name}/css/style.css')
+        shutil.copyfile(css_file, f'{NdrSettings.get_css_path()}/style.css')
 
-        os.makedirs(f'{app_name}/static/{app_name}/images/')
+        os.makedirs(f'{NdrSettings.get_images_path()}/')
         logo_file = finders.find('ndr_core/app_init/logo.png')
-        shutil.copyfile(logo_file, f'{app_name}/static/{app_name}/images/logo.png')
+        shutil.copyfile(logo_file, f'{NdrSettings.get_static_path()}/images/logo.png')
 
-        os.makedirs(f'{app_name}/static/{app_name}/sample_data/')
+        os.makedirs(f'{NdrSettings.get_sample_data_path()}/')
 
-        # media directory
+        # media directory TODO
         if not os.path.exists('media/backgrounds/'):
             os.makedirs('media/backgrounds/')
         if not os.path.exists('media/teams/'):

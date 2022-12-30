@@ -17,7 +17,7 @@ def get_context_data():
     apis = NdrCoreApiConfiguration.objects.all().order_by('api_name')
     files = {}
     for api in apis:
-        dir_name = f'{NdrSettings.APP_NAME}/static/{NdrSettings.APP_NAME}/sample_data/{api.api_name}'
+        dir_name = f'{NdrSettings.get_sample_data_path()}/{api.api_name}'
         if os.path.isdir(dir_name):
             files[api.api_name] = []
             for data in os.listdir(dir_name):
@@ -45,7 +45,7 @@ class SampleDataDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         file_contents = ""
-        file_path = f'{NdrSettings.APP_NAME}/static/{NdrSettings.APP_NAME}/sample_data/{self.object.api_name}/{self.kwargs["filename"]}'
+        file_path = f'{NdrSettings.get_sample_data_path()}/{self.object.api_name}/{self.kwargs["filename"]}'
         if os.path.isfile(file_path):
             with open(file_path, 'r') as f:
                 json_result = json.load(f)
@@ -71,7 +71,7 @@ class SampleDataDeleteView(LoginRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
-        file_name = f'{NdrSettings.APP_NAME}/static/{NdrSettings.APP_NAME}/sample_data/{self.kwargs["pk"]}/{self.kwargs["filename"]}'
+        file_name = f'{NdrSettings.get_sample_data_path()}/{self.kwargs["pk"]}/{self.kwargs["filename"]}'
         if os.path.exists(file_name):
             os.remove(file_name)
             messages.info(self.request, f'Deleted {self.kwargs["filename"]}')
@@ -91,7 +91,7 @@ class SampleDataUploadView(LoginRequiredMixin, FormView):
         upload_file = form.cleaned_data['upload_file']
         upload_filename = upload_file.name
 
-        file_dir = f'{NdrSettings.APP_NAME}/static/{NdrSettings.APP_NAME}/sample_data/{api.api_name}'
+        file_dir = f'{NdrSettings.get_sample_data_path()}/{api.api_name}'
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
         save_file_path = f'{file_dir}/{upload_filename}'

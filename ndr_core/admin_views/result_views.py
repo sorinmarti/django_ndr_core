@@ -27,7 +27,9 @@ class ResultsConfigurationDetailView(LoginRequiredMixin, FormView):
 
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
-        context = {'searches': NdrCoreSearchConfiguration.objects.all().order_by('conf_label')}
+        conf_name = kwargs['search_config']
+        context = {'searches': NdrCoreSearchConfiguration.objects.all().order_by('conf_label'),
+                   'configuration': NdrCoreSearchConfiguration.objects.get(conf_name=conf_name)}
         return render(self.request, template_name='ndr_core/admin_views/configure_results.html',
                       context=context)
 

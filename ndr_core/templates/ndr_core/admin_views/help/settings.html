@@ -1,9 +1,42 @@
 <div class="card-deck">
     <div class="card bg-light mb-3">
         <div class="card-body">
-            <h5 class="card-title">How Change Page Settings</h5>
+            <h5 class="card-title">Settings</h5>
             <p class="card-text">
-                Text not available yet.
+                NDR Core has a number of settings. Most of them can be changed and custom settings can be added if
+                needed.
+            </p>
+
+            <h6>Change Settings</h6>
+            <p class="card-text">
+                Go to your <a href="{% url 'ndr_core:configure_settings' %}">Settings Page</a> and choose a settings group on the right side. Each group
+                contains settings you can change. Refer to the list below:
+            </p>
+
+            <h6>Import/Export Settings</h6>
+            <p class="card-text">
+                You can import or export your settings so you can store them or use them in another project. The export
+                function produces a JSON file which can be deserialized into NDR Core's data model. Refer to
+                <a href="#">NDR Core data serialization</a> for more information
+            </p>
+
+            <h6>Custom Settings</h6>
+            <p class="card-text">
+                You will only need custom settings if you use <a href="#">Advanced editing</a>.
+            </p>
+
+            <h6>See also</h6>
+            <p class="card-text">
+                <i>
+                    (Administration pages in <span class="bg-primary text-white">blue</span>, help pages in
+                    <span class="bg-secondary text-white">grey</span>, external links in
+                    <span class="bg-warning">yellow</span>)
+                </i>
+            </p>
+            <p class="card-text">
+                <a href="{% url 'ndr_core:configure_settings' %}" class="btn btn-sm btn-primary" role="button">Settings</a>
+                <a href="#" class="btn btn-sm btn-secondary" role="button">Advanced Editing</a>
+                <a href="#" class="btn btn-sm btn-secondary" role="button">Data serialization</a>
             </p>
         </div>
     </div>

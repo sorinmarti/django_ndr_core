@@ -109,8 +109,8 @@ urlpatterns = [
     # SEARCH CONFIG
     path('configure/search/', ConfigureSearch.as_view(), name='configure_search'),
     path('configure/search/create/new/', SearchConfigurationCreateView.as_view(), name='create_search'),
-    path('configure/search/edit/<int:pk>/', SearchConfigurationEditView.as_view(), name='edit_search'),
-    path('configure/search/delete/<int:pk>/', SearchConfigurationDeleteView.as_view(), name='delete_search'),
+    path('configure/search/edit/<str:pk>/', SearchConfigurationEditView.as_view(), name='edit_search'),
+    path('configure/search/delete/<str:pk>/', SearchConfigurationDeleteView.as_view(), name='delete_search'),
     path('configure/search/image/preview/<str:img_config>/', preview_image, name='preview_image'),
 
     # SEARCH FIELDS

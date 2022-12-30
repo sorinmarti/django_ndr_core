@@ -58,6 +58,7 @@ class SearchConfigurationCreateView(LoginRequiredMixin, CreateView):
                form.cleaned_data[f'row_field_{row}'] is not None and \
                form.cleaned_data[f'column_field_{row}'] is not None and  \
                form.cleaned_data[f'size_field_{row}'] is not None:
+                print("SF", form.cleaned_data[f'search_field_{row}'])
                 new_field = NdrCoreSearchFieldFormConfiguration.objects.create(
                     search_field=form.cleaned_data[f'search_field_{row}'],
                     field_row=form.cleaned_data[f'row_field_{row}'],
@@ -165,6 +166,6 @@ def preview_image(request, img_config):
                 'row': int(config_row[0]),
                 'col': int(config_row[1]),
                 'size': int(config_row[2]),
-                'text': NdrCoreSearchField.objects.get(id=int(config_row[3])).field_label})
+                'text': NdrCoreSearchField.objects.get(pk=config_row[3]).field_label})
     image_data = get_image_from_raw_data(data)
     return HttpResponse(image_data, content_type="image/png")

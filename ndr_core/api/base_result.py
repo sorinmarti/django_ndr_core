@@ -3,9 +3,12 @@ import json
 
 import requests
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 
 
 class BaseResult(ABC):
+    """ The result class is used to actually retrieve a result from a server,
+    load it and transform it, so ndr-core can render it."""
 
     TIMEOUT = -100
     REQUEST = -101
@@ -28,65 +31,108 @@ class BaseResult(ABC):
         self.form_links = {}
         self.results = list()
 
-    def load_result(self, transform_result=True):
+    def load_result(self):
+        """Convenience function to undertake all the necessary steps to have a sanitized search result."""
+        # 1.) download the text and save it to self.raw_result
+        self.download_result()
+        if self.raw_result is None:
+            raise ValueError
+
+        # 2.) fill meta data (self.total, self.page, self.page_size, self.num_pages)
+        self.fill_meta_data()
+
+        # 3.) With the metadata known (total results, etc.), create pagination links
+        self.page_links = self.get_page_list()
+
+        # 4.) Create links to refine search or start a new one
+        self.form_links = self.get_form_links()
+
+        # 4.) Fill the result list with dict objects
+        self.fill_results()
+
+        # 5.) Transform the result to render it according to the configuration
+        self.transform_results()
+
+    def download_result(self):
+        """Downloads the result by requesting the query.
+        The result is saved in self.raw_result or an error is logged. """
         try:
             # Timeouts: 2s until connection, 5s until result
             result = requests.get(self.query, timeout=(2, 5))
         except requests.exceptions.ConnectTimeout as e:
-            self.error = "The connection timed out"
+            self.error = _("The connection timed out")
             self.error_code = BaseResult.TIMEOUT
             return
         except requests.exceptions.RequestException as e:
-            self.error = "Query could not be requested"
+            self.error = _("Query could not be requested")
             self.error_code = BaseResult.REQUEST
             return
 
         # If request was successful: load json object from it
         if result.status_code == 200:
-            try:
-                json_obj = json.loads(result.text)
-                self.raw_result = json_obj
-                if transform_result:
-                    self.organize_raw_result()
-                return
-            except json.JSONDecodeError:
-                self.error = "Result could not be loaded"
-                self.error_code = BaseResult.LOADED
-                return
+            self.save_raw_result(result.text)
         else:
-            self.error = f"The server returned status code: {result.status_code}"
+            self.error = _(f"The server returned status code: {result.status_code}")
             self.error_code = BaseResult.SERVER
             return
 
-    def organize_raw_result(self):
-        """The result json contains meta data which is organized here for convenience reasons."""
+    @abstractmethod
+    def save_raw_result(self, text):
+        """Save the raw text result in the desired form form post procession"""
+        pass
 
-        if self.raw_result is None:
-            return
+    @abstractmethod
+    def fill_meta_data(self):
+        """Fill the meta data variables from the raw result"""
+        pass
 
-        # Result Statistics
-        self.total = int(self.raw_result['total'])
-        self.page = int(self.raw_result['page'])
-        self.page_size = int(self.raw_result['size'])
-        self.num_pages = int(self.total / self.page_size)
-        if int(self.total) % int(self.page_size) > 0:
-            self.num_pages += 1
+    @abstractmethod
+    def fill_results(self):
+        """Fill the actual results from the search in the hit list"""
+        pass
 
-        # Pagination links
-        self.page_links = self.get_page_list()
+    def get_result_options(self, record_id):
+        result_options = [
+            {
+                "url": reverse('ndr_core:download_record',
+                               kwargs={'api_config': self.api_configuration.api_name, 'record_id': record_id}),
+                "target": "_blank", "label": "Download Record"
+            },
+            {
+                "url": "http:",
+                "target": "_blank", "label": "View Repository"
+            },
+            {
+                "url": "http:",
+                "target": "_blank", "label": "Mark For Correction"
+            }
+        ]
+        return result_options
 
-        # Refine URL
-        updated_url = self.request.GET.copy()
-        try:
-            # TODO Button is only called like this in simple search
-            del (updated_url['search_button_simple'])
-        except KeyError:
-            pass
-        self.form_links['refine'] = "?" + updated_url.urlencode()
+    def transform_results(self):
+        hit_number = self.page * self.page_size - self.page_size + 1
 
-        # New Search URL (TODO change this to view name)
-        self.form_links['new'] = self.request.path
+        transformed_results = list()
+        for result in self.results:
+            transformed_result = {
+                "id": "",
+                "title": "",
+                "transcription": "",
+                "values": [],
+                "result_meta": {
+                    "result_number": hit_number,
+                    "total_results": self.total
+                },
+                "options": self.get_result_options(result["id"])
+            }
+            transformed_results.append(transformed_result)
+            hit_number += 1
 
+        self.results = transformed_results
+
+
+
+    def organize_raw_result_old(self):
         # Actual results of this page
         # TODO: Add Ndr core data: has_page_image,page_image, has_fragment, fragment, result_number, total_results
         self.results = self.get_transformed_hits()
@@ -180,26 +226,31 @@ class BaseResult(ABC):
                 }
             ]
 
-            # TODO Result metadata
-            transformed_data["result_meta"] = {"result_number": hit_number, "total_results": self.total}
-
             hit["ndr"] = transformed_data
             results.append(hit)
             hit_number += 1
         return results
 
-    @staticmethod
-    def safe_get(dct, keys):
-        for key in keys:
-            try:
-                dct = dct[key]
-            except KeyError:
-                return None
-        return dct
+    def get_form_links(self):
+        form_links = {}
+
+        # Refine URL
+        updated_url = self.request.GET.copy()
+        try:
+            # TODO Button is only called like this in simple search
+            del (updated_url['search_button_simple'])
+        except KeyError:
+            pass
+        form_links['refine'] = "?" + updated_url.urlencode()
+
+        # New Search URL (TODO change this to view name)
+        form_links['new'] = self.request.path
+        return form_links
 
     def get_page_list(self):
         """Returns list of objects containing the page number and the url to the result page.
-        If there are more than 8 Pages, only part of all pages are shown"""
+        If there are more than 8 Pages, only part of all pages are shown. This is used for
+        pagination."""
         page_list = []
 
         if self.page <= 5 and self.num_pages >= 10:
@@ -238,3 +289,12 @@ class BaseResult(ABC):
         return {'pages': enriched_page_list, 'prev': f"{url}page={self.page - 1}",
                 'next': f"{url}page={self.page + 1}"}
 
+    @staticmethod
+    def safe_get(dct, keys):
+        """ Helper function to get nested keys"""
+        for key in keys:
+            try:
+                dct = dct[key]
+            except KeyError:
+                return None
+        return dct

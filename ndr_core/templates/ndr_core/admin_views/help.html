@@ -83,6 +83,17 @@
 
     {% if chapter %}
         {% include 'ndr_core/admin_views/help/'|add:chapter|add:".html" %}
+    {% else %}
+        <div class="card-deck">
+            <div class="card bg-light mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">NDR Core Help</h5>
+                    <p class="card-text">
+                        Welcome to the NDR Core help pages. Choose a topic above.
+                    </p>
+                </div>
+            </div>
+        </div>
     {% endif %}
 
 

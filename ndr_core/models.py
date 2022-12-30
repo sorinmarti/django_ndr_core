@@ -127,6 +127,9 @@ class NdrCoreApiImplementation(models.Model):
     supports_facets = models.BooleanField(default=False)
     """True if the different values of a result are grouped in filter options. """
 
+    supports_single_result = models.BooleanField(default=False)
+    """True if a single result can be downloaded. """
+
     def __str__(self):
         return self.label
 
@@ -208,6 +211,18 @@ class NdrCoreApiConfiguration(models.Model):
             api_base_url += self.api_url_stub + "/"
         return api_base_url
 
+    def get_number_of_test_files(self):
+        path = f"{NdrSettings.get_sample_data_path()}/{self.api_name}"
+        if os.path.exists(path):
+            return len(os.listdir(path))
+        return 0
+
+    def get_test_files(self):
+        path = f"{NdrSettings.get_sample_data_path()}/{self.api_name}"
+        if os.path.exists(path):
+            return os.listdir(path)
+        return []
+
     def __str__(self):
         return f'{self.api_name} ({self.api_label})'
 
@@ -237,6 +252,10 @@ class NdrCoreSearchConfiguration(models.Model):
 
     def __str__(self):
         return self.conf_name
+
+
+class NdrCoreResultTemplate(models.Model):
+    pass
 
 
 class NdrCoreResultTemplateField(models.Model):

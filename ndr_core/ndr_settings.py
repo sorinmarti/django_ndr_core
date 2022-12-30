@@ -11,6 +11,28 @@ class NdrSettings:
         return os.path.isdir(f"{NdrSettings.APP_NAME}/")
 
     @staticmethod
+    def get_templates_path():
+        dir_name = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}'
+        return dir_name
+
+    @staticmethod
+    def get_static_path():
+        dir_name = f'{NdrSettings.APP_NAME}/static/{NdrSettings.APP_NAME}'
+        return dir_name
+
+    @staticmethod
+    def get_sample_data_path():
+        return f"{NdrSettings.get_static_path()}/sample_data"
+
+    @staticmethod
+    def get_images_path():
+        return f"{NdrSettings.get_static_path()}/images"
+
+    @staticmethod
+    def get_css_path():
+        return f"{NdrSettings.get_static_path()}/css"
+
+    @staticmethod
     def app_registered():
         return NdrSettings.APP_NAME in settings.INSTALLED_APPS
 
