@@ -26,31 +26,18 @@
                     </li>
                 </ul>
             </p>
+        </div>
+    </div>
+</div>
+{% include 'ndr_core/admin_views/help/page_types/template_page.html' %}
+{% include 'ndr_core/admin_views/help/page_types/search_page.html' %}
+{% include 'ndr_core/admin_views/help/page_types/flip_book_page.html' %}
+{% include 'ndr_core/admin_views/help/page_types/contact.html' %}
+{% include 'ndr_core/admin_views/help/page_types/about.html' %}
 
-            <h6>Page Types</h6>
-            <p class="card-text">
-                <strong>Template pages</strong> serve static content (such as a project description ar curated studies). When creating a Template
-                Page you choose a <code>view_name</code>. This is the path where this page will be served and the name of the
-                template file created in your installation.
-                Edit the file to provide the static content.
-            </p>
-            <p class="card-text">
-                <strong>Search pages</strong> come in three types: <strong>simple search</strong>, <strong>custom search</strong>
-                and <strong>combined search</strong>.
-                <ul class="card-text">
-                    <li>A <strong>simple search</strong> provides a catch-all search field. You need to provide an
-                    API configuration.</li>
-                    <li>A </li>
-                    <li></li>
-                </ul>
-            </p>
-            <p class="card-text">
-                <strong>List pages</strong>
-            </p>
-            <p class="card-text">
-                <strong>Contact Form pages</strong>
-            </p>
-
+<div class="card-deck">
+    <div class="card bg-light mb-3">
+        <div class="card-body">
             <h6>See also</h6>
             <p class="card-text">
                 <i>
@@ -60,9 +47,9 @@
                 </i>
             </p>
             <p class="card-text">
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
+                <a href="{% url 'ndr_core:configure_pages' %}" class="btn btn-sm btn-primary" role="button">Manage Pages</a>
+                <a href="{% url 'ndr_core:configure_images' %}" class="btn btn-sm btn-primary" role="button">Manage Page Images</a>
+                <a href="{% url 'ndr_core:create_page' %}" class="btn btn-sm btn-primary" role="button">Create New Page</a>
             </p>
         </div>
     </div>

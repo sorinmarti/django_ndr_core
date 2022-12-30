@@ -15,15 +15,16 @@
             <p class="card-text">
                 <ul class="card-text">
                     <li>
-                        Go to <a href="">Style & Colors > Change UI Style</a> and choose an UI style you like.
+                        Go to <a href="{% url 'ndr_core:ui_settings' %}">Style & Colors > Change UI Style</a> and choose
+                        an UI style you like.
                     </li>
                     <li>
                         You can select the UI style by clicking "Set this Style as your Page Style".
                         (<strong>Important:</strong> These changes are immediate and change your page.)
                     </li>
                     <li>
-                        You can check out the changes on your <a href="">Test Page</a>. You might have to force-reload
-                        your page to show the changes.
+                        You can check out the changes on your <a href="{% url 'ndr:test_ui_settings' %}">Test Page</a>.
+                        You might have to force-reload your page to show the changes.
                     </li>
                 </ul>
             </p>
@@ -32,37 +33,34 @@
             <p class="card-text">
                 <ul class="card-text">
                     <li>
-                        Go to <a href="">Style & Colors > Manage Color Palettes</a> and choose a color palette you like.
+                        Go to <a href="{% url 'ndr_core:configure_colors' %}">Style & Colors > Manage Color Palettes</a>
+                        and choose a color palette you like.
                     </li>
                     <li>
                         You can select the color palette by clicking "Set this Palette as your Page Palette".
                         (<strong>Important:</strong> These changes are immediate and change your page.)
                     </li>
                     <li>
-                        You can check out the changes on your <a href="">Test Page</a>. You might have to force-reload
-                        your page to show the changes.
+                        You can check out the changes on your <a href="{% url 'ndr:test_ui_settings' %}">Test Page</a>.
+                        You might have to force-reload your page to show the changes.
                     </li>
                 </ul>
             </p>
 
-            <h5 class="card-title">Color Palettes</h5>
-            <p>
-                The colors of your page are defined by a color palette. The palette defines a set of colors for
-                different components. You can choose how to color buttons, text, etc.
-            </p>
-
             <h6>Create a New Palette</h6>
             <p class="card-text">
-                Go to <a href="{% url 'ndr_core:create_palette' %}">Create New Color Palette</a> to create a new palette.
-                Choose the colors by selecting the field or Enter the corresponding Hex-Code.
+                Go to <a href="{% url 'ndr_core:create_palette' %}">Style & Colors > Manage Color Palettes > Create New
+                Color Palette</a> to create a new palette. Choose the colors by selecting the field or Enter the
+                corresponding Hex-Code.
             </p>
 
             <h6>Import and Export Palette</h6>
             <p class="card-text">
-                Palettes can be exported and imported. They need to be in a specific JSON format. They define a <code>pk</code>
-                key which is the unique name of the palette. If you import a palette with an existing <code>pk</code>,
-                it will be overwritten.
+                Palettes can be exported and imported. They need to be in a specific JSON format (see <a href="#">NDR
+                Core settings serialization</a>). They define a <code>pk</code> key which is the unique name of the palette.
+                If you import a palette with an existing <code>pk</code>, it will be overwritten.
             </p>
+
             <div class="alert alert-info small" role="alert">
                 <i class="fa-regular fa-circle-info"></i>
                 Instead of changing a palette you can create a new one with a unique name. This palette can then be
@@ -93,7 +91,7 @@
             <p class="card-text">
                 <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
                 <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
+                <a href="#" class="btn btn-sm btn-warning" role="button">NDR Core Settings Serialization</a>
             </p>
         </div>
     </div>

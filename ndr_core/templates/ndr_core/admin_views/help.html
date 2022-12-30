@@ -13,11 +13,8 @@
                     <a href="{% url 'ndr_core:help_chapter' 'settings' %}" class="list-group-item small list-group-item-action py-2{% if "/help/settings/" in request.path %} active{% endif %}">
                         Settings
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'contact' %}" class="list-group-item small list-group-item-action py-2{% if "/help/contact/" in request.path %} active{% endif %}">
-                        Contact Forms
-                    </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'about' %}" class="list-group-item small list-group-item-action py-2{% if "/help/about/" in request.path %} active{% endif %}">
-                        About Page
+                    <a href="{% url 'ndr_core:help_chapter' 'advanced' %}" class="list-group-item small list-group-item-action py-2{% if "/help/advanced/" in request.path %} active{% endif %}">
+                        Advanced Editing
                     </a>
                 </div>
             </div>
@@ -27,11 +24,8 @@
             <div class="card-body">
                 <h5 class="card-title">API & Search</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:help_chapter' 'api' %}" class="list-group-item small list-group-item-action py-2{% if "/help/api/" in request.path %} active{% endif %}">
-                        API Configuration
-                    </a>
                     <a href="{% url 'ndr_core:help_chapter' 'search' %}" class="list-group-item small list-group-item-action py-2{% if "/help/search/" in request.path %} active{% endif %}">
-                        Search Configuration
+                        API & Search Configuration
                     </a>
                     <a href="{% url 'ndr_core:help_chapter' 'test' %}" class="list-group-item small list-group-item-action py-2{% if "/help/test/" in request.path %} active{% endif %}">
                         Test Search
@@ -52,9 +46,6 @@
                     </a>
                     <a href="{% url 'ndr_core:help_chapter' 'images' %}" class="list-group-item small list-group-item-action py-2{% if "/help/images/" in request.path %} active{% endif %}">
                         Images
-                    </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'ui_advanced' %}" class="list-group-item small list-group-item-action py-2{% if "/help/ui_advanced/" in request.path %} active{% endif %}">
-                        Create UI Styles
                     </a>
                 </div>
             </div>

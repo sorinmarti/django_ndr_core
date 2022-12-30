@@ -9,20 +9,24 @@
 
             <h6>Change Settings</h6>
             <p class="card-text">
-                Go to your <a href="{% url 'ndr_core:configure_settings' %}">Settings Page</a> and choose a settings group on the right side. Each group
-                contains settings you can change. Refer to the list below:
+                Go to your <a href="{% url 'ndr_core:configure_settings' %}">Settings Page</a> and choose a settings
+                group on the right side. Each group contains settings you can change. Refer to the list below:
+                <ul class="card-text">
+                    <li></li>
+                </ul>
             </p>
 
             <h6>Import/Export Settings</h6>
             <p class="card-text">
                 You can import or export your settings so you can store them or use them in another project. The export
                 function produces a JSON file which can be deserialized into NDR Core's data model. Refer to
-                <a href="#">NDR Core data serialization</a> for more information
+                <a href="#">NDR Core settings serialization</a> for more information.
             </p>
 
             <h6>Custom Settings</h6>
             <p class="card-text">
-                You will only need custom settings if you use <a href="#">Advanced editing</a>.
+                You will only need custom settings if you use <a href="{% url 'ndr_core:help_chapter' 'advanced' %}">
+                Advanced editing</a>.
             </p>
 
             <h6>See also</h6>
