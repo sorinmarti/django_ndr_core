@@ -182,11 +182,7 @@ padding: .3em .4em;}
 
 .text-thin
 {font-weight:300 !important;
-  colour:#ff3366 !important;
-}
-.blog-header {
-  line-height: 1;
-  border-bottom: 1px solid #e5e5e5;
+  color:#ff3366 !important;
 }
 
 .blog-header-logo {

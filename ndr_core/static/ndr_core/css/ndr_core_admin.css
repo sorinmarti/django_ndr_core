@@ -1,20 +1,14 @@
+/* to display color palettes in admin interface */
 .palette-display {
     min-width: 15px;
     height: 15px;
     border-radius: 4px;
     border-color: black;
 }
+
+/* small text for cards in admin interface (which is most of the text) */
 .card-text {
     font-size: small;
-}
-.parent {
-    /*height: 100vh;*/
-}
-
-.parent>.row{
-    display: flex;
-    align-items: center;
-    height: 100%;
 }
 
 .col img{
@@ -30,50 +24,7 @@
     position: relative;
 }
 
-.imgbgchk:checked + label>.tick_container{
-    opacity: 1;
-}
-
-/* Animation */
-.imgbgchk:checked + label>img{
-    transform: scale(1.25);
-    opacity: 0.3;
-}
-
-.tick_container {
-    transition: .5s ease;
-    opacity: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    cursor: pointer;
-    text-align: center;
-}
-
-.tick {
-    background-color: #4CAF50;
-    color: white;
-    font-size: 16px;
-    padding: 6px 12px;
-    height: 40px;
-    width: 40px;
-    border-radius: 100%;
-}
-
-.verticalText{
-   -ms-transform: rotate(90deg);
-   -moz-transform: rotate(90deg);
-   -webkit-transform: rotate(90deg);
-   transform: rotate(90deg);
-}
-
-.image-picker-test {
-    width: 200px;
-
-}
-
+/* Selected list objects in admin interface */
 .bg-selected {
     background: #cccccc;
 }
