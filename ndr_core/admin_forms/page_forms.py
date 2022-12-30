@@ -46,7 +46,7 @@ class PageForm(forms.ModelForm):
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCorePage
-        fields = ['name', 'label', 'page_type',
+        fields = ['name', 'label', 'page_type', 'parent_page',
                   'simple_api', 'search_configs', 'list_configs', 'view_name', 'template_text']
 
     def __init__(self, *args, **kwargs):
@@ -108,6 +108,13 @@ class PageForm(forms.ModelForm):
         form_row = Row(
             Column('page_type', css_class='form-group col-md-6 mb-0'),
             Column('view_name', css_class='form-group col-md-6 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('parent_page', css_class='form-group col-md-12 mb-0'),
+
             css_class='form-row'
         )
         layout.append(form_row)
