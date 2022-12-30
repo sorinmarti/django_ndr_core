@@ -1,10 +1,70 @@
 <div class="card-deck">
     <div class="card bg-light mb-3">
         <div class="card-body">
-            <h5 class="card-title">How Change Your UI Style</h5>
+            <h5 class="card-title">UI Style & Colors</h5>
             <p class="card-text">
-                Text not available yet.
+                NDR Core has a number of styles to give your project web site the desired look. A page style
+                determines where the UI elements (such as navigation, title, footer, etc.) are placed and how they
+                look in general.
+                Together with the selected color palette (which determines which colors said elements have) this results
+                in styled NDR Core pages.
+                You can choose existing styles and palettes or create your own.
             </p>
+
+            <h6>Change UI Style</h6>
+            <p class="card-text">
+                <ul class="card-text">
+                    <li>
+                        Go to
+                    </li>
+                </ul>
+            </p>
+
+            <h6>Change Color Palette</h6>
+            <p class="card-text">
+                <ul class="card-text">
+                    <li>
+                        Go to
+                    </li>
+                </ul>
+            </p>
+
+            <h5 class="card-title">Color Palettes</h5>
+            <p>
+                The colors of your page are defined by a color palette. The palette defines a set of colors for
+                different components. You can choose how to color buttons, text, etc.
+            </p>
+
+            <h6>Create a New Palette</h6>
+            <p class="card-text">
+                Go to <a href="{% url 'ndr_core:create_palette' %}">Create New Color Palette</a> to create a new palette.
+                Choose the colors by selecting the field or Enter the corresponding Hex-Code.
+            </p>
+
+            <h6>Import and Export Palette</h6>
+            <p class="card-text">
+                Palettes can be exported and imported. They need to be in a specific JSON format. They define a <code>pk</code>
+                key which is the unique name of the palette. If you import a palette with an existing <code>pk</code>,
+                it will be overwritten.
+            </p>
+            <div class="alert alert-info small" role="alert">
+                <i class="fa-regular fa-circle-info"></i>
+                Instead of changing a palette you can create a new one with a unique name. This palette can then be
+                exported and used in different installations without overwriting default palettes.
+            </div>
+
+            <h6>Technical Details</h6>
+            <p class="card-text">
+                Every time you choose a palette, a CSS file is created and written to your ndr app. It is saved in your
+                static folder: <code>static/ndr/css/colors.css</code>. The CSS file defines the colors of bootstrap
+                elements such as <code>.btn-primary</code>,  <code>.btn-secondary</code>, etc.
+            </p>
+
+            <div class="alert alert-warning small" role="alert">
+                <i class="fa-regular fa-exclamation-circle"></i>
+                Do not modify <code>static/ndr/css/colors.css</code> as it gets overwritten every time you save a new
+                color palette setting.
+            </div>
 
             <h6>See also</h6>
             <p class="card-text">
