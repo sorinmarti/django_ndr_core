@@ -383,7 +383,7 @@ class NdrCorePage(models.Model):
                                            help_text='Text for your template page')
     """Template Pages can be filled with RichText content (instead of 'manual' HTML). """
 
-    parent_page = models.ForeignKey('NdrCorePage', null=True, blank=True, on_delete=models.DO_NOTHING)
+    parent_page = models.ForeignKey('NdrCorePage', null=True, blank=True, default=None, on_delete=models.DO_NOTHING)
     """Any NDR Core page might have children. Currently used for flip book. In the future to be used as navigation 
     hierarchy."""
 

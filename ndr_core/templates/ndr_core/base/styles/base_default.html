@@ -34,13 +34,39 @@
                         </div>
                     </div>
 
-                    <div class="py-1 mb-2 ml-0 d-xl-block d-lg-block d-none" id="links"> <!-- desktop - lg/xl only -->
-                        <nav class="nav d-flex justify-content-between border-top">
-                            {% for nav_item in navigation %}
-                                <a class="p-2 nav-item" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
-                            {% endfor %}
+
+                        <nav class="navbar navbar-expand-md navbar-light">
+                            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                                <ul class="navbar-nav">
+                                    {% for nav_item in navigation %}
+                                        {% if nav_item.ndrcorepage_set.all %}
+                                            <li class="nav-item dropdown">
+                                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
+                                                    {{ nav_item.label }}
+                                                </a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="{{ nav_item.url }}">
+                                                        {{ nav_item.label }}
+                                                    </a>
+                                                    {% for sub_page in nav_item.ndrcorepage_set.all %}
+                                                        <a class="dropdown-item" href="{{ sub_page.url }}">
+                                                            {{ sub_page.label }}
+                                                        </a>
+                                                    {% endfor %}
+                                                </div>
+                                            </li>
+                                        {% else %}
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="{{ nav_item.url }}">
+                                                    {{ nav_item.label }}
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         </nav>
-                    </div>
+
 
                     <div class="collapse py-1 mb-2 ml-0 d-xl-none d-lg-none" id="links"> <!-- mobile - all other sizes -->
                         <nav class="d-flex flex-column">

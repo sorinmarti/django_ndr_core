@@ -73,7 +73,7 @@ class _NdrCoreView(View):
         return render(request, self.template_name, self.get_ndr_context_data())
 
     def get_ndr_context_data(self):
-        context = {'page': self.ndr_page, 'navigation': NdrCorePage.objects.all().order_by('index'),
+        context = {'page': self.ndr_page, 'navigation': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
                    'partners': NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.LOGOS)
                    }
         return context

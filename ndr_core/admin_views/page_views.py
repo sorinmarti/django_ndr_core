@@ -23,7 +23,7 @@ class ManagePages(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        context = {'pages': NdrCorePage.objects.all().order_by('index')}
+        context = {'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index')}
 
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_pages.html',

@@ -43,6 +43,9 @@ class PageForm(forms.ModelForm):
                                                   widget=FilteredListWidget(
                                                       attrs={'data-minimum-input-length': 0}))
 
+    parent_page = forms.ModelChoiceField(queryset=NdrCorePage.objects.filter(parent_page=None),
+                                         required=False)
+
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCorePage
@@ -114,7 +117,6 @@ class PageForm(forms.ModelForm):
 
         form_row = Row(
             Column('parent_page', css_class='form-group col-md-12 mb-0'),
-
             css_class='form-row'
         )
         layout.append(form_row)

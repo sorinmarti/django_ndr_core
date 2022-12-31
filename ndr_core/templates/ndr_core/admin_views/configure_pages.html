@@ -51,6 +51,31 @@
                                     </div>
                                 </p>
                             </li>
+                            {% for sub_page in page.ndrcorepage_set.all %}
+                                <li class="list-group-item list-group-item-action d-flex ml-2 py-2{% if request.resolver_match.kwargs.pk == sub_page.pk %} bg-selected {% endif%}">
+                                    <p class="p-0 m-0 flex-grow-1">
+                                        <i class="fa-regular fa-file"></i>
+                                        <a href="{% url 'ndr_core:view_page' sub_page.pk %}">{{ sub_page.name }}</a> <small>(Nav: {{ page.label }} -> {{ sub_page.label }})</small><br/>
+                                        <small>Type: {{ sub_page.get_page_type_display }}, URL: {{ sub_page.url }} </small>
+                                    </p>
+
+                                    <p class="p-0 m-0">
+                                        <div style="white-space: nowrap;">
+                                            <a href="{% url 'ndr_core:move_page_up' sub_page.pk %}" class="btn btn-sm btn-secondary">
+                                               <i class="fa-regular fa-arrow-up"></i>
+                                            </a>
+                                            <a href="{% url 'ndr_core:edit_page' sub_page.pk %}" class="btn btn-sm btn-secondary">
+                                                <i class="fa-regular fa-pen-to-square"></i>
+                                            </a>
+                                            {% if not sub_page.view_name == 'index' %}
+                                                <a href="{% url 'ndr_core:delete_page' sub_page.pk %}" class="btn btn-sm btn-danger">
+                                                    <i class="fa-regular fa-delete-left"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </p>
+                                </li>
+                            {% endfor %}
                         {% endfor %}
                     </ul>
                </div>
