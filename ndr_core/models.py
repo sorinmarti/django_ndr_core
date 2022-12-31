@@ -190,16 +190,18 @@ class NdrCoreApiConfiguration(models.Model):
                                     help_text="Static URL part after host, before API parameters.")
     """Static URL part after host, before API parameters."""
 
-    api_user_name = models.CharField(max_length=50, blank=True,
-                                     default='',
-                                     help_text="")
-    """TODO """
+    api_user_name = models.CharField(max_length=50, blank=True, default='',
+                                     help_text="If the API needs user authentication, you can provide your username")
+    """An API might need to authenticate a user with username/password credentials. """
 
-    api_password = models.CharField(max_length=50, blank=True, default='')
-    """TODO """
+    api_password = models.CharField(max_length=50, blank=True, default='',
+                                    help_text="If the API needs user authentication, you can provide the password")
+    """An API might need to authenticate a user with username/password credentials. """
 
-    api_auth_key = models.CharField(max_length=512, blank=True, default='')
-    """TODO """
+    api_auth_key = models.CharField(max_length=512, blank=True, default='',
+                                    help_text="If the API needs user authentication, you can provide an authentication "
+                                              "key")
+    """An API might need an authentication key to function. """
 
     def get_base_url(self):
         """

@@ -13,7 +13,8 @@ class ApiForm(forms.ModelForm):
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreApiConfiguration
         fields = ['api_name', 'api_host', 'api_protocol', 'api_port', 'api_label',
-                  'api_page_size', 'api_url_stub', 'api_description', 'api_type']
+                  'api_page_size', 'api_url_stub', 'api_description', 'api_type',
+                  'api_user_name', 'api_password', 'api_auth_key']
         widgets = {
             'api_description': forms.TextInput(attrs={}),
         }
@@ -47,6 +48,14 @@ class ApiForm(forms.ModelForm):
             Column('api_host', css_class='form-group col-md-4 mb-0'),
             Column('api_port', css_class='form-group col-md-2 mb-0'),
             Column('api_url_stub', css_class='form-group col-md-4 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('api_user_name', css_class='form-group col-md-3 mb-0'),
+            Column('api_password', css_class='form-group col-md-3 mb-0'),
+            Column('api_auth_key', css_class='form-group col-md-6 mb-0'),
             css_class='form-row'
         )
         layout.append(form_row)
