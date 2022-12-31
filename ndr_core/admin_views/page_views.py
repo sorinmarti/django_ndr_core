@@ -36,7 +36,7 @@ class ManagePageFooter(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        context = {'pages': NdrCorePage.objects.all().order_by('index'),
+        context = {'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
                    'footer_form': FooterForm()}
 
         return render(self.request,
@@ -52,7 +52,7 @@ class PageDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PageDetailView, self).get_context_data(**kwargs)
-        context['pages'] = NdrCorePage.objects.all().order_by('index')
+        context['pages'] = NdrCorePage.objects.filter(parent_page=None).order_by('index')
         return context
 
 
