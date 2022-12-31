@@ -345,9 +345,7 @@ class NdrCorePage(models.Model):
 
     page_type = models.IntegerField(choices=PageType.choices,
                                     default=PageType.TEMPLATE,
-                                    help_text="Choose a type for your page. Template is a static page, search pages"
-                                              "display search forms, a filtered list displays data resources with a"
-                                              "filter, contact form displays a form to send a message.")
+                                    help_text="Choose a type for your page.")
     """The page_type determines what kind of page is generated and what View is called (see PageType)"""
 
     name = models.CharField(verbose_name="Page Title",
