@@ -3,7 +3,33 @@
         <div class="card-body">
             <h5 class="card-title">Template Page</h5>
             <p class="card-text">
-                Template pages are the simplest page type. They feature static content.
+                Template pages are the simplest page. They let you insert static content and style it to your needs.
+                Additionally, you can insert UI Elements such as slideshows or figures.
+            </p>
+
+            <h6>Inserting content</h6>
+            <p class="card-text">
+                The editor lets you style content in many ways. In order to get a consistent result, it is recommended
+                to insert un-styled text and do the styling within ck-editor. You can add tables, links etc., all within
+                the editor window. Alternatively, you style your content in word (or any other rich text processor),
+                keep the layout persistent and simple and copy the text directly in the editor.
+            </p>
+            <p class="card-text">
+                While images can directly be copied into the ck-editor, you should use the NDR Core image manager to
+                deal with images. With the help of UI Elements you can display them with a caption and automatic
+                resizing.
+            </p>
+
+            <h6>Inserting UI Elements</h6>
+            <p class="card-text">
+                You can insert UI Elements with a simple code: <code>[[element-type|id]]</code>. After you create a UI
+                Element, it shows you the specific line of code to copy into your template text. Examples are
+                <code>[[slideshow|2]]</code>, <code>[[figure|23]]</code>, <code>[[card|12]]</code>. Refer to the
+                <a href="{% url 'ndr_core:help_chapter' 'ui_elements' %}">UI element help</a> for more details.
+            </p>
+            <p class="card-text">
+                Similarly, you can use custom settings. Insert <code>[[setting|setting-name]]</code> into your template
+                text to display this settings value. (Example: <code>[[setting|my_own_setting]]</code>).
             </p>
         </div>
     </div>

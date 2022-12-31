@@ -3,21 +3,30 @@
         <div class="card-body">
             <h5 class="card-title">How Manage Messages</h5>
             <p class="card-text">
-                Text not available yet.
+                If you want to get in touch with users of your web site, you can provide a contact form (see
+                <a href="{% url 'ndr_core:help_chapter' 'pages' %}">Contact Form Page</a>) to let them send you
+                messages. By default, these messages are stored on your server and you can look at them in the
+                administration interface. Alternatively, you can forward these messages to a given email address
+                and deal with them there.
             </p>
 
-            <h6>See also</h6>
-             <p class="card-text">
-                <i>
-                    (Administration pages in <span class="bg-primary text-white">blue</span>, help pages in
-                    <span class="bg-secondary text-white">grey</span>, external links in
-                    <span class="bg-warning">yellow</span>)
-                </i>
-            </p>
+            <h6>How To Configure your Messages Settings</h6>
             <p class="card-text">
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
+                <ul class="card-text">
+                    <li>
+                        Go to <a href="{% url 'ndr_core:view_settings' 'mail' %}">Settings > Mail Settings</a> and set
+                        the message forward option to "keep" or "forward".
+                    </li>
+                    <li>
+                        If you choose "keep", the messages will be available in your
+                        <a href="{% url 'ndr_core:configure_messages' %}">Inbox</a>.
+                    </li>
+                    <li>
+                        If you choose "forward", you need to specify the mail-server configuration to send the
+                        messages to the specified address. The messages are still available over the
+                        <a href="{% url 'ndr_core:configure_messages' %}">Inbox</a> but they are archived automatically.
+                    </li>
+                </ul>
             </p>
         </div>
     </div>

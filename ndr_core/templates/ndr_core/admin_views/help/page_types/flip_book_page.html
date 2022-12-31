@@ -3,10 +3,30 @@
         <div class="card-body">
             <h5 class="card-title">Flip Book Page</h5>
             <p class="card-text">
-                A Contact Form is a form where visitors can send you a message.
+                A Flip Book page lets you flip through a number of pages. If, for example, you want to show case your
+                data on different pages or show a number of case studies, this page type comes in handy. To create a
+                flip book, you need to create a parent page of the type Flip Book and then the child pages (any type
+                is fine but you'll probably only need template pages). Each child page needs to specify the flip book
+                page as its parent.
             </p>
 
-            
+            <h6>How to create a Flip Book</h6>
+            <p class="card-text">
+                <ul class="card-text">
+                    <li>
+                        Go to <a href="{% url 'ndr_core:create_page' %}">Manage Pages > Create New Page</a> to create a
+                        new page. Choose flip book as its type. Fill out the required fields and create the page.
+                    </li>
+                    <li>
+                        Create a number of template pages and choose the created flip book page as parent. Fill the
+                        pages with content.
+                    </li>
+                    <li>
+                        Your main navigation now shows the flip book page. If you click on it, the first page is shown
+                        and "previous" and "next" buttons are shown.
+                    </li>
+                </ul>
+            </p>
         </div>
     </div>
 </div>

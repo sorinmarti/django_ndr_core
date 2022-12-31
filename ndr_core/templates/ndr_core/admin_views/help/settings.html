@@ -12,7 +12,31 @@
                 Go to your <a href="{% url 'ndr_core:configure_settings' %}">Settings Page</a> and choose a settings
                 group on the right side. Each group contains settings you can change. Refer to the list below:
                 <ul class="card-text">
-                    <li></li>
+                    <li>
+                        <strong>Page Settings</strong>: Set project and browser tab titles.
+                    </li>
+                    <li>
+                        <strong>Language Settings</strong>: Set the language of the resulting web site. The
+                        administration interface is english only.
+                    </li>
+                    <li>
+                        <strong>Header Settings</strong>: Set content of HTML header tags.
+                    </li>
+                    <li>
+                        <strong>Search Settings</strong>: Define simple search labels and help texts.
+                    </li>
+                    <li>
+                        <strong>Mail Settings</strong>: Change message forwarding behaviour, set your mail host
+                        settings, set forwarding address.
+                    </li>
+                    <li>
+                        <strong>Social Media</strong>: You can link to your social media profiles. Depending on your UI
+                        style, the links are shown in the footer or elsewhere.
+                    </li>
+                    <li>
+                        <strong>Custom Settings</strong>: Contain settings you created yourself. You can use them
+                        in your template text or in advanced editing methods (see below).
+                    </li>
                 </ul>
             </p>
 
@@ -25,22 +49,9 @@
 
             <h6>Custom Settings</h6>
             <p class="card-text">
-                You will only need custom settings if you use <a href="{% url 'ndr_core:help_chapter' 'advanced' %}">
-                Advanced editing</a>.
-            </p>
-
-            <h6>See also</h6>
-            <p class="card-text">
-                <i>
-                    (Administration pages in <span class="bg-primary text-white">blue</span>, help pages in
-                    <span class="bg-secondary text-white">grey</span>, external links in
-                    <span class="bg-warning">yellow</span>)
-                </i>
-            </p>
-            <p class="card-text">
-                <a href="{% url 'ndr_core:configure_settings' %}" class="btn btn-sm btn-primary" role="button">Settings</a>
-                <a href="#" class="btn btn-sm btn-secondary" role="button">Advanced Editing</a>
-                <a href="#" class="btn btn-sm btn-secondary" role="button">Data serialization</a>
+                You can save custom settings and use them in your template text. Enter <code>[[setting|setting_name]]
+                </code> to display the settings value. Apart from that, you will only need custom settings if you use
+                <a href="{% url 'ndr_core:help_chapter' 'advanced' %}">Advanced editing</a>.
             </p>
         </div>
     </div>

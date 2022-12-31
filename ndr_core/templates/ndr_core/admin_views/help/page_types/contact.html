@@ -14,12 +14,14 @@
                 <ul class="card-text">
                     <li>
                         Go to <a href="{% url 'ndr_core:view_settings' 'mail' %}">Settings > Mail Settings</a> and set
-                        Message for ward option.
+                        the message forward option to "keep" or "forward".
                     </li>
-                    <li>If you choose "Keep", the messages will be available in your
+                    <li>
+                        If you choose "keep", the messages will be available in your
                         <a href="{% url 'ndr_core:configure_messages' %}">Inbox</a>.
                     </li>
-                    <li>If you choose "Forward", you need to specify the mail-server configuration to send the
+                    <li>
+                        If you choose "forward", you need to specify the mail-server configuration to send the
                         messages to the specified address. The messages are still available over the
                         <a href="{% url 'ndr_core:configure_messages' %}">Inbox</a> but they are archived automatically.
                     </li>

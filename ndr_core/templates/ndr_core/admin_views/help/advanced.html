@@ -3,34 +3,52 @@
         <div class="card-body">
             <h5 class="card-title">Advanced Editing</h5>
             <p class="card-text">
-                Text not available yet.
+                NDR Core tries to let you do all your configuration in the browser without bugging you with technical
+                details. However, there are a number of ways in which you can tweak and change your web site if you
+                are willing to dive into the code. There is a <a href="">technical documentation</a> to which you
+                should refer. This page gives you an overview over the general possibilities.
             </p>
-
-            <h6>Create Your Own UI Style</h6>
             <p class="card-text">
+                NDR Core is a Django module and thus written in python. HTML code is mixed with the django template
+                markup which lets you build pages dynamically. A good understanding of HTML, bootstrap, CSS and basic
+                understanding of django is necessary to make most of the changes.
             </p>
 
             <h6>Overwrite Templates</h6>
             <p class="card-text">
+                When you create a page, a HTML template is created and saved within your <code>ndr</code> django module.
+                If you don't want to use the rich text editor, you can change the <code>content</code> block with your
+                own HTML code and use the jQuery, bootstrap, fontawesome, ... functionalities as you need them.
+            </p>
+            <p class="card-text">
+                There are multiple blocks you can overwrite. Besides <code>content</code>, there is <code>page_title</code>,
+                <code>footer</code> and others, depending on the UI style.
+                Refer to the <a href="">technical documentation</a> for more information.
+            </p>
+
+            <h6>Create Your Own UI Style</h6>
+            <p class="card-text">
+                A UI Style consist mainly of a <code>base.html</code> template, some css and javascript. The template
+                needs to display the main page structure and the navigation, footer and page header. It needs to provide
+                a <code>content</code> block which is overwritten by the different pages. Context data is available to
+                the template to provide the functionality and you can check for settings values if needed. The template
+                needs to be placed within your <code>ndr</code> django module and extended by your own <code>base.html</code>.
+                Refer to the <a href="">technical documentation</a> for more information.
+            </p>
+
+            <h6>Changing static content</h6>
+            <p class="card-text">
+                In your <code>ndr</code> module you find a static folder with css, javascript and some images. You can
+                change them.
             </p>
 
             <h6>Implement APIs</h6>
             <p class="card-text">
+                You can help extend NDR Core by providing your own API implementation. Basically you create two python
+                classes (<code>Query</code> and <code>Result</code>), extend the respective base classes and implement
+                the abstract methods. Refer to the <a href="">technical documentation</a> for more information.
             </p>
 
-            <h6>See also</h6>
-             <p class="card-text">
-                <i>
-                    (Administration pages in <span class="bg-primary text-white">blue</span>, help pages in
-                    <span class="bg-secondary text-white">grey</span>, external links in
-                    <span class="bg-warning">yellow</span>)
-                </i>
-            </p>
-            <p class="card-text">
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
-                <a href="#" class="btn btn-sm btn-secondary" role="button">XXX</a>
-            </p>
         </div>
     </div>
 </div>

@@ -3,9 +3,34 @@
         <div class="card-body">
             <h5 class="card-title">How To Configure A Search</h5>
             <p class="card-text">
-                Text not available yet.
+                An NDR Core Search takes search terms, searches data over an API, receives results and displays them.
+                NDR Core does not provide the search index and is not the database itself. The search function is
+                a graphical frontend for data which should be stored in repositories according to FAIR principles.
+            </p>
+            <p class="card-text">
+                An NDR Core Search consists of several parts. You need an <strong>API configuration</strong> to tell
+                NDR Core where to search for data with which API. You need <strong>Search Fields</strong> which are
+                composed into <strong>Search Forms</strong>. Finally you need a <strong>Result renderer</strong>
+                configuration and you might want to upload <strong>Sample Data</strong> to test the result rendering.
+            </p>
+            <p class="card-text">
+                You should start with configuring your API access. Then you should think about which search fields
+                you want to use. If a single catch-all search field is enough, you don't need to create a search
+                form and just use the automatically generated simple search. If you want a custom form, create the
+                search fields you need and create the form with these fields.
+                The resulting search configuration can be added to your web site by creating a search page and
+                selecting the configuration.
             </p>
 
+        </div>
+    </div>
+</div>
+
+{% include 'ndr_core/admin_views/help/search_configuration/api.html' %}
+
+<div class="card-deck">
+    <div class="card bg-light mb-3">
+        <div class="card-body">
             <h6>See also</h6>
             <p class="card-text">
                 <i>
@@ -22,5 +47,3 @@
         </div>
     </div>
 </div>
-
-{% include 'ndr_core/admin_views/help/search_configuration/api.html' %}
