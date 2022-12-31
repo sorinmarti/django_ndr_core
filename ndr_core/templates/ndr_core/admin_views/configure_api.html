@@ -30,7 +30,8 @@
                                 <p class="p-0 m-0 flex-grow-1">
                                     <i class="fa-regular fa-code"></i>
                                     <a href="{% url 'ndr_core:view_api' api.pk %}">{{ api.api_label }}</a> ({{ api.api_name }})<br/>
-                                    <small>{{ api.get_api_protocol_display }}://{{ api.api_host }}/{{ api.api_url_stub }}/</small>
+                                    <small>{{ api.get_api_protocol_display }}://{{ api.api_host }}/{{ api.api_url_stub }}/</small><br/>
+                                    <small>Type: {{ api.api_type.label }}</small>
                                 </p>
 
                                 <p class="p-0 m-0">
@@ -72,6 +73,14 @@
                     <div class="row">
                         <div class="col-3">Number of Results per Page</div>
                         <div class="col">{{ object.api_page_size }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">Username / password</div>
+                        <div class="col">{{ object.api_user_name }} / {{ object.api_password }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3">Auth Key</div>
+                        <div class="col">{{ object.api_auth_key }}</div>
                     </div>
                 </div>
             </div>

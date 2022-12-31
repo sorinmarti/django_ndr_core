@@ -1,12 +1,12 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Row, Column, Button, HTML
+from crispy_forms.layout import Layout, Row, Column, HTML
 from django import forms
 from django.urls import reverse
 from django_select2 import forms as s2forms
 
 from ndr_core.admin_forms.settings_forms import SettingsListForm
 from ndr_core.admin_forms.admin_forms import get_form_buttons
-from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreFilterableListConfiguration, NdrCorePage, NdrCoreValue
+from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreFilterableListConfiguration, NdrCorePage
 
 
 class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
@@ -44,7 +44,8 @@ class PageForm(forms.ModelForm):
                                                       attrs={'data-minimum-input-length': 0}))
 
     parent_page = forms.ModelChoiceField(queryset=NdrCorePage.objects.filter(parent_page=None),
-                                         required=False)
+                                         required=False, help_text="If you want this page to be a sub-page of another "
+                                                                   "one, you can choose the parent page here")
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
@@ -109,14 +110,22 @@ class PageForm(forms.ModelForm):
         layout.append(form_row)
 
         form_row = Row(
-            Column('page_type', css_class='form-group col-md-6 mb-0'),
             Column('view_name', css_class='form-group col-md-6 mb-0'),
+            Column('parent_page', css_class='form-group col-md-6 mb-0'),
             css_class='form-row'
         )
         layout.append(form_row)
 
         form_row = Row(
-            Column('parent_page', css_class='form-group col-md-12 mb-0'),
+            Column('page_type', css_class='form-group col-md-6 mb-0'),
+            Column(
+                HTML('<div class="alert alert-info small m-3" role="alert">'
+                     '  <i class="fa-regular fa-circle-info"></i>'
+                     '  <span id="page_type_info"></span>'
+                     '</div>'
+                     ),
+                css_class='form-group col-md-6 mb-0'
+            ),
             css_class='form-row'
         )
         layout.append(form_row)
