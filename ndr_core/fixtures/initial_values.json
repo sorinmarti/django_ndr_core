@@ -149,8 +149,8 @@
     "model": "ndr_core.NdrCoreValue",
     "fields": {
       "value_name": "messages_behaviour",
-      "value_label": "E-Mail address for Contact Form",
-      "value_help_text": "Messages from the contact form are sent to this address",
+      "value_label": "Message Forwarding Option",
+      "value_help_text": "Keep the messages or forward them?",
       "value_value": "keep",
       "value_type": "list",
       "value_options": "(forward,Forward messages);(keep,Keep messages on server)"
