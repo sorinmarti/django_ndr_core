@@ -41,7 +41,6 @@ class NdrSettings:
         settings_module = os.environ.get('DJANGO_SETTINGS_MODULE')
         project_name = settings_module.split(".")[0]
 
-        print(f'{project_name}')
         with open(f'{project_name}/urls.py') as urls_file:
             for line in urls_file.readlines():
                 search_for = f"{NdrSettings.APP_NAME}.urls"
