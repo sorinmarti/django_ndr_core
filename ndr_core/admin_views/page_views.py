@@ -161,16 +161,19 @@ def move_page_up(request, pk):
     """
 
     try:
-        page = NdrCorePage.objects.get(id=pk)
-        if page.index > 0:
-            other_page = NdrCorePage.objects.get(index=page.index-1)
-            old_index = page.index
-            page.index = page.index - 1
-            page.save()
-            other_page.index = old_index
-            other_page.save()
-        else:
+        this_page = NdrCorePage.objects.get(id=pk)
+        # Get the list in which we want to move: the same as the page is in
+        values = list(NdrCorePage.objects.filter(parent_page=this_page.parent_page).order_by('index').values_list('index', flat=True))
+        this_pages_index = values.index(this_page.index)
+        if this_pages_index == 0:
             messages.warning(request, "Page is already on top")
+        else:
+            other_page = NdrCorePage.objects.get(index=values[this_pages_index-1])
+            switch_value = other_page.index
+            other_page.index = this_page.index
+            this_page.index = switch_value
+            this_page.save()
+            other_page.save()
     except NdrCorePage.DoesNotExist:
         messages.error(request, "Page does not exist")
     return redirect('ndr_core:configure_pages')

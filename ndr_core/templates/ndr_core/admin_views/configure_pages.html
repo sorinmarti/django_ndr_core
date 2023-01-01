@@ -37,9 +37,11 @@
 
                                 <p class="p-0 m-0">
                                     <div style="white-space: nowrap;">
-                                        <a href="{% url 'ndr_core:move_page_up' page.pk %}" class="btn btn-sm btn-secondary">
-                                           <i class="fa-regular fa-arrow-up"></i>
-                                        </a>
+                                        {% if not forloop.first %}
+                                            <a href="{% url 'ndr_core:move_page_up' page.pk %}" class="btn btn-sm btn-secondary">
+                                               <i class="fa-regular fa-arrow-up"></i>
+                                            </a>
+                                        {% endif %}
                                         <a href="{% url 'ndr_core:edit_page' page.pk %}" class="btn btn-sm btn-secondary">
                                             <i class="fa-regular fa-pen-to-square"></i>
                                         </a>
