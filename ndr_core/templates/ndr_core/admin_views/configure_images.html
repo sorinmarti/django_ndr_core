@@ -71,11 +71,14 @@
                                 {% else %}
                                     <i>No Title</i><br/>
                                 {% endif %}
-                                <img src="{{ image.image.url }}" class="img-thumbnail" />
+                                <img src="{{ image.image.url }}" class="img-thumbnail" /><br/>
                                 {% if image.caption %}
                                     <small>{{ image.caption }}</small><br/>
                                 {% else %}
                                     <small><i>No caption</i></small><br/>
+                                {% endif %}
+                                {% if image.image_group == "figures" %}
+                                    <small>To display this image, use this code in your page text: <code>[[figure|{{ image.pk }}]]</code></small><br/>
                                 {% endif %}
                                 <p class="p-0 m-0">
                                     <div style="white-space: nowrap;">
