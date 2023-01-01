@@ -52,7 +52,6 @@ class ImagesGroupView(LoginRequiredMixin, View):
                    'groups': image_groups}
         group = self.kwargs['group']
 
-        print(NdrCoreImage.ImageGroup.values)
         if group in NdrCoreImage.ImageGroup.values:
             images = NdrCoreImage.objects.filter(image_group=group).order_by('index_in_group')
             context['images'] = images
