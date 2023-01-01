@@ -710,7 +710,7 @@ class NdrCoreImage(models.Model):
     """URL to image or source"""
 
     image = models.ImageField(upload_to='images',
-                              help_text='TODO')
+                              help_text='Upload an image file')
     """Actual image"""
 
     image_group = models.CharField(max_length=100,
