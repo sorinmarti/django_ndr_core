@@ -738,6 +738,7 @@ class NdrCoreUIElement(models.Model):
         SLIDESHOW = "slides", "Slideshow"
         CAROUSEL = "carousel", "Carousel"
         JUMBOTRON = "jumbotron", "Jumbotron"
+        IFRAME = "iframe", "IFrame"
 
         def get_info_text(self):
             if self.value == "CARD":

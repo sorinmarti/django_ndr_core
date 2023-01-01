@@ -6,7 +6,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
 from ndr_core.admin_forms.ui_element_forms import UIElementCardCreateForm, UIElementCardEditForm, \
     UIElementSlideshowCreateForm, UIElementSlideshowEditForm, UIElementCarouselEditForm, UIElementCarouselCreateForm, \
-    UIElementJumbotronEditForm, UIElementJumbotronCreateForm
+    UIElementJumbotronEditForm, UIElementJumbotronCreateForm, UIElementIframeEditForm, UIElementIframeCreateForm
 from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem
 
 
@@ -50,6 +50,8 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
             return UIElementSlideshowCreateForm
         elif self.kwargs['type'] == "jumbotron":
             return UIElementJumbotronCreateForm
+        elif self.kwargs['type'] == "iframe":
+            return UIElementIframeCreateForm
         return None
 
     def get_context_data(self, **kwargs):
@@ -62,6 +64,8 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
             context['view_title'] = "Create New Slideshow"
         elif self.kwargs['type'] == "jumbotron":
             context['view_title'] = "Create New Jumbotron"
+        elif self.kwargs['type'] == "iframe":
+            context['view_title'] = "Create New Iframe"
         return context
 
     def form_valid(self, form):
@@ -103,6 +107,10 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
             self.object.type = NdrCoreUIElement.UIElementType.JUMBOTRON
             self.object.save()
 
+        elif self.kwargs['type'] == "iframe":
+            self.object.type = NdrCoreUIElement.UIElementType.IFRAME
+            self.object.save()
+
         return response
 
 
@@ -122,6 +130,8 @@ class UIElementEditView(LoginRequiredMixin, UpdateView):
             return UIElementSlideshowEditForm
         elif self.object.type == NdrCoreUIElement.UIElementType.JUMBOTRON:
             return UIElementJumbotronEditForm
+        elif self.object.type == NdrCoreUIElement.UIElementType.IFRAME:
+            return UIElementIframeEditForm
         print("TYPE", self.object.type)
         return UIElementCardEditForm
 

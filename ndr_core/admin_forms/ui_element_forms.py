@@ -312,6 +312,81 @@ class UIElementJumbotronForm(forms.ModelForm):
         return helper
 
 
+class UIElementIframeForm(forms.ModelForm):
+
+    class Meta:
+        """Configure the model form. Provide model class and form fields."""
+        model = NdrCoreUIElement
+        fields = ['show_title', 'show_text', 'show_image', 'link_element', 'use_image_conf']
+
+    def __init__(self, *args, **kwargs):
+        super(UIElementIframeForm, self).__init__(*args, **kwargs)
+        self.fields[f'card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
+        self.fields['card_item_image'].widget.option_template_name = "ndr_core/test.html"
+        self.fields[f'card_item_title'] = forms.CharField()
+        self.fields[f'card_item_text'] = forms.CharField(widget=forms.Textarea)
+        self.fields[f'card_item_url'] = forms.URLField()
+
+        self.fields['show_image'].label = 'Does this card feature an image?'
+        self.fields['show_image'].help_text = 'Note: Images must be uploaded first, before they can be used in UI elements.'
+
+        self.fields['use_image_conf'].label = 'Should this card display the image\'s title, text and URL?'
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+
+        helper = FormHelper()
+        helper.form_method = "POST"
+        layout = helper.layout = Layout()
+
+        form_row = Row(
+            Column('show_image', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('card_item_image', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('use_image_conf', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('card_item_title', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('card_item_text', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('card_item_url', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('show_title', css_class='form-group col-md-4 mb-0'),
+            Column('show_text', css_class='form-group col-md-4 mb-0'),
+            Column('link_element', css_class='form-group col-md-4 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        return helper
+
+
 class UIElementCardCreateForm(UIElementCardForm):
     """Form to create a Card. Extends the base form class and adds a 'create' button."""
 
@@ -397,4 +472,26 @@ class UIElementJumbotronEditForm(UIElementJumbotronForm):
         """Creates and returns the form helper property."""
         helper = super(UIElementJumbotronEditForm, self).helper
         helper.layout.append(get_form_buttons('Save Jumbotron'))
+        return helper
+
+
+class UIElementIframeCreateForm(UIElementIframeForm):
+    """Form to create an Iframe. Extends the base form class and adds a 'create' button."""
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = super(UIElementIframeCreateForm, self).helper
+        helper.layout.append(get_form_buttons('Create New Iframe'))
+        return helper
+
+
+class UIElementIframeEditForm(UIElementIframeForm):
+    """Form to create an Iframe. Extends the base form class and adds a 'create' button."""
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = super(UIElementIframeEditForm, self).helper
+        helper.layout.append(get_form_buttons('Save Iframe'))
         return helper
