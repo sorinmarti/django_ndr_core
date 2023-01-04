@@ -67,7 +67,7 @@ function setComponents(select_value) {
                 list_configs.hide();
                 template_text.show();
                 simple_api.hide();
-                info_text.text('Create an about us page with images from your "people" images group and template text ' +
+                info_text.text('Create an about us page with images from your "people images group" and template text ' +
                                'you can add in the editor below.')
                 break;
         }

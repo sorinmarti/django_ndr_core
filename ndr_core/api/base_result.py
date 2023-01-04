@@ -78,7 +78,7 @@ class BaseResult(ABC):
 
     @abstractmethod
     def save_raw_result(self, text):
-        """Save the raw text result in the desired form form post procession"""
+        """Save the raw text result in the desired form for post procession"""
         pass
 
     @abstractmethod
