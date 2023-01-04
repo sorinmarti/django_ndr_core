@@ -16,13 +16,13 @@
   {
     "model": "ndr_core.NdrCoreApiImplementation",
     "fields": {
-      "name": "hist_figures_api",
-      "label": "Historical Figures API",
-      "url": "https://api-ninjas.com/api/historicalfigures",
+      "name": "api_ninjas",
+      "label": "API Ninjas",
+      "url": "https://api-ninjas.com/",
       "description": "",
-      "supports_simple": true,
+      "supports_simple": false,
       "supports_simple_and_or": false,
-      "supports_advanced": false,
+      "supports_advanced": true,
       "supports_lists": false,
       "supports_facets": false
     }

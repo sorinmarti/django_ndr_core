@@ -256,8 +256,9 @@ class NdrCoreSearchConfiguration(models.Model):
         return self.conf_name
 
 
-class NdrCoreResultTemplate(models.Model):
-    pass
+class NdrCoreResultMapping(models.Model):
+    """An NDR Core Result template mapping maps result jsons to html templates."""
+
 
 
 class NdrCoreResultTemplateField(models.Model):
@@ -271,7 +272,7 @@ class NdrCoreResultTemplateField(models.Model):
         OPTIONS = "options", "Options"
         VALUE_LIST = "values", "Value List"
 
-    belongs_to = models.ForeignKey(NdrCoreSearchConfiguration, on_delete=models.CASCADE)
+    belongs_to = models.ForeignKey(NdrCoreResultMapping, on_delete=models.CASCADE)
     """TODO """
 
     target_field_name = models.CharField(max_length=100)
@@ -739,11 +740,6 @@ class NdrCoreUIElement(models.Model):
         CAROUSEL = "carousel", "Carousel"
         JUMBOTRON = "jumbotron", "Jumbotron"
         IFRAME = "iframe", "IFrame"
-
-        def get_info_text(self):
-            if self.value == "CARD":
-                return "Card Info"
-            return ""
 
         def get_(self):
             pass

@@ -26,7 +26,7 @@ class BaseQuery(ABC):
         pass
 
     @abstractmethod
-    def get_advanced_query(self, add_page_and_size=True):
+    def get_advanced_query(self, *kwargs):
         pass
 
     @abstractmethod
@@ -41,24 +41,28 @@ class BaseQuery(ABC):
     def get_explain_query(self, search_type):
         pass
 
-    def get_base_string(self):
+    def get_base_string(self, show_port=True):
         """ Composes the base string for the API. Example https://api-host.com:80/query/ """
 
-        base_string = f"{self.api_config.Protocol(self.api_config.api_protocol).label}://{self.api_config.api_host}:" \
-                      f"{self.api_config.api_port}/"
+        base_string = f"{self.api_config.Protocol(self.api_config.api_protocol).label}://{self.api_config.api_host}"
+        if show_port:
+            base_string += f":{self.api_config.api_port}"
+        base_string += "/"
         if self.api_config.api_url_stub is not None:
-            base_string += f'{self.api_config.api_url_stub}/'
+            base_string += f'{self.api_config.api_url_stub}'
 
         return base_string
 
     def set_value(self, field_name, value):
+        """Sets a value=key setting to compose a query from"""
         self.values[field_name] = value
 
     def log_search(self, request, search_term):
+        """Logs the search to the database if the feature is turned on. """
         if NdrCoreValue.get_or_initialize('statistics_feature').get_value():
             ip = get_user_ip(request)
             location = get_geolocation(ip)
 
             NdrCoreSearchStatisticEntry.objects.create(search_api=self.api_config,
                                                        search_term=search_term,
-                                                       search_location=location)  # TODO
+                                                       search_location=location)  # Test this

@@ -3,10 +3,10 @@ import re
 
 from django.contrib import messages
 from django.contrib.staticfiles import finders
-from django.http import HttpResponseNotFound, JsonResponse, HttpResponseRedirect
+from django.http import HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 
 from django.views import View
 from django.views.generic import TemplateView, FormView
@@ -37,14 +37,17 @@ def dispatch(request, ndr_page):
             return FilterListView.as_view(template_name=f'ndr/{page.view_name}.html',
                                           ndr_page=page)(request)
         elif page.page_type == page.PageType.SIMPLE_SEARCH:
-            return SimpleSearchView.as_view(template_name=f'ndr/{page.view_name}.html',
-                                            ndr_page=page)(request)
+            return SearchView.as_view(template_name=f'ndr/{page.view_name}.html',
+                                      ndr_page=page,
+                                      form_class=SimpleSearchForm)(request)
         elif page.page_type == page.PageType.SEARCH:
             return SearchView.as_view(template_name=f'ndr/{page.view_name}.html',
-                                      ndr_page=page)(request)
+                                      ndr_page=page,
+                                      form_class=AdvancedSearchForm)(request)
         elif page.page_type == page.PageType.COMBINED_SEARCH:
             return SearchView.as_view(template_name=f'ndr/{page.view_name}.html',
-                                      ndr_page=page)(request)
+                                      ndr_page=page,
+                                      form_class=AdvancedSearchForm)(request)
         elif page.page_type == page.PageType.CONTACT:
             return ContactView.as_view(template_name=f'ndr/{page.view_name}.html',
                                        ndr_page=page)(request)
@@ -151,9 +154,13 @@ class FilterListView(_NdrCoreView):
 class SearchView(_NdrCoreView):
     """TODO """
 
+    form_class = None
+
     def get(self, request, *args, **kwargs):
         requested_search = None
-        form = AdvancedSearchForm(ndr_page=self.ndr_page)
+        context = self.get_ndr_context_data()
+
+        form = self.form_class(ndr_page=self.ndr_page)
 
         if request.method == "GET":
             # Check if/which a search button has been pressed
@@ -164,33 +171,46 @@ class SearchView(_NdrCoreView):
 
             # If a button has been pressed: reinitialize form with values and check its validity
             if requested_search is not None:
-                form = AdvancedSearchForm(request.GET, ndr_page=self.ndr_page)
+                form = self.form_class(request.GET, ndr_page=self.ndr_page)
                 # If the form is valid: create a search query
                 if form.is_valid():
+                    # The search is either a simple or a custom/advanced search
+                    #
+                    query_string = None
+                    query_obj = None
+                    search_term = None
+                    api_factory = None
+                    api_conf = None
 
                     if requested_search == 'simple':
-                        statistics_api = self.ndr_page.simple_api
-                        api_factory = ApiFactory(self.ndr_page.simple_api)
-                        query = api_factory.get_query_class()(self.ndr_page.simple_api, page=request.GET.get("page", 1))
+                        api_conf = self.ndr_page.simple_api
+                        api_factory = ApiFactory(api_conf)
+                        query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
                         search_term = request.GET.get('search_term', '')
-                        query_string = query.get_simple_query(search_term)
-                        query.log_search(request, search_term)
+                        query_string = query_obj.get_simple_query(search_term)
                     else:
                         search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
-                        statistics_api = search_config.api_configuration
-                        api_factory = ApiFactory(search_config.api_configuration)
-                        query = api_factory.get_query_class()(search_config.api_configuration, page=request.GET.get("page", 1))
+                        api_conf = search_config.api_configuration
+                        api_factory = ApiFactory(api_conf)
+                        query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
                         search_term = ''
                         for key in request.GET.keys():
-                            if search_config.search_form_fields.filter(search_field__field_name=key).count() > 0:
-                                query.set_value(key, request.GET.get(key))
-                                search_term += f"{key}={request.GET.get(key)}, "
-                        query_string = query.get_advanced_query()
-                        query.log_search(request, search_term)
+                            if key.startswith(requested_search):
+                                actual_key = key[len(requested_search)+1:]
+                                if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
+                                    query_obj.set_value(actual_key, request.GET.get(key))
+                                    search_term += f"{actual_key}={request.GET.get(key)}, "
+                        query_string = query_obj.get_advanced_query()
+
+                    print(query_string)
+                    result = api_factory.get_result_class()(api_conf, query_string, self.request)
+                    result.load_result()
+
+                    context.update({'api_config': api_conf})
+                    context.update({'result': result})
             else:
                 print("No search")  # TODO
 
-        context = self.get_ndr_context_data()
         context.update({'form': form, 'requested_search': requested_search})
         return render(request, self.template_name, context)
 

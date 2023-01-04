@@ -1,0 +1,18 @@
+<div class="card mb-2 box-shadow">
+    <div class="card-body d-flex flex-column align-items-start">
+        <small>Result {{ result.result_meta.result_number }} of {{ result.result_meta.total_results }}</small>
+        <pre class="w-100">{{ result.data_string }}</pre>
+    </div>
+  <div class="card-footer bg-white">
+        {% block options %}
+            {% for result_option in result.ndr.options %}
+                <a href="{{ result_option.url }}" target="{{ result_option.target }}" class="btn btn-outline-secondary">{{ result_option.label }}</a>
+            {% endfor %}
+        {% endblock %}
+
+        <small class="text-muted float-right">
+            {% block muted_info %}
+            {% endblock %}
+        </small>
+  </div>
+</div>

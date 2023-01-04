@@ -19,6 +19,7 @@ class BaseResult(ABC):
         self.api_configuration = api_configuration
         self.query = query
         self.request = request
+        self.api_request_headers = {}
         self.raw_result = None
         self.error = None
         self.error_code = None
@@ -58,7 +59,7 @@ class BaseResult(ABC):
         The result is saved in self.raw_result or an error is logged. """
         try:
             # Timeouts: 2s until connection, 5s until result
-            result = requests.get(self.query, timeout=(2, 5))
+            result = requests.get(self.query, timeout=(2, 5), headers=self.api_request_headers)
         except requests.exceptions.ConnectTimeout as e:
             self.error = _("The connection timed out")
             self.error_code = BaseResult.TIMEOUT
@@ -123,7 +124,9 @@ class BaseResult(ABC):
                     "result_number": hit_number,
                     "total_results": self.total
                 },
-                "options": self.get_result_options(result["id"])
+                "original_data": result,
+                "data_string": json.dumps(result, indent=4),
+                "options": self.get_result_options("123")
             }
             transformed_results.append(transformed_result)
             hit_number += 1
