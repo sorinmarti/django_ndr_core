@@ -443,8 +443,14 @@ class NdrCoreColorScheme(models.Model):
     background_color = ColorField(help_text='Basic background color of the whole page.')
     """Basic background color of the whole page."""
 
+    container_bg_color = ColorField(help_text='Basic container (cards, tables, etc.) color of the whole page.')
+    """Basic container (cards, tables, etc.) color of the whole page."""
+
     text_color = ColorField(help_text='Basic text color for the whole page.')
     """Basic text color for the whole page."""
+
+    title_color = ColorField(help_text='Title text color for the whole page.')
+    """Title text color for the whole page."""
 
     button_color = ColorField(help_text='Background color of primary buttons.')
     """Background color of primary buttons."""
@@ -473,6 +479,11 @@ class NdrCoreColorScheme(models.Model):
     link_color = ColorField(help_text='Color for links.')
     """Color for hrefs."""
 
+    form_field_bg = ColorField()
+    form_field_fg = ColorField()
+
+    footer_bg = ColorField()
+
     accent_color_1 = ColorField(help_text='Accent color 1. Used as navigation background and the like.')
     """Accent color 1."""
 
@@ -487,6 +498,14 @@ class NdrCoreColorScheme(models.Model):
 
     error_color = ColorField(help_text='Error color for alerts.')
     """Error color for alerts."""
+
+    @staticmethod
+    def color_list():
+        return ['background_color', 'text_color',
+                'button_color', 'button_text_color', 'button_hover_color', 'button_border_color',
+                'second_button_color', 'second_button_text_color', 'second_button_hover_color',
+                'second_button_border_color',
+                'link_color', 'accent_color_1', 'accent_color_2', 'info_color', 'success_color', 'error_color']
 
     def __str__(self):
         return self.scheme_label

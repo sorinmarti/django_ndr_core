@@ -94,6 +94,16 @@ a {
     color: [[accent_color_2]] !important;
 }
 
+/* FORM */
+form {
+    background: [[form_field_bg]];
+}
+
+.form-control {
+    color: [[form_field_fg]];
+}
+
+
 /* TEXT */
 .ndr-text-fg {
     color: [[text_color]] !important;
@@ -101,4 +111,12 @@ a {
 
 .ndr-text-fg:hover {
     color: [[accent_color_2]] !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: [[title_color]];
+}
+
+p {
+    color: [[text_color]];
 }

@@ -90,31 +90,42 @@
                 <h5 class="card-title">{{ object.scheme_label }}</h5>
                 <div class="container">
                     <div class="row">
-                        <div class="col-3">Navigation Label</div>
-                        <div class="col">{{ object.scheme_label }} <small>(This is displayed as the page's navigation label)</small></div>
+                        <div class="col-3">Palette Label</div>
+                        <div class="col">{{ object.scheme_label }}</div>
                     </div>
                     <div class="row">
-                        <div class="col-3">Page Name</div>
-                        <div class="col">{{ object.scheme_name }} <small>(This name is displayed as the page's Title)</small></div>
+                        <div class="col-3">Palette Name</div>
+                        <div class="col">{{ object.scheme_name }} <small>(Used as primary key)</small></div>
                     </div>
                     <div class="row">
                         <div class="col-3">Colors</div>
                         <div class="col">
                             <div class="container">
                                 <div class="row mt-3">
-                                    <div class="col-3 pl-0">BG Color</div>
-                                    <div class="col-3 pl-0">Text Color</div>
-                                    <div class="col-3 pl-0">Link Color</div>
+                                    <div class="col-3 pl-0 small">BG Color</div>
+                                    <div class="col-3 pl-0 small">Container BG Color</div>
+                                    <div class="col-3 pl-0 small">Footer BG</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-2 border palette-display" style="background: {{ object.background_color }};"></div>
-                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.text_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.container_bg_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.footer_bg }};"></div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-3 pl-0 small">Text Color</div>
+                                    <div class="col-3 pl-0 small">Title Color</div>
+                                    <div class="col-3 pl-0 small">Link Color</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 border palette-display" style="background: {{ object.text_color }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.title_color }};"></div>
                                     <div class="offset-1 col-2 border palette-display" style="background: {{ object.link_color }};"></div>
                                 </div>
 
                                  <div class="row mt-3">
-                                    <div class="col-3 pl-0">Accent 1</div>
-                                    <div class="col-3 pl-0">Accent2</div>
+                                    <div class="col-3 pl-0 small">Accent 1</div>
+                                    <div class="col-3 pl-0 small">Accent2</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-2 border palette-display" style="background: {{ object.accent_color_1 }};"></div>
@@ -122,10 +133,10 @@
                                 </div>
 
                                 <div class="row mt-3">
-                                    <div class="col-3 pl-0">Button Color</div>
-                                    <div class="col-3 pl-0">Button Text Color</div>
-                                    <div class="col-3 pl-0">Button Hover Color</div>
-                                    <div class="col-3 pl-0">Button Border Color</div>
+                                    <div class="col-3 pl-0 small">Button Color</div>
+                                    <div class="col-3 pl-0 small">Button Text Color</div>
+                                    <div class="col-3 pl-0 small">Button Hover Color</div>
+                                    <div class="col-3 pl-0 small">Button Border Color</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-2 border palette-display" style="background: {{ object.button_color }};"></div>
@@ -135,10 +146,10 @@
                                 </div>
 
                                 <div class="row mt-3">
-                                    <div class="col-3 pl-0">2nd Button Color</div>
-                                    <div class="col-3 pl-0">2nd Button Text Color</div>
-                                    <div class="col-3 pl-0">2nd Button Hover Color</div>
-                                    <div class="col-3 pl-0">2nd Button Border Color</div>
+                                    <div class="col-3 pl-0 small">2nd Button Color</div>
+                                    <div class="col-3 pl-0 small">2nd Button Text Color</div>
+                                    <div class="col-3 pl-0 small">2nd Button Hover Color</div>
+                                    <div class="col-3 pl-0 small">2nd Button Border Color</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-2 border palette-display" style="background: {{ object.second_button_color }};"></div>
@@ -148,9 +159,18 @@
                                 </div>
 
                                 <div class="row mt-3">
-                                    <div class="col-3 pl-0">Info Color</div>
-                                    <div class="col-3 pl-0">Success Color</div>
-                                    <div class="col-3 pl-0">Error Color</div>
+                                    <div class="col-3 pl-0 small">Form BG Color</div>
+                                    <div class="col-3 pl-0 small">Form FG Color</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2 border palette-display" style="background: {{ object.form_field_bg }};"></div>
+                                    <div class="offset-1 col-2 border palette-display" style="background: {{ object.form_field_fg }};"></div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-3 pl-0 small">Info Color</div>
+                                    <div class="col-3 pl-0 small">Success Color</div>
+                                    <div class="col-3 pl-0 small">Error Color</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-2 border palette-display" style="background: {{ object.info_color }};"></div>

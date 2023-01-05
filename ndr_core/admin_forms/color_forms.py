@@ -29,7 +29,16 @@ class ColorPaletteForm(forms.ModelForm):
 
         form_row = Row(
             Column('background_color', css_class='form-group col-md-3 mb-0'),
+            Column('container_bg_color', css_class='form-group col-md-3 mb-0'),
+            Column('footer_bg', css_class='form-group col-md-3 mb-0'),
+
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
             Column('text_color', css_class='form-group col-md-3 mb-0'),
+            Column('title_color', css_class='form-group col-md-3 mb-0'),
             Column('link_color', css_class='form-group col-md-3 mb-0'),
 
             css_class='form-row'
@@ -58,6 +67,13 @@ class ColorPaletteForm(forms.ModelForm):
             Column('second_button_hover_color', css_class='form-group col-md-3 mb-0'),
             Column('second_button_text_color', css_class='form-group col-md-3 mb-0'),
             Column('second_button_border_color', css_class='form-group col-md-3 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('form_field_bg', css_class='form-group col-md-3 mb-0'),
+            Column('form_field_fg', css_class='form-group col-md-3 mb-0'),
             css_class='form-row'
         )
         layout.append(form_row)

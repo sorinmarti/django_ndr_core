@@ -1,3 +1,5 @@
+import os
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
@@ -9,6 +11,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView,
 
 from ndr_core.admin_forms.color_forms import ColorPaletteCreateForm, ColorPaletteEditForm, ColorPaletteImportForm
 from ndr_core.models import NdrCoreColorScheme, NdrCoreValue
+from ndr_core.ndr_settings import NdrSettings
 
 
 class ConfigureColorPalettes(LoginRequiredMixin, View):
@@ -98,12 +101,23 @@ def choose_color_palette(request, pk):
     """ Function to select the project's used color palette. """
 
     try:
-        value = NdrCoreValue.objects.get(value_name='ui_color_scheme')
         palette = NdrCoreColorScheme.objects.get(pk=pk)
+        value = NdrCoreValue.get_or_initialize(value_name='ui_color_scheme',
+                                               init_label='NDR Core Color Scheme')
         value.value_value = palette.scheme_name
         value.save()
-    except NdrCoreValue.DoesNotExist:
-        messages.error(request, 'Scheme Setting is Not in Database!')
+
+        color_template_path = "static/ndr_core/app_init/color_template.css"
+        if os.path.isfile(color_template_path):
+            with open(color_template_path, "r+") as color_in_file:
+                text = color_in_file.read()
+                for color_name in NdrCoreColorScheme.color_list():
+                    text = text.replace(f"[[{color_name}]]", getattr(palette, color_name))
+
+                color_output_path = f"{NdrSettings.get_css_path()}/colors.css"
+                with open(color_output_path, "w") as color_out_file:
+                    color_out_file.write(text)
+
     except NdrCoreColorScheme.DoesNotExist:
         messages.error(request, 'Color scheme to set not found!')
 
