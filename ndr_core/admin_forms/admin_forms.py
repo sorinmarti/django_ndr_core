@@ -27,8 +27,6 @@ class NdrCoreChangePasswordForm(PasswordChangeForm):
 
 def get_form_buttons(submit_text):
     bh = ButtonHolder(
-            Button('cancel', 'Cancel', css_class="btn btn-md btn-default",
-                   data_dismiss="modal"),
             Submit('submit', submit_text, css_class='btn-default'),
             css_class="modal-footer"
         )
