@@ -1,3 +1,4 @@
+"""Contains forms used in the NDRCore admin interface for the creation or edit of Search form configurations."""
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Div, Field, HTML, Submit, Button
 from django import forms

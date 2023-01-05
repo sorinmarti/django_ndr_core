@@ -1,3 +1,4 @@
+"""Contains forms used in the NDRCore admin interface for the creation or edit of NDR pages."""
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML
 from django import forms
