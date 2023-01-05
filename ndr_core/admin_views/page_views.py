@@ -12,7 +12,7 @@ from django.views import View
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 
 from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm
-from ndr_core.models import NdrCorePage
+from ndr_core.models import NdrCorePage, NdrCoreValue
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -42,6 +42,30 @@ class ManagePageFooter(LoginRequiredMixin, View):
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_pages.html',
                       context=context)
+
+    def post(self, request, *args, **kwargs):
+        """POST request for this view. Gets executed when setting values are saved."""
+
+        context = {'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
+                   'footer_form': FooterForm(request.POST)}
+
+        save_key = 'save_'
+        for key in request.POST.keys():
+            value = request.POST.get(key)
+            if value is None:
+                value = ''
+            if key.startswith(save_key):
+                key = key[len(save_key):]
+                v_object = NdrCoreValue.objects.get(value_name=key)
+                v_object.value_value = value
+                v_object.save()
+
+        messages.success(request, "Saved Changes")
+
+        return render(self.request,
+                      template_name='ndr_core/admin_views/configure_pages.html',
+                      context=context)
+
 
 
 class PageDetailView(LoginRequiredMixin, DetailView):
