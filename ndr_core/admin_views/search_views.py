@@ -101,7 +101,7 @@ class SearchFieldConfigurationCreateView(LoginRequiredMixin, CreateView):
 
     model = NdrCoreSearchField
     form_class = SearchFieldCreateForm
-    success_url = reverse_lazy('ndr_core:configure_search_fields')
+    success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/search_field_create.html'
 
     def form_valid(self, form):
@@ -114,7 +114,7 @@ class SearchFieldConfigurationEditView(LoginRequiredMixin, UpdateView):
 
     model = NdrCoreSearchField
     form_class = SearchFieldEditForm
-    success_url = reverse_lazy('ndr_core:configure_search_fields')
+    success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/search_field_edit.html'
 
 
@@ -122,7 +122,7 @@ class SearchFieldConfigurationDeleteView(LoginRequiredMixin, DeleteView):
     """ View to delete a Search Field from the database. Asks to confirm."""
 
     model = NdrCoreSearchField
-    success_url = reverse_lazy('ndr_core:configure_search_fields')
+    success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/search_field_confirm_delete.html'
 
     def form_valid(self, form):
