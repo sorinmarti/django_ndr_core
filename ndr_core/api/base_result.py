@@ -5,6 +5,9 @@ import requests
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from ndr_core.geo_ip_utils import get_user_ip, get_geolocation
+from ndr_core.models import NdrCoreValue, NdrCoreSearchStatisticEntry
+
 
 class BaseResult(ABC):
     """ The result class is used to actually retrieve a result from a server,
@@ -37,7 +40,8 @@ class BaseResult(ABC):
         # 1.) download the text and save it to self.raw_result
         self.download_result()
         if self.raw_result is None:
-            raise ValueError
+            print("NO RESULT RETRIEVED")
+            return
 
         # 2.) fill meta data (self.total, self.page, self.page_size, self.num_pages)
         self.fill_meta_data()
@@ -54,9 +58,13 @@ class BaseResult(ABC):
         # 5.) Transform the result to render it according to the configuration
         self.transform_results()
 
+        # 6.) Log search
+        self.log_search()
+
     def download_result(self):
         """Downloads the result by requesting the query.
         The result is saved in self.raw_result or an error is logged. """
+
         try:
             # Timeouts: 2s until connection, 5s until result
             result = requests.get(self.query, timeout=(2, 5), headers=self.api_request_headers)
@@ -133,7 +141,17 @@ class BaseResult(ABC):
 
         self.results = transformed_results
 
+    def log_search(self):
+        """Logs the search to the database if the feature is turned on. """
+        if NdrCoreValue.get_or_initialize('statistics_feature').get_value():
+            location = get_geolocation(get_user_ip(self.request))
+            search_term = ''
 
+            NdrCoreSearchStatisticEntry.objects.create(search_api=self.api_configuration,
+                                                       search_term=search_term,
+                                                       search_query=self.query,
+                                                       search_no_results=self.total,
+                                                       search_location=location)
 
     def organize_raw_result_old(self):
         # Actual results of this page

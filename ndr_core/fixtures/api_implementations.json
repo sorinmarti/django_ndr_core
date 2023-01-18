@@ -16,6 +16,34 @@
   {
     "model": "ndr_core.NdrCoreApiImplementation",
     "fields": {
+      "name": "mongodb",
+      "label": "Mongo DB",
+      "url": "https://www.mongodb.com/",
+      "description": "",
+      "supports_simple": true,
+      "supports_simple_and_or": true,
+      "supports_advanced": true,
+      "supports_lists": false,
+      "supports_facets": false
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreApiImplementation",
+    "fields": {
+      "name": "ddb",
+      "label": "DDB",
+      "url": "https://pro.deutsche-digitale-bibliothek.de/daten-nutzen/schnittstellen",
+      "description": "",
+      "supports_simple": false,
+      "supports_simple_and_or": false,
+      "supports_advanced": true,
+      "supports_lists": false,
+      "supports_facets": false
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreApiImplementation",
+    "fields": {
       "name": "api_ninjas",
       "label": "API Ninjas",
       "url": "https://api-ninjas.com/",
