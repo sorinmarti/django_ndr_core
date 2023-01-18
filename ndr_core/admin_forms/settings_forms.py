@@ -22,7 +22,6 @@ class SettingsListForm(forms.Form):
 
         initial_values = {}
         for setting in self.settings_list:
-            print(setting)
             setting_obj = NdrCoreValue.get_or_initialize(setting)
             label = setting_obj.value_label
             if self.is_custom_form:
@@ -54,6 +53,13 @@ class SettingsListForm(forms.Form):
             initial_values[f"save_{setting}"] = setting_obj.get_value()
 
         self.initial = initial_values
+
+    def save_list(self):
+        for setting in self.settings_list:
+            if f"save_{setting}" in self.data:
+                print("Would save form: ", setting, "=", self.data[f"save_{setting}"])
+            else:
+                print("No value:", setting)
 
     @property
     def helper(self):

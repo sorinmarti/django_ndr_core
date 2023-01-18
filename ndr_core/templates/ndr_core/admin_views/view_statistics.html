@@ -45,10 +45,26 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col">
+                                    Searches today
+                                </div>
+                                <div class="col">
+                                    {{ search_summary.today }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    Searches this week
+                                </div>
+                                <div class="col">
+                                    {{ search_summary.this_week }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
                                     Searches this month
                                 </div>
                                 <div class="col">
-                                    327
+                                    {{ search_summary.this_month }}
                                 </div>
                             </div>
                             <div class="row">
@@ -56,7 +72,7 @@
                                     Searches this year
                                 </div>
                                 <div class="col">
-                                    23456
+                                    {{ search_summary.this_year }}
                                 </div>
                             </div>
                             <div class="row">
@@ -64,7 +80,7 @@
                                     Total searches
                                 </div>
                                 <div class="col">
-                                    45678
+                                    {{ search_summary.total }}
                                 </div>
                             </div>
                         </div>

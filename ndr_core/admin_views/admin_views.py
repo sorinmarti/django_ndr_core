@@ -1,15 +1,16 @@
 """Contains basic views used in the NDRCore admin interface."""
+from datetime import datetime, timedelta, timezone
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.management import call_command
 from django.shortcuts import render, redirect
 from django.views import View
 
-from ndr_core.geo_ip_utils import get_geolocation
 from ndr_core.models import NdrCorePage, NdrCoreSearchConfiguration, NdrCoreValue, NdrCoreApiConfiguration, \
     NdrCoreUiStyle, NdrCoreColorScheme, NdrCoreSearchStatisticEntry
 from ndr_core.ndr_settings import NdrSettings
-from ndr_core.tables import StatisticsTable
+from ndr_core.admin_tables import StatisticsTable
 
 
 class NdrCoreDashboard(LoginRequiredMixin, View):
@@ -59,9 +60,19 @@ class StatisticsView(LoginRequiredMixin, View):
     """TODO """
 
     def get(self, request, *args, **kwargs):
-        context = {'statistics_enabled': True if NdrCoreValue.objects.get(
-            value_name='statistics_feature').value_value == "true" else False,
-                   'table': StatisticsTable(data=NdrCoreSearchStatisticEntry.objects.all())}
+        today = datetime.today().astimezone().replace(hour=0, minute=0, second=0, microsecond=0)
+        first_of_week = today - timedelta(days=today.weekday())
+        first_of_month = today.replace(day=1)
+        first_of_year = today.replace(day=1, month=1)
+
+        context = {'statistics_enabled': NdrCoreValue.objects.get(value_name='statistics_feature').get_value(),
+                   'table': StatisticsTable(data=NdrCoreSearchStatisticEntry.objects.all()),
+                   'search_summary': {
+                       'today': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_week).count(),
+                       'this_week': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_week).count(),
+                       'this_month': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_month).count(),
+                       'this_year': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_year).count(),
+                       'total': NdrCoreSearchStatisticEntry.objects.all().count()}}
         return render(self.request,
                       template_name='ndr_core/admin_views/view_statistics.html',
                       context=context)

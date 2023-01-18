@@ -231,7 +231,6 @@ class SimpleSearchView(_NdrCoreView):
                 query_string = query.get_simple_query(request.GET.get('search_term', ''), request.GET.get("page", 1))
                 result = api_factory.get_result_class()(self.ndr_page.simple_api, query_string, self.request)
                 result.load_result()
-                query.log_search(request, request.GET.get('search_term', ''))
                 context.update({'api_config': self.ndr_page.simple_api})
                 context.update({'result': result})
 

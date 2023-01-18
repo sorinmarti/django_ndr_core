@@ -501,10 +501,11 @@ class NdrCoreColorScheme(models.Model):
 
     @staticmethod
     def color_list():
-        return ['background_color', 'text_color',
+        return ['background_color', 'container_bg_color', 'footer_bg', 'text_color',
                 'button_color', 'button_text_color', 'button_hover_color', 'button_border_color',
                 'second_button_color', 'second_button_text_color', 'second_button_hover_color',
                 'second_button_border_color',
+                'form_field_bg', 'form_field_fg',
                 'link_color', 'accent_color_1', 'accent_color_2', 'info_color', 'success_color', 'error_color']
 
     def __str__(self):
@@ -553,6 +554,13 @@ class NdrCoreValue(models.Model):
 
     is_user_value = models.BooleanField(default=False)
     """Indicates if a value was created by a user"""
+
+    def set_value(self, value):
+        if self.value_type == NdrCoreValue.ValueType.BOOLEAN:
+            if value:
+                self.value_value = 'true'
+            else:
+                self.value_value = 'false'
 
     def get_value(self):
         """Returns the valued which is always saved as string as the proper type. """
@@ -687,8 +695,14 @@ class NdrCoreSearchStatisticEntry(models.Model):
     search_api = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE)
     """The API which was queried in the search. """
 
-    search_term = models.CharField(max_length=100)
+    search_term = models.CharField(max_length=100, default='')
     """The search term(s) which have been searched. """
+
+    search_query = models.CharField(max_length=255, default='')
+    """TODO"""
+
+    search_no_results = models.IntegerField(default=0)
+    """TODO"""
 
     search_time = models.DateTimeField(auto_now_add=True)
     """The time the user searched. """

@@ -6,6 +6,19 @@ body {
     color: [[text_color]] !important;
 }
 
+/* Containers */
+.card {
+    background: [[container_bg_color]] !important;
+}
+
+.card-title {
+    color: [[title_color]] !important;
+}
+
+.card-text {
+    color: [[text_color]] !important;
+}
+
 /* PRIMARY */
 .btn-primary {
     background: [[button_color]] !important;
@@ -45,8 +58,8 @@ body {
 }
 
 .btn-outline-secondary {
-    background: [[background_color]] !important;
-    color: [[text_color]] !important;
+    background: [[second_button_hover_color]] !important;
+    color: [[second_button_text_color]] !important;
     border-color: [[second_button_border_color]] !important;
 }
 

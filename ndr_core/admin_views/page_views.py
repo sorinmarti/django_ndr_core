@@ -46,19 +46,10 @@ class ManagePageFooter(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         """POST request for this view. Gets executed when setting values are saved."""
 
+        form = FooterForm(request.POST)
+        form.save_list()
         context = {'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
-                   'footer_form': FooterForm(request.POST)}
-
-        save_key = 'save_'
-        for key in request.POST.keys():
-            value = request.POST.get(key)
-            if value is None:
-                value = ''
-            if key.startswith(save_key):
-                key = key[len(save_key):]
-                v_object = NdrCoreValue.objects.get(value_name=key)
-                v_object.value_value = value
-                v_object.save()
+                   'footer_form': form}
 
         messages.success(request, "Saved Changes")
 

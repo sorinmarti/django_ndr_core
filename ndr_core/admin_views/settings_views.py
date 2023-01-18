@@ -85,6 +85,9 @@ class SettingsDetailView(LoginRequiredMixin, View):
     """Shows a group of settings to change in a form. """
 
     template_name = 'ndr_core/admin_views/configure_settings.html'
+    settings_list= None
+    settings_form = None
+    settings_group = None
 
     def get_context_data(self):
         settings_group = settings_group_list[self.kwargs['group']]
@@ -94,6 +97,7 @@ class SettingsDetailView(LoginRequiredMixin, View):
                                              is_custom_form=True)
         else:
             settings_form = SettingsListForm(settings=settings_group['settings'])
+
         context = {'settings_list': settings_group_list,
                    'object': settings_group,
                    'form': settings_form}
@@ -106,22 +110,23 @@ class SettingsDetailView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         """POST request for this view. Gets executed when setting values are saved."""
+        context = self.get_context_data()
+        form = SettingsListForm(request.POST, settings=settings_group_list[self.kwargs['group']]['settings'])
+        form.save_list()
 
         save_key = 'save_'
         for key in request.POST.keys():
-            value = request.POST.get(key)
-            if value is None:
-                value = ''
             if key.startswith(save_key):
+                value = request.POST.get(key)
                 key = key[len(save_key):]
                 v_object = NdrCoreValue.objects.get(value_name=key)
-                v_object.value_value = value
+                v_object.set_value(value)
                 v_object.save()
 
         messages.success(request, "Saved Changes")
         return render(self.request,
                       template_name='ndr_core/admin_views/configure_settings.html',
-                      context=self.get_context_data())
+                      context=context)
 
 
 class SettingCreateView(LoginRequiredMixin, CreateView):
