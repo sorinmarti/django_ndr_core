@@ -21,6 +21,10 @@ class NdrSettings:
         return dir_name
 
     @staticmethod
+    def get_files_path():
+        return f"{NdrSettings.get_static_path()}/files"
+
+    @staticmethod
     def get_sample_data_path():
         return f"{NdrSettings.get_static_path()}/sample_data"
 
