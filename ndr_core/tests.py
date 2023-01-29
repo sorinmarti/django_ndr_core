@@ -1,9 +1,32 @@
 from django.test import TestCase
 
+from ndr_core.api.mongodb.mongodb_query import MongoDBQuery
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreSearchField, \
     NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration, NdrCoreApiImplementation
 from ndr_core.api_factory import ApiFactory
 
+class TestMongoDBApi(TestCase):
+
+    def setUp(self):
+        api_type = NdrCoreApiImplementation.objects.create(name="mongodb")
+        api_conf = NdrCoreApiConfiguration.objects.create(api_name='mongodb_test',
+                                                          api_type=api_type,
+                                                          api_host='localhost',
+                                                          api_protocol=NdrCoreApiConfiguration.Protocol.HTTP,
+                                                          api_port=27017,
+                                                          api_label='MongoDB Test',
+                                                          api_page_size=10)
+
+    def test_mongodb_api(self):
+        api_conf = NdrCoreApiConfiguration.objects.get(api_name='mongodb_test')
+        query = MongoDBQuery(api_conf)
+        simple = query.get_simple_query('Singer')
+
+        query.set_value('name', 'John')
+        advanced = query.get_advanced_query()
+
+        print(simple)
+        print(advanced)
 
 class SearchConfigurationTestCase(TestCase):
 
