@@ -3,7 +3,7 @@ import re
 
 from django.contrib import messages
 from django.contrib.staticfiles import finders
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import HttpResponseNotFound, JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -296,3 +296,23 @@ class ApiTestView(View):
             json_response = {}
 
         return JsonResponse(json_response)
+
+
+class NdrFileView(View):
+    """TODO """
+
+    file = None
+    content_type = 'text/plain'
+
+    def get(self, request, *args, **kwargs):
+
+        if self.file is None:
+            return JsonResponse({})
+        else:
+            filename = f"{NdrSettings.get_files_path()}/{self.file}"
+            try:
+                with open(filename, 'r') as file:
+                    string = file.readlines()
+                    return HttpResponse(string, content_type=self.content_type)
+            except FileNotFoundError:
+                return JsonResponse({"error": "file not found"})
