@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'ndr',
+    # 'ndr',
     'ndr_core',
     'django_tables2',
     'crispy_forms',

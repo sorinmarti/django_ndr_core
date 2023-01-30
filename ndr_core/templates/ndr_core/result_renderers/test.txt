@@ -1,0 +1,31 @@
+--> Choose historical person template
+
+--> Show form with fields:
+  --> full_name
+  --> profession
+
+--> Show example data json
+
+{
+    "info": {
+        "fullname": "Lea Kasper"
+    }
+}
+
+source.camvas.fragment  |  skip/value | 'no_img.jpg'
+
+{
+    "info": {
+        "first": "Lea"
+        "last": "Kasper"
+    }
+}
+
+"Herr {info.first} von {info.last}"
+
+fullname [
+            "Herr"
+            info.first |  skip/value | 'n/a'
+            "von"
+            info.last |  skip/value | 'NO LAST NAME'
+        ]

@@ -1,5 +1,6 @@
 {% extends 'ndr_core/admin_views/base.html' %}
 {% load django_tables2 %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <h2><i class="fa-regular fa-circle-nodes"></i> Configure Result Display</h2>
@@ -49,7 +50,7 @@
         <div class="card bg-light mb-3">
             <div class="card-body">
                 <h5 class="card-title">Resulting render</h5>
-
+                {% crispy form %}
             </div>
         </div>
     {% endif %}
