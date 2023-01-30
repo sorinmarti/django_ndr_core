@@ -1,5 +1,8 @@
+import json
+
 import pymongo
 import pymongo.errors
+from bson import json_util
 from django.utils.translation import gettext_lazy as _
 
 from ndr_core.api.base_result import BaseResult
@@ -10,12 +13,16 @@ class MongoDBResult(BaseResult):
 
     def download_result(self):
         try:
-            db_client = pymongo.MongoClient(f"mongodb://{self.api_configuration.api_host}:{self.api_configuration.api_port}/", serverSelectionTimeoutMS=2000)
+            connection_string = f"mongodb://{self.api_configuration.api_host}:{self.api_configuration.api_port}/"
+            print(connection_string)
+            db_client = pymongo.MongoClient(connection_string, serverSelectionTimeoutMS=2000)
             collection = db_client[self.api_configuration.api_url_stub][self.api_configuration.api_name]
+            self.page = int(self.page)
             my_document = collection.find(self.query).skip(self.page*self.page_size-self.page_size).limit(self.page_size)
 
             hits = []
             for hit in my_document:
+                hit = json.loads(json_util.dumps(hit))
                 hits.append(hit)
 
             self.raw_result = {
