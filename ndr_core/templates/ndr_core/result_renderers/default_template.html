@@ -1,13 +1,16 @@
 {% extends 'ndr_core/result_renderers/base_renderer.html' %}
 
 {% block custom_content %}
-    <p class="card-text mb-2 pt-3">
+    <p class="card-text mb-2 pt-2">
         Collection: <i>{{ result.original_data.source.title }}</i><br/>
         Year: <i>{{ result.original_data.date.ref }}</i>
     </p>
     <h3 class="mb-2 pt-0">
         <a class="text-dark" href="#">{{ result.original_data.name.transcription }}</a>
     </h3>
+     {% if result.original_data.status == "bscc company" %}
+        <p>From: <strong>{{ result.original_data.locations.0.transcription }}</strong> <a href="https://www.geonames.org/{{ result.original_data.locations.0.scheme.identifier }}" target="_blank"><i class="fa-regular fa-earth-asia"></i></a></p>
+    {% endif %}
 
     {% if result.organization.transcription %}
         <p class="card-text mb-2">Organization: {{ result.organization.transcription }}</p>

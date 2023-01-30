@@ -17,7 +17,7 @@
                     {% endblock %}
 
                     {% block values_content %}
-                        {% if result.original_data.organizations %}
+                        {% if result.original_data.status == "bscc company" %}
                             <p>This company has relations to:</p>
                             <div class="table-responsive">
                                 <table class="table table-sm">
@@ -35,6 +35,17 @@
                                 {% endfor %}
                             {% endfor %}
                             </p>
+                        {% else %}
+                            <p>This category is traded by:</p>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    {% for value in result.original_data.organizations %}
+                                        <tr>
+                                            <td class=""><i>{{ value.transcription }}</i></td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
                         {% endif %}
                     {% endblock %}
                 {% endblock %}
