@@ -1,18 +1,37 @@
-<div class="card mb-2 box-shadow">
-    <div class="card-body d-flex flex-column align-items-start">
-        <small>Result {{ result.result_meta.result_number }} of {{ result.result_meta.total_results }}</small>
-        <pre class="w-100">{{ result.data_string }}</pre>
-    </div>
-  <div class="card-footer bg-white">
-        {% block options %}
-            {% for result_option in result.ndr.options %}
-                <a href="{{ result_option.url }}" target="{{ result_option.target }}" class="btn btn-outline-secondary">{{ result_option.label }}</a>
-            {% endfor %}
-        {% endblock %}
+{% extends 'ndr_core/result_renderers/base_renderer.html' %}
 
-        <small class="text-muted float-right">
-            {% block muted_info %}
-            {% endblock %}
-        </small>
-  </div>
-</div>
+{% block custom_content %}
+    <p class="card-text mb-2 pt-3">
+        Collection: <i>{{ result.original_data.source.title }}</i><br/>
+        Year: <i>{{ result.original_data.date.ref }}</i>
+    </p>
+    <h3 class="mb-2 pt-0">
+        <a class="text-dark" href="#">{{ result.original_data.name.transcription }}</a>
+    </h3>
+
+    {% if result.organization.transcription %}
+        <p class="card-text mb-2">Organization: {{ result.organization.transcription }}</p>
+    {% endif %}
+
+    {% if result.ndr.transcription %}
+        <p class="card-text mb-2">Organization: {{ result.ndr.transcription }}</p>
+    {% endif %}
+
+    {% if result.location|length > 0 %}
+        <p class="card-text mb-2">
+        Locations:
+        {% for loc in result.location %}
+            {{ loc.transcription }}
+            {% if not forloop.last %}
+                ,
+            {% endif %}
+        {% endfor %}
+        </p>
+    {% endif %}
+
+
+{% endblock %}
+
+{% block muted_info %}
+    Cite: <i>{{ result.original_data.source.title }}, {{ result.original_data.date.ref }}, p. {{ result.original_data.source.selector.page }}, https://bscc.philhist.unibas.ch</i>
+{% endblock %}
