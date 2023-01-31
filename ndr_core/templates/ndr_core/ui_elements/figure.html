@@ -1,0 +1,16 @@
+<div class="card" style="width: 18rem;">
+    {% if True %}
+        <img class="card-img-top" src="/media/{{ data.image }}" alt="Card image cap">
+    {% endif %}
+  <div class="card-body">
+      {% if data.link_element %}
+          <a href="#" class="stretched-link"></a>
+      {% endif %}
+
+      <h5 class="card-title">{{ data.title }}</h5>
+      <p class="card-text">
+          {{ data.caption }}
+      </p>
+
+  </div>
+</div>

@@ -92,12 +92,15 @@ class NdrTemplateView(_NdrCoreView):
         # Search for ui-elements to insert
         if page_text is not None and page_text != '':
             rendered_text = page_text
-            match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron)\|([0-9]*)(\]\])', rendered_text)
+            match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron|figure)\|([0-9]*)(\]\])', rendered_text)
             while match:
                 template = match.groups()[1]
                 element_id = match.groups()[2]
                 try:
-                    element = NdrCoreUIElement.objects.get(id=int(element_id))
+                    if template == 'figure':
+                        element = NdrCoreImage.objects.get(id=int(element_id))
+                    else:
+                        element = NdrCoreUIElement.objects.get(id=int(element_id))
                     element_html_string = render_to_string(f'ndr_core/ui_elements/{template}.html',
                                                            request=self.request, context={'data': element})
 
@@ -106,7 +109,7 @@ class NdrTemplateView(_NdrCoreView):
                 except NdrCoreUIElement.DoesNotExist:
                     rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', "ERROR loading UI element")
 
-                match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron)\|([0-9]*)(\]\])', rendered_text)
+                match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron|figure)\|([0-9]*)(\]\])', rendered_text)
             context['rendered_text'] = rendered_text
         else:
             context['rendered_text'] = ''
