@@ -63,3 +63,5 @@ django-admin startproject <projectname>
 python manage.py migrate
 python manage.py init_ndr_core
 ```
+
+(This document needs to be updated)
