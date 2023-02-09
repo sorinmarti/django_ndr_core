@@ -129,10 +129,21 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                                       f'{search_field.help_text}</small>')
 
                 if search_field.field_type == search_field.FieldType.STRING:
-                    form_field = forms.CharField(required=search_field.field_required, help_text=help_text)
+                    form_field = forms.CharField(label=search_field.field_label,
+                                                 required=search_field.field_required, help_text=help_text)
                 if search_field.field_type == search_field.FieldType.NUMBER:
-                    form_field = forms.IntegerField(required=search_field.field_required, help_text=help_text)
-
+                    form_field = forms.IntegerField(label=search_field.field_label,
+                                                    required=search_field.field_required, help_text=help_text)
+                if search_field.field_type == search_field.FieldType.BOOLEAN:
+                    form_field = forms.BooleanField(label=search_field.field_label,
+                                                    required=search_field.field_required, help_text=help_text)
+                if search_field.field_type == search_field.FieldType.DATE:
+                    form_field = forms.DateField(label=search_field.field_label,
+                                                 required=search_field.field_required, help_text=help_text)
+                if search_field.field_type == search_field.FieldType.DICTIONARY:
+                    form_field = forms.ChoiceField(label=search_field.field_label,
+                                                   choices=[],
+                                                   required=search_field.field_required, help_text=help_text)
                 if form_field is not None:
                     self.fields[f'{search_config.conf_name}_{search_field.field_name}'] = form_field
 
@@ -144,19 +155,9 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
         helper.form_method = "GET"
         layout = helper.layout = Layout()
 
-        # Add "new search" buttons
-        """layout.append(
-            Div(
-                Div(
-                    Div(
-                        HTML('<a href="#" type="button" class="btn btn-sm btn-outline-secondary ">refine search</a>'),
-                        HTML('<a href="#" type="button" class="btn btn-sm btn-outline-secondary ">start a new search</a>'),
-                        css_class="btn-group float-right"),
-                    css_class="col-12"),
-                css_class="form-row")
-        )"""
-
+        # There can be multiple search configurations for one page. Each of them gets its own tab.
         tabs = TabHolder(css_id='id_tabs')
+        # A combined search has a simple search tab as well.
         if self.ndr_page.page_type == NdrCorePage.PageType.COMBINED_SEARCH:
             tab_simple = Tab(_('Simple Search'), css_id='simple')
             search_field, type_field = self.get_simple_search_layout_fields()
@@ -165,16 +166,26 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
             tab_simple.append(self.get_search_button('simple'))
             tabs.append(tab_simple)
 
+        # For each search configuration, create a tab and add the form fields to it.
         for search_config in self.search_configs:
             tab = Tab(search_config.conf_label, css_id=search_config.conf_name)
 
+            # The form fields are grouped by row and column. The row is the outer loop.
             max_row = search_config.search_form_fields.all().aggregate(Max('field_row'))
             for row in range(max_row['field_row__max']):
                 row += 1
                 form_row = Div(css_class='form-row')
+                # The column is the inner loop.
                 for column in search_config.search_form_fields.filter(field_row=row).order_by('field_column'):
-                    form_field = Field(f'{search_config.conf_name}_{column.search_field.field_name}', placeholder=column.search_field.field_label,
+                    form_field = Field(f'{search_config.conf_name}_{column.search_field.field_name}',
+                                       placeholder=column.search_field.field_label,
                                        wrapper_class=f'col-md-{column.field_size}')
+                    # Checkboxes are displayed inline.
+                    if column.search_field.field_type == column.search_field.FieldType.BOOLEAN:
+                        form_field.wrapper_class += 'custom-control-inline pt-3'
+                        if column.field_column > 1:
+                            form_field.wrapper_class += ' pl-5'
+
                     form_row.append(form_field)
 
                 tab.append(form_row)
@@ -184,7 +195,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
 
         layout.append(tabs)
 
-        helper.form_show_labels = False
+        helper.form_show_labels = True
 
         return helper
 

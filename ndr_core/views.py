@@ -9,12 +9,11 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 
 from django.views import View
-from django.views.generic import TemplateView, FormView
-from django.views.generic.edit import FormMixin, CreateView
+from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView
 
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
-from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreValue, NdrCoreSearchStatisticEntry,\
-    NdrCoreUserMessage, NdrCoreImage, NdrCoreUIElement
+from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, NdrCoreUIElement
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
 
@@ -142,7 +141,7 @@ class NdrDownloadView(View):
 
 
 class FilterListView(_NdrCoreView):
-    """TODO """
+    """TODO This function is not implemented yet."""
 
     def get(self, request, *args, **kwargs):
         form = FilterForm()
@@ -155,64 +154,63 @@ class FilterListView(_NdrCoreView):
 
 
 class SearchView(_NdrCoreView):
-    """TODO """
+    """A view to search for records in the configured API. """
 
     form_class = None
 
     def get(self, request, *args, **kwargs):
         requested_search = None
         context = self.get_ndr_context_data()
-
         form = self.form_class(ndr_page=self.ndr_page)
 
-        if request.method == "GET":
-            # Check if/which a search button has been pressed
-            for value in request.GET.keys():
-                if value.startswith('search_button_'):
-                    requested_search = value[len('search_button_'):]
-                    break
+        # Check if/which a search button has been pressed
+        for value in request.GET.keys():
+            if value.startswith('search_button_'):
+                requested_search = value[len('search_button_'):]
+                break
 
-            # If a button has been pressed: reinitialize form with values and check its validity
-            if requested_search is not None:
-                form = self.form_class(request.GET, ndr_page=self.ndr_page)
-                # If the form is valid: create a search query
-                if form.is_valid():
-                    # The search is either a simple or a custom/advanced search
-                    #
-                    query_string = None
-                    query_obj = None
-                    search_term = None
-                    api_factory = None
-                    api_conf = None
+        # If a button has been pressed: reinitialize form with values and check its validity
+        if requested_search is not None:
+            form = self.form_class(request.GET, ndr_page=self.ndr_page)
+            # If the form is valid: create a search query
+            if form.is_valid():
+                # The search is either a simple or a custom/advanced search
+                #
+                query_string = None
+                query_obj = None
+                search_term = None
+                api_factory = None
+                api_conf = None
 
-                    if requested_search == 'simple':
-                        api_conf = self.ndr_page.simple_api
-                        api_factory = ApiFactory(api_conf)
-                        query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
-                        search_term = request.GET.get('search_term', '')
-                        query_string = query_obj.get_simple_query(search_term)
-                    else:
-                        search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
-                        api_conf = search_config.api_configuration
-                        api_factory = ApiFactory(api_conf)
-                        query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
-                        search_term = ''
-                        for key in request.GET.keys():
-                            if key.startswith(requested_search):
-                                actual_key = key[len(requested_search)+1:]
-                                if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
-                                    query_obj.set_value(actual_key, request.GET.get(key))
-                                    search_term += f"{actual_key}={request.GET.get(key)}, "
-                        query_string = query_obj.get_advanced_query()
+                if requested_search == 'simple':
+                    api_conf = self.ndr_page.simple_api
+                    api_factory = ApiFactory(api_conf)
+                    query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
+                    search_term = request.GET.get('search_term', '')
+                    query_string = query_obj.get_simple_query(search_term)
+                else:
+                    search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
+                    api_conf = search_config.api_configuration
+                    api_factory = ApiFactory(api_conf)
+                    query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
+                    search_term = ''
+                    for key in request.GET.keys():
+                        if key.startswith(requested_search):
+                            actual_key = key[len(requested_search)+1:]
+                            if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
+                                query_obj.set_value(actual_key, request.GET.get(key))
+                                search_term += f"{actual_key}={request.GET.get(key)}, "
+                    query_string = query_obj.get_advanced_query()
 
-                    print(query_string)
-                    result = api_factory.get_result_class()(api_conf, query_string, self.request)
-                    result.load_result()
+                print(query_string)
+                result = api_factory.get_result_class()(api_conf, query_string, self.request)
+                result.load_result()
 
-                    context.update({'api_config': api_conf})
-                    context.update({'result': result})
-            else:
-                print("No search")  # TODO
+                context.update({'api_config': api_conf})
+                context.update({'result': result})
+        else:
+            # If no button has been pressed
+            pass
 
         context.update({'form': form, 'requested_search': requested_search})
         return render(request, self.template_name, context)

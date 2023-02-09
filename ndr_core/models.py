@@ -28,6 +28,18 @@ class NdrCoreSearchField(models.Model):
         DICTIONARY = 3, "Dictionary"
         """This field produces a dropdown or multi select field"""
 
+        BOOLEAN = 4, "Boolean"
+        """This type produces a checkbox"""
+
+        DATE = 5, "Date"
+        """This type produces a date field"""
+
+        DATE_RANGE = 6, "Date Range"
+        """This type produces a date range field"""
+
+        HIDDEN = 7, "Hidden"
+        """This type produces a hidden field"""
+
     field_name = models.CharField(max_length=100,
                                   primary_key=True,
                                   help_text="Choose a name for the field. Can't contain spaces or special characters"
