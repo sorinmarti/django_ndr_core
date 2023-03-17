@@ -8,7 +8,7 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:create_search' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:create_search' %}" class="list-group-item list-group-item-action py-2{% if search_fields.count == 0 %} disabled{% endif %}">
                         <i class="fa-regular fa-magnifying-glass"></i>
                         Create New Search Configuration
                     </a>
@@ -23,7 +23,7 @@
                 </div>
 
                 <p></p>
-                <h5 class="card-title">Search Fields From Schema</h5>
+                <h5 class="card-title">Create typical search fields</h5>
                 <div class="list-group">
                     {% for schema in schemas %}
                         <a href="{% url 'ndr_core:create_fields_from_schema' schema.pk %}" class="list-group-item list-group-item-action py-2">
@@ -39,6 +39,12 @@
             <div class="card-body">
                 <h5 class="card-title">Configured Searches</h5>
                 <ul class="list-group">
+                    {% if search_fields.count == 0 %}
+                        <div class="alert alert-warning small" role="alert">
+                            <i class="fa-regular fa-circle-exclamation"></i>
+                            You need to create at least one Search Field before you can create a Search Configuration.
+                        </div>
+                    {% endif %}
                     {% for search in searches %}
                         <li class="list-group-item list-group-item-action d-flex py-2">
                             <p class="p-0 m-0 flex-grow-1">
@@ -68,7 +74,7 @@
                     {% for field in search_fields %}
                         <li class="list-group-item list-group-item-action d-flex py-2">
                             <p class="p-0 m-0 flex-grow-1">
-                                <i class="fa-regular fa-square"></i> {{ field.field_label }} ({{ field.field_name }})
+                                <i class="fa-regular fa-square"></i> {{ field.field_label }} ({{ field.get_field_type_display }}: {{ field.field_name }})
                             </p>
 
                             <p class="p-0 m-0">

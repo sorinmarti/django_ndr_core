@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # 'ndr',
+    'ndr',
     'ndr_core',
     'django_tables2',
     'crispy_forms',
@@ -156,8 +156,8 @@ MESSAGE_TAGS = {
         messages.ERROR: 'alert-danger',
 }
 
-RECAPTCHA_PUBLIC_KEY = '6LdlOBshAAAAAOTXPq47RzZLTeoPLuxEGUua3n38'
-RECAPTCHA_PRIVATE_KEY = '6LdlOBshAAAAAGxW09MuXbIrybbSSYnaVCU_3kOQ'
+RECAPTCHA_PUBLIC_KEY = '6LdIoTwkAAAAAMoxg2s9vvLklOy0QY92q9cdionT'
+RECAPTCHA_PRIVATE_KEY = '6LdIoTwkAAAAAAyfC5D4cpvqjCRUDxKoz5BtWyM0'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'

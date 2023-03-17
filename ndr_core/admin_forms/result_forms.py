@@ -71,3 +71,74 @@ class RenderConfigurationForm(forms.Form):
         layout.append(tabs)
 
         return helper
+
+
+class RenderConfigurationForm(forms.Form):
+    render_configuration = [
+        {'field_name': 'test',
+         'field_label': 'Title Line',
+         'field_type': 'text'},
+        {'field_name': 'test2',
+         'field_label': 'First Text Line',
+         'field_type': 'text'},
+        {'field_name': 'test3',
+         'field_label': 'Fragment Image',
+         'field_type': 'text'}]
+
+    def __init__(self, *args, **kwargs):
+        """Initialises all needed form fields. """
+        super().__init__(*args, **kwargs)
+
+        for tab_conf in self.render_configuration:
+            self.create_value_fields(tab_conf["field_name"])
+
+    def create_value_fields(self, field_name):
+        self.fields[f'{field_name}_simple_val'] = forms.CharField(label="Simple Value", required=False)
+        self.fields[f'{field_name}_composed_val'] = forms.CharField(label="Composed Value", required=False)
+        self.fields[f'{field_name}_null_val'] = forms.CharField(label="Null Value", required=False)
+
+    def add_value_fields_to(self, component, field_name):
+        form_row_1 = Div(css_class='form-row')
+        form_row_1.append(Field(f'{field_name}_simple_val', wrapper_class=f'col-md-6'))
+        form_row_1.append(Div(HTML('<div class="alert alert-info">'
+                                   'If you want to display a single value from the result, '
+                                   'enter its key here. This field is ignored if the "Composed Value" field is set.'
+                                   '</div>'), css_class='col-md-6'))
+        component.append(form_row_1)
+
+        form_row_2 = Div(css_class='form-row')
+        form_row_2.append(Field(f'{field_name}_composed_val', wrapper_class=f'col-md-6'))
+        form_row_2.append(Div(HTML('<div class="alert alert-info">'
+                                   'If you want to display multiple values from the result, you'
+                                   'can enter a string format here. The format string can be composed according to'
+                                   'the Python string format syntax.'
+                                   '</div>'), css_class='col-md-6'))
+        component.append(form_row_2)
+
+        form_row_3 = Div(css_class='form-row')
+        form_row_3.append(Field(f'{field_name}_null_val', wrapper_class=f'col-md-6'))
+        form_row_3.append(Div(HTML('<div class="alert alert-info">'
+                                   'If there is no value for the given key, this value will be displayed.'
+                                   '</div>'), css_class='col-md-6'))
+        component.append(form_row_3)
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_method = "POST"
+        helper.layout = layout = Layout()
+
+        tabs = TabHolder(css_id='id_tabs')
+        for tab_conf in self.render_configuration:
+            tab = Tab(tab_conf["field_label"], css_id=tab_conf["field_name"])
+            self.add_value_fields_to(tab, tab_conf["field_name"])
+            tabs.append(tab)
+
+        layout.append(tabs)
+
+        return helper
+
+class MyTestForm(forms.Form):
+
+    format_field = forms.CharField(label='Format', max_length=100)
+    format_field.widget.attrs['class'] = 'form-control'

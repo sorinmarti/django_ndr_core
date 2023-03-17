@@ -106,6 +106,24 @@ class PagesTestCase(TestCase):
         # self.assertEqual('#', page.url())
 
 
+class RenderTestCase(TestCase):
+
+    def test_render_creation(self):
+        # In Order to render search results, we need a function to get a number of values formatted into a string to
+        # render it in a template. This is the value of a template result field in a result template.
+        # The resulting string is composed by maximum 3 parts. Each part consists of a value object which points to a
+        # dictionary value by a key and a value if the json value is empty or None. The value object also contains
+        # options to format the value.
+        # A template result field has a type which determines how the value is rendered. The type can be a string, an
+        # image, a link or a list of values.
+        # Consider the following example: The template result field has a type of string. The value object points to the
+        # key 'name' in the json value. The value object also contains a format string which is used to format the value
+
+
+
+
+
+
 class ResultTemplateTestCase(TestCase):
 
     def test_template(self):

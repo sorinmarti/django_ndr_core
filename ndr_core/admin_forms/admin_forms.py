@@ -1,7 +1,7 @@
 """Contains general forms used in the NDRCore admin interface."""
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Button, ButtonHolder
+from crispy_forms.layout import Submit, ButtonHolder
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 
@@ -31,3 +31,4 @@ def get_form_buttons(submit_text):
             css_class="modal-footer"
         )
     return bh
+
