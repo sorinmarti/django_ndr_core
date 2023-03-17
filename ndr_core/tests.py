@@ -118,11 +118,7 @@ class RenderTestCase(TestCase):
         # image, a link or a list of values.
         # Consider the following example: The template result field has a type of string. The value object points to the
         # key 'name' in the json value. The value object also contains a format string which is used to format the value
-
-
-
-
-
+        pass
 
 class ResultTemplateTestCase(TestCase):
 
