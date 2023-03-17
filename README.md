@@ -168,6 +168,15 @@ Django works as such that there are different apps. django-ndr-core is a django-
 python manage.py init_ndr_core
 ```
 
+### 3.3. Start configuring and entering content
+Run your server.
+    
+```
+python manage.py runserver
+```
+
+Visit http://localhost:8000/ to view your website and http://localhost:8000/ndr_core/ to access the configuration interface.
+    
 
 ## How to use ndr_core for development
 1. Clone this repo, create and activate a virtual environment
