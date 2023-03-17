@@ -34,12 +34,13 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'ndr',
+    # 'ndr',
     'ndr_core',
     'django_tables2',
     'crispy_forms',
     'django_select2',
     'bootstrap4',
+    'crispy_bootstrap4',
     'ckeditor',
     'ckeditor_uploader',
     'captcha',
