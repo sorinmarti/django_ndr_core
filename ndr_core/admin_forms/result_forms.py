@@ -2,6 +2,7 @@ import django.forms as forms
 from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Field, HTML
+from django_select2 import forms as s2forms
 
 
 class RenderConfigurationForm(forms.Form):
@@ -138,7 +139,20 @@ class RenderConfigurationForm(forms.Form):
 
         return helper
 
+
+class FilteredListWidget(s2forms.Select2MultipleWidget):
+    """Widget to display a multi select2 dropdown for list configurations. """
+
+    search_fields = [
+        'list_name__icontains'
+    ]
+
+
 class MyTestForm(forms.Form):
 
     format_field = forms.CharField(label='Format', max_length=100)
     format_field.widget.attrs['class'] = 'form-control'
+
+    dropdown_field = forms.MultipleChoiceField(label='Dropdown',
+                                               choices=[('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')],
+                                               widget=FilteredListWidget(attrs={'data-minimum-input-length': 0}))

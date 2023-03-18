@@ -25,19 +25,22 @@ class NdrCoreSearchField(models.Model):
         NUMBER = 2, "Number"
         """This type produces a number field"""
 
-        DICTIONARY = 3, "Dictionary"
+        LIST = 3, "Dropdown List"
         """This field produces a dropdown or multi select field"""
 
-        BOOLEAN = 4, "Boolean"
+        MULTI_LIST = 4, "Multi Select List"
+        """This field produces a multi select field"""
+
+        BOOLEAN = 5, "Boolean"
         """This type produces a checkbox"""
 
-        DATE = 5, "Date"
+        DATE = 6, "Date"
         """This type produces a date field"""
 
-        DATE_RANGE = 6, "Date Range"
+        DATE_RANGE = 7, "Date Range"
         """This type produces a date range field"""
 
-        HIDDEN = 7, "Hidden"
+        HIDDEN = 8, "Hidden"
         """This type produces a hidden field"""
 
     field_name = models.CharField(max_length=100,
@@ -78,6 +81,18 @@ class NdrCoreSearchField(models.Model):
     """If the search fields were created from a schema, this field gets filled out with the schema's name. This helps
     to identify fields which were automatically created so they can be overwritten when they are regenerated from a 
     schema"""
+
+    list_choices = models.TextField(blank=True,
+                                    default='',
+                                    help_text="Comma separated list of choices for dropdowns")
+    """Comma separated list of choices for dropdowns"""
+
+    def get_list_choices(self):
+        # read the list choices from a file
+        if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
+            list_choices = [tuple(line.split(',')) for line in self.list_choices.splitlines()]
+
+        return list_choices
 
     def __str__(self):
         return f'{self.field_name} ({self.field_label})'

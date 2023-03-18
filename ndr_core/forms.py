@@ -14,6 +14,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreUserMessage
 from ndr_core.widgets import CustomSelect
+from django_select2 import forms as s2forms
 
 
 class _NdrCoreForm(forms.Form):
@@ -103,6 +104,14 @@ class SimpleSearchForm(_NdrCoreSearchForm):
         return helper
 
 
+class FilteredListWidget(s2forms.Select2MultipleWidget):
+    # TODO: This is a copy of the original widget.
+    """Widget to display a multi select2 dropdown for list configurations. """
+
+    search_fields = [
+        'list_name__icontains'
+    ]
+
 class AdvancedSearchForm(_NdrCoreSearchForm):
     """Form class for the advanced (=configured) search. Needs a search config and then creates and configures
     the form from it. """
@@ -128,22 +137,41 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                 help_text = mark_safe(f'<small id="{search_field.field_name}Help" class="form-text text-muted">'
                                       f'{search_field.help_text}</small>')
 
+                # Text field
                 if search_field.field_type == search_field.FieldType.STRING:
                     form_field = forms.CharField(label=search_field.field_label,
-                                                 required=search_field.field_required, help_text=help_text)
+                                                 required=search_field.field_required,
+                                                 help_text=help_text)
+                # Number field
                 if search_field.field_type == search_field.FieldType.NUMBER:
                     form_field = forms.IntegerField(label=search_field.field_label,
-                                                    required=search_field.field_required, help_text=help_text)
+                                                    required=search_field.field_required,
+                                                    help_text=help_text)
+                # Boolean field (checkbox)
                 if search_field.field_type == search_field.FieldType.BOOLEAN:
                     form_field = forms.BooleanField(label=search_field.field_label,
-                                                    required=search_field.field_required, help_text=help_text)
+                                                    required=search_field.field_required,
+                                                    help_text=help_text)
+                # Date field
                 if search_field.field_type == search_field.FieldType.DATE:
                     form_field = forms.DateField(label=search_field.field_label,
-                                                 required=search_field.field_required, help_text=help_text)
-                if search_field.field_type == search_field.FieldType.DICTIONARY:
+                                                 required=search_field.field_required,
+                                                 help_text=help_text)
+                # List field (dropdown)
+                if search_field.field_type == search_field.FieldType.LIST:
                     form_field = forms.ChoiceField(label=search_field.field_label,
-                                                   choices=[],
-                                                   required=search_field.field_required, help_text=help_text)
+                                                   choices=search_field.get_list_choices(),
+                                                   required=search_field.field_required,
+                                                   help_text=help_text)
+                # Multi list field (multiple select with Select2)
+                if search_field.field_type == search_field.FieldType.MULTI_LIST:
+                    form_field = forms.MultipleChoiceField(label=search_field.field_label,
+                                                           choices=search_field.get_list_choices(),
+                                                           widget=FilteredListWidget(attrs={'data-minimum-input-length': 0}),
+                                                           required=search_field.field_required,
+                                                           help_text=help_text)
+
+                # Add the field to the form if it was created.
                 if form_field is not None:
                     self.fields[f'{search_config.conf_name}_{search_field.field_name}'] = form_field
 

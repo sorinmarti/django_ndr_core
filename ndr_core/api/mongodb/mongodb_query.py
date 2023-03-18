@@ -33,8 +33,8 @@ class MongoDBQuery(BaseQuery):
         if field is not None:
             if field.field_type == NdrCoreSearchField.FieldType.STRING:
                 value = {"$regex": value, "$options": "i"}
-            if field.field_type == NdrCoreSearchField.FieldType.DICTIONARY:
-                print("DICTIONARY")
+            if field.field_type == NdrCoreSearchField.FieldType.LIST:
+                print("LIST")
         else:
             value = {"$regex": value, "$options": "i"}
         self.values[field_name] = value
