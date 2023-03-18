@@ -38,3 +38,7 @@
     background-color: var(--secondary) !important;
     color: white !important;
 }
+
+.select2-selection__choice__display {
+    padding-left: 20px !important;
+}
