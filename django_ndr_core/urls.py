@@ -13,22 +13,12 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf import settings
 from django.contrib import admin
-from django.urls import path, include, re_path
-from django.views.static import serve
+from django.urls import path
+from ndr_core.ndr_settings import NdrSettings
 
 urlpatterns = [
-    # path('', include('ndr.urls')),
-    path('ndr_core/', include('ndr_core.urls')),
-    path("select2/", include("django_select2.urls")),
-    re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
     path('admin/', admin.site.urls),
 ]
+urlpatterns += NdrSettings.get_urls()
 
-if settings.DEBUG:
-    urlpatterns += [
-        re_path(r'^media/(?P<path>.*)$', serve, {
-            'document_root': settings.MEDIA_ROOT
-        }),
-    ]

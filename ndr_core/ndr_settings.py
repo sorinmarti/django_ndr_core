@@ -1,6 +1,8 @@
 import os.path
 
 from django.conf import settings
+from django.urls import path, include, re_path
+from django.views.static import serve
 
 
 class NdrSettings:
@@ -31,6 +33,27 @@ class NdrSettings:
         if NdrSettings.app_exists():
             apps.append(NdrSettings.APP_NAME)
         return apps
+
+    @staticmethod
+    def get_urls():
+        urls = [
+            path('ndr_core/', include('ndr_core.urls')),
+            path("select2/", include("django_select2.urls")),
+            re_path(r'^ckeditor/', include('ckeditor_uploader.urls'))
+        ]
+
+        if NdrSettings.app_exists():
+            urls += [path('', include(f'{NdrSettings.APP_NAME}.urls')),]
+
+        if settings.DEBUG:
+            urls += [
+                re_path(r'^media/(?P<path>.*)$', serve, {
+                    'document_root': settings.MEDIA_ROOT
+                }),
+            ]
+
+        return urls
+
 
     @staticmethod
     def get_templates_path():
