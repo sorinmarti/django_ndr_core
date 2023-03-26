@@ -75,7 +75,7 @@ class Command(BaseCommand):
             'color_palettes.json',
         ]
         files_to_copy = [
-            ('urls.py', 'urls.py'),
+            ('urls.py', f'{NdrSettings.APP_NAME}/urls.py'),
             ('base.html', f'{NdrSettings.get_templates_path()}/base.html'),
             ('index.html', f'{NdrSettings.get_templates_path()}/index.html'),
             ('search.html', f'{NdrSettings.get_templates_path()}/search.html'),
