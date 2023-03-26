@@ -11,29 +11,26 @@ from ndr_core.api.ddb_api.ddb_result import DDBResult
 class ApiFactory:
     """The API factory returns Query and Result classes for a selected API implementation. """
 
+    api_mapping = {
+        "ndr_core": {"query": NdrCoreQuery, "result": NdrCoreResult},
+        "api_ninjas": {"query": ApiNinjasQuery, "result": ApiNinjasResult},
+        "mongodb": {"query": MongoDBQuery, "result": MongoDBResult},
+        "ddb": {"query": DDBQuery, "result": DDBResult}
+    }
+
     def __init__(self, api_configuration):
         self.api_configuration = api_configuration
 
     def get_query_class(self):
-        if self.api_configuration.api_type.name == "ndr_core":
-            return NdrCoreQuery
-        elif self.api_configuration.api_type.name == "api_ninjas":
-            return ApiNinjasQuery
-        elif self.api_configuration.api_type.name == "mongodb":
-            return MongoDBQuery
-        elif self.api_configuration.api_type.name == "ddb":
-            return DDBQuery
-        print("API IMPLEMENTATION NOT FOUND")
-        return None
+        """Returns the query class for the selected API implementation."""
+        if self.api_configuration.api_type.name in self.api_mapping:
+            return self.api_mapping[self.api_configuration.api_type.name]["query"]
+        else:
+            raise Exception("API IMPLEMENTATION NOT FOUND")
 
     def get_result_class(self):
-        if self.api_configuration.api_type.name == "ndr_core":
-            return NdrCoreResult
-        elif self.api_configuration.api_type.name == "api_ninjas":
-            return ApiNinjasResult
-        elif self.api_configuration.api_type.name == "mongodb":
-            return MongoDBResult
-        elif self.api_configuration.api_type.name == "ddb":
-            return DDBResult
-        print("API IMPLEMENTATION NOT FOUND")
-        return None
+        """Returns the result class for the selected API implementation."""
+        if self.api_configuration.api_type.name in self.api_mapping:
+            return self.api_mapping[self.api_configuration.api_type.name]["result"]
+        else:
+            raise Exception("API IMPLEMENTATION NOT FOUND")
