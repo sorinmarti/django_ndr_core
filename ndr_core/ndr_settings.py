@@ -6,9 +6,31 @@ from django.conf import settings
 class NdrSettings:
     APP_NAME = 'ndr'
 
+    ADDITIONAL_APPS = [
+        'ndr_core',
+        'django_tables2',
+        'crispy_forms',
+        'django_select2',
+        'bootstrap4',
+        'crispy_bootstrap4',
+        'ckeditor',
+        'ckeditor_uploader',
+        'captcha',
+        'colorfield',
+        'fontawesomefree',
+        'django.forms',
+    ]
+
     @staticmethod
     def app_exists():
         return os.path.isdir(f"{NdrSettings.APP_NAME}/")
+
+    @staticmethod
+    def get_installed_apps():
+        apps = NdrSettings.ADDITIONAL_APPS
+        if NdrSettings.app_exists():
+            apps.append(NdrSettings.APP_NAME)
+        return apps
 
     @staticmethod
     def get_templates_path():

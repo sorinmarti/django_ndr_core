@@ -15,6 +15,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from django.contrib import messages
 from django.urls import reverse_lazy
+from ndr_core.ndr_settings import NdrSettings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,19 +35,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    # 'ndr',
-    'ndr_core',
-    'django_tables2',
-    'crispy_forms',
-    'django_select2',
-    'bootstrap4',
-    'crispy_bootstrap4',
-    'ckeditor',
-    'ckeditor_uploader',
-    'captcha',
-    'colorfield',
-    'fontawesomefree',
-    'django.forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+INSTALLED_APPS += NdrSettings.get_installed_apps()
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
