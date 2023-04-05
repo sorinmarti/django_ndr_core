@@ -112,6 +112,7 @@ class FilteredListWidget(s2forms.Select2MultipleWidget):
         'list_name__icontains'
     ]
 
+
 class AdvancedSearchForm(_NdrCoreSearchForm):
     """Form class for the advanced (=configured) search. Needs a search config and then creates and configures
     the form from it. """
@@ -154,6 +155,11 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                                                     help_text=help_text)
                 # Date field
                 if search_field.field_type == search_field.FieldType.DATE:
+                    form_field = forms.DateField(label=search_field.field_label,
+                                                 required=search_field.field_required,
+                                                 help_text=help_text)
+                # Date range field
+                if search_field.field_type == search_field.FieldType.DATE_RANGE:
                     form_field = forms.DateField(label=search_field.field_label,
                                                  required=search_field.field_required,
                                                  help_text=help_text)

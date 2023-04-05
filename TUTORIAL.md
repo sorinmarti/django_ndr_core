@@ -1,3 +1,12 @@
-# django_ndr_core Tutorial
+# NDR Core Tutorial
 
-After you've installed your system, follow this tutorial to create your NDR Core presentation website.
+This tutorial will walk you through the process of installing NDR Core on your computer and creating your first presentation website.
+
+## Prerequisites
+
+## Installation
+
+## 
+## Creating a Presentation Website
+
+

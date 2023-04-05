@@ -33,6 +33,11 @@
                         Create New Iframe<br/>
                         <small>Content from another location.</small>
                     </a>
+                    <a href="{% url 'ndr_core:create_ui_element' 'banner' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-plus-circle"></i>
+                        Create New Banner<br/>
+                        <small>Banner.</small>
+                    </a>
                     <a href="{% url 'ndr_core:help_chapter' 'ui_elements' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
                         Help
@@ -76,6 +81,8 @@
                     {% include 'ndr_core/ui_elements/card.html' with data=object %}
                 {% elif object.type == "slides" %}
                     {% include 'ndr_core/ui_elements/slideshow.html' with data=object %}
+                {% elif object.type == "banner" %}
+                    {% include 'ndr_core/ui_elements/banner.html' with data=object %}
                 {% endif %}
 
             </div>

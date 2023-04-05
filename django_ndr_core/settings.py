@@ -13,9 +13,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-from django.contrib import messages
-from django.urls import reverse_lazy
-from ndr_core.ndr_settings import NdrSettings
+from ndr_core.ndr_settings import *
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -33,7 +31,6 @@ ALLOWED_HOSTS = ['*']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -122,36 +119,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = reverse_lazy('ndr_core:login')
-LOGOUT_URL = reverse_lazy('ndr_core:logout')
-LOGIN_REDIRECT_URL = reverse_lazy('ndr_core:dashboard')
-
-FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
-
-MESSAGE_TAGS = {
-        messages.DEBUG: 'alert-secondary',
-        messages.INFO: 'alert-info',
-        messages.SUCCESS: 'alert-success',
-        messages.WARNING: 'alert-warning',
-        messages.ERROR: 'alert-danger',
-}
-
-RECAPTCHA_PUBLIC_KEY = '6LdIoTwkAAAAAMoxg2s9vvLklOy0QY92q9cdionT'
-RECAPTCHA_PRIVATE_KEY = '6LdIoTwkAAAAAAyfC5D4cpvqjCRUDxKoz5BtWyM0'
-
+# NDR Core needs these Settings
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
-
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-
 GEOIP_PATH = os.path.join(BASE_DIR, 'geoip/')

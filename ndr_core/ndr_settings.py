@@ -1,8 +1,9 @@
 import os.path
 
 from django.conf import settings
-from django.urls import path, include, re_path
+from django.urls import path, include, re_path, reverse_lazy
 from django.views.static import serve
+from django.contrib import messages
 
 
 class NdrSettings:
@@ -100,3 +101,29 @@ class NdrSettings:
                 if search_for in line and not '#' in line[0:line.find(search_for)]:
                     return True
         return False
+
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+
+LOGIN_URL = reverse_lazy('ndr_core:login')
+LOGOUT_URL = reverse_lazy('ndr_core:logout')
+LOGIN_REDIRECT_URL = reverse_lazy('ndr_core:dashboard')
+
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
+
+
+
+MESSAGE_TAGS = {
+        messages.DEBUG: 'alert-secondary',
+        messages.INFO: 'alert-info',
+        messages.SUCCESS: 'alert-success',
+        messages.WARNING: 'alert-warning',
+        messages.ERROR: 'alert-danger',
+}
+
+RECAPTCHA_PUBLIC_KEY = '6LdIoTwkAAAAAMoxg2s9vvLklOy0QY92q9cdionT'
+RECAPTCHA_PRIVATE_KEY = '6LdIoTwkAAAAAAyfC5D4cpvqjCRUDxKoz5BtWyM0'
+
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+

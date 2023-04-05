@@ -6,7 +6,8 @@ from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
 from ndr_core.admin_forms.ui_element_forms import UIElementCardCreateForm, UIElementCardEditForm, \
     UIElementSlideshowCreateForm, UIElementSlideshowEditForm, UIElementCarouselEditForm, UIElementCarouselCreateForm, \
-    UIElementJumbotronEditForm, UIElementJumbotronCreateForm, UIElementIframeEditForm, UIElementIframeCreateForm
+    UIElementJumbotronEditForm, UIElementJumbotronCreateForm, UIElementIframeEditForm, UIElementIframeCreateForm, \
+    UIElementBannerEditForm, UIElementBannerCreateForm
 from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem
 
 
@@ -52,6 +53,8 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
             return UIElementJumbotronCreateForm
         elif self.kwargs['type'] == "iframe":
             return UIElementIframeCreateForm
+        elif self.kwargs['type'] == "banner":
+            return UIElementBannerCreateForm
         return None
 
     def get_context_data(self, **kwargs):
@@ -66,6 +69,8 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
             context['view_title'] = "Create New Jumbotron"
         elif self.kwargs['type'] == "iframe":
             context['view_title'] = "Create New Iframe"
+        elif self.kwargs['type'] == "banner":
+            context['view_title'] = "Create New Banner"
         return context
 
     def form_valid(self, form):
@@ -111,6 +116,14 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
             self.object.type = NdrCoreUIElement.UIElementType.IFRAME
             self.object.save()
 
+        elif self.kwargs['type'] == "banner":
+            card_item = NdrCoreUiElementItem.objects.create(belongs_to=self.object,
+                                                            order_idx=0)
+            card_item.ndr_image = form.cleaned_data['card_item_image']
+            card_item.save()
+            self.object.type = NdrCoreUIElement.UIElementType.BANNER
+            self.object.save()
+
         return response
 
 
@@ -132,6 +145,8 @@ class UIElementEditView(LoginRequiredMixin, UpdateView):
             return UIElementJumbotronEditForm
         elif self.object.type == NdrCoreUIElement.UIElementType.IFRAME:
             return UIElementIframeEditForm
+        elif self.object.type == NdrCoreUIElement.UIElementType.BANNER:
+            return UIElementBannerEditForm
         print("TYPE", self.object.type)
         return UIElementCardEditForm
 

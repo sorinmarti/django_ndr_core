@@ -1,0 +1,25 @@
+{% extends 'ndr/base.html' %}
+{% load ndr_utils %}
+
+{# block page_title #}
+{# endblock #}
+
+{# block content #}
+{# endblock #}
+
+{% block generated_content %}
+    {% if data.team_members %}
+        <div class="row pb-3">
+        {% for team_member in data.team_members %}
+            <div class="col-md-3">
+                {% include 'ndr_core/ui_elements/image_card.html' with card_image=team_member %}
+            </div>
+            {% if forloop.counter|modulo:4 == 0 %}
+                </div>
+                <div class="row pb-3">
+            {% endif %}
+        {% endfor %}
+        </div>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -34,14 +34,15 @@ sudo apt-get -y install python3-pip
 ```
 
 #### 1.4. Create a virtual environment
+(You might need to sudo this command).
 ```
-sudo pip3 install virtualenv 
+pip3 install virtualenv 
 virtualenv venv 
 ```
 
 #### 1.5. Activate the virtual environment and upgrade pip
 ```
-source venv/bin/activate (linux)
+source venv/bin/activate (linux & MacOS
 venv\Scripts\activate (windows)
 python -m pip install --upgrade pip
 ```
@@ -71,7 +72,7 @@ python manage.py migrate
 
 ##### settings.py
 Open ```<projectname>/settings.py``` and add the ndr_core module and its dependencies to ```INSTALLED_APPS```:
-
+(Leave the existing settings in place).
 ```
 INSTALLED_APPS = [
     'ndr_core',

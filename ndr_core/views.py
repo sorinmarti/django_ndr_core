@@ -84,6 +84,8 @@ class _NdrCoreView(View):
 class NdrTemplateView(_NdrCoreView):
     """Basic template view. (Is currently the same as _NdrCoreView) """
 
+    ui_element_regex = r'(\[\[)(card|slideshow|carousel|jumbotron|figure|banner)\|([0-9]*)(\]\])'
+
     def get_ndr_context_data(self):
         context = super(NdrTemplateView, self).get_ndr_context_data()
         page_text = context['page'].template_text
@@ -91,7 +93,7 @@ class NdrTemplateView(_NdrCoreView):
         # Search for ui-elements to insert
         if page_text is not None and page_text != '':
             rendered_text = page_text
-            match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron|figure)\|([0-9]*)(\]\])', rendered_text)
+            match = re.search(self.ui_element_regex, rendered_text)
             while match:
                 template = match.groups()[1]
                 element_id = match.groups()[2]
@@ -100,6 +102,7 @@ class NdrTemplateView(_NdrCoreView):
                         element = NdrCoreImage.objects.get(id=int(element_id))
                     else:
                         element = NdrCoreUIElement.objects.get(id=int(element_id))
+
                     element_html_string = render_to_string(f'ndr_core/ui_elements/{template}.html',
                                                            request=self.request, context={'data': element})
 
@@ -108,7 +111,7 @@ class NdrTemplateView(_NdrCoreView):
                 except NdrCoreUIElement.DoesNotExist:
                     rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', "ERROR loading UI element")
 
-                match = re.search(r'(\[\[)(card|slideshow|carousel|jumbotron|figure)\|([0-9]*)(\]\])', rendered_text)
+                match = re.search(self.ui_element_regex, rendered_text)
             context['rendered_text'] = rendered_text
         else:
             context['rendered_text'] = ''
@@ -268,7 +271,12 @@ class AboutUsView(_NdrCoreView):
         return context
 
     def get(self, request, *args, **kwargs):
-        pass
+        context = self.get_context_data()
+
+        team_members = NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.PEOPLE)
+        context['data'] = {'team_members': team_members}
+
+        return render(request, self.template_name, context)
 
 
 class FlipBookView(_NdrCoreView):

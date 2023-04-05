@@ -89,8 +89,9 @@ class NdrCoreSearchField(models.Model):
 
     def get_list_choices(self):
         # read the list choices from a file
+        # TODO ignore invalid lines
         if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
-            list_choices = [tuple(line.split(',')) for line in self.list_choices.splitlines()]
+            list_choices = [tuple(line.split(',')[0:2]) for line in self.list_choices.splitlines()]
 
         return list_choices
 
@@ -800,6 +801,7 @@ class NdrCoreUIElement(models.Model):
         CAROUSEL = "carousel", "Carousel"
         JUMBOTRON = "jumbotron", "Jumbotron"
         IFRAME = "iframe", "IFrame"
+        BANNER = "banner", "Banner"
 
         def get_(self):
             pass

@@ -1,3 +1,4 @@
+""" This file contains the views for the page management. It lets you create, edit and delete pages."""
 import os
 import shutil
 
@@ -12,7 +13,7 @@ from django.views import View
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 
 from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm
-from ndr_core.models import NdrCorePage, NdrCoreValue
+from ndr_core.models import NdrCorePage
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -58,9 +59,9 @@ class ManagePageFooter(LoginRequiredMixin, View):
                       context=context)
 
 
-
 class PageDetailView(LoginRequiredMixin, DetailView):
-    """TODO """
+    """The PageDetailView shows the details of a page. It is shown when selecting a page in the table.
+    The list of pages is still shown on the right side."""
 
     model = NdrCorePage
     template_name = 'ndr_core/admin_views/configure_pages.html'
@@ -116,7 +117,7 @@ class PageCreateView(LoginRequiredMixin, CreateView):
                 base_file = finders.find('ndr_core/app_init/flip_book.html')
                 shutil.copyfile(base_file, new_filename)
             elif self.object.page_type == self.object.PageType.ABOUT_PAGE:
-                base_file = finders.find('ndr_core/app_init/about.html')
+                base_file = finders.find('ndr_core/app_init/about_us.html')
                 shutil.copyfile(base_file, new_filename)
         return response
 
@@ -172,7 +173,7 @@ def move_page_up(request, pk):
 
     :param request: The page's request object
     :param pk: The primary key of the NdrCorePage to move up
-    :return: A redirect response to to 'configure_pages'
+    :return: A redirect response to 'configure_pages'
     """
 
     try:

@@ -19,6 +19,15 @@ class ImageMultipleChoiceField(forms.ModelMultipleChoiceField):
         return f'{obj.image.url}'
 
 
+class UIElementBaseForm(forms.ModelForm):
+    """TODO Create base form for UI elements and remove redundant code."""
+
+    class Meta:
+        """Configure the model form. Provide model class and form fields."""
+        model = NdrCoreUIElement
+        fields = ['show_text']
+
+
 class UIElementCardForm(forms.ModelForm):
 
     class Meta:
@@ -28,11 +37,11 @@ class UIElementCardForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UIElementCardForm, self).__init__(*args, **kwargs)
-        self.fields[f'card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
+        self.fields['card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
         self.fields['card_item_image'].widget.option_template_name = "ndr_core/test.html"
-        self.fields[f'card_item_title'] = forms.CharField(required=False)
-        self.fields[f'card_item_text'] = forms.CharField(widget=forms.Textarea, required=False)
-        self.fields[f'card_item_url'] = forms.URLField(required=False)
+        self.fields['card_item_title'] = forms.CharField(required=False)
+        self.fields['card_item_text'] = forms.CharField(widget=forms.Textarea, required=False)
+        self.fields['card_item_url'] = forms.URLField(required=False)
 
         self.fields['show_image'].label = 'Does this card feature an image?'
         self.fields['show_image'].help_text = 'Note: Images must be uploaded first, before they can be used in UI elements.'
@@ -387,6 +396,41 @@ class UIElementIframeForm(forms.ModelForm):
         return helper
 
 
+class UIElementBannerForm(forms.ModelForm):
+
+    class Meta:
+        """Configure the model form. Provide model class and form fields."""
+        model = NdrCoreUIElement
+        fields = ['title']
+
+    def __init__(self, *args, **kwargs):
+        super(UIElementBannerForm, self).__init__(*args, **kwargs)
+        self.fields['card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
+        self.fields['card_item_image'].widget.option_template_name = "ndr_core/test.html"
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+
+        helper = FormHelper()
+        helper.form_method = "POST"
+        layout = helper.layout = Layout()
+
+        form_row = Row(
+            Column('title', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('card_item_image', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        return helper
+
+
 class UIElementCardCreateForm(UIElementCardForm):
     """Form to create a Card. Extends the base form class and adds a 'create' button."""
 
@@ -494,4 +538,26 @@ class UIElementIframeEditForm(UIElementIframeForm):
         """Creates and returns the form helper property."""
         helper = super(UIElementIframeEditForm, self).helper
         helper.layout.append(get_form_buttons('Save Iframe'))
+        return helper
+
+
+class UIElementBannerCreateForm(UIElementBannerForm):
+    """Form to create a Banner. Extends the base form class and adds a 'create' button."""
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = super(UIElementBannerCreateForm, self).helper
+        helper.layout.append(get_form_buttons('Create New Banner'))
+        return helper
+
+
+class UIElementBannerEditForm(UIElementBannerForm):
+    """Form to create a Banner. Extends the base form class and adds a 'create' button."""
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = super(UIElementBannerEditForm, self).helper
+        helper.layout.append(get_form_buttons('Save Banner'))
         return helper
