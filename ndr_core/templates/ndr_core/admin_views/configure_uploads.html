@@ -1,0 +1,69 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load django_tables2 %}
+{% load static %}
+{% load ndr_utils %}
+
+{% block content %}
+    <h2><i class="fa-regular fa-file-upload"></i> Manage Uploads</h2>
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Options</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:create_upload' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-file-import"></i>
+                        Upload File
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'files' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Help
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3" style="max-height: 50vh;">
+            <div class="overflow-auto">
+                <div class="card-body">
+                    <h5 class="card-title">Uploaded Files</h5>
+                    <ul class="list-group">
+                        {% for file in files %}
+                            <li class="list-group-item list-group-item-action d-flex py-2 px-2{% if request.resolver_match.kwargs.pk == file.pk %} bg-selected {% endif%}">
+                                <p class="p-0 m-0 flex-grow-1">
+                                    <i class="fa-regular fa-file"></i>
+                                    {{ file.title }}<br/>
+                                    <small>[[file|{{ file.pk }}]] or [[file-href|{{ file.pk }}]]</small>
+                                </p>
+
+                                <p class="p-0 m-0">
+                                    <div style="white-space: nowrap;">
+                                        <a href="{% url 'ndr_core:edit_upload' file.pk %}" class="btn btn-sm btn-secondary">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </a>
+                                        <a href="{% url 'ndr_core:delete_upload' file.pk %}" class="btn btn-sm btn-danger">
+                                            <i class="fa-regular fa-delete-left"></i>
+                                        </a>
+                                     </div>
+                                </p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if file is not None %}
+       <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ file.tile }}</h5>
+
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="alert alert-info small" role="alert">
+        <i class="fa-regular fa-circle-info"></i>
+    </div>
+
+{% endblock %}

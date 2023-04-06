@@ -67,7 +67,7 @@
                                             </a>
                                         </div>
                                     </li>
-                                    <li class="nav-item dropdown{% if "/configure/ui_settings/" in request.path or "/configure/colors/" in request.path  or "/configure/images/" in request.path %} active{% endif %}">
+                                    <li class="nav-item dropdown{% if "/configure/ui_settings/" in request.path or "/configure/colors/" in request.path %} active{% endif %}">
                                         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
                                             <i class="fa-regular fa-palette"></i>
                                             Style & Colors
@@ -81,6 +81,14 @@
                                                 <i class="fa-regular fa-palette"></i>
                                                 Manage Color Palettes
                                             </a>
+                                        </div>
+                                    </li>
+                                    <li class="nav-item dropdown{% if "/configure/ui_elements/" in request.path or "/configure/images/" in request.path or "/configure/uploads/" in request.path %} active{% endif %}">
+                                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa-regular fa-folder-open"></i>
+                                            Resources
+                                        </a>
+                                        <div class="dropdown-menu">
                                             <a class="dropdown-item" href="{% url 'ndr_core:configure_ui_elements' %}">
                                                 <i class="fa-regular fa-window-restore"></i>
                                                 Manage UI Elements
@@ -88,6 +96,10 @@
                                             <a class="dropdown-item" href="{% url 'ndr_core:configure_images' %}">
                                                 <i class="fa-regular fa-images"></i>
                                                 Manage Page Images
+                                            </a>
+                                            <a class="dropdown-item" href="{% url 'ndr_core:configure_uploads' %}">
+                                                <i class="fa-regular fa-file-upload"></i>
+                                                Manage File Uploads
                                             </a>
                                         </div>
                                     </li>

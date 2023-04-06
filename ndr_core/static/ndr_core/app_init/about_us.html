@@ -19,7 +19,9 @@
                 <div class="row pb-3">
             {% endif %}
         {% endfor %}
-        </div>
+        {% if data.team_members|length|modulo:4 != 0 %}
+            </div>
+        {% endif %}
         </div>
     {% endif %}
 {% endblock %}

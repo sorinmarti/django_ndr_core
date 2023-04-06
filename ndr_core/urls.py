@@ -2,6 +2,7 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
+from ndr_core.admin_views.uploads_views import ConfigureUploads, UploadCreateView, UploadEditView, UploadDeleteView
 from ndr_core.admin_views.result_views import ConfigureResultsView, ResultsConfigurationDetailView
 from ndr_core.admin_views.export_views import export_color_palette, export_settings, export_messages
 from ndr_core.admin_views.admin_views import NdrCoreDashboard, init_ndr_core, HelpView, StatisticsView, \
@@ -68,6 +69,12 @@ urlpatterns = [
     path('configure/images/edit/<int:pk>/', ImagesEditView.as_view(), name='edit_image'),
     path('configure/images/delete/<int:pk>/', ImagesDeleteView.as_view(), name='delete_image'),
     path('configure/images/move/up/<int:pk>/', move_image_up, name='move_image_up'),
+
+    # UPLOADS
+    path('configure/uploads/', ConfigureUploads.as_view(), name='configure_uploads'),
+    path('configure/uploads/create/new/', UploadCreateView.as_view(), name='create_upload'),
+    path('configure/uploads/edit/<int:pk>/', UploadEditView.as_view(), name='edit_upload'),
+    path('configure/uploads/delete/<int:pk>/', UploadDeleteView.as_view(), name='delete_upload'),
 
     # USER MESSAGES
     path('configure/messages/', ConfigureMessages.as_view(), name='configure_messages'),

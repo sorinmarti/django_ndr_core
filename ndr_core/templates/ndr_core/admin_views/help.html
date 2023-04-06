@@ -42,7 +42,7 @@
 
         <div class="card bg-light mb-3">
             <div class="card-body">
-                <h5 class="card-title">UI</h5>
+                <h5 class="card-title">UI & Resources</h5>
                 <div class="list-group">
                     <a href="{% url 'ndr_core:help_chapter' 'ui_style' %}" class="list-group-item small list-group-item-action py-2{% if "/help/ui_style/" in request.path %} active{% endif %}">
                         UI Style & Colors
@@ -52,6 +52,9 @@
                     </a>
                     <a href="{% url 'ndr_core:help_chapter' 'images' %}" class="list-group-item small list-group-item-action py-2{% if "/help/images/" in request.path %} active{% endif %}">
                         Images
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'files' %}" class="list-group-item small list-group-item-action py-2{% if "/help/files/" in request.path %} active{% endif %}">
+                        Files
                     </a>
                 </div>
             </div>

@@ -13,7 +13,8 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
-from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, NdrCoreUIElement
+from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, NdrCoreUIElement, \
+    NdrCoreUpload
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
 
@@ -84,7 +85,7 @@ class _NdrCoreView(View):
 class NdrTemplateView(_NdrCoreView):
     """Basic template view. (Is currently the same as _NdrCoreView) """
 
-    ui_element_regex = r'(\[\[)(card|slideshow|carousel|jumbotron|figure|banner)\|([0-9]*)(\]\])'
+    ui_element_regex = r'(\[\[)(card|slideshow|carousel|jumbotron|figure|banner|file|page)\|([0-9]*)(\]\])'
 
     def get_ndr_context_data(self):
         context = super(NdrTemplateView, self).get_ndr_context_data()
@@ -100,6 +101,10 @@ class NdrTemplateView(_NdrCoreView):
                 try:
                     if template == 'figure':
                         element = NdrCoreImage.objects.get(id=int(element_id))
+                    elif template == 'file':
+                        element = NdrCoreUpload.objects.get(id=int(element_id))
+                    elif template == 'page':
+                        element = NdrCorePage.objects.get(id=int(element_id))
                     else:
                         element = NdrCoreUIElement.objects.get(id=int(element_id))
 

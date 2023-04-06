@@ -83,8 +83,7 @@ class Command(BaseCommand):
             ('style.css', f'{NdrSettings.get_css_path()}/style.css'),
             ('logo.png', f'{NdrSettings.get_images_path()}/logo.png')]
         media_directories_to_create = [
-            'backgrounds',
-            'teams',
+            'uploads',
             'images']
 
         # (4) CREATE DIRECTORIES AND FILES

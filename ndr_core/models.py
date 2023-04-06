@@ -792,6 +792,15 @@ class NdrCoreImage(models.Model):
         return self.title
 
 
+class NdrCoreUpload(models.Model):
+    title = models.CharField(max_length=200, blank=True, default='',
+                             help_text='Title of the upload.')
+    """Title of the upload"""
+
+    file = models.FileField(upload_to='uploads/')
+    """Actual file"""
+
+
 class NdrCoreUIElement(models.Model):
     """ UI Element """
 
