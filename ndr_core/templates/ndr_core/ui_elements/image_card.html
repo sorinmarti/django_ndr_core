@@ -1,16 +1,17 @@
-    <div class="card p-2" style="width: auto;">
-            <img class="card-img-top" src="{{ card_image.image.url }}" alt="Card image cap">
-      <div class="card-body">
-              {% if card_image.url %}
-                <a href="{{ card_image.url }}" target="_blank" class="stretched-link"></a>
-              {% endif %}
-              <h5 class="card-title">{{ card_image.title }}</h5>
-              <p class="card-text">
-                  {{ card_image.caption }}
-              </p>
-              <h5 class="card-title">{{ data.title }}</h5>
-              <p class="card-text">
-                  {{ data.text }}
-              </p>
-      </div>
+<!-- This template expects a NdrCoreImage data -->
+<div class="card p-2" style="width: auto;">
+    <img class="card-img-top" src="{{ card_image.image.url }}" alt="Card image cap">
+    <div class="card-body">
+          {% if card_image.url %}
+              <a href="{{ card_image.url }}" target="_blank" class="stretched-link"></a>
+          {% endif %}
+          <h5 class="card-title">{{ card_image.title }}</h5>
+          <p class="card-text">
+              {{ card_image.caption }}
+          </p>
+          <h5 class="card-title">{{ data.title }}</h5>
+          <p class="card-text">
+              {{ data.text }}
+          </p>
     </div>
+</div>
