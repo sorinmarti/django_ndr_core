@@ -15,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreUserMessage
 from ndr_core.widgets import CustomSelect
 from django_select2 import forms as s2forms
+from bootstrap_daterangepicker import widgets, fields
 
 
 class _NdrCoreForm(forms.Form):
@@ -160,9 +161,13 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                                                  help_text=help_text)
                 # Date range field
                 if search_field.field_type == search_field.FieldType.DATE_RANGE:
-                    form_field = forms.DateField(label=search_field.field_label,
-                                                 required=search_field.field_required,
-                                                 help_text=help_text)
+                    form_field = fields.DateRangeField(label=search_field.field_label,
+                                                       required=search_field.field_required,
+                                                       help_text=help_text,
+                                                       input_formats=['%d/%m/%Y'],
+                                                       widget=widgets.DateRangeWidget(
+                                                           format='%d/%m/%Y'
+                                                       ))
                 # List field (dropdown)
                 if search_field.field_type == search_field.FieldType.LIST:
                     form_field = forms.ChoiceField(label=search_field.field_label,

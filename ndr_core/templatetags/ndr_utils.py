@@ -43,10 +43,16 @@ def reduce_iiif_size(image_url, target_percent_of_size):
     """Reduces the size of an IIIF image URL."""
     if image_url is None:
         return ''
+    if type(image_url) is not str:
+        return image_url
     if target_percent_of_size is None:
         return image_url
 
-    return image_url.replace('/full/full/', f'/full/pct:{target_percent_of_size}/')
+    if '/full/full/' in image_url:
+        return image_url.replace('/full/full/', f'/full/pct:{target_percent_of_size}/')
+    match = re.match(r'^.*\/(\d*,\d*,\d*,\d*)\/(full)/.*$', image_url)
+    if match:
+        return image_url.replace(match.group(2), f'pct:{target_percent_of_size}')
 
 
 @register.filter
@@ -78,6 +84,19 @@ def translate_dict_value(value, dict_name):
     except NdrCoreSearchField.DoesNotExist:
         return value
 
+
+@register.filter
+def translate_to_color(value, lightness=50):
+    """Translates a value to a color."""
+    if value is None:
+        return ''
+
+    hash_value = 0
+    for char in value:
+        hash_value = ord(char) + ((hash_value << 5) - hash_value)
+        hash_value = hash_value & hash_value
+
+    return f'hsl({hash_value%360}, {100}%, {lightness}%)'
 
 @register.filter
 def format_date(date_string):

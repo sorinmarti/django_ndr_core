@@ -1,19 +1,15 @@
+<!-- This is the base renderer which is used to render the results. It needs to be extended. -->
 {% load static %}
 {% load ndr_utils %}
 
-
 <div class="card mb-2 box-shadow">
     <div class="card-body d-flex flex-column align-items-start">
+        {% block search_result_base_content %}
+        {% endblock %}
+
         <div class="row">
             <div class="col-{% if False %}8{% else %}12{% endif %}">
-                {% block title_bar %}
-                    <div class="d-inline-block mb-2 text-secondary">
-                        <small>Result {{ result.result_meta.result_number }} of {{ result.result_meta.total_results }}</small>
-                        &nbsp;&nbsp;
-                        {% block tags %}
-                        {% endblock %}
-                    </div>
-                {% endblock %}
+
 
                 {% block card_content %}
                     {% block custom_content %}
@@ -23,6 +19,7 @@
                     {% endblock %}
                 {% endblock %}
             </div>
+
             {% if False %}
                 <div class="col-md-4">
                     <a href="{{ result.ndr.page_image }}" target="_blank">

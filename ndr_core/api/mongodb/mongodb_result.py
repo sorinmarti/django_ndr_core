@@ -17,7 +17,12 @@ class MongoDBResult(BaseResult):
             db_client = pymongo.MongoClient(connection_string, serverSelectionTimeoutMS=2000)
             collection = db_client[self.api_configuration.api_url_stub][self.api_configuration.api_name]
             self.page = int(self.page)
-            my_document = collection.find(self.query).skip(self.page*self.page_size-self.page_size).limit(self.page_size)
+
+            sort = list({'date.ref': 1 }.items())
+            my_document = collection.find(filter=self.query,
+                                          sort=sort,
+                                          skip=self.page * self.page_size,
+                                          limit=self.page_size)
 
             hits = []
             for hit in my_document:

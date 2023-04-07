@@ -6,14 +6,68 @@ class MongoDBQuery(BaseQuery):
 
     def get_simple_query(self, search_term, add_page_and_size=True):
         """ Not Implemented """
-        return {"transcription.original": {"$regex": search_term, "$options": "i"}}
+        query = {
+            'transcription.original': {
+                '$regex': 'ersuchet',
+                '$options': 'i'
+            },
+            'date.ref': {
+                '$gte': '1729-01-03',
+                '$lte': '1729-01-05'
+            },
+            'tags.tags': {
+                '$all': [
+                    'notice'
+                ]
+            },
+            'type.id': 'curious',
+            'type.language': 'de',
+            'source.issue': 1
+        }
+        return query
+        #return {"transcription.original": {"$regex": search_term, "$options": "i"}}
 
     def get_advanced_query(self, *kwargs):
         print("ADVANCED")
         query = {}
-        for val in self.values:
-            query['name.transcription'] = self.values[val]
-            print(val, self.values[val], query)
+        for field_name in self.values:
+            try:
+                field = NdrCoreSearchField.objects.get(field_name=field_name)
+                value = None
+
+                if field.field_type == NdrCoreSearchField.FieldType.STRING:
+                    if self.values[field_name] != '':
+                        value = {"$regex": self.values[field_name], "$options": "i"}
+                if field.field_type == NdrCoreSearchField.FieldType.MULTI_LIST:
+                    print(self.values[field_name])
+                    if type(self.values[field_name]) == list and len(self.values[field_name]) > 0:
+                        value = {"$all": self.values[field_name]}
+
+                if value is not None:
+                    query[field.api_parameter] = value
+            except NdrCoreSearchField.DoesNotExist:
+                pass
+
+        print(query)
+
+        query = {
+            'transcription.original': {
+                '$regex': 'ersuchet',
+                '$options': 'i'
+            },
+            'date.ref': {
+                '$gte': '1729-01-03',
+                '$lte': '1729-01-05'
+            },
+            'tags.tags': {
+                '$all': [
+                    'notice'
+                ]
+            },
+            'type.id': 'curious',
+            'type.language': 'de',
+            'source.issue': 1
+        }
         return query
 
     def get_list_query(self, list_name, add_page_and_size=True, search_term=None, tags=None):
@@ -31,12 +85,4 @@ class MongoDBQuery(BaseQuery):
 
     def set_value(self, field_name, value):
         """Sets a value=key setting to compose a query from"""
-        field = NdrCoreSearchField.objects.filter(field_name=field_name).first()
-        if field is not None:
-            if field.field_type == NdrCoreSearchField.FieldType.STRING:
-                value = {"$regex": value, "$options": "i"}
-            if field.field_type == NdrCoreSearchField.FieldType.LIST:
-                print("LIST")
-        else:
-            value = {"$regex": value, "$options": "i"}
         self.values[field_name] = value

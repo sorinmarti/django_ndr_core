@@ -12,3 +12,4 @@ Pillow==9.4.0
 geoip2~=4.6.0
 pymongo~=4.3
 crispy-bootstrap4>=2022.1
+django-bootstrap-daterangepicker~=1.1.0

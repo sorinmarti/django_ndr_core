@@ -207,7 +207,7 @@ class SearchView(_NdrCoreView):
                         if key.startswith(requested_search):
                             actual_key = key[len(requested_search)+1:]
                             if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
-                                query_obj.set_value(actual_key, request.GET.get(key))
+                                query_obj.set_value(actual_key, form.cleaned_data[key])
                                 search_term += f"{actual_key}={request.GET.get(key)}, "
                     query_string = query_obj.get_advanced_query()
 

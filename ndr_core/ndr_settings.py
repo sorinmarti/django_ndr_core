@@ -22,6 +22,7 @@ class NdrSettings:
         'colorfield',
         'fontawesomefree',
         'django.forms',
+        'bootstrap_daterangepicker'
     ]
 
     @staticmethod

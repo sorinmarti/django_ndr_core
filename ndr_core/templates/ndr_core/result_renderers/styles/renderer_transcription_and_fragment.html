@@ -1,0 +1,36 @@
+{% extends 'ndr_core/result_renderers/base_renderer.html' %}
+{% load ndr_utils %}
+
+<!-- This block is used to render the whole result line content. -->
+{% block search_result_base_content %}
+    <div class="row">
+        <div class="col-12">
+            <!-- This is the top bar.
+                 It consists of the number of the search result and a list of tags. -->
+            <div class="d-inline-block mb-2 text-secondary">
+                <small>Result {{ result.result_meta.result_number }} of {{ result.result_meta.total_results }}</small>
+                &nbsp;&nbsp;
+                {% block result_tags %}
+                     <!-- This block is overwritten by the template implementation. -->
+                 {% endblock %}
+            </div>
+
+            <!-- This is the main content of the result line. -->
+            {% block content %}
+                {% block text %}
+                {% endblock %}
+                {% block fragment_image %}
+                {% endblock %}
+                {% block tags %}
+                {% endblock %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block options %}
+    <a href="#" target="" class="btn btn-sm btn-outline-secondary">Download Data</a>
+    <a href="#" target="" class="btn btn-sm btn-outline-secondary">Open Page</a>
+    <input style="display: none;" type="text" id="copyTarget_{{ result.original_data.source.selector.id|remove_special_chars }}" value="{{ result.original_data.source.title }}, {{ result.original_data.date.ref }} (Issue {{ result.original_data.source.issue }}), p. {{ result.original_data.source.selector.page }}, https://avisblatt.philhist.unibas.ch" />
+    <span onclick="copyToClipboard($('#copyTarget_{{ result.original_data.source.selector.id|remove_special_chars }}'));" class="btn btn-sm btn-outline-secondary">Copy Citation</span>
+{% endblock %}

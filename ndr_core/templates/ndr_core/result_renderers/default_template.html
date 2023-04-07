@@ -1,41 +1,48 @@
-{% extends 'ndr_core/result_renderers/base_renderer.html' %}
+{% extends 'ndr_core/result_renderers/styles/renderer_transcription_and_fragment.html' %}
 {% load ndr_utils %}
 
-{% block custom_content %}
-    <p class="card-text mb-2 pt-2">
-        <i>{{ result.original_data.source.title }}</i>: <strong>{{ result.original_data.date.ref|format_date }}</strong>, Issue {{ result.original_data.source.issue }}, p. {{ result.original_data.source.selector.page }}
+{% block result_tags %}
+    <a href="#">
+        <span  data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="badge badge-secondary small" style="font-weight: normal; background-color: {{ result.original_data.type.id|translate_to_color:30 }};">{{ result.original_data.type.id|translate_dict_value:'type' }}</span>
+    </a>
+    {% if result.original_data.type.is_original %}
+        <span class="badge badge-secondary small" style="font-weight: normal; background-color: #4DC7A0;">Original</span>
+    {% else %}
+        <span class="badge badge-secondary small" style="font-weight: normal; background-color: #e4606d;">Reprint</span>
+    {% endif %}
+    {% if result.original_data.type.is_header %}
+        <span class="badge badge-secondary small" style="font-weight: normal; background-color: #7abaff;">Header</span>
+    {% endif %}
+    {% if result.original_data.type.language %}
+        <span class="badge badge-secondary small" style="font-weight: normal;">{{ result.original_data.type.language|translate_dict_value:'language' }}</span>
+    {% endif %}
+{% endblock %}
 
-        <p class="text-center">
-            {% for tag in result.original_data.tags.tags %}
-                <span class="badge border border-secondary small" style="font-weight: normal;">{{ tag|translate_dict_value:'tags' }}</span>
-            {% endfor %}
-        </p>
+{% block tags %}
+    <p class="text-center pt-3">
+        Categories:
+        {% for tag in result.original_data.tags.tags %}
+            <span class="badge border border-secondary small" style="font-weight: normal; background-color: {{ tag|translate_to_color:80 }};">{{ tag|translate_dict_value:'tags' }}</span>
+        {% endfor %}
+    </p>
+{% endblock %}
 
-        <p class="text-center bg-light border rounded p-3">
-            "{{ result.original_data.transcription.original }}"
-        </p>
+{% block title_line %}
+    <i>{{ result.original_data.source.title }}</i>: <strong>{{ result.original_data.date.ref|format_date }}</strong>, Issue {{ result.original_data.source.issue }}, p. {{ result.original_data.source.selector.page }}
+{% endblock %}
 
-        <img class="img-fluid" src="{{ result.original_data.source.selector.fragment }}" alt="IIIF fragment">
+{% block text %}
+    <p class="text-center bg-light border rounded p-3">
+        "{{ result.original_data.transcription.original }}"
+    </p>
+{% endblock %}
 
-
+{% block fragment_image %}
+    <p class="text-center p-3 border rounded">
+        <img class="img-fluid" src="{{ result.original_data.source.selector.fragment|reduce_iiif_size:25 }}" alt="IIIF fragment">
     </p>
 {% endblock %}
 
 {% block muted_info %}
     Cite: <i>{{ result.original_data.source.title }}, {{ result.original_data.date.ref }} (Issue {{ result.original_data.source.issue }}), p. {{ result.original_data.source.selector.page }}, https://avisblatt.philhist.unibas.ch</i>
-{% endblock %}
-
-{% block tags %}
-    <span class="badge badge-secondary small" style="font-weight: normal;">{{ result.original_data.type.id|translate_dict_value:'type' }}</span>
-    {% if result.original_data.type.is_original %}
-        <span class="badge badge-secondary small" style="font-weight: normal;">Original</span>
-    {% else %}
-        <span class="badge badge-secondary small" style="font-weight: normal;">Reprint</span>
-    {% endif %}
-    {% if result.original_data.type.is_header %}
-        <span class="badge badge-secondary small" style="font-weight: normal;">Header</span>
-    {% endif %}
-    {% if result.original_data.type.language %}
-        <span class="badge badge-secondary small" style="font-weight: normal;">{{ result.original_data.type.language|translate_dict_value:'language' }}</span>
-    {% endif %}
 {% endblock %}
