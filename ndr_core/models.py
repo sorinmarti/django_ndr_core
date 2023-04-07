@@ -88,11 +88,17 @@ class NdrCoreSearchField(models.Model):
     """Comma separated list of choices for dropdowns"""
 
     def get_list_choices(self):
-        # read the list choices from a file
+        # read the list choices from the list_choices field
         # TODO ignore invalid lines
         if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
             list_choices = [tuple(line.split(',')[0:2]) for line in self.list_choices.splitlines()]
+        return list_choices
 
+    def get_list_choices_as_dict(self):
+        # read the list choices from the list_choices field
+        # TODO ignore invalid lines
+        if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
+            list_choices = {line.split(',')[0]: line.split(',')[1] for line in self.list_choices.splitlines()}
         return list_choices
 
     def __str__(self):

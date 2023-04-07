@@ -14,7 +14,6 @@ class MongoDBResult(BaseResult):
     def download_result(self):
         try:
             connection_string = f"mongodb://{self.api_configuration.api_host}:{self.api_configuration.api_port}/"
-            print(connection_string)
             db_client = pymongo.MongoClient(connection_string, serverSelectionTimeoutMS=2000)
             collection = db_client[self.api_configuration.api_url_stub][self.api_configuration.api_name]
             self.page = int(self.page)
@@ -34,7 +33,7 @@ class MongoDBResult(BaseResult):
             self.error = _("Timed out")
 
     def save_raw_result(self, text):
-        """ Normally this would save the raw result to a file.
+        """ Normally this would save the raw result to a json object.
         In this case, the MongoClient is already returning a JSON object."""
         pass
 

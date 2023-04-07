@@ -203,6 +203,7 @@ class SearchView(_NdrCoreView):
                     query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
                     search_term = ''
                     for key in request.GET.keys():
+                        # http://localhost:8000/p/search/?search_term=&and_or_field=and&avisblatt_text=text&avisblatt_year=&avisblatt_issue=&search_button_avisblatt=Search
                         if key.startswith(requested_search):
                             actual_key = key[len(requested_search)+1:]
                             if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:

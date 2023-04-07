@@ -1,4 +1,8 @@
+import re
+
 from django import template
+
+from ndr_core.models import NdrCoreSearchField
 
 register = template.Library()
 
@@ -26,3 +30,62 @@ def key_value(data_dict, key):
 def modulo(num, val):
     """Provides modulo functionality in templates."""
     return num % val
+
+
+@register.filter
+def remove_special_chars(value):
+    """Provides modulo functionality in templates."""
+    return value.replace('/', '_')
+
+
+@register.filter
+def reduce_iiif_size(image_url, target_percent_of_size):
+    """Reduces the size of an IIIF image URL."""
+    if image_url is None:
+        return ''
+    if target_percent_of_size is None:
+        return image_url
+
+    return image_url.replace('/full/full/', f'/full/pct:{target_percent_of_size}/')
+
+
+@register.filter
+def translate_dict_value(value, dict_name):
+    """Translates a value in a dictionary."""
+
+    basic_dicts = ['language', ]
+
+    if dict_name in basic_dicts:
+        return {
+            'language': {
+                'de': 'German',
+                'en': 'English',
+                'fr': 'French',
+                'it': 'Italian',
+                'la': 'Latin',
+                'pl': 'Polish',
+                'ru': 'Russian',
+                'es': 'Spanish',
+                'tr': 'Turkish',
+                'zh': 'Chinese',
+            },
+        }.get(dict_name, {}).get(value, value)
+
+    try:
+        field = NdrCoreSearchField.objects.get(field_name=dict_name)
+        choices = field.get_list_choices_as_dict()
+        return choices.get(value, value)
+    except NdrCoreSearchField.DoesNotExist:
+        return value
+
+
+@register.filter
+def format_date(date_string):
+    """Formats a date string."""
+    if date_string is None:
+        return ''
+
+    if re.match(r'^\d{4}-\d{2}-\d{2}$', date_string):
+        split_date = date_string.split('-')
+        return f'{split_date[2]}.{split_date[1]}.{split_date[0]}'
+    return date_string

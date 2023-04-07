@@ -1,40 +1,41 @@
 {% extends 'ndr_core/result_renderers/base_renderer.html' %}
+{% load ndr_utils %}
 
 {% block custom_content %}
     <p class="card-text mb-2 pt-2">
-        Collection: <i>{{ result.original_data.source.title }}</i><br/>
-        Year: <i>{{ result.original_data.date.ref }}</i>
-    </p>
-    <h3 class="mb-2 pt-0">
-        <a class="text-dark" href="#">{{ result.original_data.name.transcription }}</a>
-    </h3>
-     {% if result.original_data.status == "bscc company" %}
-        <p>From: <strong>{{ result.original_data.locations.0.transcription }}</strong> <a href="https://www.geonames.org/{{ result.original_data.locations.0.scheme.identifier }}" target="_blank"><i class="fa-regular fa-earth-asia"></i></a></p>
-    {% endif %}
+        <i>{{ result.original_data.source.title }}</i>: <strong>{{ result.original_data.date.ref|format_date }}</strong>, Issue {{ result.original_data.source.issue }}, p. {{ result.original_data.source.selector.page }}
 
-    {% if result.organization.transcription %}
-        <p class="card-text mb-2">Organization: {{ result.organization.transcription }}</p>
-    {% endif %}
-
-    {% if result.ndr.transcription %}
-        <p class="card-text mb-2">Organization: {{ result.ndr.transcription }}</p>
-    {% endif %}
-
-    {% if result.location|length > 0 %}
-        <p class="card-text mb-2">
-        Locations:
-        {% for loc in result.location %}
-            {{ loc.transcription }}
-            {% if not forloop.last %}
-                ,
-            {% endif %}
-        {% endfor %}
+        <p class="text-center">
+            {% for tag in result.original_data.tags.tags %}
+                <span class="badge border border-secondary small" style="font-weight: normal;">{{ tag|translate_dict_value:'tags' }}</span>
+            {% endfor %}
         </p>
-    {% endif %}
+
+        <p class="text-center bg-light border rounded p-3">
+            "{{ result.original_data.transcription.original }}"
+        </p>
+
+        <img class="img-fluid" src="{{ result.original_data.source.selector.fragment }}" alt="IIIF fragment">
 
 
+    </p>
 {% endblock %}
 
 {% block muted_info %}
-    Cite: <i>{{ result.original_data.source.title }}, {{ result.original_data.date.ref }}, p. {{ result.original_data.source.selector.page }}, https://bscc.philhist.unibas.ch</i>
+    Cite: <i>{{ result.original_data.source.title }}, {{ result.original_data.date.ref }} (Issue {{ result.original_data.source.issue }}), p. {{ result.original_data.source.selector.page }}, https://avisblatt.philhist.unibas.ch</i>
+{% endblock %}
+
+{% block tags %}
+    <span class="badge badge-secondary small" style="font-weight: normal;">{{ result.original_data.type.id|translate_dict_value:'type' }}</span>
+    {% if result.original_data.type.is_original %}
+        <span class="badge badge-secondary small" style="font-weight: normal;">Original</span>
+    {% else %}
+        <span class="badge badge-secondary small" style="font-weight: normal;">Reprint</span>
+    {% endif %}
+    {% if result.original_data.type.is_header %}
+        <span class="badge badge-secondary small" style="font-weight: normal;">Header</span>
+    {% endif %}
+    {% if result.original_data.type.language %}
+        <span class="badge badge-secondary small" style="font-weight: normal;">{{ result.original_data.type.language|translate_dict_value:'language' }}</span>
+    {% endif %}
 {% endblock %}

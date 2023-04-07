@@ -1,4 +1,5 @@
 {% extends 'ndr/base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% load ndr_utils %}
 {% load i18n %}
@@ -37,4 +38,8 @@
         {% crispy form %}
     {% endif %}
 
+{% endblock %}
+
+{% block page_js %}
+    <script src="{% static 'ndr_core/js/ui_js/copy_to_clipboard.js' %}"></script>
 {% endblock %}

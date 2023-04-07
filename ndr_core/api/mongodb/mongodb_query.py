@@ -9,9 +9,11 @@ class MongoDBQuery(BaseQuery):
         return {"transcription.original": {"$regex": search_term, "$options": "i"}}
 
     def get_advanced_query(self, *kwargs):
+        print("ADVANCED")
         query = {}
         for val in self.values:
             query['name.transcription'] = self.values[val]
+            print(val, self.values[val], query)
         return query
 
     def get_list_query(self, list_name, add_page_and_size=True, search_term=None, tags=None):
