@@ -14,7 +14,7 @@
         <span class="badge badge-secondary small" style="font-weight: normal; background-color: #7abaff;">Header</span>
     {% endif %}
     {% if result.original_data.type.language %}
-        <span class="badge badge-secondary small" style="font-weight: normal;">{{ result.original_data.type.language|translate_dict_value:'language' }}</span>
+        <span class="badge badge-secondary small" style="font-weight: normal;">{{ result.original_data.type.language|translate_dict_value:'lang' }}</span>
     {% endif %}
 {% endblock %}
 
@@ -32,9 +32,10 @@
 {% endblock %}
 
 {% block text %}
-    <p class="text-center bg-light border rounded p-3">
-        "{{ result.original_data.transcription.original }}"
-    </p>
+        <p class="text-center bg-light border rounded p-3">
+            "{{ result.original_data.transcription.original }}"
+        </p>
+
 {% endblock %}
 
 {% block fragment_image %}
@@ -43,6 +44,9 @@
     </p>
 {% endblock %}
 
-{% block muted_info %}
-    Cite: <i>{{ result.original_data.source.title }}, {{ result.original_data.date.ref }} (Issue {{ result.original_data.source.issue }}), p. {{ result.original_data.source.selector.page }}, https://avisblatt.philhist.unibas.ch</i>
+{% block citation_info %}
+    Cite:
+    <span id="copyTarget_{{ result.original_data.source.selector.id|url_parse }}">
+        {{ result.original_data.source.title }}, {{ result.original_data.date.ref }} (Issue {{ result.original_data.source.issue }}), p. {{ result.original_data.source.selector.page }}, https://avisblatt.philhist.unibas.ch
+    </span>
 {% endblock %}

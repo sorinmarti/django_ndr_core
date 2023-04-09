@@ -1,4 +1,5 @@
 import re
+import urllib
 
 from django import template
 
@@ -33,9 +34,22 @@ def modulo(num, val):
 
 
 @register.filter
-def remove_special_chars(value):
+def url_parse(value):
     """Provides modulo functionality in templates."""
-    return value.replace('/', '_')
+    if value is None:
+        return ''
+
+    return value.replace('/', '_sl_')
+
+
+@register.filter
+def url_deparse(value):
+    """Provides modulo functionality in templates."""
+    if value is None:
+        return ''
+
+    # return urllib.parse.unquote(value)
+    return value.replace('_sl_', '/')
 
 
 @register.filter
@@ -58,24 +72,8 @@ def reduce_iiif_size(image_url, target_percent_of_size):
 @register.filter
 def translate_dict_value(value, dict_name):
     """Translates a value in a dictionary."""
-
-    basic_dicts = ['language', ]
-
-    if dict_name in basic_dicts:
-        return {
-            'language': {
-                'de': 'German',
-                'en': 'English',
-                'fr': 'French',
-                'it': 'Italian',
-                'la': 'Latin',
-                'pl': 'Polish',
-                'ru': 'Russian',
-                'es': 'Spanish',
-                'tr': 'Turkish',
-                'zh': 'Chinese',
-            },
-        }.get(dict_name, {}).get(value, value)
+    if value is None:
+        return ''
 
     try:
         field = NdrCoreSearchField.objects.get(field_name=dict_name)

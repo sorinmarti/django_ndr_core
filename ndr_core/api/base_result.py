@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ndr_core.geo_ip_utils import get_user_ip, get_geolocation
 from ndr_core.models import NdrCoreValue, NdrCoreSearchStatisticEntry
+from ndr_core.templatetags.ndr_utils import url_parse
 
 
 class BaseResult(ABC):
@@ -19,6 +20,9 @@ class BaseResult(ABC):
     SERVER = -103
 
     def __init__(self, api_configuration, query, request):
+        if api_configuration is None:
+            raise ValueError("api_configuration must not be None")
+
         self.api_configuration = api_configuration
         self.query = query
         self.request = request
@@ -28,19 +32,18 @@ class BaseResult(ABC):
         self.error_code = None
 
         self.total = 0
-        self.page = 0
-        self.page_size = 0
+        self.page = 1
+        self.page_size = api_configuration.api_page_size
         self.num_pages = 0
         self.page_links = {}
         self.form_links = {}
         self.results = list()
 
-    def load_result(self):
+    def load_result(self, transform_result=True):
         """Convenience function to undertake all the necessary steps to have a sanitized search result."""
         # 1.) download the text and save it to self.raw_result
         self.download_result()
         if self.raw_result is None:
-            print("NO RESULT RETRIEVED")
             return
 
         # 2.) fill meta data (self.total, self.page, self.page_size, self.num_pages)
@@ -55,8 +58,9 @@ class BaseResult(ABC):
         # 4.) Fill the result list with dict objects
         self.fill_results()
 
-        # 5.) Transform the result to render it according to the configuration
-        self.transform_results()
+        if transform_result:
+            # 5.) Transform the result to render it according to the configuration
+            self.transform_results()
 
         # 6.) Log search
         self.log_search()
@@ -101,21 +105,55 @@ class BaseResult(ABC):
         pass
 
     def get_result_options(self, record_id):
+        """
+        :param record_id: The id of the record to create the options for
+        :return: Return a list of dicts with the options for a result."""
+
         result_options = [
             {
-                "url": reverse('ndr_core:download_record',
-                               kwargs={'api_config': self.api_configuration.api_name, 'record_id': record_id}),
-                "target": "_blank", "label": "Download Record"
-            },
-            {
-                "url": "http:",
-                "target": "_blank", "label": "View Repository"
-            },
-            {
-                "url": "http:",
-                "target": "_blank", "label": "Mark For Correction"
+                "href": reverse('ndr_core:download_record',
+                                kwargs={'api_config': self.api_configuration.api_name, 'record_id': url_parse(record_id)}),
+                "target": "_blank",
+                "label": '<i class="fa-regular fa-file-arrow-down"></i>',
+                "class": "btn btn-sm btn-outline-secondary",
+                "data-toggle": "tooltip",
+                "data-placement": "top",
+                "title": "Download the record as a JSON file"
             }
         ]
+        if self.api_configuration.api_repository_url is not None:
+            result_options.append({
+                "href": self.api_configuration.api_repository_url,
+                "target": "_blank",
+                "label": '<i class="fa-regular fa-vault"></i>',
+                "class": "btn btn-sm btn-outline-secondary",
+                "data-toggle": "tooltip",
+                "data-placement": "top",
+                "title": "View The Data Repository"
+            })
+
+        correction_feature = NdrCoreValue.get_or_initialize("correction_feature").get_value()
+        if correction_feature:
+            correction_url = reverse('ndr_core:mark_record',
+                                     kwargs={'api_config': self.api_configuration.api_name,
+                                             'record_id': url_parse(record_id)})
+            result_options.append({
+                "onclick": f"callUrl('{correction_url}', '{url_parse(record_id)}')",
+                "label": '<i class="fa-regular fa-check-double"></i>',
+                "class": "btn btn-sm btn-outline-secondary",
+                "data-toggle": "tooltip",
+                "data-placement": "top",
+                "title": "Report this entry as incorrect"
+            })
+
+        result_options.append({
+            "onclick": f"copyToClipboard('{url_parse(record_id)}')",
+            "label": '<i class="fa-regular fa-copy"></i>',
+            "class": "btn btn-sm btn-outline-secondary",
+            "data-toggle": "tooltip",
+            "data-placement": "top",
+            "title": "Copy Citation"
+        })
         return result_options
 
     def transform_results(self):
@@ -134,7 +172,7 @@ class BaseResult(ABC):
                 },
                 "original_data": result,
                 "data_string": json.dumps(result, indent=4),
-                "options": self.get_result_options("123")
+                "options": self.get_result_options(result['source']['selector']['id'])  # TODO: Make this generic
             }
             transformed_results.append(transformed_result)
             hit_number += 1

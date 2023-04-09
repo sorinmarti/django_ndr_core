@@ -16,24 +16,35 @@ class MongoDBResult(BaseResult):
             connection_string = f"mongodb://{self.api_configuration.api_host}:{self.api_configuration.api_port}/"
             db_client = pymongo.MongoClient(connection_string, serverSelectionTimeoutMS=2000)
             collection = db_client[self.api_configuration.api_url_stub][self.api_configuration.api_name]
-            self.page = int(self.page)
 
-            sort = list({'date.ref': 1 }.items())
-            my_document = collection.find(filter=self.query,
-                                          sort=sort,
+            if 'type' in self.query and self.query['type'] is 'single':
+                my_document = collection.find_one(filter=self.query['filter'])
+                self.raw_result = json.loads(json_util.dumps(my_document))
+                return
+
+            try:
+                self.page = self.query['page']
+            except KeyError:
+                self.page = 0
+
+            my_document = collection.find(filter=self.query['filter'],
+                                          sort=self.query['sort'],
                                           skip=self.page * self.page_size,
                                           limit=self.page_size)
-
+            # print(my_document.explain())
             hits = []
             for hit in my_document:
+                print(hit)
                 hit = json.loads(json_util.dumps(hit))
                 hits.append(hit)
 
+            total_count = collection.count_documents(self.query['filter'])
             self.raw_result = {
-                "total": collection.count_documents(self.query),
+                "total": total_count,
                 "page": self.page,
                 "hits": hits
             }
+            # print(self.raw_result)
         except pymongo.errors.ServerSelectionTimeoutError:
             self.error = _("Timed out")
 
@@ -43,13 +54,20 @@ class MongoDBResult(BaseResult):
         pass
 
     def fill_meta_data(self):
-        self.total = self.raw_result["total"]
-        self.page = self.raw_result["page"]
+        """Fills the meta data from the raw result"""
+        if "total" in self.raw_result:
+            self.total = self.raw_result["total"]
+        else:
+            self.total = 0
+        if "page" in self.raw_result:
+            self.page = self.raw_result["page"]
+
         self.page_size = self.api_configuration.api_page_size
         self.num_pages = self.total // self.page_size
         if self.total % self.page_size > 0:
             self.num_pages += 1
 
     def fill_results(self):
-        self.results = self.raw_result['hits']
+        if "hits" in self.raw_result:
+            self.results = self.raw_result['hits']
 

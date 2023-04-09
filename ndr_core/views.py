@@ -14,9 +14,10 @@ from django.views.generic.edit import CreateView
 
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, NdrCoreUIElement, \
-    NdrCoreUpload
+    NdrCoreUpload, NdrCoreCorrection
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
+from ndr_core.templatetags.ndr_utils import url_deparse
 
 
 def dispatch(request, ndr_page):
@@ -140,13 +141,21 @@ class NdrDownloadView(View):
             api_config = NdrCoreApiConfiguration.objects.get(api_name=self.kwargs['api_config'])
             api_factory = ApiFactory(api_config)
             api = api_factory.get_query_class()(api_config)
-            query = api.get_record_query(self.kwargs['record_id'])
+            record_id = url_deparse(self.kwargs['record_id'])
+            query = api.get_record_query(record_id)
             result = api_factory.get_result_class()(api_config, query, self.request)
             result.load_result(transform_result=False)
             return JsonResponse(result.raw_result)
         except NdrCoreApiConfiguration.DoesNotExist:
             return JsonResponse({})
 
+
+class NdrMarkForCorrectionView(View):
+    def get(self, request, *args, **kwargs):
+        api_config = NdrCoreApiConfiguration.objects.get(api_name=self.kwargs['api_config'])
+        NdrCoreCorrection.objects.create(corrected_dataset=api_config,
+                                         corrected_record_id=url_deparse(self.kwargs['record_id']))
+        return HttpResponse("OK")
 
 class FilterListView(_NdrCoreView):
     """TODO This function is not implemented yet."""

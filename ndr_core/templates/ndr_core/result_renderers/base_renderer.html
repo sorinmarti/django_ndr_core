@@ -31,18 +31,26 @@
     </div>
   <div class="card-footer bg-white">
         {% block options %}
-
-           <a href="#" target="" class="btn btn-sm btn-outline-secondary">Download Data</a>
-           <a href="#" target="" class="btn btn-sm btn-outline-secondary">Open Page</a>
-            <input type="text" id="copyTarget_{{ result.original_data.source.selector.id|remove_special_chars }}" value="{{ result.original_data.source.title }}, {{ result.original_data.date.ref }} (Issue {{ result.original_data.source.issue }}), p. {{ result.original_data.source.selector.page }}, https://avisblatt.philhist.unibas.ch" />
-            <span onclick="copyToClipboard($('#copyTarget_{{ result.original_data.source.selector.id|remove_special_chars }}'));" class="btn btn-sm btn-outline-secondary">Cite</span>
-
+            <div class="row">
+                <div class="col-sm-12">
+                    {% for option in result.options %}
+                        <a
+                        {% for key, value in option.items %}
+                            {% if key != 'label' %}
+                                {{ key }}="{{ value }}"
+                            {% endif %}
+                        {% endfor %}>
+                            <span>{{ option.label|safe }}</span>
+                        </a>
+                    {% endfor %}
+                    <div id="copyNotification_{{ result.original_data.source.selector.id|url_parse }}" class="btn btn-sm notification-box"></div>
+                    <small class="text-muted float-right">
+                        {% block citation_info %}
+                        {% endblock %}
+                    </small>
+                </div>
+            </div>
         {% endblock %}
-
-        <small class="text-muted float-right">
-            {% block muted_info %}
-            {% endblock %}
-        </small>
   </div>
 </div>
 

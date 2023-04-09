@@ -164,14 +164,22 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                     form_field = fields.DateRangeField(label=search_field.field_label,
                                                        required=search_field.field_required,
                                                        help_text=help_text,
-                                                       input_formats=['%d/%m/%Y'],
+                                                       input_formats=['%d.%m.%Y'],
                                                        widget=widgets.DateRangeWidget(
-                                                           format='%d/%m/%Y'
+                                                           format='%d.%m.%Y',
+                                                           picker_options={'startDate': "01.01.1729",
+                                                                           'endDate': "31.12.1840",
+                                                                           'minYear': 1729,
+                                                                           'maxYear': 1840,
+                                                                           "maxSpan": {
+                                                                               "years": 500
+                                                                           },
+                                                                           'showDropdowns': True}
                                                        ))
                 # List field (dropdown)
                 if search_field.field_type == search_field.FieldType.LIST:
                     form_field = forms.ChoiceField(label=search_field.field_label,
-                                                   choices=search_field.get_list_choices(),
+                                                   choices=[('', _('Please Choose'))] + search_field.get_list_choices(),
                                                    required=search_field.field_required,
                                                    help_text=help_text)
                 # Multi list field (multiple select with Select2)

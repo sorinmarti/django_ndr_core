@@ -40,7 +40,10 @@ class NdrCoreSearchField(models.Model):
         DATE_RANGE = 7, "Date Range"
         """This type produces a date range field"""
 
-        HIDDEN = 8, "Hidden"
+        NUMBER_RANGE = 8, "Number Range"                # TODO implement
+        """This type produces a number range field"""
+
+        HIDDEN = 9, "Hidden"
         """This type produces a hidden field"""
 
     field_name = models.CharField(max_length=100,
@@ -223,6 +226,11 @@ class NdrCoreApiConfiguration(models.Model):
                                     verbose_name="URL stub",
                                     help_text="Static URL part after host, before API parameters.")
     """Static URL part after host, before API parameters."""
+
+    api_repository_url = models.URLField(default=None, null=True, blank=True,
+                                         verbose_name="Repository URL",
+                                         help_text="URL to the data repository where this data is stored.")
+    """URL to the repository's website."""
 
     api_user_name = models.CharField(max_length=50, blank=True, default='',
                                      help_text="If the API needs user authentication, you can provide your username")
