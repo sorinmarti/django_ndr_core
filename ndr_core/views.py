@@ -14,7 +14,7 @@ from django.views.generic.edit import CreateView
 
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, NdrCoreUIElement, \
-    NdrCoreUpload, NdrCoreCorrection
+    NdrCoreUpload, NdrCoreCorrection, NdrCoreSearchConfiguration
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
 from ndr_core.templatetags.ndr_utils import url_deparse
@@ -178,7 +178,7 @@ class SearchView(_NdrCoreView):
     def get(self, request, *args, **kwargs):
         requested_search = None
         context = self.get_ndr_context_data()
-        form = self.form_class(ndr_page=self.ndr_page)
+        form = self.form_class(request.GET, ndr_page=self.ndr_page)
 
         # Check if/which a search button has been pressed
         for value in request.GET.keys():
@@ -201,6 +201,9 @@ class SearchView(_NdrCoreView):
 
                 if requested_search == 'simple':
                     api_conf = self.ndr_page.simple_api
+                    search_config = NdrCoreSearchConfiguration()
+                    search_config.api_configuration = api_conf
+                    search_config.conf_name = 'simple'
                     api_factory = ApiFactory(api_conf)
                     query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
                     search_term = request.GET.get('search_term', '')
@@ -220,8 +223,9 @@ class SearchView(_NdrCoreView):
                                 search_term += f"{actual_key}={request.GET.get(key)}, "
                     query_string = query_obj.get_advanced_query()
 
+
                 print(query_string)
-                result = api_factory.get_result_class()(api_conf, query_string, self.request)
+                result = api_factory.get_result_class()(search_config, query_string, self.request)
                 result.load_result()
 
                 context.update({'api_config': api_conf})

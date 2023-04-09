@@ -31,10 +31,9 @@ class MongoDBResult(BaseResult):
                                           sort=self.query['sort'],
                                           skip=self.page * self.page_size,
                                           limit=self.page_size)
-            # print(my_document.explain())
+
             hits = []
             for hit in my_document:
-                print(hit)
                 hit = json.loads(json_util.dumps(hit))
                 hits.append(hit)
 
@@ -62,7 +61,6 @@ class MongoDBResult(BaseResult):
         if "page" in self.raw_result:
             self.page = self.raw_result["page"]
 
-        self.page_size = self.api_configuration.api_page_size
         self.num_pages = self.total // self.page_size
         if self.total % self.page_size > 0:
             self.num_pages += 1

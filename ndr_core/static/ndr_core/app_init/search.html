@@ -21,8 +21,8 @@
         {% include 'ndr_core/messages.html' %}
 
         <div class="mb-2">
-            {% blocktranslate %}
-                Your search returned {{ result.total }} results, showing page {{ result.page }} of {{ result.num_pages }}.
+            {% blocktranslate with total=result.total page=result.page num_pages=result.num_pages %}
+                Your search returned {{ total }} results, showing page {{ page }} of {{ num_pages }}.
             {% endblocktranslate %}
         </div>
 
@@ -42,4 +42,14 @@
 
 {% block page_js %}
     <script src="{% static 'ndr_core/js/ui_js/copy_to_clipboard.js' %}"></script>
+    {% if not result %}
+        <script>
+            $(document).ready(function () {
+                var url_params = new URLSearchParams(window.location.search);
+                if (url_params.has('tab')) {
+                        $('a[href="#'+url_params.get('tab')+'"]').tab('show');
+                }
+            });
+        </script>
+    {% endif %}
 {% endblock %}

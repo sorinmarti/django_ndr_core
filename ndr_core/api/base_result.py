@@ -19,11 +19,12 @@ class BaseResult(ABC):
     LOADED = -102
     SERVER = -103
 
-    def __init__(self, api_configuration, query, request):
-        if api_configuration is None:
-            raise ValueError("api_configuration must not be None")
+    def __init__(self, search_configuration, query, request):
+        if search_configuration is None:
+            raise ValueError("search_configuration must not be None")
 
-        self.api_configuration = api_configuration
+        self.search_configuration = search_configuration
+        self.api_configuration = search_configuration.api_configuration
         self.query = query
         self.request = request
         self.api_request_headers = {}
@@ -33,7 +34,7 @@ class BaseResult(ABC):
 
         self.total = 0
         self.page = 1
-        self.page_size = api_configuration.api_page_size
+        self.page_size = self.api_configuration.api_page_size
         self.num_pages = 0
         self.page_links = {}
         self.form_links = {}
@@ -49,7 +50,7 @@ class BaseResult(ABC):
         # 2.) fill meta data (self.total, self.page, self.page_size, self.num_pages)
         self.fill_meta_data()
 
-        # 3.) With the metadata known (total results, etc.), create pagination links
+        # 3.) With the metadata known (current page, total results, etc.), create pagination links
         self.page_links = self.get_page_list()
 
         # 4.) Create links to refine search or start a new one
@@ -296,11 +297,12 @@ class BaseResult(ABC):
         # Refine URL
         updated_url = self.request.GET.copy()
         try:
-            # TODO Button is only called like this in simple search
-            del (updated_url['search_button_simple'])
+            del (updated_url[f'search_button_{self.search_configuration.conf_name}'])
+            if 'tab' in updated_url:
+                del (updated_url['tab'])
         except KeyError:
             pass
-        form_links['refine'] = "?" + updated_url.urlencode()
+        form_links['refine'] = self.request.path + "?" + updated_url.urlencode() + "&tab=" + self.search_configuration.conf_name
 
         # New Search URL (TODO change this to view name)
         form_links['new'] = self.request.path
