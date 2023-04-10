@@ -13,10 +13,16 @@ class MongoDBQuery(BaseQuery):
         """ Not Implemented """
         query = {
             'filter': {
-                'transcription.original': {
-                    '$regex': search_term,
-                    '$options': 'i'
-                }
+                '$or': [
+                    {'transcription.original': {
+                        '$regex': search_term,
+                        '$options': 'i'
+                    }},
+                    {'transcription.corrected': {
+                        '$regex': search_term,
+                        '$options': 'i'
+                    }}
+                ]
             },
             'sort': list({'date.ref': 1}.items()),
             'page': int(self.page)
@@ -46,7 +52,9 @@ class MongoDBQuery(BaseQuery):
                 elif field.field_type == NdrCoreSearchField.FieldType.MULTI_LIST:
                     print(self.values[field_name])
                     if type(self.values[field_name]) == list and len(self.values[field_name]) > 0:
-                        value = {"$all": self.values[field_name]}
+                        # TODO - This should be configurable
+                        # value = {"$all": self.values[field_name]}
+                        value = {"$in": self.values[field_name]}
                 elif field.field_type == NdrCoreSearchField.FieldType.DATE:
                     # TODO: Implement
                     pass

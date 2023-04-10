@@ -29,7 +29,7 @@ class MongoDBResult(BaseResult):
 
             my_document = collection.find(filter=self.query['filter'],
                                           sort=self.query['sort'],
-                                          skip=self.page * self.page_size,
+                                          skip=self.page * self.page_size - self.page_size,
                                           limit=self.page_size)
 
             hits = []

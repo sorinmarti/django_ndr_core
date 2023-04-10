@@ -22,7 +22,7 @@
     <p class="text-center pt-3">
         Categories:
         {% for tag in result.original_data.tags.tags %}
-            <span class="badge border border-secondary small" style="font-weight: normal; background-color: {{ tag|translate_to_color:80 }};">{{ tag|translate_dict_value:'tags' }}</span>
+            <a href="#" class="badge border border-secondary small text-dark" style="font-weight: normal; background-color: {{ tag|translate_to_color:80 }};">{{ tag|translate_dict_value:'tags' }}</a>
         {% endfor %}
     </p>
 {% endblock %}
