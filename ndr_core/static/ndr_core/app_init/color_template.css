@@ -116,6 +116,10 @@ form {
     color: [[form_field_fg]];
 }
 
+/* FOOTER */
+.footer-bg {
+    background: [[footer_bg]] !important;
+}
 
 /* TEXT */
 .ndr-text-fg {

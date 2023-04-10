@@ -115,6 +115,8 @@ def choose_color_palette(request, pk):
                     text = text.replace(f"[[{color_name}]]", getattr(palette, color_name))
 
                 color_output_path = f"{NdrSettings.get_css_path()}/colors.css"
+                if os.path.isfile(color_output_path):
+                    os.remove(color_output_path)
                 with open(color_output_path, "w") as color_out_file:
                     color_out_file.write(text)
 
