@@ -41,11 +41,11 @@ class _NdrCoreSearchForm(_NdrCoreForm):
         """Create form fields for simple search. """
 
         self.fields['search_term'] = forms.CharField(label=NdrCoreValue.get_or_initialize("search_simple_field_label",
-                                                                                          init_value="Search Term"),
+                                                                                          init_value="Search Term").value_value,
                                                      required=False,
                                                      max_length=100,
                                                      help_text=NdrCoreValue.get_or_initialize("search_simple_help_text",
-                                                                                              init_value="Search for anything!"))
+                                                                                              init_value="Search for anything!").value_value)
 
         self.fields['and_or_field'] = forms.ChoiceField(label=_('And or Or Search'),
                                                         choices=[('and', _('AND search')), ('or', _('OR search'))],
@@ -348,11 +348,12 @@ class ContactForm(ModelForm, _NdrCoreForm):
         )
         layout.append(form_row)
 
-        form_row = Row(
-            Column('captcha', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
+        if NdrCoreValue.get_or_initialize(value_name='contact_form_display_captcha').get_value():
+            form_row = Row(
+                Column('captcha', css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'
+            )
+            layout.append(form_row)
 
         bh = ButtonHolder(
             Submit('submit', "Send Message", css_class='btn-default'),

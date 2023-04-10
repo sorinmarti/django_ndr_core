@@ -47,7 +47,8 @@ settings_group_list = {
                              'contact_form_default_subject',
                              'email_config_host',
                              'contact_form_send_to_address',
-                             'contact_form_send_from_address']
+                             'contact_form_send_from_address',
+                             'contact_form_display_captcha']
             },
             'socials': {
                 'name': 'socials',
@@ -85,16 +86,18 @@ class SettingsDetailView(LoginRequiredMixin, View):
     """Shows a group of settings to change in a form. """
 
     template_name = 'ndr_core/admin_views/configure_settings.html'
-    settings_list= None
+    settings_list = None
     settings_form = None
     settings_group = None
 
     def get_context_data(self):
         settings_group = settings_group_list[self.kwargs['group']]
+        # Users can create their own settings, which are identified by is_user_value=True
         if settings_group['name'] == "custom":
             settings_list = NdrCoreValue.objects.filter(is_user_value=True).values_list('value_name', flat=True)
             settings_form = SettingsListForm(settings=settings_list,
                                              is_custom_form=True)
+        # All other settings that are used by NDR Core are configured and added to groups upon project creation
         else:
             settings_form = SettingsListForm(settings=settings_group['settings'])
 
@@ -114,14 +117,7 @@ class SettingsDetailView(LoginRequiredMixin, View):
         form = SettingsListForm(request.POST, settings=settings_group_list[self.kwargs['group']]['settings'])
         form.save_list()
 
-        save_key = 'save_'
-        for key in request.POST.keys():
-            if key.startswith(save_key):
-                value = request.POST.get(key)
-                key = key[len(save_key):]
-                v_object = NdrCoreValue.objects.get(value_name=key)
-                v_object.set_value(value)
-                v_object.save()
+        context['form'] = form
 
         messages.success(request, "Saved Changes")
         return render(self.request,

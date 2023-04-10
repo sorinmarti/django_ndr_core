@@ -615,7 +615,7 @@ class NdrCoreValue(models.Model):
             except (TypeError, ValueError):
                 return 0
         if self.value_type == NdrCoreValue.ValueType.BOOLEAN:
-            if self.value_value.lower() == 'true':
+            if self.value_value.lower() == 'true' or self.value_value.lower() == 'on' or self.value_value == 'on':
                 return True
             else:
                 return False

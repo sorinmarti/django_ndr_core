@@ -57,8 +57,11 @@ class SettingsListForm(forms.Form):
     def save_list(self):
         for setting in self.settings_list:
             if f"save_{setting}" in self.data:
-                print("Would save form: ", setting, "=", self.data[f"save_{setting}"])
+                obj = NdrCoreValue.objects.get(value_name=setting)
+                obj.value_value = self.data[f"save_{setting}"]
+                obj.save()
             else:
+                # TODO: log or raise error
                 print("No value:", setting)
 
     @property

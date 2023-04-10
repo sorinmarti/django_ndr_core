@@ -186,6 +186,16 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "contact_form_display_captcha",
+      "value_label": "Use Captcha?",
+      "value_help_text": "Captcha is used to prevent spam. You'll need a valid reCAPTCHA API key pair.",
+      "value_type": "boolean",
+      "value_value": "false"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "email_config_host",
       "value_label": "E-Mail host to send messages",
       "value_help_text": "",
