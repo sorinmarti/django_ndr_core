@@ -24,6 +24,7 @@ class BaseResult(ABC):
             raise ValueError("search_configuration must not be None")
 
         self.search_configuration = search_configuration
+        print("search_configuration: ", search_configuration)
         self.api_configuration = search_configuration.api_configuration
         self.query = query
         self.request = request

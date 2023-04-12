@@ -53,8 +53,8 @@ class MongoDBQuery(BaseQuery):
                     print(self.values[field_name])
                     if type(self.values[field_name]) == list and len(self.values[field_name]) > 0:
                         # TODO - This should be configurable
-                        # value = {"$all": self.values[field_name]}
-                        value = {"$in": self.values[field_name]}
+                        value = {"$all": self.values[field_name]}
+                        # value = {"$in": self.values[field_name]}
                 elif field.field_type == NdrCoreSearchField.FieldType.DATE:
                     # TODO: Implement
                     pass

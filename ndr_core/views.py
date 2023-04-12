@@ -138,7 +138,8 @@ class NdrDownloadView(View):
 
     def get(self, request, *args, **kwargs):
         try:
-            api_config = NdrCoreApiConfiguration.objects.get(api_name=self.kwargs['api_config'])
+            api_config = NdrCoreApiConfiguration.objects.get(api_name=self.kwargs['search_config'])
+            search_config = NdrCoreSearchConfiguration.objects.get(conf_name=self.kwargs['search_config'])
             api_factory = ApiFactory(api_config)
             api = api_factory.get_query_class()(api_config)
             record_id = url_deparse(self.kwargs['record_id'])
@@ -156,6 +157,7 @@ class NdrMarkForCorrectionView(View):
         NdrCoreCorrection.objects.create(corrected_dataset=api_config,
                                          corrected_record_id=url_deparse(self.kwargs['record_id']))
         return HttpResponse("OK")
+
 
 class FilterListView(_NdrCoreView):
     """TODO This function is not implemented yet."""
