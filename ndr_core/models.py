@@ -40,11 +40,14 @@ class NdrCoreSearchField(models.Model):
         DATE_RANGE = 7, "Date Range"
         """This type produces a date range field"""
 
-        NUMBER_RANGE = 8, "Number Range"                # TODO implement
+        NUMBER_RANGE = 8, "Number Range"
         """This type produces a number range field"""
 
         HIDDEN = 9, "Hidden"
         """This type produces a hidden field"""
+
+        INFO_TEXT = 10, "Info Text"
+        """This type produces a HTML component to show info text. This is not an input field"""
 
     field_name = models.CharField(max_length=100,
                                   primary_key=True,
@@ -93,6 +96,7 @@ class NdrCoreSearchField(models.Model):
     def get_list_choices(self):
         # read the list choices from the list_choices field
         # TODO ignore invalid lines
+        list_choices = []
         if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
             list_choices = [tuple(line.split(',')[0:2]) for line in self.list_choices.splitlines()]
         return list_choices
@@ -100,6 +104,7 @@ class NdrCoreSearchField(models.Model):
     def get_list_choices_as_dict(self):
         # read the list choices from the list_choices field
         # TODO ignore invalid lines
+        list_choices = {}
         if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
             list_choices = {line.split(',')[0]: line.split(',')[1] for line in self.list_choices.splitlines()}
         return list_choices

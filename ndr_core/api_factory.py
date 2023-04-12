@@ -18,19 +18,34 @@ class ApiFactory:
         "ddb": {"query": DDBQuery, "result": DDBResult}
     }
 
-    def __init__(self, api_configuration):
-        self.api_configuration = api_configuration
+    def __init__(self, search_configuration):
+        self.search_configuration = search_configuration
+
+    def get_query_instance(self, page=1):
+        """Returns an instance of the query class for the selected API implementation."""
+        return self.get_query_class()(
+            self.search_configuration,
+            page=page
+        )
 
     def get_query_class(self):
         """Returns the query class for the selected API implementation."""
-        if self.api_configuration.api_type.name in self.api_mapping:
-            return self.api_mapping[self.api_configuration.api_type.name]["query"]
+        if self.search_configuration.api_configuration.api_type.name in self.api_mapping:
+            return self.api_mapping[self.search_configuration.api_configuration.api_type.name]["query"]
         else:
             raise Exception("API IMPLEMENTATION NOT FOUND")
 
+    def get_result_instance(self, query, request):
+        """Returns an instance of the result class for the selected API implementation."""
+        return self.get_result_class()(
+            self.search_configuration,
+            query,
+            request
+        )
+
     def get_result_class(self):
         """Returns the result class for the selected API implementation."""
-        if self.api_configuration.api_type.name in self.api_mapping:
-            return self.api_mapping[self.api_configuration.api_type.name]["result"]
+        if self.search_configuration.api_configuration.api_type.name in self.api_mapping:
+            return self.api_mapping[self.search_configuration.api_configuration.api_type.name]["result"]
         else:
             raise Exception("API IMPLEMENTATION NOT FOUND")

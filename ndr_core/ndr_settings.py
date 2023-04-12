@@ -5,7 +5,6 @@ from django.urls import path, include, re_path, reverse_lazy
 from django.views.static import serve
 from django.contrib import messages
 
-
 class NdrSettings:
     APP_NAME = 'ndr'
 

@@ -1,5 +1,6 @@
 import json
 import re
+import pandas as pd
 
 from django.contrib import messages
 from django.contrib.staticfiles import finders
@@ -133,22 +134,83 @@ class NdrTestView(_NdrCoreView):
         return render(request, f"{NdrSettings.APP_NAME}/test.html", {'form': form})
 
 
-class NdrDownloadView(View):
+class _NdrCoreSearchView(_NdrCoreView):
+    """ View for all configured ndr_core search views. """
+
+    form_class = AdvancedSearchForm
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def get_simple_search_mockup_config(self):
+        search_config = NdrCoreSearchConfiguration()
+        search_config.api_configuration = self.ndr_page.simple_api
+        search_config.conf_name = 'simple'
+        return search_config
+
+    def get_search_config_from_name(self, name):
+        return NdrCoreSearchConfiguration.objects.get(conf_name=name)
+
+    def fill_search_query_values(self, requested_search, query_obj):
+        search_config = self.get_search_config_from_name(requested_search)
+        form = self.form_class(self.request.GET, search_config=search_config)
+        form.is_valid()
+
+        for key in self.request.GET.keys():
+            if key.startswith(requested_search):
+                actual_key = key[len(requested_search) + 1:]
+                if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
+                    query_obj.set_value(actual_key, form.cleaned_data[key])
+
+
+class NdrDownloadView(_NdrCoreSearchView):
     """Returns a json from an ID request to the API """
 
     def get(self, request, *args, **kwargs):
         try:
-            api_config = NdrCoreApiConfiguration.objects.get(api_name=self.kwargs['search_config'])
-            search_config = NdrCoreSearchConfiguration.objects.get(conf_name=self.kwargs['search_config'])
-            api_factory = ApiFactory(api_config)
-            api = api_factory.get_query_class()(api_config)
+            api_factory = ApiFactory(self.get_search_config_from_name(self.kwargs['search_config']))
+            api = api_factory.get_query_instance()
             record_id = url_deparse(self.kwargs['record_id'])
             query = api.get_record_query(record_id)
-            result = api_factory.get_result_class()(api_config, query, self.request)
+            result = api_factory.get_result_instance(query, self.request)
             result.load_result(transform_result=False)
             return JsonResponse(result.raw_result)
         except NdrCoreApiConfiguration.DoesNotExist:
             return JsonResponse({})
+
+
+class NdrListDownloadView(_NdrCoreSearchView):
+    """Returns a json list from a search result. """
+
+    def create_result_for_response(self):
+        api_factory = ApiFactory(self.get_search_config_from_name(self.kwargs['search_config']))
+        query_obj = api_factory.get_query_instance(page=self.request.GET.get("page", 1))
+        self.fill_search_query_values(self.kwargs['search_config'], query_obj)
+        query_string = query_obj.get_advanced_query()
+        result = api_factory.get_result_instance(query_string, self.request)
+        result.page_size = 250
+        result.load_result(transform_result=False)
+        return result
+
+    def get(self, request, *args, **kwargs):
+        try:
+            result = self.create_result_for_response()
+            return JsonResponse(result.raw_result)
+        except NdrCoreApiConfiguration.DoesNotExist:
+            return JsonResponse({})
+
+
+class NdrCSVListDownloadView(NdrListDownloadView):
+    def get(self, request, *args, **kwargs):
+        try:
+            result = self.create_result_for_response()
+            json_string = json.dumps(result.raw_result['hits'])
+            df = pd.read_json(json_string)
+            csv_string = df.to_csv(encoding='utf-8')
+
+            return HttpResponse(csv_string, content_type="text/csv")
+        except NdrCoreApiConfiguration.DoesNotExist:
+            return HttpResponse("")
 
 
 class NdrMarkForCorrectionView(View):
@@ -172,10 +234,8 @@ class FilterListView(_NdrCoreView):
         return render(request, self.template_name, context)
 
 
-class SearchView(_NdrCoreView):
+class SearchView(_NdrCoreSearchView):
     """A view to search for records in the configured API. """
-
-    form_class = None
 
     def get(self, request, *args, **kwargs):
         requested_search = None
@@ -194,43 +254,23 @@ class SearchView(_NdrCoreView):
             # If the form is valid: create a search query
             if form.is_valid():
                 # The search is either a simple or a custom/advanced search
-                #
-                query_string = None
-                query_obj = None
-                search_term = None
-                api_factory = None
-                api_conf = None
-
                 if requested_search == 'simple':
-                    api_conf = self.ndr_page.simple_api
-                    search_config = NdrCoreSearchConfiguration()
-                    search_config.api_configuration = api_conf
-                    search_config.conf_name = 'simple'
-                    api_factory = ApiFactory(api_conf)
-                    query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
-                    search_term = request.GET.get('search_term', '')
-                    query_string = query_obj.get_simple_query(search_term)
+                    search_config = self.get_simple_search_mockup_config()
+                    api_factory = ApiFactory(search_config)
+                    query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
+                    query_string = query_obj.get_simple_query(request.GET.get('search_term', ''))
                 else:
                     search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
-                    api_conf = search_config.api_configuration
-                    api_factory = ApiFactory(api_conf)
-                    query_obj = api_factory.get_query_class()(api_conf, page=request.GET.get("page", 1))
-                    search_term = ''
-                    for key in request.GET.keys():
-                        # http://localhost:8000/p/search/?search_term=&and_or_field=and&avisblatt_text=text&avisblatt_year=&avisblatt_issue=&search_button_avisblatt=Search
-                        if key.startswith(requested_search):
-                            actual_key = key[len(requested_search)+1:]
-                            if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
-                                query_obj.set_value(actual_key, form.cleaned_data[key])
-                                search_term += f"{actual_key}={request.GET.get(key)}, "
+                    api_factory = ApiFactory(search_config)
+                    query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
+                    self.fill_search_query_values(requested_search, query_obj)
                     query_string = query_obj.get_advanced_query()
 
-
-                print(query_string)
-                result = api_factory.get_result_class()(search_config, query_string, self.request)
+                # Create a result object and load the result
+                result = api_factory.get_result_instance(query_string, self.request)
                 result.load_result()
 
-                context.update({'api_config': api_conf})
+                context.update({'api_config': search_config.api_configuration})
                 context.update({'result': result})
         else:
             # If no button has been pressed
@@ -240,7 +280,7 @@ class SearchView(_NdrCoreView):
         return render(request, self.template_name, context)
 
 
-class SimpleSearchView(_NdrCoreView):
+class SimpleSearchView(_NdrCoreSearchView):
     """TODO """
 
     def get(self, request, *args, **kwargs):
@@ -251,12 +291,13 @@ class SimpleSearchView(_NdrCoreView):
             form = SimpleSearchForm(request.GET, ndr_page=self.ndr_page)
 
             if "search_button_simple" in request.GET.keys():
-                api_factory = ApiFactory(self.ndr_page.simple_api)
-                query = api_factory.get_query_class()(self.ndr_page.simple_api)
+                search_config = self.get_simple_search_mockup_config()
+                api_factory = ApiFactory(search_config)
+                query = api_factory.get_query_instance()
                 query_string = query.get_simple_query(request.GET.get('search_term', ''), request.GET.get("page", 1))
-                result = api_factory.get_result_class()(self.ndr_page.simple_api, query_string, self.request)
+                result = api_factory.get_result_instance(query_string, self.request)
                 result.load_result()
-                context.update({'api_config': self.ndr_page.simple_api})
+                context.update({'api_config': search_config.api_configuration})
                 context.update({'result': result})
 
         context.update({'form': form})

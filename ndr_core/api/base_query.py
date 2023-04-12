@@ -11,10 +11,12 @@ class BaseQuery(ABC):
     Q_LIST = 'LIST'
 
     api_config = None
+    search_config = None
     page = 1
 
-    def __init__(self, api_configuration, page=1):
-        self.api_config = api_configuration
+    def __init__(self, search_configuration, page=1):
+        self.search_config = search_configuration
+        self.api_config = self.search_config.api_configuration
         self.page = page
 
         self.values = {}

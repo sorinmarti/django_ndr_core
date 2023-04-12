@@ -13,3 +13,5 @@ geoip2~=4.6.0
 pymongo~=4.3
 crispy-bootstrap4>=2022.1
 django-bootstrap-daterangepicker~=1.1.0
+pandas~=2.0.0
+setuptools~=65.5.1

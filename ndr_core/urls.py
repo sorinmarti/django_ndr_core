@@ -30,7 +30,7 @@ from ndr_core.admin_views.sample_data_views import SampleDataView, SampleDataDet
     SampleDataDeleteView
 
 from ndr_core.admin_forms.admin_forms import NdrCoreLoginForm, NdrCoreChangePasswordForm
-from ndr_core.views import ApiTestView, NdrDownloadView, NdrMarkForCorrectionView
+from ndr_core.views import ApiTestView, NdrDownloadView, NdrMarkForCorrectionView, NdrListDownloadView, NdrCSVListDownloadView
 
 app_name = 'ndr_core'
 urlpatterns = [
@@ -156,7 +156,9 @@ urlpatterns = [
     path('help/<str:chapter>/', HelpView.as_view(), name='help_chapter'),
 
     # Download URL for single DB entry
-    path('download/<str:api_config>/<str:record_id>/', NdrDownloadView.as_view(), name='download_record'),
+    path('download/<str:search_config>/<str:record_id>/', NdrDownloadView.as_view(), name='download_record'),
+    path('bulk-download/json/<str:search_config>/', NdrListDownloadView.as_view(), name='download_list'),
+    path('bulk-download/csv/<str:search_config>/', NdrCSVListDownloadView.as_view(), name='download_csv'),
 
     # Mark an entry for correction
     path('mark/to/correct/<str:api_config>/<str:record_id>/', NdrMarkForCorrectionView.as_view(), name='mark_record'),

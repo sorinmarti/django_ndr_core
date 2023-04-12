@@ -22,10 +22,11 @@ class BaseResult(ABC):
     def __init__(self, search_configuration, query, request):
         if search_configuration is None:
             raise ValueError("search_configuration must not be None")
+        if search_configuration.api_configuration is None:
+            raise ValueError("api_configuration must not be None")
 
         self.search_configuration = search_configuration
-        print("search_configuration: ", search_configuration)
-        self.api_configuration = search_configuration.api_configuration
+        self.api_configuration = self.search_configuration.api_configuration
         self.query = query
         self.request = request
         self.api_request_headers = {}
@@ -98,7 +99,7 @@ class BaseResult(ABC):
 
     @abstractmethod
     def fill_meta_data(self):
-        """Fill the meta data variables from the raw result"""
+        """Fill the meta-data variables from the raw result"""
         pass
 
     @abstractmethod
@@ -114,7 +115,8 @@ class BaseResult(ABC):
         result_options = [
             {
                 "href": reverse('ndr_core:download_record',
-                                kwargs={'api_config': self.api_configuration.api_name, 'record_id': url_parse(record_id)}),
+                                kwargs={'search_config': self.search_configuration.conf_name,
+                                        'record_id': url_parse(record_id)}),
                 "target": "_blank",
                 "label": '<i class="fa-regular fa-file-arrow-down"></i>',
                 "class": "btn btn-sm btn-outline-secondary",
@@ -307,6 +309,9 @@ class BaseResult(ABC):
 
         # New Search URL (TODO change this to view name)
         form_links['new'] = self.request.path
+
+        form_links['bulk_download'] = reverse('ndr_core:download_csv',
+                                              kwargs={'search_config': self.search_configuration.conf_name}) + "?" + updated_url.urlencode()
         return form_links
 
     def get_page_list(self):

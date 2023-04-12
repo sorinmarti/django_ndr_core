@@ -4,7 +4,7 @@ import os
 from captcha.fields import ReCaptchaField
 from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Row, Column, Div, BaseInput, ButtonHolder, Submit
+from crispy_forms.layout import Layout, Field, Row, Column, Div, BaseInput, ButtonHolder, Submit, HTML
 from django import forms
 from django.conf import settings
 from django.db.models import Max
@@ -12,7 +12,7 @@ from django.forms import ModelForm
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreUserMessage
+from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreUserMessage, NdrCoreSearchConfiguration
 from ndr_core.widgets import CustomSelect
 from django_select2 import forms as s2forms
 from bootstrap_daterangepicker import widgets, fields
@@ -27,6 +27,8 @@ class _NdrCoreForm(forms.Form):
         """Init the form class. Save the ndr page if it is provided."""
         if 'ndr_page' in kwargs:
             self.ndr_page = kwargs.pop('ndr_page')
+        if 'search_config' in kwargs:
+            self.search_config_name = kwargs.pop('search_config')
         if 'instance' in kwargs:
             kwargs.pop('instance')
 
@@ -123,13 +125,16 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
 
         super().__init__(*args, **kwargs)
 
-        self.search_configs = self.ndr_page.search_configs.all()
+        if 'search_config' not in kwargs:
+            self.search_configs = self.ndr_page.search_configs.all()
+        else:
+            self.search_configs = [NdrCoreSearchConfiguration.objects.get(conf_name=self.search_config_name),]
 
         self.query_dict = {}
         if len(args) > 0:
             self.query_dict = querydict_to_dict(args[0])
 
-        if self.ndr_page.page_type == NdrCorePage.PageType.COMBINED_SEARCH:
+        if self.ndr_page is not None and self.ndr_page.page_type == NdrCorePage.PageType.COMBINED_SEARCH:
             self.init_simple_search_fields()
 
         for search_config in self.search_configs:
@@ -224,14 +229,24 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                 form_row = Div(css_class='form-row')
                 # The column is the inner loop.
                 for column in search_config.search_form_fields.filter(field_row=row).order_by('field_column'):
-                    form_field = Field(f'{search_config.conf_name}_{column.search_field.field_name}',
-                                       placeholder=column.search_field.field_label,
-                                       wrapper_class=f'col-md-{column.field_size}')
-                    # Checkboxes are displayed inline.
-                    if column.search_field.field_type == column.search_field.FieldType.BOOLEAN:
-                        form_field.wrapper_class += 'custom-control-inline pt-3'
-                        if column.field_column > 1:
-                            form_field.wrapper_class += ' pl-5'
+                    if column.search_field.field_type == column.search_field.FieldType.INFO_TEXT:
+                        print("INFO TEXT")
+                        form_field = Div(HTML(mark_safe(
+                            f'<div class="alert alert-info small" role="alert">'
+                            f'<i class="fa-regular fa-circle-info"></i>&nbsp;'
+                            f'<strong>{column.search_field.field_label}</strong><br/>'
+                            f"{column.search_field.list_choices}"
+                            f'</div>'
+                        )), css_class=f'col-md-{column.field_size}')
+                    else:
+                        form_field = Field(f'{search_config.conf_name}_{column.search_field.field_name}',
+                                           placeholder=column.search_field.field_label,
+                                           wrapper_class=f'col-md-{column.field_size}')
+                        # Checkboxes are displayed inline.
+                        if column.search_field.field_type == column.search_field.FieldType.BOOLEAN:
+                            form_field.wrapper_class += 'custom-control-inline pt-3'
+                            if column.field_column > 1:
+                                form_field.wrapper_class += ' pl-5'
 
                     form_row.append(form_field)
 
