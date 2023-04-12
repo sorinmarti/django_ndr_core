@@ -310,8 +310,11 @@ class BaseResult(ABC):
         # New Search URL (TODO change this to view name)
         form_links['new'] = self.request.path
 
-        form_links['bulk_download'] = reverse('ndr_core:download_csv',
-                                              kwargs={'search_config': self.search_configuration.conf_name}) + "?" + updated_url.urlencode()
+        form_links['bulk_download_json'] = reverse('ndr_core:download_list',
+                                                   kwargs={'search_config': self.search_configuration.conf_name}) + "?" + updated_url.urlencode()
+
+        form_links['bulk_download_csv'] = reverse('ndr_core:download_csv',
+                                                  kwargs={'search_config': self.search_configuration.conf_name}) + "?" + updated_url.urlencode()
         return form_links
 
     def get_page_list(self):

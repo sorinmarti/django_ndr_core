@@ -16,10 +16,15 @@
                 <a href="{{ result.form_links.new }}" type="button" class="btn btn-sm btn-outline-secondary float-right">
                     {% translate 'start a new search' %}
                 </a>
-                <a href="{{ result.form_links.bulk_download }}" target="_blank" type="button" class="btn btn-sm btn-outline-secondary float-right">
-                    <!-- TODO Tooltip with max results -->
-                    {% translate 'Download Results' %}
-                </a>
+                <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {% translate 'Download' %}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="{{ result.form_links.bulk_download_json }}">{% translate 'Download JSON' %}</a>
+                        <a class="dropdown-item" href="{{ result.form_links.bulk_download_csv }}">{% translate 'Download CSV' %}</a>
+                    </div>
+                </div>
             </div>
         </h4>
         {% include 'ndr_core/messages.html' %}
