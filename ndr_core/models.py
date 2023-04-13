@@ -94,10 +94,12 @@ class NdrCoreSearchField(models.Model):
     """Comma separated list of choices for dropdowns"""
 
     lower_value = models.IntegerField(null=True,
+                                      blank=True,
                                       help_text="The lower value of a range field")
     """The lower value of a range field"""
 
     upper_value = models.IntegerField(null=True,
+                                      blank=True,
                                       help_text="The upper value of a range field")
     """The upper value of a range field"""
 

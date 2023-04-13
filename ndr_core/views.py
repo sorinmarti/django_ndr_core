@@ -1,12 +1,9 @@
 import json
-import re
-import pandas as pd
 
 from django.contrib import messages
 from django.contrib.staticfiles import finders
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponse
 from django.shortcuts import render
-from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 
 from django.views import View
@@ -14,8 +11,8 @@ from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
-from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, NdrCoreUIElement, \
-    NdrCoreUpload, NdrCoreCorrection, NdrCoreSearchConfiguration
+from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, \
+    NdrCoreCorrection, NdrCoreSearchConfiguration, NdrCoreValue
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
 from ndr_core.templatetags.ndr_utils import url_deparse
@@ -294,12 +291,18 @@ class ContactView(CreateView, _NdrCoreView):
         return context
 
     def form_valid(self, form):
-        # TODO SEND EMAIL AND/OR CREATE USER MESSAGE OBJECT
-
-        print("Send Email?")
+        answer = super().form_valid(form)
         messages.success(self.request, "Thank you! The message has been sent.")
-        return super().form_valid(form)
 
+        # A message object is created and saved. Now the message should be sent to a forwarding address.
+        # If it is sc configured.
+        # TODO SEND EMAIL
+
+        return answer
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Please correct the errors below.")
+        return super().form_invalid(form)
 
 class AboutUsView(_NdrCoreView):
     """A view to show an about us page. """

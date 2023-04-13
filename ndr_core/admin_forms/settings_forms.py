@@ -61,8 +61,14 @@ class SettingsListForm(forms.Form):
                 obj.value_value = self.data[f"save_{setting}"]
                 obj.save()
             else:
-                # TODO: log or raise error
-                print("No value:", setting)
+                # If the setting is not in the data and its type is BOOLEAN, it means it was unchecked.
+                try:
+                    obj = NdrCoreValue.objects.get(value_name=setting)
+                    if obj.value_type == NdrCoreValue.ValueType.BOOLEAN:
+                        obj.value_value = False
+                        obj.save()
+                except NdrCoreValue.DoesNotExist:
+                    pass
 
     @property
     def helper(self):

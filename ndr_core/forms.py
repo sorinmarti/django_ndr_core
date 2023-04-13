@@ -12,6 +12,7 @@ from django.db.models import Max
 from django.forms import ModelForm
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
+from pandas.core.methods.describe import select_describe_func
 
 from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreUserMessage, NdrCoreSearchConfiguration
 from ndr_core.widgets import CustomSelect
@@ -34,6 +35,36 @@ class _NdrCoreForm(forms.Form):
             kwargs.pop('instance')
 
         super(forms.Form, self).__init__(*args, **kwargs)
+
+    def querydict_to_dict(self, query_dict):
+        """Translates query dict of form return to default dict and removes single value lists. """
+
+        data = {}
+        for key in query_dict.keys():
+            v = query_dict.getlist(key)
+            if len(v) == 1:
+                v = v[0]
+            data[key] = v
+        return data
+
+    @staticmethod
+    def get_button_line(button_name, button_label):
+        """Create and return right aligned search button. """
+
+        div = Div(
+            Div(
+                css_class="col-md-8"
+            ),
+            Div(
+                Div(
+                    MySubmit(button_name, button_label),
+                    css_class="text-right"
+                ),
+                css_class="col-md-4"
+            ),
+            css_class="form-row"
+        )
+        return div
 
 
 class _NdrCoreSearchForm(_NdrCoreForm):
@@ -66,21 +97,7 @@ class _NdrCoreSearchForm(_NdrCoreForm):
     @staticmethod
     def get_search_button(conf_name):
         """Create and return right aligned search button. """
-
-        div = Div(
-                Div(
-                    css_class="col-md-8"
-                    ),
-                Div(
-                    Div(
-                        MySubmit(f'search_button_{conf_name}', _('Search')),
-                        css_class="text-right"
-                    ),
-                    css_class="col-md-4"
-                ),
-                css_class="form-row"
-        )
-        return div
+        return _NdrCoreForm.get_button_line(f'search_button_{conf_name}', _('Search'))
 
 
 class SimpleSearchForm(_NdrCoreSearchForm):
@@ -177,7 +194,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
 
         self.query_dict = {}
         if len(args) > 0:
-            self.query_dict = querydict_to_dict(args[0])
+            self.query_dict = self.querydict_to_dict(args[0])
 
         if self.ndr_page is not None and self.ndr_page.page_type == NdrCorePage.PageType.COMBINED_SEARCH:
             self.init_simple_search_fields()
@@ -282,7 +299,6 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                 # The column is the inner loop.
                 for column in search_config.search_form_fields.filter(field_row=row).order_by('field_column'):
                     if column.search_field.field_type == column.search_field.FieldType.INFO_TEXT:
-                        print("INFO TEXT")
                         form_field = Div(HTML(mark_safe(
                             f'<div class="alert alert-info small" role="alert">'
                             f'<i class="fa-regular fa-circle-info"></i>&nbsp;'
@@ -324,7 +340,7 @@ class FilterForm(_NdrCoreForm):
 
         self.query_dict = {}
         if len(args) > 0:
-            self.query_dict = querydict_to_dict(args[0])
+            self.query_dict = self.querydict_to_dict(args[0])
 
         if "tags[]" in self.query_dict:
             selection = self.query_dict["tags[]"]
@@ -339,15 +355,8 @@ class FilterForm(_NdrCoreForm):
                                             'selection': selection,
                                             'placeholder': 'All sub collections are selected. '
                                                            'Filter them by type here.'}, )
-        dict_config = {
-            "type": "tsv",
-            "file": "main/tag_list.tsv",
-            "search_column": 0,
-            "display_column": 1,
-            "has_title_row": True
-        }
-        choices = get_choices_from_tsv(dict_config)
-        filter_field = forms.ChoiceField(widget=choice_widget, choices=choices, required=False)
+
+        filter_field = forms.ChoiceField(widget=choice_widget, choices=[], required=False)
         self.fields['tags'] = filter_field
 
     @property
@@ -381,8 +390,6 @@ class FilterForm(_NdrCoreForm):
 class ContactForm(ModelForm, _NdrCoreForm):
     """TODO """
 
-    captcha = ReCaptchaField()
-
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreUserMessage
@@ -395,6 +402,9 @@ class ContactForm(ModelForm, _NdrCoreForm):
         self.fields['message_subject'].label = _('Message Subject')
         self.fields['message_ret_email'].label = _('Your E-Mail address')
         self.fields['message_text'].label = _('Message Text')
+
+        if NdrCoreValue.get_or_initialize(value_name='contact_form_display_captcha').get_value():
+            self.fields['captcha'] = ReCaptchaField()
 
     @property
     def helper(self):
@@ -422,11 +432,7 @@ class ContactForm(ModelForm, _NdrCoreForm):
             )
             layout.append(form_row)
 
-        bh = ButtonHolder(
-            Submit('submit', "Send Message", css_class='btn-default'),
-            css_class="modal-footer"
-        )
-        layout.append(bh)
+        layout.append(_NdrCoreForm.get_button_line('submit', _('Send Message')))
 
         return helper
 
@@ -448,38 +454,3 @@ class MySubmit(BaseInput):
 
         self.field_classes = "btn btn btn-outline-secondary w-100"
         super().__init__(*args, **kwargs)
-
-
-def get_choices_from_tsv(dict_config):
-    """TODO """
-
-    if "display_column" in dict_config and "search_column" in dict_config and "file" in dict_config:
-        choices = list()
-        with open(os.path.join(settings.STATIC_ROOT, dict_config["file"]), encoding='utf-8') as fd:
-            rd = csv.reader(fd, delimiter="\t")
-            line = 0
-            for row in rd:
-                if line > 0 or (line == 0 and not dict_config["has_title_row"]):
-                    choices.append((
-                        row[dict_config["search_column"]],
-                        row[dict_config["display_column"]]
-                    ))
-                line += 1
-        choices = sorted(choices, key=lambda tup: tup[1])
-        return choices
-    else:
-        print(">> dictionary config needs search- and display-column")
-        return []
-
-
-def querydict_to_dict(query_dict):
-    """Translates query dict of form return to default dict and removes single value lists. """
-
-    data = {}
-    for key in query_dict.keys():
-        v = query_dict.getlist(key)
-        if len(v) == 1:
-            v = v[0]
-        data[key] = v
-    return data
-
