@@ -19,6 +19,7 @@ from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMes
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
 from ndr_core.templatetags.ndr_utils import url_deparse
+from ndr_core.ndr_template_tags import TextPreRenderer
 
 
 def dispatch(request, ndr_page):
@@ -93,36 +94,10 @@ class NdrTemplateView(_NdrCoreView):
         context = super(NdrTemplateView, self).get_ndr_context_data()
         page_text = context['page'].template_text
 
-        # Search for ui-elements to insert
-        if page_text is not None and page_text != '':
-            rendered_text = page_text
-            match = re.search(self.ui_element_regex, rendered_text)
-            while match:
-                template = match.groups()[1]
-                element_id = match.groups()[2]
-                try:
-                    if template == 'figure':
-                        element = NdrCoreImage.objects.get(id=int(element_id))
-                    elif template == 'file':
-                        element = NdrCoreUpload.objects.get(id=int(element_id))
-                    elif template == 'page':
-                        element = NdrCorePage.objects.get(id=int(element_id))
-                    else:
-                        element = NdrCoreUIElement.objects.get(id=int(element_id))
+        pre_renderer = TextPreRenderer(page_text, self.request)
+        rendered_page_text = pre_renderer.get_pre_rendered_text()
+        context['rendered_text'] = rendered_page_text
 
-                    element_html_string = render_to_string(f'ndr_core/ui_elements/{template}.html',
-                                                           request=self.request, context={'data': element})
-
-                    rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', element_html_string)
-
-                except NdrCoreUIElement.DoesNotExist:
-                    rendered_text = rendered_text.replace(f'[[{template}|{element_id}]]', "ERROR loading UI element")
-
-                match = re.search(self.ui_element_regex, rendered_text)
-            context['rendered_text'] = rendered_text
-        else:
-            context['rendered_text'] = ''
-            
         return context
 
 

@@ -9,9 +9,11 @@
 {# endblock #}
 
 {% block generated_content %}
-    <p class="pb-3 mb-3"> {% translate 'Fill in the form below to contact us with any queries.' %}  </p>
 
-    <div>
-        {% crispy form %}
+    <div class="card mb-2 box-shadow">
+        <div class="card-body d-flex flex-column">
+            <p class="pb-3 mb-3"> {% translate 'Fill in the form below to contact us with any queries.' %}  </p>
+            {% crispy form %}
+        </div>
     </div>
 {% endblock %}
