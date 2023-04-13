@@ -93,6 +93,14 @@ class NdrCoreSearchField(models.Model):
                                     help_text="Comma separated list of choices for dropdowns")
     """Comma separated list of choices for dropdowns"""
 
+    lower_value = models.IntegerField(null=True,
+                                      help_text="The lower value of a range field")
+    """The lower value of a range field"""
+
+    upper_value = models.IntegerField(null=True,
+                                      help_text="The upper value of a range field")
+    """The upper value of a range field"""
+
     def get_list_choices(self):
         # read the list choices from the list_choices field
         # TODO ignore invalid lines

@@ -15,7 +15,7 @@ class SearchFieldForm(forms.ModelForm):
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreSearchField
         fields = ['field_name', 'field_label', 'field_type', 'field_required', 'help_text', 'api_parameter',
-                  'list_choices']
+                  'lower_value', 'upper_value', 'list_choices']
 
     @property
     def helper(self):
@@ -40,6 +40,13 @@ class SearchFieldForm(forms.ModelForm):
 
         form_row = Row(
             Column('help_text', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('lower_value', css_class='form-group col-md-6 mb-0'),
+            Column('upper_value', css_class='form-group col-md-6 mb-0'),
             css_class='form-row'
         )
         layout.append(form_row)

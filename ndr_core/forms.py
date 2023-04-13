@@ -7,6 +7,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Row, Column, Div, BaseInput, ButtonHolder, Submit, HTML
 from django import forms
 from django.conf import settings
+from django.core.validators import RegexValidator
 from django.db.models import Max
 from django.forms import ModelForm
 from django.utils.safestring import mark_safe
@@ -116,6 +117,50 @@ class FilteredListWidget(s2forms.Select2MultipleWidget):
     ]
 
 
+class NumberRangeField(forms.CharField):
+
+    lowest_number = 1
+    highest_number = 999999
+
+    def __init__(self, *args, **kwargs):
+        if 'lowest_number' in kwargs:
+            self.lowest_number = kwargs.pop('lowest_number')
+        if 'highest_number' in kwargs:
+            self.highest_number = kwargs.pop('highest_number')
+        super().__init__(*args, **kwargs)
+
+    def to_python(self, value):
+        """Normalize data to a list of strings."""
+        # Return an empty list if no input was given.
+        if not value:
+            return []
+
+        try:
+            result = set()
+            for part in value.split(','):
+                x = part.split('-')
+                result.update(range(int(x[0]), int(x[-1]) + 1))
+            return sorted(result)
+        except ValueError:
+            raise forms.ValidationError(_('Invalid value: Format is "1,2,3-5,7"'))
+
+    def validate(self, value):
+        """Check if value consists only of valid emails."""
+        # Use the parent's handling of required fields, etc.
+        super().validate(value)
+        if len(value) == 0:
+            return
+        elif len(value) == 1:
+            if value[0] < self.lowest_number or value[0] > self.highest_number:
+                raise forms.ValidationError(_('Value is out of range. ({}-{})'.format(self.lowest_number, self.highest_number)))
+        if len(value) > 1:
+            if value[0] < self.lowest_number or value[-1] > self.highest_number:
+                raise forms.ValidationError(_('Value is out of range. ({}-{})'.format(self.lowest_number, self.highest_number)))
+
+        if value is None:
+            raise forms.ValidationError(_('Invalid value'))
+
+
 class AdvancedSearchForm(_NdrCoreSearchForm):
     """Form class for the advanced (=configured) search. Needs a search config and then creates and configures
     the form from it. """
@@ -154,6 +199,13 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                     form_field = forms.IntegerField(label=search_field.field_label,
                                                     required=search_field.field_required,
                                                     help_text=help_text)
+                # Number Range field
+                if search_field.field_type == search_field.FieldType.NUMBER_RANGE:
+                    form_field = NumberRangeField(label=search_field.field_label,
+                                                  required=search_field.field_required,
+                                                  help_text=help_text,
+                                                  lowest_number=search_field.lower_value if search_field.lower_value is not None else 1,
+                                                  highest_number=search_field.upper_value if search_field.upper_value is not None else 999999)
                 # Boolean field (checkbox)
                 if search_field.field_type == search_field.FieldType.BOOLEAN:
                     form_field = forms.BooleanField(label=search_field.field_label,
