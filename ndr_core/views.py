@@ -20,6 +20,7 @@ from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
 from ndr_core.templatetags.ndr_utils import url_deparse
 from ndr_core.ndr_template_tags import TextPreRenderer
+from ndr_core.utils import create_csv_export_string
 
 
 def dispatch(request, ndr_page):
@@ -86,18 +87,14 @@ class _NdrCoreView(View):
 
 
 class NdrTemplateView(_NdrCoreView):
-    """Basic template view. (Is currently the same as _NdrCoreView) """
-
-    ui_element_regex = r'(\[\[)(card|slideshow|carousel|jumbotron|figure|banner|file|page)\|([0-9]*)(\]\])'
+    """Basic template view. Pre-Renders the page text and adds it to the context. """
 
     def get_ndr_context_data(self):
         context = super(NdrTemplateView, self).get_ndr_context_data()
         page_text = context['page'].template_text
-
         pre_renderer = TextPreRenderer(page_text, self.request)
         rendered_page_text = pre_renderer.get_pre_rendered_text()
         context['rendered_text'] = rendered_page_text
-
         return context
 
 
@@ -179,10 +176,15 @@ class NdrCSVListDownloadView(NdrListDownloadView):
     def get(self, request, *args, **kwargs):
         try:
             result = self.create_result_for_response()
-            json_string = json.dumps(result.raw_result['hits'])
-            df = pd.read_json(json_string)
-            csv_string = df.to_csv(encoding='utf-8')
 
+            # TODO: This should be configurable
+            mapping = [
+                {"field": "source.selector.idxx", "header": "ID"},
+                {"field": "transcription.original", "header": "Transcription"},
+                {"field": "tags.tags", "header": "Tags"},
+            ]
+
+            csv_string = create_csv_export_string(result.raw_result['hits'], mapping)
             return HttpResponse(csv_string, content_type="text/csv")
         except NdrCoreApiConfiguration.DoesNotExist:
             return HttpResponse("")
