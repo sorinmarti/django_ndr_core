@@ -101,6 +101,9 @@ class NdrCoreSearchField(models.Model):
                                       help_text="The upper value of a range field")
     """The upper value of a range field"""
 
+    use_in_csv_export = models.BooleanField(default=False,
+                                            help_text="Should this field be included in the CSV export?")
+
     def get_list_choices(self):
         # read the list choices from the list_choices field
         # TODO ignore invalid lines

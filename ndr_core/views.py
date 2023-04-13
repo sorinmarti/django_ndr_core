@@ -176,13 +176,13 @@ class NdrCSVListDownloadView(NdrListDownloadView):
     def get(self, request, *args, **kwargs):
         try:
             result = self.create_result_for_response()
-
-            # TODO: This should be configurable
             mapping = [
-                {"field": "source.selector.idxx", "header": "ID"},
-                {"field": "transcription.original", "header": "Transcription"},
-                {"field": "tags.tags", "header": "Tags"},
+                # TODO: Add id field
             ]
+            search_config = self.get_search_config_from_name(self.kwargs['search_config'])
+            for field in search_config.search_form_fields.all():
+                if field.search_field.use_in_csv_export:
+                    mapping.append({"field": field.search_field.api_parameter, "header": field.search_field.field_label})
 
             csv_string = create_csv_export_string(result.raw_result['hits'], mapping)
             return HttpResponse(csv_string, content_type="text/csv")
