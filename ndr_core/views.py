@@ -9,6 +9,8 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
+from django.utils.translation import gettext_lazy as _
+
 
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, \
@@ -229,11 +231,29 @@ class SearchView(_NdrCoreSearchView):
             if form.is_valid():
                 # The search is either a simple or a custom/advanced search
                 if requested_search == 'simple':
+                    search_term = request.GET.get('search_term', '')
+                    if search_term == '':
+                        messages.error(request, _('Please enter a search term.'))
+                        context.update({'form': form, 'requested_search': requested_search})
+                        return render(request, self.template_name, context)
+
                     search_config = self.get_simple_search_mockup_config()
                     api_factory = ApiFactory(search_config)
                     query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
                     query_string = query_obj.get_simple_query(request.GET.get('search_term', ''))
                 else:
+                    has_values = False
+                    for field in form.fields:
+                        if field.startswith(requested_search):
+                            if form.cleaned_data[field] not in [None, '', []]:
+                                has_values = True
+                                break
+
+                    if not has_values:
+                        messages.error(request, _('Please fill out at least one search field.'))
+                        context.update({'form': form, 'requested_search': requested_search})
+                        return render(request, self.template_name, context)
+
                     search_config = self.ndr_page.search_configs.get(conf_name=requested_search)
                     api_factory = ApiFactory(search_config)
                     query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
@@ -244,8 +264,11 @@ class SearchView(_NdrCoreSearchView):
                 result = api_factory.get_result_instance(query_string, self.request)
                 result.load_result()
 
-                context.update({'api_config': search_config.api_configuration})
-                context.update({'result': result})
+                if result.total == 0:
+                    messages.error(request, _('No results found.'))
+                else:
+                    context.update({'api_config': search_config.api_configuration})
+                    context.update({'result': result})
         else:
             # If no button has been pressed
             pass
