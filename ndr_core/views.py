@@ -79,9 +79,9 @@ class _NdrCoreView(View):
         return render(request, self.template_name, self.get_ndr_context_data())
 
     def get_ndr_context_data(self):
-        context = {'page': self.ndr_page, 'navigation': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
-                   'partners': NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.LOGOS)
-                   }
+        context = {'page': self.ndr_page,
+                   'navigation': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
+                   'partners': NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.LOGOS)}
         return context
 
 
@@ -114,10 +114,7 @@ class _NdrCoreSearchView(_NdrCoreView):
         super().__init__(*args, **kwargs)
 
     def get_simple_search_mockup_config(self):
-        search_config = NdrCoreSearchConfiguration()
-        search_config.api_configuration = self.ndr_page.simple_api
-        search_config.conf_name = 'simple'
-        return search_config
+        return NdrCoreSearchConfiguration.get_simple_search_mockup_config(self.ndr_page.simple_api)
 
     def get_search_config_from_name(self, name):
         return NdrCoreSearchConfiguration.objects.get(conf_name=name)

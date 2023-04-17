@@ -137,3 +137,18 @@ h1, h2, h3, h4, h5, h6 {
 p {
     color: [[text_color]];
 }
+
+/* NAVIGATION */
+.nav-link.active {
+    color: [[title_color]] !important;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.nav-link.active:hover {
+    text-decoration: none;
+}
+
+.nav-link.active:hover {
+    text-decoration: underline;
+}

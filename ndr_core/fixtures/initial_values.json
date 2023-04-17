@@ -31,6 +31,15 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "search_simple_has_compact_result_view",
+      "value_label": "Simple Search has compact result view",
+      "value_help_text": "If true, the simple search form will feature a 'compact view' trigger.",
+      "value_value": "false"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "footer_show_partners",
       "value_label": "Show partner images",
       "value_help_text": "Add partnering institution logos to your images to display and link them.",

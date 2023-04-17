@@ -10,19 +10,22 @@
         <h4 class="mt-4">
             {% translate 'Search Results' %}
             <div class="btn-group float-right">
-                <a href="{{ result.form_links.refine }}" type="button" class="btn btn-sm btn-outline-secondary ">
+                <a href="{{ result.form_links.refine }}" type="button" class="btn btn-sm btn-secondary ">
                     {% translate 'refine search' %}
                 </a>
-                <a href="{{ result.form_links.new }}" type="button" class="btn btn-sm btn-outline-secondary float-right">
+                <a href="{{ result.form_links.new }}" type="button" class="btn btn-sm btn-secondary float-right">
                     {% translate 'start a new search' %}
                 </a>
                 <div class="btn-group" role="group">
-                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {% translate 'Download' %}
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{{ result.form_links.bulk_download_json }}" target="_blank">{% translate 'Download JSON' %}</a>
                         <a class="dropdown-item" href="{{ result.form_links.bulk_download_csv }}">{% translate 'Download CSV' %}</a>
+                        {% if result.total > 250 %}
+                            <span class="dropdown-item small font-italic">(Downloads are limited to 250 results.)</span>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -56,8 +59,22 @@
             $(document).ready(function () {
                 var url_params = new URLSearchParams(window.location.search);
                 if (url_params.has('tab')) {
-                        $('a[href="#'+url_params.get('tab')+'"]').tab('show');
+                     $('a[href="#' + url_params.get('tab') + '"]').tab('show');
                 }
+                {% if requested_search %}
+                    $('a[href="#{{ requested_search }}"]').tab('show');
+                {% endif %}
+
+                $('form').bind("keypress", function(e) {
+                  if (e.keyCode == 13) {
+                      let my_id = $('.tab-content .active').attr('id');
+                      let formButton = $('#submit-id-search_button_' + my_id);
+                        formButton.click();
+                      console.log(my_id);
+                      e.preventDefault();
+                      return false;
+                  }
+                });
             });
         </script>
     {% endif %}

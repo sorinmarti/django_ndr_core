@@ -28,6 +28,12 @@ def key_value(data_dict, key):
 
 
 @register.filter
+def is_list(value):
+    """Provides key-value lookup functionality in templates."""
+    return type(value) is list
+
+
+@register.filter
 def modulo(num, val):
     """Provides modulo functionality in templates."""
     return num % val
@@ -58,7 +64,7 @@ def reduce_iiif_size(image_url, target_percent_of_size):
     if image_url is None:
         return ''
     if type(image_url) is not str:
-        return image_url
+        return ''
     if target_percent_of_size is None:
         return image_url
 

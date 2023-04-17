@@ -119,7 +119,7 @@ class BaseResult(ABC):
                                         'record_id': url_parse(record_id)}),
                 "target": "_blank",
                 "label": '<i class="fa-regular fa-file-arrow-down"></i>',
-                "class": "btn btn-sm btn-outline-secondary",
+                "class": "btn btn-sm btn-secondary",
                 "data-toggle": "tooltip",
                 "data-placement": "top",
                 "title": "Download the record as a JSON file"
@@ -130,7 +130,7 @@ class BaseResult(ABC):
                 "href": self.api_configuration.api_repository_url,
                 "target": "_blank",
                 "label": '<i class="fa-regular fa-vault"></i>',
-                "class": "btn btn-sm btn-outline-secondary",
+                "class": "btn btn-sm btn-secondary",
                 "data-toggle": "tooltip",
                 "data-placement": "top",
                 "title": "View The Data Repository"
@@ -144,7 +144,7 @@ class BaseResult(ABC):
             result_options.append({
                 "onclick": f"callUrl('{correction_url}', '{url_parse(record_id)}')",
                 "label": '<i class="fa-regular fa-check-double"></i>',
-                "class": "btn btn-sm btn-outline-secondary",
+                "class": "btn btn-sm btn-secondary",
                 "data-toggle": "tooltip",
                 "data-placement": "top",
                 "title": "Report this entry as incorrect"
@@ -153,7 +153,7 @@ class BaseResult(ABC):
         result_options.append({
             "onclick": f"copyToClipboard('{url_parse(record_id)}')",
             "label": '<i class="fa-regular fa-copy"></i>',
-            "class": "btn btn-sm btn-outline-secondary",
+            "class": "btn btn-sm btn-secondary",
             "data-toggle": "tooltip",
             "data-placement": "top",
             "title": "Copy Citation"

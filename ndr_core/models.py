@@ -312,8 +312,23 @@ class NdrCoreSearchConfiguration(models.Model):
                                                 help_text="Fields associated with this configuration")
     """Fields associated with this configuration """
 
+    search_has_compact_result = models.BooleanField(default=False,
+                                                    help_text="If the result has a normal and a compact view, "
+                                                              "check this box.")
+    """If the result has a normal and a compact view, check this box."""
+
     def __str__(self):
         return self.conf_name
+
+    @staticmethod
+    def get_simple_search_mockup_config(api_configuration):
+        search_config = NdrCoreSearchConfiguration()
+        search_config.api_configuration = api_configuration
+        search_config.conf_name = 'simple'
+        search_config.search_has_compact_result = NdrCoreValue.get_or_initialize('search_simple_has_compact_result_view',
+                                                                                 init_value="false",
+                                                                                 init_type=NdrCoreValue.ValueType.BOOLEAN).get_value()
+        return search_config
 
 
 class NdrCoreResultMapping(models.Model):
@@ -561,7 +576,7 @@ class NdrCoreColorScheme(models.Model):
 
     @staticmethod
     def color_list():
-        return ['background_color', 'container_bg_color', 'footer_bg', 'text_color',
+        return ['background_color', 'container_bg_color', 'footer_bg', 'text_color', 'title_color',
                 'button_color', 'button_text_color', 'button_hover_color', 'button_border_color',
                 'second_button_color', 'second_button_text_color', 'second_button_hover_color',
                 'second_button_border_color',

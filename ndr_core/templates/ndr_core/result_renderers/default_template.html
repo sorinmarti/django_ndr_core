@@ -40,7 +40,18 @@
 
 {% block fragment_image %}
     <p class="text-center p-3 border rounded">
-        <img class="img-fluid" src="{{ result.original_data.source.selector.fragment|reduce_iiif_size:25 }}" alt="IIIF fragment">
+        {% if result.original_data.source.selector.fragment|is_list %}
+            {% for frag in result.original_data.source.selector.fragment %}
+                <img class="img-fluid" src="{{ frag|reduce_iiif_size:25 }}" alt="IIIF fragment">
+            {% endfor %}
+        {% else %}
+            {% if result.original_data.source.selector.fragment|reduce_iiif_size:25 != '' %}
+                <img class="img-fluid" src="{{ result.original_data.source.selector.fragment|reduce_iiif_size:25 }}" alt="IIIF fragment">
+            {% else %}
+                (no image found)
+            {% endif %}
+        {% endif %}
+
     </p>
 {% endblock %}
 

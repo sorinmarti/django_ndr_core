@@ -4,20 +4,18 @@ import os
 from captcha.fields import ReCaptchaField
 from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Row, Column, Div, BaseInput, ButtonHolder, Submit, HTML
+from crispy_forms.layout import Layout, Field, Row, Column, Div, BaseInput, HTML
 from django import forms
-from django.conf import settings
-from django.core.validators import RegexValidator
 from django.db.models import Max
 from django.forms import ModelForm
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from pandas.core.methods.describe import select_describe_func
 
 from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreUserMessage, NdrCoreSearchConfiguration
-from ndr_core.widgets import CustomSelect
 from django_select2 import forms as s2forms
 from bootstrap_daterangepicker import widgets, fields
+
+from ndr_core.widgets import BootstrapSwitchWidget
 
 
 class _NdrCoreForm(forms.Form):
@@ -86,6 +84,12 @@ class _NdrCoreSearchForm(_NdrCoreForm):
                                                         required=False,
                                                         )
 
+        if NdrCoreSearchConfiguration.get_simple_search_mockup_config(None).search_has_compact_result:
+            self.fields['compact_view_simple'] = forms.BooleanField(required=False,
+                                                                    widget=BootstrapSwitchWidget(
+                                                                        attrs={'label': 'Compact Result View'}),
+                                                                    label='')
+
     @staticmethod
     def get_simple_search_layout_fields():
         """Create and return layout fields for the simple search fields. """
@@ -97,7 +101,24 @@ class _NdrCoreSearchForm(_NdrCoreForm):
     @staticmethod
     def get_search_button(conf_name):
         """Create and return right aligned search button. """
-        return _NdrCoreForm.get_button_line(f'search_button_{conf_name}', _('Search'))
+        div = Div(
+            Div(
+                css_class="col-md-5"
+            ),
+            Div(
+                Field(f'compact_view_{conf_name}'),
+                css_class="col-md-4"
+            ),
+            Div(
+                Div(
+                    MySubmit(f'search_button_{conf_name}', _('Search')),
+                    css_class="text-right"
+                ),
+                css_class="col-md-3"
+            ),
+            css_class="form-row"
+        )
+        return div
 
 
 class SimpleSearchForm(_NdrCoreSearchForm):
@@ -200,6 +221,12 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
             self.init_simple_search_fields()
 
         for search_config in self.search_configs:
+            if search_config.search_has_compact_result:
+                self.fields[f'compact_view_{search_config.conf_name}'] = forms.BooleanField(required=False,
+                                                                                            widget=BootstrapSwitchWidget(
+                                                                                                attrs={'label': 'Compact Result View'}),
+                                                                                            label='')
+
             for field in search_config.search_form_fields.all():
                 search_field = field.search_field
                 form_field = None
@@ -338,52 +365,13 @@ class FilterForm(_NdrCoreForm):
 
         super().__init__(*args, **kwargs)
 
-        self.query_dict = {}
-        if len(args) > 0:
-            self.query_dict = self.querydict_to_dict(args[0])
-
-        if "tags[]" in self.query_dict:
-            selection = self.query_dict["tags[]"]
-            if selection == '':
-                selection = []
-            elif isinstance(selection, str):
-                selection = [selection, ]
-        else:
-            selection = []
-
-        choice_widget = CustomSelect(attrs={'list_name': 'tags',
-                                            'selection': selection,
-                                            'placeholder': 'All sub collections are selected. '
-                                                           'Filter them by type here.'}, )
-
-        filter_field = forms.ChoiceField(widget=choice_widget, choices=[], required=False)
-        self.fields['tags'] = filter_field
-
     @property
     def helper(self):
         """Creates and returns the form helper class with the layout-ed form fields. """
-
         helper = FormHelper()
         helper.form_method = "GET"
         helper.form_show_labels = False
         layout = helper.layout = Layout()
-
-        form_row = Row(
-            Column(
-                Field('tags'),
-                css_class=f'col-md-10'
-            ),
-            Column(
-                Div(
-                    MySubmit('filter', _('Filter')),
-                    MySubmit('show_all', _('Show all')),
-                    css_class="btn-group d-flex"
-                ),
-                css_class=f'col-md-2'
-            ),
-        )
-
-        layout.append(form_row)
         return helper
 
 
@@ -452,5 +440,5 @@ class MySubmit(BaseInput):
     def __init__(self, *args, **kwargs):
         """TODO """
 
-        self.field_classes = "btn btn btn-outline-secondary w-100"
+        self.field_classes = "btn btn-primary w-100"
         super().__init__(*args, **kwargs)

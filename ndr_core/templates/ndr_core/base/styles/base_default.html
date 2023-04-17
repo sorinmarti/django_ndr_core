@@ -27,7 +27,7 @@
                         <div class="col-4 text-center">
                         </div>
 
-                        <div class="col-4 d-flex justify-content-end align-items-center navbar-light d-xl-none d-lg-none">
+                        <div class="d-flex justify-content-end align-items-center navbar-light p-2 d-md-none d-lg-none d-xl-none">
                             <button class="navbar-toggler order-first" type="button" data-toggle="collapse" data-target="#links" aria-controls="links" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="navbar-toggler-icon "></span>
                             </button>
@@ -41,7 +41,7 @@
                                     {% for nav_item in navigation %}
                                         {% if nav_item.ndrcorepage_set.all %}
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
+                                                <a class="nav-link dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.ndrcorepage_set.all %} active{% endif %}" href="#" data-toggle="dropdown" aria-expanded="false">
                                                     {{ nav_item.label }}
                                                 </a>
                                                 <div class="dropdown-menu">
@@ -57,7 +57,7 @@
                                             </li>
                                         {% else %}
                                             <li class="nav-item">
-                                                <a class="nav-link" href="{{ nav_item.url }}">
+                                                <a class="nav-link{% if nav_item.view_name == page.view_name %} active{% endif %}" href="{{ nav_item.url }}">
                                                     {{ nav_item.label }}
                                                 </a>
                                             </li>
@@ -67,23 +67,25 @@
                             </div>
                         </nav>
 
-
                     <div class="collapse py-1 mb-2 ml-0 d-xl-none d-lg-none" id="links"> <!-- mobile - all other sizes -->
                         <nav class="d-flex flex-column">
-                            <div class="col-5 offset-md-1">
+                            <div class="col-12 offset-md-1">
                                 <ul class="navbar-nav mr-auto navbar-ul-items">
                                     {% for nav_item in navigation %}
-                                         <li class="nav-item-bottom">
-                                             <a class="link-bottom" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
+                                         <li class="nav-item border">
+                                             <a class="nav-link p-3 text-center{% if nav_item.view_name == page.view_name %} active{% endif %}" style="display: block;" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
                                          </li>
                                     {% endfor %}
                                 </ul>
                             </div>
                         </nav>
                     </div>
+
+                    <hr class="p-0 m-0" style="height:2px;border-width:0;color:gray;background-color:gray">
                 </header>
             </div>
         </div>  <!-- end of navigation -->
+
 
         <div class="container">
             {% block page_title %}

@@ -36,7 +36,8 @@ settings_group_list = {
                 'title': 'Search Settings',
                 'help_text': 'Settings for your search',
                 'settings': ['search_simple_field_label',
-                             'search_simple_help_text']
+                             'search_simple_help_text',
+                             'search_simple_has_compact_result_view']
             },
             'mail': {
                 'name': 'mail',

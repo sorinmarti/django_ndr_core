@@ -92,7 +92,7 @@ class SearchConfigurationForm(forms.ModelForm):
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreSearchConfiguration
-        fields = ['conf_name', 'conf_label', 'api_configuration']
+        fields = ['conf_name', 'conf_label', 'api_configuration', 'search_has_compact_result']
 
     def __init__(self, *args, **kwargs):
         super(SearchConfigurationForm, self).__init__(*args, **kwargs)
@@ -129,9 +129,19 @@ class SearchConfigurationForm(forms.ModelForm):
         helper.form_method = "POST"
         layout = helper.layout = Layout()
 
-        layout.append(Div(Field('conf_name', wrapper_class=f'col-md-12'), css_class='form-row'))
-        layout.append(Div(Field('conf_label', wrapper_class=f'col-md-12'), css_class='form-row'))
-        layout.append(Div(Field('api_configuration', wrapper_class=f'col-md-12'), css_class='form-row'))
+        form_row = Row(
+            Column('conf_name', css_class='col-6'),
+            Column('conf_label', css_class='col-6'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('api_configuration', css_class='col-6'),
+            Column('search_has_compact_result', wrapper_class='form-check-inline', css_class='col-6'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
 
         form_row = Div(css_class='form-row', css_id=f'search_field_config_title_row')
         form_row.append(Div(HTML('Search Field'), css_class='col-md-6'))
@@ -155,6 +165,12 @@ class SearchConfigurationForm(forms.ModelForm):
             layout.append(form_row)
 
         helper.form_show_labels = False
+
+        form_row = Row(
+            Column(HTML('<img id="preview_image" />'), css_class='col-md-12'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
 
         helper.add_input(Submit('submit', 'Create Search Configuration'))
         helper.add_input(Button('add_row', 'Add Row', css_class='btn btn-secondary'))

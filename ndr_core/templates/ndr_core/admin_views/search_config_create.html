@@ -1,4 +1,5 @@
 {% extends 'ndr_core/admin_views/base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -10,27 +11,19 @@
         <div class="card-body">
             <h5 class="card-title">Create New Search Configuration</h5>
             {% crispy form %}
-            <img id="preview_image" />
         </div>
     </div>
 {% endblock %}
 
 {% block page_js %}
-    <script>
-        function generatePreview() {
-            let data_array = [];
-            for (let i = 0; i < 20; i++) {
-                let row_field =  $('#id_row_field_'+i)
-                let column_field =  $('#id_column_field_'+i)
-                let size_field = $('#id_size_field_'+i);
-                let search_field = $('#id_search_field_'+i);
-                data_array[i]=row_field.val()+"~"+column_field.val()+"~"+size_field.val()+"~"+search_field.val();
-            }
-            let sensorID = "{% url 'ndr_core:preview_image' 'image_string' %}";
-            let url_mask = sensorID.replace("image_string", data_array);
+    <script src="{% static 'ndr_core/js/admin/form_preview.js' %}"></script>
 
-            $('#preview_image').attr("src", url_mask);
+    <script>
+        function updateImage() {
+            let urlMask = getMaskedUrl("{% url 'ndr_core:preview_image' 'image_string' %}");
+            $('#preview_image').attr("src", urlMask);
         }
+
         $(document).ready(function(){
             for (let i = 0; i < 20; i++) {
                 let select_box = $('#id_search_field_'+i);
@@ -56,12 +49,12 @@
                         }
                     }
 
-                    generatePreview();
+                    updateImage();
                 });
 
-                $('#id_row_field_'+i).on('change', generatePreview);
-                $('#id_column_field_'+i).on('change', generatePreview);
-                $('#id_size_field_'+i).on('change', generatePreview);
+                $('#id_row_field_'+i).on('change', updateImage);
+                $('#id_column_field_'+i).on('change', updateImage);
+                $('#id_size_field_'+i).on('change', updateImage);
             }
 
             // When document is ready:

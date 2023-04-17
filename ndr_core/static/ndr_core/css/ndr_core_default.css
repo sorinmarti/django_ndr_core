@@ -8,48 +8,6 @@ body p {
     font-weight:400;
 }
 
-.select2-container {
-    width: 100% !important;
-
-}
-
-.select2-selection {
-  border: 1px solid #ced4da !important;
-  border-radius: 7px;
-}
-
-.select2-selection--multiple:before {
-    content: "";
-    position: absolute;
-    right: 7px;
-    top: 42%;
-    border-top: 5px solid #888;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-}
-
-.select2-dropdown {
-  background-color: white;
-  border-left: 1px solid #ced4da !important;
-  border-right: 1px solid #ced4da !important;
-  border-bottom: 1px solid #ced4da !important;
-
-  border-bottom-right-radius: 7px;
-  border-bottom-left-radius: 7px;
-}
-
-.select2-search__field {
-  margin-top: 7px !important;
-  margin-left: 12px !important;
-  padding-top: 0px !important;
-  height: 24px !important;
-}
-
-.select2-results__option--highlighted[aria-selected] {
-     background-color: var(--secondary) !important;
-     color: white !important;
-}
-
 h1, h2, h3, h4, h5, h6 {
   font-family: "Open Sans", "Georgia", serif;
 }

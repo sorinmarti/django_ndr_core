@@ -77,6 +77,23 @@ class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/search_config_edit.html'
 
+    def get_form(self, form_class=None):
+        form = super(SearchConfigurationEditView, self).get_form(form_class=form_class)
+        fields = self.object.search_form_fields.all()
+
+        form_row = 0
+        for field in fields:
+            form.fields[f'search_field_{form_row}'].initial = field.search_field
+            form.fields[f'row_field_{form_row}'].initial = field.field_row
+            form.fields[f'column_field_{form_row}'].initial = field.field_column
+            form.fields[f'size_field_{form_row}'].initial = field.field_size
+            form_row += 1
+
+        return form
+
+    def form_valid(self, form):
+        return super(SearchConfigurationEditView, self).form_valid(form)
+
 
 class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
     """ View to delete a Search Field from the database. Asks to confirm."""
