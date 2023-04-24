@@ -112,8 +112,11 @@ class BaseResult(ABC):
         :param record_id: The id of the record to create the options for
         :return: Return a list of dicts with the options for a result."""
 
-        result_options = [
-            {
+        result_options = []
+        if NdrCoreValue.get_or_initialize("search_allow_download_single",
+                                          init_type=NdrCoreValue.ValueType.BOOLEAN,
+                                          init_value="true").get_value():
+            result_options.append({
                 "href": reverse('ndr_core:download_record',
                                 kwargs={'search_config': self.search_configuration.conf_name,
                                         'record_id': url_parse(record_id)}),
@@ -123,8 +126,8 @@ class BaseResult(ABC):
                 "data-toggle": "tooltip",
                 "data-placement": "top",
                 "title": "Download the record as a JSON file"
-            }
-        ]
+            })
+
         if self.api_configuration.api_repository_url is not None:
             result_options.append({
                 "href": self.api_configuration.api_repository_url,

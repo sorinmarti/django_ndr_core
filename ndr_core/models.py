@@ -322,6 +322,9 @@ class NdrCoreSearchConfiguration(models.Model):
 
     @staticmethod
     def get_simple_search_mockup_config(api_configuration):
+        """All search related functions expect a SearchConfiguration but the simple search only provides an
+                ApiConfiguration. This returns a mockup config with the simple-search-api-configuration."""
+
         search_config = NdrCoreSearchConfiguration()
         search_config.api_configuration = api_configuration
         search_config.conf_name = 'simple'

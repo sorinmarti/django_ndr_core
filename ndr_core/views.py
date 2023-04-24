@@ -1,3 +1,4 @@
+"""This file contains the main NDR Core views. For the views for the administration interface, see admin_views/* """
 import json
 
 from django.contrib import messages
@@ -24,7 +25,8 @@ from ndr_core.utils import create_csv_export_string
 
 def dispatch(request, ndr_page=None):
     """All requests for ndr_core pages are routed through this function which decides the
-    type of page which should be returned based on the configuration
+    type of page which should be returned based on the configuration. If the ndr_page is None,
+    the index page is returned.
 
     :param request: The page's request object
     :param ndr_page: The NdrCorePage's database id
@@ -85,9 +87,11 @@ class _NdrCoreView(View):
         super().__init__(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        """ Default get method for all ndr core pages. """
         return render(request, self.template_name, self.get_ndr_context_data())
 
     def get_ndr_context_data(self):
+        """ Returns the page object, the pre-rendered page text, the navigation items and the partner image objects. """
         context = {'page': self.ndr_page,
                    'rendered_text': self.pre_render_text(),
                    'navigation': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
@@ -95,6 +99,8 @@ class _NdrCoreView(View):
         return context
 
     def pre_render_text(self):
+        """ An NDR Core page can have a page text with certain [[style|tags]]. They are replaced by the respective
+         HTML element by the TextPreRenderer. """
         page_text = self.ndr_page.template_text
         if page_text is None or page_text == '':
             return ''
@@ -105,12 +111,14 @@ class _NdrCoreView(View):
 
 
 class NdrTemplateView(_NdrCoreView):
-    """Basic template view. Pre-Renders the page text and adds it to the context. """
+    """Basic template view. """
     pass
 
 
 class NdrTestView(_NdrCoreView):
-    """Shows a test view to test the UI settings """
+    """ Shows a test view to test the UI settings. Features a form to test form rendering.
+     Users can change colors and style of their pages. With this test page they can see how
+     all the elements look. """
 
     def get(self, request, *args, **kwargs):
         form = TestForm()
@@ -118,7 +126,8 @@ class NdrTestView(_NdrCoreView):
 
 
 class _NdrCoreSearchView(_NdrCoreView):
-    """ View for all configured ndr_core search views. """
+    """ Base View for all NDR Core search views. A search view in this context means all views used to
+     retrieve or display results. It is also the base view for all result download views."""
 
     form_class = AdvancedSearchForm
 
@@ -126,12 +135,21 @@ class _NdrCoreSearchView(_NdrCoreView):
         super().__init__(*args, **kwargs)
 
     def get_simple_search_mockup_config(self):
+        """All search related functions expect a SearchConfiguration but the simple search only provides an
+        ApiConfiguration. This returns a mockup config with the simple-search-api-configuration."""
         return NdrCoreSearchConfiguration.get_simple_search_mockup_config(self.ndr_page.simple_api)
 
-    def get_search_config_from_name(self, name):
-        return NdrCoreSearchConfiguration.objects.get(conf_name=name)
+    @staticmethod
+    def get_search_config_from_name(name):
+        """ Convenience method to get search config. """
+        try:
+            return NdrCoreSearchConfiguration.objects.get(conf_name=name)
+        except NdrCoreSearchConfiguration.DoesNotExist:
+            return None
 
     def fill_search_query_values(self, requested_search, query_obj):
+        """ Translates the GET parameters provided by the search form to key-value pairs
+        and saves them in the Query-object. """
         search_config = self.get_search_config_from_name(requested_search)
         form = self.form_class(self.request.GET, search_config=search_config)
         form.is_valid()
@@ -144,7 +162,7 @@ class _NdrCoreSearchView(_NdrCoreView):
 
 
 class NdrDownloadView(_NdrCoreSearchView):
-    """Returns a json from an ID request to the API """
+    """Returns a JSON record from an ID request to the API """
 
     def get(self, request, *args, **kwargs):
         try:
@@ -160,7 +178,7 @@ class NdrDownloadView(_NdrCoreSearchView):
 
 
 class NdrListDownloadView(_NdrCoreSearchView):
-    """Returns a json list from a search result. """
+    """Returns a JSON record list from a search result. """
 
     def create_result_for_response(self):
         api_factory = ApiFactory(self.get_search_config_from_name(self.kwargs['search_config']))
@@ -168,7 +186,9 @@ class NdrListDownloadView(_NdrCoreSearchView):
         self.fill_search_query_values(self.kwargs['search_config'], query_obj)
         query_string = query_obj.get_advanced_query()
         result = api_factory.get_result_instance(query_string, self.request)
-        result.page_size = 250
+        result.page_size = NdrCoreValue.get_or_initialize("search_download_max_results",
+                                                          init_type=NdrCoreValue.ValueType.INTEGER,
+                                                          init_value="250").get_value()
         result.load_result(transform_result=False)
         return result
 

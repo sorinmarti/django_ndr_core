@@ -37,7 +37,11 @@ settings_group_list = {
                 'name': 'search',
                 'title': 'Search Settings',
                 'help_text': 'Settings for your search',
-                'settings': ['search_simple_field_label',
+                'settings': ['search_allow_download_single',
+                             'search_allow_download_list_json',
+                             'search_allow_download_list_csv',
+                             'search_download_max_results',
+                             'search_simple_field_label',
                              'search_simple_help_text',
                              'search_simple_has_compact_result_view']
             },

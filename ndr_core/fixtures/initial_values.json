@@ -6,7 +6,7 @@
       "value_label": "Page Is Under Construction",
       "value_help_text": "Shows a \"Under Construction\" page instead of your configured home page",
       "value_type": "boolean",
-      "value_value": "false",
+      "value_value": "false"
     }
   },
   {
@@ -27,6 +27,46 @@
       "value_type": "list",
       "value_value": "en",
       "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano)"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "search_allow_download_single",
+      "value_label": "Allow single result downloads?",
+      "value_help_text": "Results can be downloaded one by one",
+      "value_type": "boolean",
+      "value_value": "true"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "search_allow_download_list_json",
+      "value_label": "Allow list result downloads?",
+      "value_help_text": "Results can be downloaded together as json list",
+      "value_type": "boolean",
+      "value_value": "true"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "search_allow_download_list_csv",
+      "value_label": "Allow list result downloads?",
+      "value_help_text": "Results can be downloaded together as csv list",
+      "value_type": "boolean",
+      "value_value": "true"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "search_download_max_results",
+      "value_label": "Max results to download",
+      "value_help_text": "Search results can be downloaded. This number defines the maximum number of results.",
+      "value_type": "integer",
+      "value_value": "250"
     }
   },
   {
