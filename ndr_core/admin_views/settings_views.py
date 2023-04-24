@@ -15,7 +15,9 @@ settings_group_list = {
                 'name': 'page',
                 'title': 'Page Settings',
                 'help_text': 'These settings are not mandatory but recommended.',
-                'settings': ['project_title',
+                'settings': ['under_construction',
+                             'under_construction_text',
+                             'project_title',
                              'header_default_title']
              },
             'language': {

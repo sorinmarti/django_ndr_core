@@ -83,13 +83,3 @@ def set_statistics_option(request, option):
     value.value_value = option
     value.save()
     return redirect('ndr_core:search_statistics')
-
-
-def init_ndr_core(request):
-    """TODO """
-    if not NdrSettings.app_exists():
-        call_command('init_ndr_core')
-        messages.success(request, "NDR Core application initialized.")
-    else:
-        messages.error(request, "NDR Core application already exists.")
-    return redirect('ndr_core:dashboard')

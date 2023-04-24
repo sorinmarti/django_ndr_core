@@ -19,43 +19,10 @@
     <script src="{% static 'ndr_core/js/admin/form_preview.js' %}"></script>
 
     <script>
-        function updateImage() {
-            let urlMask = getMaskedUrl("{% url 'ndr_core:preview_image' 'image_string' %}");
-            $('#preview_image').attr("src", urlMask);
-        }
-
         $(document).ready(function(){
-            for (let i = 0; i < 20; i++) {
-                let select_box = $('#id_search_field_'+i);
-                select_box.data('pre', $(this).val());
-
-                select_box.change(function(e){
-                    let before_change = $(this).data('pre');//get the pre data
-                    $(this).data('pre', $(this).val());//update the pre data
-                    let after_change = $(this).data('pre');//get the pre data
-                    let this_index = this.id.split('_').slice(-1);
-                    if(before_change !== '') {
-                        for (let x = 0; x < 20; x++) {
-                            if(x !== parseInt(this_index)) {
-                                $('#id_search_field_'+x+' option[value="'+before_change+'"]').removeAttr("disabled");
-                            }
-                        }
-                    }
-                    if(after_change !== '') {
-                        for (let x = 0; x < 20; x++) {
-                            if(x !== parseInt(this_index)) {
-                                $('#id_search_field_'+x+' option[value="'+after_change+'"]').attr("disabled", "disabled");
-                            }
-                        }
-                    }
-
-                    updateImage();
-                });
-
-                $('#id_row_field_'+i).on('change', updateImage);
-                $('#id_column_field_'+i).on('change', updateImage);
-                $('#id_size_field_'+i).on('change', updateImage);
-            }
+            let imageBaseUrl = "{% url 'ndr_core:preview_image' 'image_string' %}";
+            configureRows(20, imageBaseUrl);
+            initializeAddAndRemoveButtons();
 
             // When document is ready:
             // Hide remove row
@@ -64,41 +31,6 @@
             for (let i = 1; i < 20; i++) {
               $('#search_field_config_row_'+i).hide();
             }
-            // Set visible buttons to 1
-            let visible_buttons = 0;
-
-            $('#button-id-add_row').on('click', function () {
-                $('#button-id-remove_row').show();
-                if (visible_buttons < 19) {
-                    visible_buttons += 1;
-                    $('#search_field_config_row_' + visible_buttons).show();
-                }
-                if (visible_buttons === 19) {
-                    $('#button-id-add_row').hide();
-                }
-
-                console.log(visible_buttons);
-            });
-
-            $('#button-id-remove_row').on('click', function () {
-                if(visible_buttons > 0) {
-                    $('#id_search_field_'+visible_buttons).val(null);
-                    $('#id_search_field_'+visible_buttons).change();
-                    $('#id_row_field_'+visible_buttons).val("");
-                    $('#id_column_field_'+visible_buttons).val("");
-                    $('#id_size_field_'+visible_buttons).val("");
-                    $('#search_field_config_row_'+visible_buttons).hide();
-
-                    if (visible_buttons === 1) {
-                        $('#button-id-remove_row').hide();
-                    }
-                    if (visible_buttons === 19) {
-                        $('#button-id-add_row').show();
-                    }
-                    visible_buttons -= 1;
-                }
-            });
-
 
         });
     </script>

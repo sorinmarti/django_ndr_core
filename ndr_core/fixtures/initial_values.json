@@ -2,6 +2,25 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "under_construction",
+      "value_label": "Page Is Under Construction",
+      "value_help_text": "Shows a \"Under Construction\" page instead of your configured home page",
+      "value_type": "boolean",
+      "value_value": "false",
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "under_construction_text",
+      "value_label": "Under Construction Text",
+      "value_help_text": "Text if page is under construction",
+      "value_value": "This page is currently under construction."
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "ndr_language",
       "value_label": "UI language",
       "value_help_text": "UI language of the frontend. The administration interface is english only.",

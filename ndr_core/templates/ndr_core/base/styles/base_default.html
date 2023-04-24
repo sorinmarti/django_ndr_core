@@ -92,11 +92,11 @@
                 <h1>{{ page.name }}</h1>
             {% endblock %}
 
-            {% block generated_content %}
-            {% endblock %}
-
             {% block content %}
                 {{ rendered_text|safe }}
+            {% endblock %}
+
+            {% block generated_content %}
             {% endblock %}
 
         </div>

@@ -1,0 +1,28 @@
+{% load static %}
+{% load ndr_values %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Under Construction</title>
+    {% include 'ndr_core/base/base_header_tags.html' %}
+</head>
+<body style="background-color: #171a1d;">
+    <div class="container">
+        <div class="row">
+            <div class="col text-center">
+                <h1 style="color: #dad8d8;">Under Construction</h1>
+                <p style="color: #dad8d8;">
+                    {% config_value 'under_construction_text' %}
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-center">
+                <img src="{% static 'ndr_core/images/various/under_construction.png' %}" style="height: auto; max-width: 50%;" />
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

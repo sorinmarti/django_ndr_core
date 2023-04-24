@@ -22,7 +22,7 @@ from ndr_core.ndr_template_tags import TextPreRenderer
 from ndr_core.utils import create_csv_export_string
 
 
-def dispatch(request, ndr_page):
+def dispatch(request, ndr_page=None):
     """All requests for ndr_core pages are routed through this function which decides the
     type of page which should be returned based on the configuration
 
@@ -30,35 +30,44 @@ def dispatch(request, ndr_page):
     :param ndr_page: The NdrCorePage's database id
     :return: A configured view or 404 if not found
     """
+
+    if NdrCoreValue.get_or_initialize("under_construction",
+                                      init_type=NdrCoreValue.ValueType.BOOLEAN,
+                                      init_value="false").get_value():
+        return TemplateView.as_view(template_name='ndr_core/under_construction.html')(request)
+
+    if ndr_page is None:
+        ndr_page = 'index'
+
     try:
         page = NdrCorePage.objects.get(view_name=ndr_page)
 
         if page.page_type == page.PageType.TEMPLATE:
-            return NdrTemplateView.as_view(template_name=f'ndr/{page.view_name}.html',
+            return NdrTemplateView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                            ndr_page=page)(request)
         elif page.page_type == page.PageType.FILTER_LIST:
-            return FilterListView.as_view(template_name=f'ndr/{page.view_name}.html',
+            return FilterListView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                           ndr_page=page)(request)
         elif page.page_type == page.PageType.SIMPLE_SEARCH:
-            return SearchView.as_view(template_name=f'ndr/{page.view_name}.html',
+            return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                       ndr_page=page,
                                       form_class=SimpleSearchForm)(request)
         elif page.page_type == page.PageType.SEARCH:
-            return SearchView.as_view(template_name=f'ndr/{page.view_name}.html',
+            return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                       ndr_page=page,
                                       form_class=AdvancedSearchForm)(request)
         elif page.page_type == page.PageType.COMBINED_SEARCH:
-            return SearchView.as_view(template_name=f'ndr/{page.view_name}.html',
+            return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                       ndr_page=page,
                                       form_class=AdvancedSearchForm)(request)
         elif page.page_type == page.PageType.CONTACT:
-            return ContactView.as_view(template_name=f'ndr/{page.view_name}.html',
+            return ContactView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                        ndr_page=page)(request)
         elif page.page_type == page.PageType.FLIP_BOOK:
-            return FlipBookView.as_view(template_name=f'ndr/{page.view_name}.html',
+            return FlipBookView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                         ndr_page=page)(request)
         elif page.page_type == page.PageType.ABOUT_PAGE:
-            return AboutUsView.as_view(template_name=f'ndr/{page.view_name}.html',
+            return AboutUsView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                        ndr_page=page)(request)
         else:
             return HttpResponseNotFound("Page Type Not Found")
@@ -80,21 +89,24 @@ class _NdrCoreView(View):
 
     def get_ndr_context_data(self):
         context = {'page': self.ndr_page,
+                   'rendered_text': self.pre_render_text(),
                    'navigation': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
                    'partners': NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.LOGOS)}
         return context
 
+    def pre_render_text(self):
+        page_text = self.ndr_page.template_text
+        if page_text is None or page_text == '':
+            return ''
+
+        pre_renderer = TextPreRenderer(page_text, self.request)
+        rendered_page_text = pre_renderer.get_pre_rendered_text()
+        return rendered_page_text
+
 
 class NdrTemplateView(_NdrCoreView):
     """Basic template view. Pre-Renders the page text and adds it to the context. """
-
-    def get_ndr_context_data(self):
-        context = super(NdrTemplateView, self).get_ndr_context_data()
-        page_text = context['page'].template_text
-        pre_renderer = TextPreRenderer(page_text, self.request)
-        rendered_page_text = pre_renderer.get_pre_rendered_text()
-        context['rendered_text'] = rendered_page_text
-        return context
+    pass
 
 
 class NdrTestView(_NdrCoreView):
@@ -312,7 +324,7 @@ class ContactView(CreateView, _NdrCoreView):
 
     def form_valid(self, form):
         answer = super().form_valid(form)
-        messages.success(self.request, "Thank you! The message has been sent.")
+        messages.success(self.request, _("Thank you! The message has been sent."))
 
         # A message object is created and saved. Now the message should be sent to a forwarding address.
         # If it is sc configured.
@@ -321,8 +333,9 @@ class ContactView(CreateView, _NdrCoreView):
         return answer
 
     def form_invalid(self, form):
-        messages.error(self.request, "Please correct the errors below.")
+        messages.error(self.request, _("Please correct the errors below."))
         return super().form_invalid(form)
+
 
 class AboutUsView(_NdrCoreView):
     """A view to show an about us page. """

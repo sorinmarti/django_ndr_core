@@ -91,8 +91,9 @@ class PageForm(forms.ModelForm):
                 self.add_error('list_configs', msg)
         elif page_type == NdrCorePage.PageType.CONTACT:
             if NdrCorePage.objects.filter(page_type=NdrCorePage.PageType.CONTACT).count() > 0:
-                msg = "You can't have more than one contact page."
-                self.add_error('page_type', msg)
+                if self.instance.pk is None:
+                    msg = "You can't have more than one contact page."
+                    self.add_error('page_type', msg)
         else:
             pass
 

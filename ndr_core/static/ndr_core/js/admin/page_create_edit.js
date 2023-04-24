@@ -26,7 +26,7 @@ function setComponents(select_value) {
             case '5':   // Contact Page
                 search_configs.hide();
                 list_configs.hide();
-                template_text.hide();
+                template_text.show();
                 simple_api.hide();
                 info_text.text('Creates a page with a contact form. Users can send you messages which you can read in ' +
                                'the administration interface or forward to an email-address..')

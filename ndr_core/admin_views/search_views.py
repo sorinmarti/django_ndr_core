@@ -179,10 +179,12 @@ def preview_image(request, img_config):
     for row in config_rows:
         config_row = row.split("~")
         if '' not in config_row:
+            field = NdrCoreSearchField.objects.get(pk=config_row[3])
             data.append({
                 'row': int(config_row[0]),
                 'col': int(config_row[1]),
                 'size': int(config_row[2]),
-                'text': NdrCoreSearchField.objects.get(pk=config_row[3]).field_label})
+                'text': field.field_label,
+                'type': field.field_type})
     image_data = get_image_from_raw_data(data)
     return HttpResponse(image_data, content_type="image/png")

@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 from ndr_core.admin_views.uploads_views import ConfigureUploads, UploadCreateView, UploadEditView, UploadDeleteView
 from ndr_core.admin_views.result_views import ConfigureResultsView, ResultsConfigurationDetailView
 from ndr_core.admin_views.export_views import export_color_palette, export_settings, export_messages
-from ndr_core.admin_views.admin_views import NdrCoreDashboard, init_ndr_core, HelpView, StatisticsView, \
+from ndr_core.admin_views.admin_views import NdrCoreDashboard, HelpView, StatisticsView, \
     set_statistics_option
 from ndr_core.admin_views.page_views import ManagePages, PageCreateView, PageEditView, PageDeleteView, PageDetailView, \
     move_page_up, ManagePageFooter
@@ -35,8 +35,6 @@ from ndr_core.views import ApiTestView, NdrDownloadView, NdrMarkForCorrectionVie
 app_name = 'ndr_core'
 urlpatterns = [
     path('', NdrCoreDashboard.as_view(), name='dashboard'),
-
-    path('init/', init_ndr_core, name='init_ndr_core'),
 
     # PAGES
     path('configure/pages/', ManagePages.as_view(), name='configure_pages'),
