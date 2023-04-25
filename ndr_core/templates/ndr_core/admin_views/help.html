@@ -7,6 +7,9 @@
             <div class="card-body">
                 <h5 class="card-title">General</h5>
                 <div class="list-group">
+                    <a href="{% url 'ndr_core:help_chapter' 'about' %}" class="list-group-item small list-group-item-action py-2{% if "/help/about/" in request.path %} active{% endif %}">
+                        About NDR Core
+                    </a>
                     <a href="{% url 'ndr_core:help_chapter' 'pages' %}" class="list-group-item small list-group-item-action py-2{% if "/help/pages/" in request.path %} active{% endif %}">
                         NDR Core Pages
                     </a>

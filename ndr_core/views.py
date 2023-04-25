@@ -400,23 +400,3 @@ class ApiTestView(View):
             json_response = {}
 
         return JsonResponse(json_response)
-
-
-class NdrFileView(View):
-    """TODO """
-
-    file = None
-    content_type = 'text/plain'
-
-    def get(self, request, *args, **kwargs):
-
-        if self.file is None:
-            return JsonResponse({})
-        else:
-            filename = f"{NdrSettings.get_files_path()}/{self.file}"
-            try:
-                with open(filename, 'r') as file:
-                    string = file.readlines()
-                    return HttpResponse(string, content_type=self.content_type)
-            except FileNotFoundError:
-                return JsonResponse({"error": "file not found"})

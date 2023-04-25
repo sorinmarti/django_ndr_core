@@ -1,6 +1,8 @@
 {% extends 'ndr_core/admin_views/base.html' %}
-{% load django_tables2 %}
+{% load render_table from django_tables2 %}
+{% load crispy_forms_tags %}
 {% load ndr_utils %}
+{% load bootstrap4 %}
 
 {% block content %}
     <h2><i class="fa-regular fa-chart-simple"></i> View Statistics</h2>
@@ -103,6 +105,10 @@
     <div class="card bg-light mb-3">
         <div class="card-body">
             <h5>Searches</h5>
+            <form action="" method="get" class="form form-inline">
+                {% bootstrap_form filter.form layout='inline'  %}
+                {% bootstrap_button 'Filter' button_class="btn-outline-primary" %}
+            </form>
             {% render_table table %}
         </div>
     </div>

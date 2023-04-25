@@ -63,9 +63,9 @@
                             <p class="text-muted small font-italic p-0 m-0" style="position: absolute; left: 0px; bottom: 0px;">(Image created with <a href="https://labs.openai.com/">DALL-E</a>.)</p>
                         </div>
                         <div class="col-sm-auto p-0 m-0">
-                            <a href="#" class="btn btn-sm btn-primary">Check Messages</a>
-                            <a href="#" class="btn btn-sm btn-primary">See Search Statistics</a>
-                            <a href="#" class="btn btn-sm btn-primary">View Entries To Correct</a>
+                            <a href="{% url 'ndr_core:configure_messages' %}" class="btn btn-sm btn-primary">Check Messages</a>
+                            <a href="{% url 'ndr_core:search_statistics' %}" class="btn btn-sm btn-primary">See Search Statistics</a>
+                            <a href="{% url 'ndr_core:configure_corrections' %}" class="btn btn-sm btn-primary">View Entries To Correct</a>
                         </div>
                     </div>
                 </div>
@@ -90,7 +90,7 @@
                 <div class="container p-0 m-0">
                     <div class="row p-0 m-0">
                         <div class="col-sm-auto p-0 m-0">
-                            <a href="#" class="btn btn-sm btn-primary">API Implementations</a>
+                            <a href="{% url 'ndr_core:help_chapter' 'apis' %}" class="btn btn-sm btn-primary">API Implementations</a>
                         </div>
                         <div class="col-sm p-0 m-0">
                             <p class="text-muted small font-italic p-0 m-0" style="position: absolute; right: 0px; bottom: 0px;">(Image created with <a href="https://labs.openai.com/">DALL-E</a>.)</p>
@@ -122,7 +122,7 @@
                             <p class="text-muted small font-italic p-0 m-0" style="position: absolute; left: 0px; bottom: 0px;">(Image created with <a href="https://labs.openai.com/">DALL-E</a>.)</p>
                         </div>
                         <div class="col-sm-auto p-0 m-0">
-                            <a href="#" class="btn btn-sm btn-primary">NDR Core Help</a>
+                            <a href="{% url 'ndr_core:help' %}" class="btn btn-sm btn-primary">NDR Core Help</a>
                             <a href="#" class="btn btn-sm btn-primary">Installation Guide</a>
                             <a href="#" class="btn btn-sm btn-primary">Repository</a>
                         </div>

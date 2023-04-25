@@ -1,3 +1,4 @@
+"""This file holds the init_dr_core management command class."""
 import os
 import shutil
 
@@ -61,8 +62,6 @@ class Command(BaseCommand):
         directories_to_create = [
             NdrSettings.get_templates_path(),
             NdrSettings.get_static_path(),
-            NdrSettings.get_files_path(),
-            NdrSettings.get_data_path(),
             NdrSettings.get_sample_data_path(),
             NdrSettings.get_images_path(),
             NdrSettings.get_css_path(),

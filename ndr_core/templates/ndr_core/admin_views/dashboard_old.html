@@ -1,0 +1,196 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load static %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/ndr.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">NDR Core Administration</h5>
+                  <p class="card-text">Welcome to the NDR Core administration interface.</p>
+                  <p class="card-text">
+                      {% if not ndr_inizialized %}
+                          <strong class="text-danger">
+                              It seems as if you have not initialized your NDR application.
+                              You can initialize it by pressing the button below.
+                          </strong>
+                      {% else %}
+                          {% if not ndr_registered %}
+                              <strong class="text-danger">
+                                Your NDR application is not registered! Add it to you INSTALLED_APPS setting.
+                              </strong>
+                          {% else %}
+                              {% if not ndr_in_urls %}
+                                  <strong class="text-danger">
+                                      Your NDR application is not registered in urls.py! Add it to you urls.py setting.
+                                  </strong>
+                              {% else %}
+                                  Your NDR application seems to be set up and running!
+                              {% endif %}
+                          {% endif %}
+                      {% endif %}
+                  </p>
+            </div>
+            <div class="card-footer text-center">
+                {% if not ndr_inizialized %}
+                    <a href="{% url 'ndr_core:init_ndr_core' %}" class="btn btn-sm btn-success">Initialize NDR</a>
+                {% else %}
+                    <a href="{% url 'ndr_core:configure_settings' %}" class="btn btn-sm btn-outline-secondary">Settings</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/api.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Configure Your API</h5>
+                  <p class="card-text">
+                      NDR Core provides a fronted for your data. In order to use the search functions, you need to
+                      define the API the data is served with and define how your results will be styled by NDR Core.
+                  </p>
+                  <p class="card-text"><small class="text-muted">You have {{ numbers.api }} API configurations in your installation.</small></p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{% url 'ndr_core:configure_api' %}" class="btn btn-sm btn-outline-secondary{% if not ndr_inizialized %} disabled{% endif %}">Configure API</a>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/search.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Configure Your Search</h5>
+                  <p class="card-text">
+                      With a configured API you can create search forms to provide access to your data.
+                  </p>
+                  <p class="card-text"><small class="text-muted">You have {{ numbers.search }} search configurations in your installation.</small></p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{% url 'ndr_core:configure_search' %}" class="btn btn-sm btn-outline-secondary{% if not ndr_inizialized %} disabled{% endif %}">Configure Search</a>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/pages.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Create or Edit Pages</h5>
+                  <p class="card-text">
+                      Your web site consists of a number of pages. You can create pages of various types to display
+                      static content, search or contact forms and more.
+                  </p>
+                  <p class="card-text"><small class="text-muted">You have {{ numbers.page }} pages in your installation.</small></p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{% url 'ndr_core:configure_pages' %}" class="btn btn-sm btn-outline-secondary{% if not ndr_inizialized %} disabled{% endif %}">Manage Pages</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECOND ROW -->
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/messages.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Check Your Inbox</h5>
+                  <p class="card-text">
+                      Youn can forward your messages or view them here
+                  </p>
+                  <p class="card-text"><small class="text-muted">You have {{ numbers.messages }} new messages.</small></p>
+            </div>
+            <div class="card-footer text-center">
+              <a href="#" class="btn btn-sm btn-outline-secondary{% if not ndr_inizialized %} disabled{% endif %}">View Inbox</a>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/correct.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Corrections</h5>
+                  <p class="card-text">
+                      This feature is not implemented yet.
+                  </p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="#" class="btn btn-sm btn-outline-secondary disabled">See Corrections</a>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/data.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Sample Data</h5>
+                  <p class="card-text">
+                      You can provide sample data to test the rendering of your search results.
+                  </p>
+            </div>
+            <div class="card-footer text-center">
+              <a href="{% url 'ndr_core:configure_sample_data' %}" class="btn btn-sm btn-outline-secondary{% if not ndr_inizialized %} disabled{% endif %}">Configure Sample Data</a>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/images.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Images</h5>
+                  <p class="card-text">
+                      Manage Images in Your installation.
+                  </p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{% url 'ndr_core:help' %}" class="btn btn-sm btn-outline-secondary">Manage Images</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Third ROW -->
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/style.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Change Look & Feel and Colors</h5>
+                  <p class="card-text">
+                      You can choose from pre-installed UI Styles and color schemes.
+                  </p>
+                  <p class="card-text"><small class="text-muted">Selected UI Style is: {{ ui_style }}, selected color scheme is: {{ color_scheme }}</small></p>
+            </div>
+            <div class="card-footer text-center">
+              <a href="{% url 'ndr_core:ui_settings' %}" class="btn btn-sm btn-outline-secondary{% if not ndr_inizialized %} disabled{% endif %}">Change UI Style</a>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/elements.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Configure UI Elements</h5>
+                  <p class="card-text">
+                      This feature is not implemented yet.
+                  </p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="#" class="btn btn-sm btn-outline-secondary disabled">Configure UI Elements</a>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/view.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">View your Homepage</h5>
+                  <p class="card-text">
+                      All Changes you make to your configuration will change how your home page looks and feels.
+                  </p>
+            </div>
+            <div class="card-footer text-center">
+              <a href="/" class="btn btn-sm btn-outline-secondary{% if not ndr_inizialized %} disabled{% endif %}">View Your Home Page</a>
+            </div>
+        </div>
+        <div class="card bg-light mb-3">
+            <img class="card-img-top" src="{% static 'ndr_core/images/admin/dashboard/help.png' %}" alt="Card image cap" style="opacity: .6;">
+            <div class="card-body">
+                <h5 class="card-title">Read the Documentation</h5>
+                  <p class="card-text">
+                      You can view a FAQ-like help page or read NDR Core's documentation.
+                  </p>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{% url 'ndr_core:help' %}" class="btn btn-sm btn-outline-secondary">Help Page</a>
+                <a href="#" class="btn btn-sm btn-outline-secondary">Documentation</a>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

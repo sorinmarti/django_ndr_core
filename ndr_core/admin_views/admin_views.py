@@ -6,6 +6,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.management import call_command
 from django.shortcuts import render, redirect
 from django.views import View
+from django.views.generic import ListView
+from django_filters import FilterSet
+from django_filters.views import FilterView
+from django_tables2 import SingleTableMixin
 
 from ndr_core.models import NdrCorePage, NdrCoreSearchConfiguration, NdrCoreValue, NdrCoreApiConfiguration, \
     NdrCoreUiStyle, NdrCoreColorScheme, NdrCoreSearchStatisticEntry
@@ -33,8 +37,7 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
         return render(self.request,
                       template_name='ndr_core/admin_views/dashboard.html',
                       context={'ndr_inizialized': NdrSettings.app_exists(),
-                               'ndr_registered': NdrSettings.app_registered(),
-                               'ndr_in_urls': NdrSettings.app_in_urls(),
+
                                'numbers': {
                                    'api': NdrCoreApiConfiguration.objects.all().count(),
                                    'search': NdrCoreSearchConfiguration.objects.all().count(),
@@ -56,26 +59,41 @@ class HelpView(LoginRequiredMixin, View):
                       context={'chapter': chapter})
 
 
-class StatisticsView(LoginRequiredMixin, View):
-    """TODO """
+class StatisticsFilter(FilterSet):
+    class Meta:
+        model = NdrCoreSearchStatisticEntry
+        fields = {"search_query": ["contains"]}
 
-    def get(self, request, *args, **kwargs):
+class StatisticsView(LoginRequiredMixin, SingleTableMixin, FilterView):
+    """TODO """
+    table_class = StatisticsTable
+    model = NdrCoreSearchStatisticEntry
+    template_name = 'ndr_core/admin_views/view_statistics.html'
+    paginate_by = 25
+
+    filterset_class = StatisticsFilter
+
+    def get_context_data(self, **kwargs):
+        context = super(StatisticsView, self).get_context_data(**kwargs)
         today = datetime.today().astimezone().replace(hour=0, minute=0, second=0, microsecond=0)
         first_of_week = today - timedelta(days=today.weekday())
         first_of_month = today.replace(day=1)
         first_of_year = today.replace(day=1, month=1)
 
-        context = {'statistics_enabled': NdrCoreValue.objects.get(value_name='statistics_feature').get_value(),
-                   'table': StatisticsTable(data=NdrCoreSearchStatisticEntry.objects.all()),
-                   'search_summary': {
-                       'today': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_week).count(),
-                       'this_week': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_week).count(),
-                       'this_month': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_month).count(),
-                       'this_year': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_year).count(),
-                       'total': NdrCoreSearchStatisticEntry.objects.all().count()}}
-        return render(self.request,
-                      template_name='ndr_core/admin_views/view_statistics.html',
-                      context=context)
+        context['statistics_enabled'] = NdrCoreValue.objects.get(value_name='statistics_feature').get_value()
+        context['search_summary'] = {
+            'today': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_week).count(),
+            'this_week': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_week).count(),
+            'this_month': NdrCoreSearchStatisticEntry.objects.filter(
+                search_time__gte=first_of_month).count(),
+            'this_year': NdrCoreSearchStatisticEntry.objects.filter(search_time__gte=first_of_year).count(),
+            'total': NdrCoreSearchStatisticEntry.objects.all().count()}
+        return context
+
+
+    def get_queryset(self):
+        return NdrCoreSearchStatisticEntry.objects.all().order_by('-search_time')
+
 
 
 def set_statistics_option(request, option):
