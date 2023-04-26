@@ -5,8 +5,8 @@ This repository contains the sources to the ndr_core module. You don't need to c
 or download it in order to use ndr_core. If you want to build your own ndr web interface,
 follow the instructions below
 
-![ci](https://github.com/sorinmarti/django_ndr_core/actions/workflows/django.yml/badge.svg)
-![docs](https://readthedocs.org/projects/django_ndr_core/badge/?version=latest)
+![DjangoCI Status](https://github.com/sorinmarti/django_ndr_core/actions/workflows/django.yml/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/django-ndr-core/badge/?version=latest)](https://django-ndr-core.readthedocs.io/en/latest/?badge=latest)
 
 ## How to use ndr_core
 This is the development repo for ndr-core. Follow these step-by-step instructions to create your own ndr installation from the last release on PyPi.
