@@ -6,15 +6,9 @@ from django.urls import path, include, re_path, reverse_lazy
 from django.views.static import serve
 from django.contrib import messages
 
-
 class NdrSettings:
     """Contains mostly static, mostly django-related settings. Not to be confused with NdrCoreValue objects
     which are used to set all web page and search-related settings. """
-
-    VERSION = ndr_core.__version__
-    """ NDR Core Version. Must be iterated when a new version is released. First number are major releases with 
-    fundamental changes, second number are minor releases like new features, third number are bugfixes or added
-    API implementations."""
 
     APP_NAME = 'ndr'
     """ The generated content for the web site is technically a django-app which needs a name. This name is important 
@@ -37,6 +31,11 @@ class NdrSettings:
     ]
     """NDR Core uses many third party modules which need to be in the INSTALLED_APPS list in the django settings. 
     To make things easier for users, this list is joined with the installed apps list."""
+
+    @staticmethod
+    def get_version():
+        with open(os.path.join('ndr_core', 'VERSION')) as version_file:
+            return version_file.read().strip()
 
     @staticmethod
     def app_exists():

@@ -18,5 +18,5 @@ def get_config_value(name):
 @register.simple_tag(name='settings_value')
 def get_version(name):
     if name.lower() == "version":
-        return NdrSettings.VERSION
+        return NdrSettings.get_version()
     return ''

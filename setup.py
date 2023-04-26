@@ -1,4 +1,7 @@
 from setuptools import setup
-import ndr_core
+import os
 
-setup(version=ndr_core.__version__)
+with open(os.path.join('ndr_core', 'VERSION')) as version_file:
+    version = version_file.read().strip()
+
+setup(version=version)
