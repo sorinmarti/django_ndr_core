@@ -90,10 +90,8 @@ class StatisticsView(LoginRequiredMixin, SingleTableMixin, FilterView):
             'total': NdrCoreSearchStatisticEntry.objects.all().count()}
         return context
 
-
     def get_queryset(self):
         return NdrCoreSearchStatisticEntry.objects.all().order_by('-search_time')
-
 
 
 def set_statistics_option(request, option):
