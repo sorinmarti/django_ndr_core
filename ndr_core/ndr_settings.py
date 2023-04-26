@@ -36,7 +36,7 @@ class NdrSettings:
 
     @staticmethod
     def get_version():
-        with open(os.path.join(Path(__file__).resolve().parent, 'ndr_core', 'VERSION')) as version_file:
+        with open(os.path.join(Path(__file__).resolve().parent, 'VERSION')) as version_file:
             return version_file.read().strip()
 
     @staticmethod
