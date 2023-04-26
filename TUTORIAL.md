@@ -63,6 +63,64 @@ if you don't use PostgreSQL.
 pip install django gunicorn psycopg2-binary django-ndr-core
 ```
 
+## Create a Django Project
+Now you can create a django project. Replace <projectname> with the name of your project.
+This can be the same name as the parent directory with your virtual environment, but it hasn't
+to be.
+
+```
+django-admin startproject <projectname>
+```
+
+This will create a directory with the name of your project. Change into it.
+You'll find another directory with the same name inside. Change into that directory.
+
+```
+cd <projectname>/<projectname>
+```
+
+There you'll find a file called ``settings.py``. Open it with your favorite editor and make the 
+following changes:
+
+- Add the following lines to the top of the file with the other imports:
+```
+import os
+from ndr_core.ndr_settings import *
+```
+- Add the following line after the INSTALLED_APPS list:
+```
+INSTALLED_APPS += NdrSettings.get_installed_apps()
+```
+- To the bottom of the file add the following lines:
+```
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
+```
+
+- Now open the file ``urls.py`` and add the following line to the top of the file with the other imports:
+```
+from ndr_core.ndr_settings import NdrSettings
+```
+- Add the following line below the urlpatterns list:
+```
+urlpatterns += NdrSettings.get_urls()
+```
+
+- For production use, you'll have to change more settings: Set the ``ALLOWED_HOSTS`` setting to include the hostname 
+of your server and set the ``DEBUG`` flag to False.
+
+Now change back to your django project directory and create the database. This will create a file called ``db.sqlite3``
+in your project directory. This is the default database for django. If you want to use PostgreSQL or MySQL you'll have
+to change the ``DATABASES`` setting in the ``settings.py`` file. See https://docs.djangoproject.com/en/3.2/ref/databases/
+for more information.
+
+```
+cd ..
+python manage.py migrate
+```
+
+
 
 ## Install mongodb
 

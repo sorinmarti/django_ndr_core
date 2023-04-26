@@ -5,3 +5,4 @@ recursive-include ndr_core/static *
 recursive-include ndr_core/fixtures *
 recursive-include ndr_core/templates *
 global-exclude *.py[cod]
+global-exclude __pycache__

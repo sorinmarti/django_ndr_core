@@ -6,7 +6,10 @@ or download it in order to use ndr_core. If you want to build your own ndr web i
 follow the instructions below
 
 ![DjangoCI Status](https://github.com/sorinmarti/django_ndr_core/actions/workflows/django.yml/badge.svg)
+![PyPi Status](https://github.com/sorinmarti/django_ndr_core/actions/workflows/python-publish.yml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/django-ndr-core/badge/?version=latest)](https://django-ndr-core.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/django-ndr-core.svg)](https://badge.fury.io/py/django-ndr-core)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## How to use ndr_core
 This is the development repo for ndr-core. Follow these step-by-step instructions to create your own ndr installation from the last release on PyPi.
