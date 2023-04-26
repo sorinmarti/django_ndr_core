@@ -1,4 +1,4 @@
 from setuptools import setup
-from ndr_core.ndr_settings import NdrSettings
+import ndr_core
 
-setup(version=NdrSettings.VERSION)
+setup(version=ndr_core.__version__)
