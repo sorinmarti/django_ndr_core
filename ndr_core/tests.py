@@ -5,6 +5,7 @@ from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreSearchF
     NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration, NdrCoreApiImplementation
 from ndr_core.api_factory import ApiFactory
 
+
 class TestMongoDBApi(TestCase):
 
     def setUp(self):
@@ -17,9 +18,12 @@ class TestMongoDBApi(TestCase):
                                                           api_label='MongoDB Test',
                                                           api_page_size=10)
 
+        search_conf = NdrCoreSearchConfiguration.objects.create(api_configuration=api_conf)
+        search_conf.save()
+
     def test_mongodb_api(self):
-        api_conf = NdrCoreApiConfiguration.objects.get(api_name='mongodb_test')
-        query = MongoDBQuery(api_conf)
+        conf = NdrCoreSearchConfiguration.objects.get(api_configuration__api_name="mongodb_test")
+        query = MongoDBQuery(conf)
         simple = query.get_simple_query('Singer')
 
         query.set_value('name', 'John')
@@ -77,13 +81,13 @@ class SearchConfigurationTestCase(TestCase):
 
     def test_basic_query(self):
         conf = NdrCoreSearchConfiguration.objects.get(api_configuration__api_name="asia_dir")
-        query = ApiFactory(conf.api_configuration).get_query_class()(conf.api_configuration, page=1)
+        query = ApiFactory(conf).get_query_instance()
         query_string = query.get_simple_query('1234')
         self.assertEqual('http://asiadir.int:8080/query/basic?s=15&p=1&t=1234', query_string)
 
     def test_advanced_query(self):
         conf = NdrCoreSearchConfiguration.objects.get(api_configuration__api_name="asia_dir")
-        query = ApiFactory(conf.api_configuration).get_query_class()(conf.api_configuration, page=1)
+        query = ApiFactory(conf).get_query_instance()
         query.set_value("first_name", "John")
         query.set_value("last_name", "Smith")
         query_string = query.get_advanced_query()
