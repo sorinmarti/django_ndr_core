@@ -6,3 +6,5 @@ recursive-include ndr_core/fixtures *
 recursive-include ndr_core/templates *
 global-exclude *.py[cod]
 global-exclude __pycache__
+recursive-exclude django_ndr_core *
+recursive-exclude docs *
