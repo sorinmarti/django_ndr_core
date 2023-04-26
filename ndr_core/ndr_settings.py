@@ -10,7 +10,7 @@ class NdrSettings:
     """Contains mostly static, mostly django-related settings. Not to be confused with NdrCoreValue objects
     which are used to set all web page and search-related settings. """
 
-    VERSION = '0.2.0'
+    VERSION = '0.3.0'
     """ NDR Core Version. Must be iterated when a new version is released. First number are major releases with 
     fundamental changes, second number are minor releases like new features, third number are bugfixes or added
     API implementations."""
