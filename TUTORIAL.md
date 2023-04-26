@@ -46,7 +46,7 @@ sudo apt install python3-venv python3-dev libpq-dev postgresql postgresql-contri
 Create a directory for your project, change its ownership and change into it.
 ```
 sudo mkdir /var/www/<projectname>
-sudo chown <username>:<username> /var/www/<projectname>
+sudo chown <username> /var/www/<projectname>
 cd /var/www/<projectname>
 ```
 

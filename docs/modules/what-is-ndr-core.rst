@@ -7,7 +7,7 @@ projects often produce data they want to make accessible. The data is (hopefully
 thus saved for long term use. Repositories with this functionality (such as Zenodo or InvenioRDM) do a great job storing
 the data and ensuring FAIR principles (Findable, Accessible, Interoperable, Reusable) and providing important functionalities
 such as providing persistent identifiers. What these repositories can't do is showcase your data and present it with a
-pretty website. After a research project you want to present data with context,maybeyou want to publish studies alongside
+pretty website. After a research project you want to present data with context, maybe you want to publish studies alongside
 and you want to rapidly search it. NDR Core helps you to do just that.
 
 Who should use it?
@@ -36,4 +36,4 @@ a domain to serve your page from and location where you can install your django 
 How to start?
 =============
 Read this documentation, download django and NDR Core and follow the step by step instructions to get you started.
-I suggest starting with :doc:`how-to-get-started`
+Start with :doc:`how-to-get-started`
