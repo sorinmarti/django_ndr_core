@@ -1,5 +1,7 @@
 """This file holds the NdrSettings class."""
 import os.path
+from pathlib import Path
+
 import ndr_core
 from django.conf import settings
 from django.urls import path, include, re_path, reverse_lazy
@@ -34,7 +36,7 @@ class NdrSettings:
 
     @staticmethod
     def get_version():
-        with open(os.path.join('ndr_core', 'VERSION')) as version_file:
+        with open(os.path.join(Path(__file__).resolve().parent, 'ndr_core', 'VERSION')) as version_file:
             return version_file.read().strip()
 
     @staticmethod
