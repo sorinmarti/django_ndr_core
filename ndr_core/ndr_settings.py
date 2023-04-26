@@ -1,5 +1,6 @@
 """This file holds the NdrSettings class."""
 import os.path
+import ndr_core
 from django.conf import settings
 from django.urls import path, include, re_path, reverse_lazy
 from django.views.static import serve
