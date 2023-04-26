@@ -138,3 +138,5 @@ RECAPTCHA_PRIVATE_KEY = '6LdIoTwkAAAAAAyfC5D4cpvqjCRUDxKoz5BtWyM0'
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 """Needed for the ck-editor"""
 
+GEOIP_PATH = os.path.join('geoip/')
+"""Needed for the geoip functionality."""

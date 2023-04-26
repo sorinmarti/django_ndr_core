@@ -107,6 +107,13 @@ class Command(BaseCommand):
                 os.makedirs(f'media/{directory}/')
                 self.stdout.write(self.style.SUCCESS(f'>>> Created "media/{directory}/"'))
 
+        # Create geoip directory
+        self.stdout.write(self.style.SUCCESS('Creating geoip directory...'))
+        if not os.path.exists(f'geoip/'):
+            os.makedirs(f'geoip/')
+            source_file = finders.find(f'ndr_core/app_init/GeoLite2-Country.mmdb')
+            shutil.copyfile(source_file, 'geoip/GeoLite2-Country.mmdb')
+
         # (5) INITIALIZE VALUES
         # Load fixtures
         self.stdout.write(self.style.SUCCESS('Loading initial values...'))
