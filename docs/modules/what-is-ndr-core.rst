@@ -2,11 +2,11 @@
 What is NDR Core?
 #################
 
-NDR Core is a system to help you build a project website for your data repositories. Modern science and humanities
-projects often produce data they want to make accessible. The data is (hopefully) stored in a FAIR environment and
+NDR Core is a system to help you build a project website to present your research data. Modern science and humanities
+projects often produce data they want to make accessible. The data should be stored in a FAIR environment and
 thus saved for long term use. Repositories with this functionality (such as Zenodo or InvenioRDM) do a great job storing
 the data and ensuring FAIR principles (Findable, Accessible, Interoperable, Reusable) and providing important functionalities
-such as providing persistent identifiers. What these repositories can't do is showcase your data and present it with a
+such as providing persistent identifiers. What these repositories don't do is showcase your data and present it with a
 pretty website. After a research project you want to present data with context, maybe you want to publish studies alongside
 and you want to rapidly search it. NDR Core helps you to do just that.
 
@@ -23,17 +23,22 @@ Check out these sites which were built with NDR Core:
 
 How does it work?
 =================
-NDR Core is a built with the Django Framework. It is basically a module which helps you build your own Django app. NDR
+NDR Core is built with the Django Framework. It is basically a module which helps you build your own Django app. NDR
 Core takes care of creating a basic webpage and provides you with an administration UI that lets you manage your pages
 and configure the access to your search API. It lets you configure search forms and helps you take care of the basic
-elements all project websites need such as Contact forms etc.
+elements most project websites need such as Contact forms, About Pages, File downloads, etc.
 
 What do you need?
 =================
-NDR Core does not serve the data. You'll need a Service which provides you with the actual data over an API. You'll need
-a domain to serve your page from and location where you can install your django installation (e.g. a webserver).
+NDR Core needs to be installed as a Django installation. You'll need a database to store your data. You'll need a search
+engine to index your data and provide search results. You'll need a webserver to serve your page. You'll need a domain
+to serve your page from.
+
+- NDR Core takes care of most of the django installation. It also provides a default built-in database configuration.
+- NDR Core provides access to multiple types of data sources over API implementations. Ideally you'll have a search engine
+  which provides access your data. If you need to store the searchable data yourself, you can, for example, use mongodb.
 
 How to start?
 =============
-Read this documentation, download django and NDR Core and follow the step by step instructions to get you started.
+Read this documentation, download NDR Core and follow the step by step instructions to get you started.
 Start with :doc:`how-to-get-started`

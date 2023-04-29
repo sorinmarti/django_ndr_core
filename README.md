@@ -1,9 +1,9 @@
 # django_ndr_core
 
-NDR_CORE is a django app which helps you build a web interface for your NDR data.
-This repository contains the sources to the ndr_core module. You don't need to clone
-or download it in order to use ndr_core. If you want to build your own ndr web interface,
-follow the instructions below
+NDR Core is a django app which helps you build a web interface to present your data.
+This repository contains the sources to the ndr_core module. You are free to clone
+or download it but you'll need it only if you want to develop it further (which is
+highly welcomed) To use NDR Core you can install it from PyPi. 
 
 ![DjangoCI Status](https://github.com/sorinmarti/django_ndr_core/actions/workflows/django.yml/badge.svg)
 ![PyPi Status](https://github.com/sorinmarti/django_ndr_core/actions/workflows/python-publish.yml/badge.svg)
@@ -38,7 +38,6 @@ sudo apt-get -y install python3-pip
 ```
 
 #### 1.4. Create a virtual environment
-(You might need to sudo this command).
 ```
 pip3 install virtualenv 
 virtualenv venv 
@@ -59,17 +58,11 @@ This will install all the needed dependencies and also install django.
 pip install django-ndr-core
 ```
 
-(Or install from test.pypi:)
-```
-python -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ django-ndr-core
-```
-
 #### 2.2. Start a django project
 Replace <projectname> with the name of your project.
 ```
 django-admin startproject <projectname>
 cd <projectname>
-python manage.py migrate
 ```
 
 #### 2.3. Include NDR Core into your project
@@ -79,20 +72,9 @@ Open ```<projectname>/settings.py``` and add the ndr_core module and its depende
 (Leave the existing settings in place).
 ```
 INSTALLED_APPS = [
-    'ndr_core',
-    'django_tables2',
-    'crispy_forms',
-    'django_select2',
-    'bootstrap4',
-    'crispy_bootstrap4',
-    'ckeditor',
-    'ckeditor_uploader',
-    'captcha',
-    'colorfield',
-    'fontawesomefree',
-    'django.forms',
     [...]
 ]
+INSTALLED_APPS += NdrSettings.get_installed_apps()
 ```
 
 Specify the various settings from the various
