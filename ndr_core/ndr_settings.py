@@ -133,8 +133,8 @@ MESSAGE_TAGS = {
 }
 """Bootstrap css classes to use to display django's built in message tags."""
 
-RECAPTCHA_PUBLIC_KEY = '6LdIoTwkAAAAAMoxg2s9vvLklOy0QY92q9cdionT'
-RECAPTCHA_PRIVATE_KEY = '6LdIoTwkAAAAAAyfC5D4cpvqjCRUDxKoz5BtWyM0'
+RECAPTCHA_PUBLIC_KEY = '6LdIoTwekAAAAAMoxg2s9vvLklOy0QY92q9cdionT'
+RECAPTCHA_PRIVATE_KEY = '6LdIoTwekAAAAAAyfC5D4cpvqjCRUDxKoz5BtWyM0'
 """Recaptcha key to use for the captcha functionality for the contact form.. """
 
 CKEDITOR_UPLOAD_PATH = 'uploads/'

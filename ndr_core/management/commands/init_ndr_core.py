@@ -27,6 +27,12 @@ class Command(BaseCommand):
             default="ndr_core",
             help='Sets the password for the admin user.'
         )
+        parser.add_argument(
+            '--no-interaction',
+            type=bool,
+            default=False,
+            help='Skips all user interaction.'
+        )
 
     def handle(self, *args, **options):
         app_name = NdrSettings.APP_NAME
@@ -122,21 +128,22 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'>>> Loaded initial values: {fixture}'))
 
         # (6) LET THE USER OVERRIDE SOME VALUES
-        values_to_override = [
-            'project_title',
-            'header_default_title'
-        ]
-        for value in values_to_override:
-            try:
-                value_obj = NdrCoreValue.objects.get(value_name=value)
-                temp_value = input(f'Please enter a value for "{value_obj.value_label} '
-                                   f'<default: {value_obj.value_value}>": ')
-                if temp_value != '':
-                    value_obj.value_value = temp_value
-                    value_obj.save()
-                    self.stdout.write(self.style.SUCCESS(f'>>> Updated value "{value}"'))
-            except NdrCoreValue.DoesNotExist:
-                self.stdout.write(self.style.ERROR(f'ERROR: Value "{value}" does not exist.'))
+        if not options['no_interaction']:
+            values_to_override = [
+                'project_title',
+                'header_default_title'
+            ]
+            for value in values_to_override:
+                try:
+                    value_obj = NdrCoreValue.objects.get(value_name=value)
+                    temp_value = input(f'Please enter a value for "{value_obj.value_label} '
+                                       f'<default: {value_obj.value_value}>": ')
+                    if temp_value != '':
+                        value_obj.value_value = temp_value
+                        value_obj.save()
+                        self.stdout.write(self.style.SUCCESS(f'>>> Updated value "{value}"'))
+                except NdrCoreValue.DoesNotExist:
+                    self.stdout.write(self.style.ERROR(f'ERROR: Value "{value}" does not exist.'))
 
         # (7) CREATE ADMIN USER
         self.stdout.write(self.style.SUCCESS('Creating admin user...'))
