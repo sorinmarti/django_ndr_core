@@ -1,11 +1,10 @@
 Admin-Views
 ===========
-These views are used by the admin interface to manage the NDR Core installation.
+Most of NDR Cores Views are admin views. They are documented here.
 
-.. automodule:: ndr_core.admin_views.admin_views
-   :members:
-   :undoc-members:
+.. toctree::
+   :maxdepth: 2
+   :caption: Submodules
 
-.. automodule:: ndr_core.admin_views.api_views
-   :members:
-   :undoc-members:
+   modules/admin/admin_views.rst
+   modules/admin/api_views.rst
