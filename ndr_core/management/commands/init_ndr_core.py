@@ -28,7 +28,7 @@ class Command(BaseCommand):
             help='Sets the password for the admin user.'
         )
         parser.add_argument(
-            '--no-interaction',
+            '--noinput',
             type=bool,
             default=False,
             help='Skips all user interaction.'
@@ -128,7 +128,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'>>> Loaded initial values: {fixture}'))
 
         # (6) LET THE USER OVERRIDE SOME VALUES
-        if not options['no_interaction']:
+        if not options['noinput']:
             values_to_override = [
                 'project_title',
                 'header_default_title'
