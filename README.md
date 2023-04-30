@@ -1,9 +1,9 @@
-# django_ndr_core
+# django-ndr-core
 
-NDR Core is a django app which helps you build a web interface to present your data.
-This repository contains the sources to the ndr_core module. You are free to clone
-or download it but you'll need it only if you want to develop it further (which is
-highly welcomed) To use NDR Core you can install it from PyPi. 
+Django NDR Core is a django app which helps you build a web interface to present your research
+data. This repository contains the sources to the ndr_core module. You are free to clone
+or download it, but you'll only need it if you want to develop it further (which is
+highly welcomed). To use NDR Core you can install it from PyPi or check out the Docker image. 
 
 ![DjangoCI Status](https://github.com/sorinmarti/django_ndr_core/actions/workflows/django.yml/badge.svg)
 ![PyPi Status](https://github.com/sorinmarti/django_ndr_core/actions/workflows/python-publish.yml/badge.svg)
@@ -12,170 +12,137 @@ highly welcomed) To use NDR Core you can install it from PyPi.
 [![Docker Image CI](https://github.com/sorinmarti/django_ndr_core/actions/workflows/docker-image.yml/badge.svg)](https://github.com/sorinmarti/django_ndr_core/actions/workflows/docker-image.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## How to use ndr_core
-This is the development repo for ndr-core. Follow these step-by-step instructions to create your own ndr installation from the last release on PyPi.
+## More Information
+- Read the [Documentation](https://django-ndr-core.readthedocs.io/en/latest/) on ReadTheDocs.
+- Find the module on [PyPi](https://pypi.org/project/django-ndr-core/).
+- Check out the [Docker image](https://hub.docker.com/r/sorinmarti/django_ndr_core) on Docker Hub.
+- See [ndrcore.org](https://ndrcore.org) for a demo and a list of projects using NDR Core. (in development). 
 
-### Install a python environment
+## How to use NDR Core
+First you need to install NDR Core. You can do this in different ways. You can install it from PyPi, you can use the
+Docker image or you can clone this repository and install it from the sources.
 
-#### 1.1. Create a project directory
-```
-mkdir <projectname>
-cd <projectname>
-```
+It is recommended to use the docker image for local testing and configuration. For production use you should install
+NDR Core from PyPi and use a webserver like nginx to serve the application.
 
-#### 1.2. Make sure you have Python and pip installed, update pip to the latest version
+### Use the Docker image
+The Docker image is available on Docker Hub. You can pull it with the following command:
+```shell
+docker pull sorinmarti/django_ndr_core
 ```
+You can run the image with the following command:
+```shell
+docker run -p 8000:8000 sorinmarti/django_ndr_core
+```
+This will start the application on port 8000. You can access it with your browser on http://localhost:8000.
+
+
+### Install NDR Core from Scratch
+This is a step-by-step guide to install NDR Core on a Ubuntu Machine (or similar). It is recommended to use a virtual environment
+for the installation. This guide assumes that you have a fresh Ubuntu installation. If you already have Python and
+pip installed, you can skip the first two steps.
+
+#### Make sure you have Python and pip installed, update pip to the latest version
+```shell
 python3 --version
 pip3 --version
 python3 -m pip install --upgrade pip
 ```
 If installed, a version number is shown. If not, follow the next step
 
-#### 1.3. Install python and pip
-```
+#### Install python and pip
+```shell
 sudo apt-get update
 sudo apt-get install python3.11
 sudo apt-get -y install python3-pip
 ```
 
-#### 1.4. Create a virtual environment
+#### Create a project directory
+Create a directory for your project and change into it. This will be the root directory of your project.
+It contains the virtual environment and the django project.
+```shell
+mkdir <project_root>
+cd <project_root>
 ```
+
+#### Create a virtual environment
+```shell
 pip3 install virtualenv 
 virtualenv venv 
 ```
 
-#### 1.5. Activate the virtual environment and upgrade pip
-```
-source venv/bin/activate (linux & MacOS
-venv\Scripts\activate (windows)
+#### Activate the virtual environment and upgrade pip
+```shell
+source venv/bin/activate
 python -m pip install --upgrade pip
 ```
 
-### Create a Django project
-
-#### 2.1. Install ndr_core
+#### Install ndr_core
 This will install all the needed dependencies and also install django.
-```
+```shell
 pip install django-ndr-core
 ```
 
-#### 2.2. Start a django project
-Replace <projectname> with the name of your project.
-```
-django-admin startproject <projectname>
-cd <projectname>
+#### Start a django project
+Replace `<project_name>` with the name of your project. It can be the same as your project root directory.
+```shell
+django-admin startproject <project_name>
+cd <project_name>
 ```
 
-#### 2.3. Include NDR Core into your project
-
-##### settings.py
-Open ```<projectname>/settings.py``` and add the ndr_core module and its dependencies to ```INSTALLED_APPS```:
+#### settings.py
+Open ```<project_name>/settings.py``` and add the ndr_core module and its dependencies to ```INSTALLED_APPS```:
 (Leave the existing settings in place).
-```
+
+```python
+import os
+from ndr_core.ndr_settings import *
+
+[...]
+
 INSTALLED_APPS = [
     [...]
 ]
 INSTALLED_APPS += NdrSettings.get_installed_apps()
 ```
 
-Specify the various settings from the various
-```
-import os
-from django.contrib import messages
-from django.urls import reverse_lazy
+#### urls.py
+Open ```<project_name>/urls.py``` and add the ndr_core module and its dependencies to ```INSTALLED_APPS```:
+(Leave the existing settings in place).
+```python
+from ndr_core.ndr_settings import NdrSettings
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-LOGIN_URL = reverse_lazy('ndr_core:login')
-LOGOUT_URL = reverse_lazy('ndr_core:logout')
-LOGIN_REDIRECT_URL = reverse_lazy('ndr_core:dashboard')
-FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
-
-MESSAGE_TAGS = {
-        messages.DEBUG: 'alert-secondary',
-        messages.INFO: 'alert-info',
-        messages.SUCCESS: 'alert-success',
-        messages.WARNING: 'alert-warning',
-        messages.ERROR: 'alert-danger',
-}
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = '/media/'
-
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-
-GEOIP_PATH = os.path.join(BASE_DIR, 'geoip/')
-```
-
-NDR Core forms use reCaptchas. In order to use them, you need an [API key](|https://www.google.com/recaptcha/about/).
-
-You can sign up and enter your keys:
-
-```
-RECAPTCHA_PUBLIC_KEY = 'YourPublicKey'
-RECAPTCHA_PRIVATE_KEY = 'YourPrivateKey'
-```
-
-or you can skip this step by silencing the error
-
-```
-SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
-```
-
-##### urls.py
-Open ```<projectname>/urls.py``` and add the needed url configs to ```urlpatterns```:
-
-```
-from django.urls import path, include, re_path
+[...]
 
 urlpatterns = [
-    path('ndr_core/', include('ndr_core.urls')),
-    path("select2/", include("django_select2.urls")),
-    re_path(r'^ckeditor/', include('ckeditor_uploader.urls')),
-    [...]
+   [...]
 ]
+urlpatterns += NdrSettings.get_urls()
 ```
 
-### Create Your App
-
-#### 3.1. Migrate the database
+#### Migrate the database
 After you have added the django-ndr-core module and its dependencies to your settungs and urls, you can migrate your installation again to create the necessary database tables for your ndr-core installation.
 
-```
+```shell
 python manage.py migrate
 python manage.py collectstatic
 ```
 
-### 3.2. Initialize your NDR Core app
+#### Initialize your NDR Core app
 Django works as such that there are different apps. django-ndr-core is a django-app which lets you create and manage your own app. Use the following command initialize your own.
 
-```
+```shell
 python manage.py init_ndr_core
 ```
 
-### 3.3. Start configuring and entering content
+#### Start configuring and entering content
 Run your server.
     
-```
+```shell
 python manage.py runserver
 ```
 
-Visit http://localhost:8000/ to view your website and http://localhost:8000/ndr_core/ to access the configuration interface.
-    
-
-## How to use ndr_core for development
-1. Clone this repo, create and activate a virtual environment
-2. Install requirements: ```pip install -r requirements.txt``` 
-3. Create Sqlite Database: ```python manage.py migrate```
-4. Collect static files: ```python manage.py collectstatic```
-5. Init your NDR page: ```python manage.py init_ndr_core```
-6. Run your server: ```python manage.py runserver```
-
-You should be able to access your site now. It consists of a simple home page.
-
-Go to http://localhost:8000/ndr_core/ to configure your page.
-
-(This document needs to be updated)
+Visit http://localhost:8000/ to view your website and http://localhost:8000/ndr_core/ 
+to access the configuration interface. The last command runs your server on port 8000.
+This is not suitable for production use. You should use a webserver like nginx to serve
+your application. See the [Documentation](https://django-ndr-core.readthedocs.io/en/latest/) for more information.

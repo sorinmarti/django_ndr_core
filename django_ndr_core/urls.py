@@ -1,8 +1,4 @@
-"""django_ndr_core URL Configuration
-
-
-
-"""
+"""django_ndr_core URL Configuration"""
 from django.contrib import admin
 from django.urls import path
 from ndr_core.ndr_settings import NdrSettings

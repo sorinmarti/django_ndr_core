@@ -12,6 +12,8 @@ Welcome to NDR Core's documentation
 
    modules/what-is-ndr-core.rst
    modules/how-to-get-started.rst
+   modules/api-implementations.rst
+   modules/install-on-a-server.rst
    modules/administration-interface.rst
    modules/models.rst
    modules/views.rst

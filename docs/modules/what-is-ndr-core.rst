@@ -16,10 +16,8 @@ NDR Core is aimed at project groups who want their data published in a modern re
 to much with the hassle of building one. Think of NDR Core as a very specialized CMS (Content Management System) which is
 tailored to enable you to display search results and static website content.
 
-Check out these sites which were built with NDR Core:
+Check out sites which were built with NDR Core: https://ndrcore.org
 
-- `https://divisive-power.org <https://divisive-power.org>`_
-- `https://asia-directories.org <https://asia-directories.org>`_
 
 How does it work?
 =================
