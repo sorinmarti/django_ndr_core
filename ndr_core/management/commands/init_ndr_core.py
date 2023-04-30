@@ -50,12 +50,13 @@ class Command(BaseCommand):
 
         # If the app does not exist, ask if it should be created, create it, and continue or exit
         else:
-            confirm_command = ''
-            while confirm_command != 'y':
-                confirm_command = input(f'Are you sure you want to initialize the NDR Core app? '
-                                        f'This is going to create files and directories. (y/n) ')
-                if confirm_command == 'n':
-                    return
+            if options['noinput'] is False:
+                confirm_command = ''
+                while confirm_command != 'y':
+                    confirm_command = input(f'Are you sure you want to initialize the NDR Core app? '
+                                            f'This is going to create files and directories. (y/n) ')
+                    if confirm_command == 'n':
+                        return
 
         # (2) CREATE APP
         # Initialize the app
@@ -128,7 +129,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'>>> Loaded initial values: {fixture}'))
 
         # (6) LET THE USER OVERRIDE SOME VALUES
-        if not options['noinput']:
+        if options['noinput'] is False:
             values_to_override = [
                 'project_title',
                 'header_default_title'
