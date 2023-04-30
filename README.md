@@ -9,6 +9,7 @@ highly welcomed) To use NDR Core you can install it from PyPi.
 ![PyPi Status](https://github.com/sorinmarti/django_ndr_core/actions/workflows/python-publish.yml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/django-ndr-core/badge/?version=latest)](https://django-ndr-core.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/django-ndr-core.svg)](https://badge.fury.io/py/django-ndr-core)
+[![Docker Image CI](https://github.com/sorinmarti/django_ndr_core/actions/workflows/docker-image.yml/badge.svg)](https://github.com/sorinmarti/django_ndr_core/actions/workflows/docker-image.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## How to use ndr_core
