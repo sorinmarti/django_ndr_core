@@ -184,6 +184,13 @@ On a virtual machine, you can try to open port 8000 and then visit http://<your-
     sudo ufw allow 8000
     python manage.py runserver 0.0.0.0:8000
 
+You should assign ownership of the project directory to the user that will run the django project.
+This is ideally ``www-data`` or something similar.
+
+.. code-block:: bash
+
+    sudo chown -R www-data /var/www/<project_root>
+
 To now run your django project with gunicorn, follow the next steps.
 
 Configure Nginx and Gunicorn
@@ -402,13 +409,12 @@ you when your certificate is about to expire.
 
 Install MongoDB
 ===============
-TODO
+To install MongoDB Community Edition, you can follow the instructions on the MongoDB website
+or follow the instructions below.
 
-::
+:: code-block:: bash
 
     sudo apt-get install gnupg
-
-    wget -qO - https://www.mongodb.org/static/pgp/server-4.0.asc | sudo apt-key add -
 
     curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
        sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg \
@@ -420,22 +426,186 @@ TODO
 
     sudo apt-get install -y mongodb-org
 
-    sudo systemctl start mongod
+You now have installed gnupg, added the MongoDB GPG key to your system, created a list file
+for MongoDB, updated the local package list and installed the MongoDB packages.
+
+Reload systemd and start MongoDB:
+
+.. code-block:: bash
+
     sudo systemctl daemon-reload
+    sudo systemctl start mongod
     sudo systemctl status mongod
+
+You can stop it with the following command:
+
+.. code-block:: bash
+
+    sudo systemctl start mongod
+
+If you want it to run as a service, you can enable it with the following command:
+
+.. code-block:: bash
+
     sudo systemctl enable mongod
 
+Your MongoDB installation is now complete.
 
+Cantaloupe IIIF Server
+======================
+Cantaloupe is an open-source IIIF image server. It is written in Java and uses the
+Java Advanced Imaging (JAI) library. It is fast, scalable, and easy to deploy.
+
+First, we need to install Java or check if it is installed. We will work with OpenJDK 11.
+
+Check if Java is installed:
+.. code-block:: bash
+
+    java -version
+
+If it is not installed, install it with the following command:
+.. code-block:: bash
+
+    sudo apt install default-jre
+
+Change into the /usr/local/ directory and download the latest version of Cantaloupe:
+
+.. code-block:: bash
+
+    cd /usr/local
+    sudo mkdir cantaloupe
+    cd cantaloupe
+    wget https://github.com/cantaloupe-project/cantaloupe/releases/download/v5.0.5/cantaloupe-5.0.5.zip
+
+Unzip the file, cd into the directory and copy the cantaloupe.properties.sample file:
+
+.. code-block:: bash
+
+    unzip cantaloupe-5.0.5.zip
+    cd cantaloupe-5.0.5
+    cp cantaloupe.properties.sample cantaloupe.properties
+
+Create a directory to store the images:
+
+.. code-block:: bash
+
+    sudo mkdir /var/www/<project_root>>/images
+
+Open the cantaloupe.properties file and change at least the following settings:
+
+.. code-block:: bash
+
+    FilesystemSource.BasicLookupStrategy.path_prefix = /var/www/<project_root>/images/
+
+If you want you can activate the admin interface:
+
+.. code-block:: bash
+
+    # Enables the Control Panel, at /admin.
+    endpoint.admin.enabled = true
+    endpoint.admin.username = admin
+    endpoint.admin.secret = s3cr3t
+
+Now you can test if cantaloupe is working:
+
+.. code-block:: bash
+
+    java -Dcantaloupe.config=cantaloupe.properties -Xmx2g -jar cantaloupe-5.0.5.jar
+
+If it works, we can create a service file for Cantaloupe:
+
+.. code-block:: bash
+
+    sudo nano /etc/systemd/system/cantaloupe.service
+
+Add the following content to the file:
+
+.. code-block:: bash
+
+    [Unit]
+    Description=Cantaloupe IIIF Service
+
+    [Service]
+    User=www-data
+    WorkingDirectory=/usr/local/cantaloupe/cantaloupe-5.0.5
+    ExecStart=/usr/local/cantaloupe/cantaloupe-5.0.5/start-cantaloupe
+    SuccessExitStatus=143
+    TimeoutStopSec=10
+    Restart=on-failure
+    RestartSec=5
+
+    [Install]
+    WantedBy=multi-user.target
+
+Now we need to create the start script:
+
+.. code-block:: bash
+
+    sudo nano /usr/local/cantaloupe/cantaloupe-5.0.5/start-cantaloupe
+
+Add the following content to the file:
+
+.. code-block:: bash
+
+    #!/bin/bash
+    /usr/bin/java -Dcantaloupe.config=cantaloupe.properties -Xmx2g -jar cantaloupe-5.0.5.jar
+
+Make the script executable:
+
+.. code-block:: bash
+
+    sudo chmod u+x /usr/local/cantaloupe/cantaloupe-5.0.5/start-cantaloupe
+
+Now change ownership of the cantaloupe directory:
+
+.. code-block:: bash
+
+    sudo chown -R www-data:www-data /usr/local/cantaloupe
+
+Reload systemd and start Cantaloupe:
+
+.. code-block:: bash
+
+    sudo systemctl daemon-reload
+    sudo systemctl start cantaloupe
+    sudo systemctl status cantaloupe
+
+Enable it as a service:
+
+.. code-block:: bash
+
+    sudo systemctl enable cantaloupe
+
+Allow the cantaloupe port in the firewall:
+
+.. code-block:: bash
+
+    sudo ufw allow 8182/tcp
+
+Add images to your image directory and test if Cantaloupe is working. Sy you have an
+image called test.jpg in your image directory. You can now access it with the following
+URL: http://<your_domain>:8182/iiif/3/test.jpg/full/full/0/default.jpg
+
+You can also access the admin interface with the following URL: http://<your_domain>:8182/admin
+
+Next Steps
+==========
+You now have installed NDR Core and if needed MongoDB and a IIIF image server. The
+next steps are to populate the database with data and the images folder with images.
+
+See :doc:`sample-data-base` for an example on how to populate the database.
 
 Sources
 =======
 This guide heavily relies on the following sources:
-https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/
-https://docs.djangoproject.com/
-https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-22-04
-https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-22-04
-https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-22-04
-https://www.digitalocean.com/community/tutorials/how-to-set-up-password-authentication-with-nginx-on-ubuntu-20-04
-https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
 
--
+* https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-ubuntu/
+* https://docs.djangoproject.com/
+* https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-22-04
+* https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-22-04
+* https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-22-04
+* https://www.digitalocean.com/community/tutorials/how-to-set-up-password-authentication-with-nginx-on-ubuntu-20-04
+* https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
+* https://cantaloupe-project.github.io/
+* https://training.iiif.io/intro-to-iiif/INSTALLING_CANTALOUPE.html
+* https://medium.com/@sulmansarwar/run-your-java-application-as-a-service-on-ubuntu-544531bd6102
