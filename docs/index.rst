@@ -6,6 +6,13 @@
 Welcome to NDR Core's documentation
 ===================================
 
+.. warning::
+    NDR Core is currently in development. While it is usable, it is not yet
+    ready for out-of-the-box use. If you are interested in using NDR Core,
+    please contact us at https://ndrcore.org
+
+    (Also: ndrcore.org is not yet up and running, but it will be soon. :) )
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -15,9 +22,7 @@ Welcome to NDR Core's documentation
    modules/api-implementations.rst
    modules/install-on-a-server.rst
    modules/administration-interface.rst
-   modules/models.rst
-   modules/views.rst
-   modules/admin-views.rst
+   modules/source-code-documentation.rst
    modules/about-ndr-core.rst
 
 
