@@ -412,7 +412,7 @@ Install MongoDB
 To install MongoDB Community Edition, you can follow the instructions on the MongoDB website
 or follow the instructions below.
 
-:: code-block:: bash
+.. code-block:: bash
 
     sudo apt-get install gnupg
 
