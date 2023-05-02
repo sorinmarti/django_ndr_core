@@ -1,0 +1,202 @@
+[
+    {
+        "id": "1",
+        "title": "The Great Gatsby",
+        "author": {
+            "name": "F. Scott Fitzgerald",
+            "gnd": "118540004"
+        },
+        "source": {
+            "info": "http://localhost:8182/iiif/3/gatsby.jpg/info.json",
+            "cover": "http://localhost:8182/iiif/3/gatsby.jpg/full/max/0/default.jpg",
+            "title_fragment": "http://localhost:8182/iiif/3/gatsby.jpg/0,0,200,200/max/0/default.jpg"
+        },
+        "year": 1925,
+        "pages": 180,
+        "genre": "fiction",
+        "language": "en",
+        "places": [
+            {
+                "name": "New York",
+                "geonames": "5128581"
+            },
+            {
+                "name": "Long Island",
+                "geonames": "5128638"
+            }
+        ],
+      "wikidata": "Q168384"
+    },
+    {
+        "id": "2",
+        "title": "The Grapes of Wrath",
+        "author": {
+            "name": "John Steinbeck",
+            "gnd": "118614798"
+        },
+        "source": {
+            "info": "http://localhost:8182/iiif/3/grapes.jpg/info.json",
+            "cover": "http://localhost:8182/iiif/3/grapes.jpg/full/max/0/default.jpg",
+            "title_fragment": "http://localhost:8182/iiif/3/grapes.jpg/0,0,200,200/max/0/default.jpg"
+        },
+        "year": 1939,
+        "pages": 464,
+        "genre": "fiction",
+        "language": "en",
+        "places": [
+            {
+                "name": "Oklahoma",
+                "geonames": "4544379"
+            },
+            {
+                "name": "California",
+                "geonames": "5332921"
+            }
+        ],
+        "wikidata": "Q168384"
+    },
+    {
+        "id": "3",
+        "title": "The Catcher in the Rye",
+        "author": {
+            "name": "J. D. Salinger",
+            "gnd": "118610110"
+        },
+        "source": {
+            "info": "http://localhost:8182/iiif/3/catcher.jpg/info.json",
+            "cover": "http://localhost:8182/iiif/3/catcher.jpg/full/max/0/default.jpg",
+            "title_fragment": "http://localhost:8182/iiif/3/catcher.jpg/0,0,200,200/max/0/default.jpg"
+        },
+        "year": 1951,
+        "pages": 277,
+        "genre": "fiction",
+        "language": "en",
+        "places": [
+            {
+                "name": "New York",
+                "geonames": "5128581"
+            }
+        ],
+        "wikidata": "Q168384"
+    },
+    {
+        "id": "4",
+        "title": "Die Verwandlung",
+        "author": {
+            "name": "Franz Kafka",
+            "gnd": "118559086"
+        },
+        "source": {
+            "info": "http://localhost:8182/iiif/3/verwandlung.jpg/info.json",
+            "cover": "http://localhost:8182/iiif/3/verwandlung.jpg/full/max/0/default.jpg",
+            "title_fragment": "http://localhost:8182/iiif/3/verwandlung.jpg/0,0,200,200/max/0/default.jpg"
+        },
+        "year": 1915,
+        "pages": 55,
+        "genre": "fiction",
+        "language": "de",
+        "places": [
+            {
+                "name": "Prague",
+                "geonames": "3067696"
+            }
+        ],
+        "wikidata": "Q168384"
+    },
+    {
+        "id": "5",
+        "title": "L'Amant",
+        "author": {
+            "name": "Marguerite Duras",
+            "gnd": "118530707"
+        },
+        "source": {
+            "info": "http://localhost:8182/iiif/3/amant.jpg/info.json",
+            "cover": "http://localhost:8182/iiif/3/amant.jpg/full/max/0/default.jpg",
+            "title_fragment": "http://localhost:8182/iiif/3/amant.jpg/0,0,200,200/max/0/default.jpg"
+        },
+        "year": 1984,
+        "pages": 117,
+        "genre": "fiction",
+        "language": "fr",
+        "places": [
+            {
+                "name": "Saigon",
+                "geonames": "1566083"
+            }
+        ],
+        "wikidata": "Q168384"
+    },
+    {
+        "id": "6",
+        "title": "On the Origin of Species",
+        "author": {
+            "name": "Charles Darwin",
+            "gnd": "118527579"
+        },
+        "source": {
+            "info": "http://localhost:8182/iiif/3/origin.jpg/info.json",
+            "cover": "http://localhost:8182/iiif/3/origin.jpg/full/max/0/default.jpg",
+            "title_fragment": "http://localhost:8182/iiif/3/origin.jpg/0,0,200,200/max/0/default.jpg"
+        },
+        "year": 1859,
+        "pages": 502,
+        "genre": "non-fiction",
+        "language": "en",
+        "places": [
+            {
+                "name": "London",
+                "geonames": "2643743"
+            }
+        ],
+        "wikidata": "Q168384"
+    },
+    {
+        "id": "7",
+        "title": "Ansichten der Natur",
+        "author": {
+            "name": "Alexander von Humboldt",
+            "gnd": "118554471"
+        },
+        "source": {
+            "info": "http://localhost:8182/iiif/3/ansichten.jpg/info.json",
+            "cover": "http://localhost:8182/iiif/3/ansichten.jpg/full/max/0/default.jpg",
+            "title_fragment": "http://localhost:8182/iiif/3/ansichten.jpg/0,0,200,200/max/0/default.jpg"
+        },
+        "year": 1808,
+        "pages": 448,
+        "genre": "non-fiction",
+        "language": "de",
+        "places": [
+            {
+                "name": "Berlin",
+                "geonames": "2950159"
+            }
+        ],
+        "wikidata": "Q168384"
+    },
+    {
+        "id": "8",
+        "title": "Emile ou De l'éducation",
+        "author": {
+            "name": "Jean-Jacques Rousseau",
+            "gnd": "118607915"
+        },
+        "source": {
+            "info": "http://localhost:8182/iiif/3/emile.jpg/info.json",
+            "cover": "http://localhost:8182/iiif/3/emile.jpg/full/max/0/default.jpg",
+            "title_fragment": "http://localhost:8182/iiif/3/emile.jpg/0,0,200,200/max/0/default.jpg"
+        },
+        "year": 1762,
+        "pages": 432,
+        "genre": "non-fiction",
+        "language": "fr",
+        "places": [
+            {
+                "name": "Paris",
+                "geonames": "2988507"
+            }
+        ],
+        "wikidata": "Q168384"
+    }
+]
