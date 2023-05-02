@@ -38,4 +38,4 @@ author, year, pages, and genre. The data item can have any number of fields.
 IIIF Images
 ===========
 
-.. image:: _static/images/gatsby.png
+.. image:: ../_static/samples/gatsby.png
