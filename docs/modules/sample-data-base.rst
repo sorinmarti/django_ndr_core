@@ -38,4 +38,7 @@ author, year, pages, and genre. The data item can have any number of fields.
 IIIF Images
 ===========
 
-.. image:: ../_static/samples/gatsby.png
+.. image:: ../_static/samples/gatsby.jpg
+    :width: 200px
+    :align: center
+    :alt: The Great Gatsby
