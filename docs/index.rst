@@ -22,6 +22,7 @@ Welcome to NDR Core's documentation
    modules/api-implementations.rst
    modules/install-on-a-server.rst
    modules/sample-data-base.rst
+   modules/sample-setup.rst
    modules/administration-interface.rst
    modules/source-code-documentation.rst
    modules/about-ndr-core.rst

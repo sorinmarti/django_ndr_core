@@ -147,10 +147,10 @@ own images, you can skip this section.
 
 Next Steps
 ==========
-If you followed the Installation and Setup instructions and this guid, you should now have
+If you followed the Installation and Setup instructions and this guide, you should now have
 a running NDR Core installation, a MongoDB with example data and a IIIF image server with
 example images. You can now start to use NDR Core.
 
-You either can follow the :doc:`sample-setup` or access the administration interface at
-``http://localhost:8000/ndr_core``. The default username is ``ndr_core_admin`` and the default
+You either can follow the :doc:`sample-setup` guide or access the administration interface at
+``http://<your-domain>/ndr_core``. The default username is ``ndr_core_admin`` and the default
 password is ``ndr_core``. You should change the password as soon as possible.
