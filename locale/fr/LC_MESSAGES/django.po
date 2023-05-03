@@ -3,25 +3,28 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-03 22:55+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2023-05-03 23:00+0200\n"
+"PO-Revision-Date: 2023-05-03 22:59+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: .\ndr\templates\ndr\contact.html:15
 #: .\ndr_core\static\ndr_core\app_init\contact.html:15
 #: .\static\ndr_core\app_init\contact.html:15
+#, fuzzy
 msgid "Fill in the form below to contact us with any queries."
 msgstr ""
+"Remplissez le formulaire ci-dessous pour nous contacter pour toute question."
 
 #: .\ndr\templates\ndr\search.html:12
 #: .\ndr_core\static\ndr_core\app_init\combined_search.html:19
@@ -29,7 +32,7 @@ msgstr ""
 #: .\static\ndr_core\app_init\combined_search.html:19
 #: .\static\ndr_core\app_init\search.html:11
 msgid "Search Results"
-msgstr ""
+msgstr "Résultats de la recherche"
 
 #: .\ndr\templates\ndr\search.html:15
 #: .\ndr_core\static\ndr_core\app_init\combined_search.html:22
@@ -37,178 +40,205 @@ msgstr ""
 #: .\static\ndr_core\app_init\combined_search.html:22
 #: .\static\ndr_core\app_init\search.html:14
 msgid "refine search"
-msgstr ""
+msgstr "affiner la recherche"
 
 #: .\ndr\templates\ndr\search.html:18
 #: .\ndr_core\static\ndr_core\app_init\search.html:18
 #: .\static\ndr_core\app_init\search.html:17
+#, fuzzy
 msgid "start a new search"
-msgstr ""
+msgstr "Commencer une nouvelle recherche"
 
 #: .\ndr\templates\ndr\search.html:25
 #: .\ndr_core\static\ndr_core\app_init\search.html:25
 #: .\static\ndr_core\app_init\search.html:21
 msgid "Download"
-msgstr ""
+msgstr "Télécharger"
 
 #: .\ndr\templates\ndr\search.html:29
 #: .\ndr_core\static\ndr_core\app_init\search.html:29
 #: .\static\ndr_core\app_init\search.html:24
 msgid "Download JSON"
-msgstr ""
+msgstr "Télécharger JSON"
 
 #: .\ndr\templates\ndr\search.html:32
 #: .\ndr_core\static\ndr_core\app_init\search.html:32
 #: .\static\ndr_core\app_init\search.html:25
 msgid "Download CSV"
-msgstr ""
+msgstr "Télécharger CSV"
 
 #: .\ndr\templates\ndr\search.html:46
 #: .\ndr_core\static\ndr_core\app_init\search.html:46
 #: .\static\ndr_core\app_init\search.html:36
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "                Your search returned %(total)s results, showing page %(page)"
 "s of %(num_pages)s.\n"
 "            "
 msgstr ""
+"\n"
+"Votre recherche a renvoyé %(total)s résultats, affichant la page %(page)s de "
+"%(num_pages)s.\n"
+"            "
 
 #: .\ndr_core\api\api_ninjas\api_ninjas_result.py:20
 #: .\ndr_core\api\ddb_api\ddb_result.py:20
 #: .\ndr_core\api\ndr_core\ndr_core_result.py:16
+#, fuzzy
 msgid "Result could not be loaded"
-msgstr ""
+msgstr "Le résultat n’a pas pu être chargé"
 
 #: .\ndr_core\api\base_result.py:79
+#, fuzzy
 msgid "The connection timed out"
-msgstr ""
+msgstr "La connexion a expiré"
 
 #: .\ndr_core\api\base_result.py:83
+#, fuzzy
 msgid "Query could not be requested"
-msgstr ""
+msgstr "Impossible de demander une requête"
 
 #: .\ndr_core\api\base_result.py:91
+#, fuzzy
 msgid "The server returned status code: {result.status_code}"
-msgstr ""
+msgstr "Le serveur a renvoyé le code d’état : {result.status_code}"
 
 #: .\ndr_core\api\mongodb\mongodb_result.py:48
+#, fuzzy
 msgid "Timed out"
-msgstr ""
+msgstr "Délai expiré"
 
 #: .\ndr_core\forms.py:82
+#, fuzzy
 msgid "And or Or Search"
-msgstr ""
+msgstr "et/ou rechercher"
 
 #: .\ndr_core\forms.py:83
+#, fuzzy
 msgid "AND search"
-msgstr ""
+msgstr "ET recherche"
 
 #: .\ndr_core\forms.py:83
+#, fuzzy
 msgid "OR search"
-msgstr ""
+msgstr "Rechercher"
 
 #: .\ndr_core\forms.py:114
 msgid "Search"
-msgstr ""
+msgstr "Rechercher"
 
 #: .\ndr_core\forms.py:183
+#, fuzzy
 msgid "Invalid value: Format is \"1,2,3-5,7\""
-msgstr ""
+msgstr "Valeur non valide : Le format est « 1,2,3-5,7 »"
 
 #: .\ndr_core\forms.py:193 .\ndr_core\forms.py:196
+#, fuzzy
 msgid "Value is out of range. ({}-{})"
-msgstr ""
+msgstr "La valeur est hors de portée. ({}-{})"
 
 #: .\ndr_core\forms.py:199
 msgid "Invalid value"
-msgstr ""
+msgstr "Valeur non valide"
 
 #: .\ndr_core\forms.py:283
 msgid "Please Choose"
-msgstr ""
+msgstr "Veuillez choisir"
 
 #: .\ndr_core\forms.py:310
 msgid "Simple Search"
-msgstr ""
+msgstr "Recherche simple"
 
 #: .\ndr_core\forms.py:390
 msgid "Message Subject"
-msgstr ""
+msgstr "Objet/Sujet du Message"
 
 #: .\ndr_core\forms.py:391
 msgid "Your E-Mail address"
-msgstr ""
+msgstr "Votre email"
 
 #: .\ndr_core\forms.py:392
 msgid "Message Text"
-msgstr ""
+msgstr "Votre Message"
 
 #: .\ndr_core\forms.py:423
 msgid "Send Message"
-msgstr ""
+msgstr "Envoyer le message"
 
 #: .\ndr_core\static\ndr_core\app_init\combined_search.html:25
 #: .\static\ndr_core\app_init\combined_search.html:25
+#, fuzzy
 msgid "start a search"
-msgstr ""
+msgstr "Démarrer une recherche"
 
 #: .\ndr_core\static\ndr_core\app_init\combined_search.html:32
 #: .\static\ndr_core\app_init\combined_search.html:32
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "                Your search returned %(meta.total)s results, showing page %"
 "(meta.page)s of %(meta.num_pages)s.\n"
 "            "
 msgstr ""
+"\n"
+"Votre recherche a renvoyé les résultats %(meta.total)s, affichant la page %"
+"(meta.page)s de %(meta.num_pages)s.\n"
+"            "
 
 #: .\ndr_core\static\ndr_core\app_init\filtered_list.html:15
 #: .\static\ndr_core\app_init\filtered_list.html:15
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "            Showing %(meta.total)s items. Showing page %(meta.page)s of %"
 "(meta.num_pages)s.\n"
 "        "
 msgstr ""
+"\n"
+"Affichage des éléments %(meta.total)s. Affichage de la page %(meta.page)s de "
+"%(meta.num_pages)s.\n"
+"        "
 
 #: .\ndr_core\templates\django_tables2\bootstrap4-responsive.html:66
 msgid "previous"
-msgstr ""
+msgstr "précédent"
 
 #: .\ndr_core\templates\django_tables2\bootstrap4-responsive.html:86
 msgid "next"
-msgstr ""
+msgstr "suivant"
 
 #: .\ndr_core\templates\ndr_core\base\footer.html:33
 msgid "Connect"
-msgstr ""
+msgstr "Connecter"
 
 #: .\ndr_core\templates\ndr_core\ui_elements\slideshow.html:30
 msgid "Previous"
-msgstr ""
+msgstr "Précédent"
 
 #: .\ndr_core\templates\ndr_core\ui_elements\slideshow.html:34
+#, fuzzy
 msgid "Next"
-msgstr ""
+msgstr "Suivant"
 
 #: .\ndr_core\views.py:265
 msgid "Please enter a search term."
-msgstr ""
+msgstr "Veuillez entrer un mot-clé."
 
 #: .\ndr_core\views.py:282
+#, fuzzy
 msgid "Please fill out at least one search field."
-msgstr ""
+msgstr "Veuillez remplir au moins un champ de recherche."
 
 #: .\ndr_core\views.py:297
 msgid "No results found."
-msgstr ""
+msgstr "Aucun résultat trouvé."
 
 #: .\ndr_core\views.py:347
+#, fuzzy
 msgid "Thank you! The message has been sent."
-msgstr ""
+msgstr "Merci! Le message a été envoyé."
 
 #: .\ndr_core\views.py:356
 msgid "Please correct the errors below."
-msgstr ""
+msgstr "Veuillez corriger les erreurs indiquées."
