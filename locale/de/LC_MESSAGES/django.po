@@ -1,0 +1,214 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-05-03 22:55+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\ndr\templates\ndr\contact.html:15
+#: .\ndr_core\static\ndr_core\app_init\contact.html:15
+#: .\static\ndr_core\app_init\contact.html:15
+msgid "Fill in the form below to contact us with any queries."
+msgstr ""
+
+#: .\ndr\templates\ndr\search.html:12
+#: .\ndr_core\static\ndr_core\app_init\combined_search.html:19
+#: .\ndr_core\static\ndr_core\app_init\search.html:12
+#: .\static\ndr_core\app_init\combined_search.html:19
+#: .\static\ndr_core\app_init\search.html:11
+msgid "Search Results"
+msgstr ""
+
+#: .\ndr\templates\ndr\search.html:15
+#: .\ndr_core\static\ndr_core\app_init\combined_search.html:22
+#: .\ndr_core\static\ndr_core\app_init\search.html:15
+#: .\static\ndr_core\app_init\combined_search.html:22
+#: .\static\ndr_core\app_init\search.html:14
+msgid "refine search"
+msgstr ""
+
+#: .\ndr\templates\ndr\search.html:18
+#: .\ndr_core\static\ndr_core\app_init\search.html:18
+#: .\static\ndr_core\app_init\search.html:17
+msgid "start a new search"
+msgstr ""
+
+#: .\ndr\templates\ndr\search.html:25
+#: .\ndr_core\static\ndr_core\app_init\search.html:25
+#: .\static\ndr_core\app_init\search.html:21
+msgid "Download"
+msgstr ""
+
+#: .\ndr\templates\ndr\search.html:29
+#: .\ndr_core\static\ndr_core\app_init\search.html:29
+#: .\static\ndr_core\app_init\search.html:24
+msgid "Download JSON"
+msgstr ""
+
+#: .\ndr\templates\ndr\search.html:32
+#: .\ndr_core\static\ndr_core\app_init\search.html:32
+#: .\static\ndr_core\app_init\search.html:25
+msgid "Download CSV"
+msgstr ""
+
+#: .\ndr\templates\ndr\search.html:46
+#: .\ndr_core\static\ndr_core\app_init\search.html:46
+#: .\static\ndr_core\app_init\search.html:36
+#, python-format
+msgid ""
+"\n"
+"                Your search returned %(total)s results, showing page %(page)"
+"s of %(num_pages)s.\n"
+"            "
+msgstr ""
+
+#: .\ndr_core\api\api_ninjas\api_ninjas_result.py:20
+#: .\ndr_core\api\ddb_api\ddb_result.py:20
+#: .\ndr_core\api\ndr_core\ndr_core_result.py:16
+msgid "Result could not be loaded"
+msgstr ""
+
+#: .\ndr_core\api\base_result.py:79
+msgid "The connection timed out"
+msgstr ""
+
+#: .\ndr_core\api\base_result.py:83
+msgid "Query could not be requested"
+msgstr ""
+
+#: .\ndr_core\api\base_result.py:91
+msgid "The server returned status code: {result.status_code}"
+msgstr ""
+
+#: .\ndr_core\api\mongodb\mongodb_result.py:48
+msgid "Timed out"
+msgstr ""
+
+#: .\ndr_core\forms.py:82
+msgid "And or Or Search"
+msgstr ""
+
+#: .\ndr_core\forms.py:83
+msgid "AND search"
+msgstr ""
+
+#: .\ndr_core\forms.py:83
+msgid "OR search"
+msgstr ""
+
+#: .\ndr_core\forms.py:114
+msgid "Search"
+msgstr ""
+
+#: .\ndr_core\forms.py:183
+msgid "Invalid value: Format is \"1,2,3-5,7\""
+msgstr ""
+
+#: .\ndr_core\forms.py:193 .\ndr_core\forms.py:196
+msgid "Value is out of range. ({}-{})"
+msgstr ""
+
+#: .\ndr_core\forms.py:199
+msgid "Invalid value"
+msgstr ""
+
+#: .\ndr_core\forms.py:283
+msgid "Please Choose"
+msgstr ""
+
+#: .\ndr_core\forms.py:310
+msgid "Simple Search"
+msgstr ""
+
+#: .\ndr_core\forms.py:390
+msgid "Message Subject"
+msgstr ""
+
+#: .\ndr_core\forms.py:391
+msgid "Your E-Mail address"
+msgstr ""
+
+#: .\ndr_core\forms.py:392
+msgid "Message Text"
+msgstr ""
+
+#: .\ndr_core\forms.py:423
+msgid "Send Message"
+msgstr ""
+
+#: .\ndr_core\static\ndr_core\app_init\combined_search.html:25
+#: .\static\ndr_core\app_init\combined_search.html:25
+msgid "start a search"
+msgstr ""
+
+#: .\ndr_core\static\ndr_core\app_init\combined_search.html:32
+#: .\static\ndr_core\app_init\combined_search.html:32
+#, python-format
+msgid ""
+"\n"
+"                Your search returned %(meta.total)s results, showing page %"
+"(meta.page)s of %(meta.num_pages)s.\n"
+"            "
+msgstr ""
+
+#: .\ndr_core\static\ndr_core\app_init\filtered_list.html:15
+#: .\static\ndr_core\app_init\filtered_list.html:15
+#, python-format
+msgid ""
+"\n"
+"            Showing %(meta.total)s items. Showing page %(meta.page)s of %"
+"(meta.num_pages)s.\n"
+"        "
+msgstr ""
+
+#: .\ndr_core\templates\django_tables2\bootstrap4-responsive.html:66
+msgid "previous"
+msgstr ""
+
+#: .\ndr_core\templates\django_tables2\bootstrap4-responsive.html:86
+msgid "next"
+msgstr ""
+
+#: .\ndr_core\templates\ndr_core\base\footer.html:33
+msgid "Connect"
+msgstr ""
+
+#: .\ndr_core\templates\ndr_core\ui_elements\slideshow.html:30
+msgid "Previous"
+msgstr ""
+
+#: .\ndr_core\templates\ndr_core\ui_elements\slideshow.html:34
+msgid "Next"
+msgstr ""
+
+#: .\ndr_core\views.py:265
+msgid "Please enter a search term."
+msgstr ""
+
+#: .\ndr_core\views.py:282
+msgid "Please fill out at least one search field."
+msgstr ""
+
+#: .\ndr_core\views.py:297
+msgid "No results found."
+msgstr ""
+
+#: .\ndr_core\views.py:347
+msgid "Thank you! The message has been sent."
+msgstr ""
+
+#: .\ndr_core\views.py:356
+msgid "Please correct the errors below."
+msgstr ""
