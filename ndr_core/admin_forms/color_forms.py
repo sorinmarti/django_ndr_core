@@ -17,6 +17,7 @@ class ColorPaletteForm(forms.ModelForm):
 
     @property
     def helper(self):
+        """Creates and returns the form helper property."""
         helper = FormHelper()
         layout = helper.layout = Layout()
         helper.form_method = "POST"
@@ -112,13 +113,14 @@ class ColorPaletteEditForm(ColorPaletteForm):
 
 
 class ColorPaletteImportForm(forms.Form):
-    """TODO """
+    """Form to import a json file to create or update a color palette. """
 
     palette_file = forms.FileField(help_text='Select your exported scheme file. '
                                              'Existing schemes with identical names are updated.')
 
     @property
     def helper(self):
+        """Creates and returns the form helper property."""
         helper = FormHelper()
         helper.form_method = "POST"
         helper.layout = Layout()

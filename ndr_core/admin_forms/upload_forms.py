@@ -8,7 +8,7 @@ from ndr_core.models import NdrCoreUpload
 
 
 class UploadForm(forms.ModelForm):
-    """Form to upload image data. """
+    """Form to upload downloadable files. """
 
     class Meta:
         model = NdrCoreUpload
@@ -33,6 +33,7 @@ class UploadForm(forms.ModelForm):
 
 
 class UploadCreateForm(UploadForm):
+    """Form to upload downloadable files."""
 
     @property
     def helper(self):
@@ -43,6 +44,7 @@ class UploadCreateForm(UploadForm):
 
 
 class UploadEditForm(UploadForm):
+    """Form to edit downloadable files."""
 
     @property
     def helper(self):

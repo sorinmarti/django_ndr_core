@@ -40,7 +40,7 @@ class SampleDataUploadForm(forms.Form):
 
 
 class SampleDataDeleteForm(forms.Form):
-    """ Form to confirmdeletion of sample data file."""
+    """ Form to confirm deletion of sample data file."""
 
     @property
     def helper(self):

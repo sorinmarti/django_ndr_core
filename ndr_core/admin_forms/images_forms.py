@@ -8,7 +8,8 @@ from ndr_core.models import NdrCoreImage
 
 
 class ImageForm(forms.ModelForm):
-    """Form to upload image data. """
+    """Base form to upload/edit image objects. Image-objects mean database objects with an image file
+    linked to them. """
 
     class Meta:
         model = NdrCoreImage
@@ -45,6 +46,7 @@ class ImageForm(forms.ModelForm):
 
 
 class ImageCreateForm(ImageForm):
+    """Form to upload images"""
 
     @property
     def helper(self):
@@ -55,6 +57,7 @@ class ImageCreateForm(ImageForm):
 
 
 class ImageEditForm(ImageForm):
+    """Form to edit images"""
 
     @property
     def helper(self):
@@ -65,9 +68,9 @@ class ImageEditForm(ImageForm):
 
 
 class LogoUploadForm(forms.Form):
-    """Form to upload sample data. """
+    """Form to upload the logo file """
 
-    upload_file = forms.FileField(help_text='TODO')
+    upload_file = forms.FileField(help_text='Choose a logo file to upload.')
 
     @property
     def helper(self):

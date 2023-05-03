@@ -179,7 +179,7 @@ class SearchConfigurationForm(forms.ModelForm):
 
 
 class SearchConfigurationCreateForm(SearchConfigurationForm):
-    """Form to create a search search configuration. """
+    """Form to create a search configuration. """
 
     @property
     def helper(self):
@@ -192,7 +192,7 @@ class SearchConfigurationCreateForm(SearchConfigurationForm):
 
 
 class SearchConfigurationEditForm(SearchConfigurationForm):
-    """Form to edit a search search configuration. """
+    """Form to edit a search configuration. """
 
     @property
     def helper(self):

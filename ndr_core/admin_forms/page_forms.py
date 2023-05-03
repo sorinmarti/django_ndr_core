@@ -188,6 +188,7 @@ class PageEditForm(PageForm):
 
 
 class FooterForm(SettingsListForm):
+    """Form to edit the footer settings."""
 
     def __init__(self, *args, **kwargs):
         kwargs['settings'] = ["footer_show_partners", "footer_show_main_navigation", "footer_show_socials",

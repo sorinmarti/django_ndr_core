@@ -1,3 +1,4 @@
+"""Forms used in the NDRCore admin interface for UI elements."""
 from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML
@@ -8,12 +9,14 @@ from ndr_core.models import NdrCoreUIElement, NdrCoreImage
 
 
 class ImageChoiceField(forms.ModelChoiceField):
+    """Used to display images in a select field."""
 
     def label_from_instance(self, obj):
         return f'{obj.image.url}'
 
 
 class ImageMultipleChoiceField(forms.ModelMultipleChoiceField):
+    """Used to display images in a select field."""
 
     def label_from_instance(self, obj):
         return f'{obj.image.url}'
@@ -25,7 +28,17 @@ class UIElementBaseForm(forms.ModelForm):
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreUIElement
-        fields = ['show_text']
+        fields = ['show_text', ]
+
+    def __init__(self, *args, **kwargs):
+        super(UIElementBaseForm, self).__init__(*args, **kwargs)
+        self.fields['text'] = forms.CharField(widget=forms.Textarea, required=False)
+
+    def initialize_field(self, field_name):
+        if field_name == "card_item_image":
+            self.fields[field_name] = ImageChoiceField(
+                queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
+            self.fields[field_name].widget.option_template_name = "ndr_core/test.html"
 
 
 class UIElementCardForm(forms.ModelForm):
@@ -37,6 +50,7 @@ class UIElementCardForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UIElementCardForm, self).__init__(*args, **kwargs)
+
         self.fields['card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
         self.fields['card_item_image'].widget.option_template_name = "ndr_core/test.html"
         self.fields['card_item_title'] = forms.CharField(required=False)

@@ -1,3 +1,4 @@
+"""Forms used in the NDRCore admin interface for in-app settings."""
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Div, HTML
 from django import forms
@@ -7,7 +8,7 @@ from ndr_core.models import NdrCoreValue
 
 
 class SettingsListForm(forms.Form):
-    """Shows a definedlist of settings to change. """
+    """Shows a defined list of settings to change. """
 
     settings_list = list()
     is_custom_form = False
@@ -163,7 +164,7 @@ class SettingEditForm(SettingForm):
 
 
 class SettingsImportForm(forms.Form):
-    """TODO """
+    """Form to import settings from a json file. """
 
     settings_file = forms.FileField(help_text='Select your exported settings file. '
                                               'Existing settings with identical names are updated.')
