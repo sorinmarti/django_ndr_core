@@ -22,7 +22,7 @@ highly welcomed). To use NDR Core you can install it from PyPi or check out the 
 
 ## How to use NDR Core
 First you need to install NDR Core. You can do this in different ways. You can install it from PyPi, you can use the
-Docker image or you can clone this repository and install it from the sources.
+Docker image, or you can clone this repository and install it from the sources.
 
 It is recommended to use the docker image for local testing and configuration. For production use you should install
 NDR Core from PyPi and use a webserver like nginx to serve the application.
@@ -106,6 +106,13 @@ INSTALLED_APPS = [
     [...]
 ]
 INSTALLED_APPS += NdrSettings.get_installed_apps()
+```
+
+At the bottom of the file, add the following lines:
+```python
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
 ```
 
 #### urls.py
