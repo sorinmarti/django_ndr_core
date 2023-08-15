@@ -315,5 +315,16 @@
       "value_help_text": "The project's or web page's title.",
       "value_value": ""
     }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "available_languages",
+      "value_label": "Available Languages",
+      "value_help_text": "What languages are available?",
+      "value_value": "en",
+      "value_type": "multi_list",
+      "value_options": "(en,English);(de,Deutsch);"
+    }
   }
 ]
