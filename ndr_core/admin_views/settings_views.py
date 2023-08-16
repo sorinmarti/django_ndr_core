@@ -24,7 +24,8 @@ settings_group_list = {
                 'name': 'language',
                 'title': 'Language Settings',
                 'help_text': 'Language for the UI.',
-                'settings': ['ndr_language']
+                'settings': ['ndr_language',
+                             'available_languages']
             },
             'header': {
                 'name': 'header',
