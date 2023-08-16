@@ -337,23 +337,18 @@ class UIElementJumbotronForm(forms.ModelForm):
 
 class UIElementIframeForm(forms.ModelForm):
 
+    iframe_text = forms.CharField(widget=forms.Textarea, label="Embed code",
+                                  help_text="Paste the embed code here. This should be the code provided by the third "
+                                            "party site, not the URL of the page you want to embed.")
+
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreUIElement
-        fields = ['show_title', 'show_text', 'show_image', 'link_element', 'use_image_conf']
+        fields = []
 
     def __init__(self, *args, **kwargs):
         super(UIElementIframeForm, self).__init__(*args, **kwargs)
-        self.fields[f'card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
-        self.fields['card_item_image'].widget.option_template_name = "ndr_core/test.html"
-        self.fields[f'card_item_title'] = forms.CharField()
-        self.fields[f'card_item_text'] = forms.CharField(widget=forms.Textarea)
-        self.fields[f'card_item_url'] = forms.URLField()
 
-        self.fields['show_image'].label = 'Does this card feature an image?'
-        self.fields['show_image'].help_text = 'Note: Images must be uploaded first, before they can be used in UI elements.'
-
-        self.fields['use_image_conf'].label = 'Should this card display the image\'s title, text and URL?'
 
     @property
     def helper(self):
@@ -364,49 +359,10 @@ class UIElementIframeForm(forms.ModelForm):
         layout = helper.layout = Layout()
 
         form_row = Row(
-            Column('show_image', css_class='form-group col-md-12 mb-0'),
+            Column('iframe_text', css_class='form-group col-md-12 mb-0'),
             css_class='form-row'
         )
         layout.append(form_row)
-
-        form_row = Row(
-            Column('card_item_image', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('use_image_conf', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('card_item_title', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('card_item_text', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('card_item_url', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('show_title', css_class='form-group col-md-4 mb-0'),
-            Column('show_text', css_class='form-group col-md-4 mb-0'),
-            Column('link_element', css_class='form-group col-md-4 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
         return helper
 
 
