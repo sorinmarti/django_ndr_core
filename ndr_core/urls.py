@@ -30,7 +30,8 @@ from ndr_core.admin_views.sample_data_views import SampleDataView, SampleDataDet
     SampleDataDeleteView
 
 from ndr_core.admin_forms.admin_forms import NdrCoreLoginForm, NdrCoreChangePasswordForm
-from ndr_core.views import ApiTestView, NdrDownloadView, NdrMarkForCorrectionView, NdrListDownloadView, NdrCSVListDownloadView
+from ndr_core.views import ApiTestView, NdrDownloadView, NdrMarkForCorrectionView, NdrListDownloadView, \
+    NdrCSVListDownloadView, set_language_view
 
 app_name = 'ndr_core'
 urlpatterns = [
@@ -160,6 +161,9 @@ urlpatterns = [
 
     # Mark an entry for correction
     path('mark/to/correct/<str:api_config>/<str:record_id>/', NdrMarkForCorrectionView.as_view(), name='mark_record'),
+
+    # Language
+    path('language/<str:language>/', set_language_view, name='set_language'),
 
     # TEST SERVER
     path('query/<str:api_request>', ApiTestView.as_view(), name='api_test')
