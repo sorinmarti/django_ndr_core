@@ -3,16 +3,18 @@ import json
 
 from django.contrib import messages
 from django.contrib.staticfiles import finders
-from django.http import HttpResponseNotFound, JsonResponse, HttpResponse
+from django.http import HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.urls import reverse
 
 from django.views import View
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 from django.utils.translation import gettext_lazy as _
+from django.utils import translation
 
-
+from django_ndr_core import settings
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
 from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, \
     NdrCoreCorrection, NdrCoreSearchConfiguration, NdrCoreValue
@@ -400,3 +402,22 @@ class ApiTestView(View):
             json_response = {}
 
         return JsonResponse(json_response)
+
+
+def set_language_view(request, language):
+    """A view to set the language of the page. """
+
+    translation.activate(language)
+    request.LANGUAGE_CODE = language
+
+    redirect_url = request.META.get('HTTP_REFERER')
+    if redirect_url is None:
+        redirect_url = reverse(f'{NdrSettings.APP_NAME}:index')
+
+    response = HttpResponseRedirect(redirect_url)
+
+    if hasattr(request, 'session'):
+        request.session['django_language'] = language
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+
+    return response
