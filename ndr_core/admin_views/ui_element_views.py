@@ -113,6 +113,10 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
             self.object.save()
 
         elif self.kwargs['type'] == "iframe":
+            # An Iframe has 1 item.
+            NdrCoreUiElementItem.objects.create(belongs_to=self.object,
+                                                text=form.cleaned_data['iframe_text'],
+                                                order_idx=0)
             self.object.type = NdrCoreUIElement.UIElementType.IFRAME
             self.object.save()
 
