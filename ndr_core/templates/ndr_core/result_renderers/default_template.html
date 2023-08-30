@@ -3,27 +3,37 @@
 
 {% block result_tags %}
     <a href="#">
-        <span  data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="badge badge-secondary small" style="font-weight: normal; background-color: {{ result.original_data.type.id|translate_to_color:30 }};">{{ result.original_data.type.id|translate_dict_value:'type' }}</span>
+        <span  data-toggle="tooltip" data-placement="top" title="Type of the snippet" class="badge badge-secondary small" style="font-weight: normal; background-color: {{ result.original_data.type.id|translate_to_color:30 }};">{{ result.original_data.snippet_type.id|translate_dict_value:'type' }}</span>
     </a>
-    {% if result.original_data.type.is_original %}
-        <span class="badge badge-secondary small" style="font-weight: normal; background-color: #4DC7A0;">Original</span>
-    {% else %}
+    {% if result.original_data.snippet_type.is_reprint %}
         <span class="badge badge-secondary small" style="font-weight: normal; background-color: #e4606d;">Reprint</span>
+    {% else %}
+        <span class="badge badge-secondary small" style="font-weight: normal; background-color: #4DC7A0;">Original</span>
     {% endif %}
-    {% if result.original_data.type.is_header %}
+    {% if result.original_data.snippet_type.additional_data.is_header %}
         <span class="badge badge-secondary small" style="font-weight: normal; background-color: #7abaff;">Header</span>
     {% endif %}
-    {% if result.original_data.type.language %}
-        <span class="badge badge-secondary small" style="font-weight: normal;">{{ result.original_data.type.language|translate_dict_value:'lang' }}</span>
+    {% if result.original_data.snippet_type.additional_data.is_advert %}
+        <span class="badge badge-secondary small" style="font-weight: normal; background-color: #7abaff;">Advert</span>
+    {% endif %}
+    {% if result.original_data.snippet_type.additional_data.is_notice %}
+        <span class="badge badge-secondary small" style="font-weight: normal; background-color: #7abaff;">Notice</span>
+    {% endif %}
+    {% if result.original_data.snippet_type.language %}
+        <span class="badge badge-secondary small" style="font-weight: normal;">{{ result.original_data.snippet_type.language|translate_dict_value:'lang' }}</span>
     {% endif %}
 {% endblock %}
 
 {% block tags %}
     <p class="text-center pt-3">
-        Categories:
-        {% for tag in result.original_data.tags.tags %}
-            <a href="#" class="badge border border-secondary small text-dark" style="font-weight: normal; background-color: {{ tag|translate_to_color:80 }};">{{ tag|translate_dict_value:'tags' }}</a>
-        {% endfor %}
+        {% if result.original_data.tags.tags %}
+            Categories:
+            {% with result.original_data.tags.tags|key_value:'tags.tags' as tag_list %}
+                {% for tag in tag_list|clean_list %}
+                    <a href="#" class="badge border border-secondary small text-dark" style="font-weight: normal; background-color: {{ tag|translate_to_color:80 }};">{{ tag|translate_dict_value:'tags' }}</a>
+                {% endfor %}
+            {% endwith %}
+        {% endif %}
     </p>
 {% endblock %}
 
