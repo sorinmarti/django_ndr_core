@@ -473,6 +473,9 @@ class NdrCorePage(models.Model):
                              help_text="The label of the page, e.g. the page's navigation label")
     """This is the navigation label which is displayed in the navigation"""
 
+    show_in_navigation = models.BooleanField(default=True,
+                                             help_text="Should the page be displayed in the navigation?")
+
     nav_icon = models.CharField(max_length=200,
                                 help_text='The fontawesome nav icon (leave blank if none)',
                                 blank=True)
