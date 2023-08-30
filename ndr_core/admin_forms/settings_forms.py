@@ -46,6 +46,11 @@ class SettingsListForm(forms.Form):
                                                                    required=False,
                                                                    choices=setting_obj.get_options(),
                                                                    help_text=setting_obj.value_help_text)
+            elif setting_obj.value_type == NdrCoreValue.ValueType.MULTI_LIST:
+                self.fields[f"save_{setting}"] = forms.MultipleChoiceField(label=label,
+                                                                           required=False,
+                                                                           choices=setting_obj.get_options(),
+                                                                           help_text=setting_obj.value_help_text)
             elif setting_obj.value_type == NdrCoreValue.ValueType.URL:
                 self.fields[f"save_{setting}"] = forms.URLField(label=label,
                                                                 required=False,
@@ -59,7 +64,10 @@ class SettingsListForm(forms.Form):
         for setting in self.settings_list:
             if f"save_{setting}" in self.data:
                 obj = NdrCoreValue.objects.get(value_name=setting)
-                obj.value_value = self.data[f"save_{setting}"]
+                if obj.value_type == NdrCoreValue.ValueType.MULTI_LIST:
+                    obj.value_value = ','.join(self.data.getlist(f"save_{setting}"))
+                else:
+                    obj.value_value = self.data[f"save_{setting}"]
                 obj.save()
             else:
                 # If the setting is not in the data and its type is BOOLEAN, it means it was unchecked.

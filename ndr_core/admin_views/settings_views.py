@@ -23,7 +23,8 @@ settings_group_list = {
             'language': {
                 'name': 'language',
                 'title': 'Language Settings',
-                'help_text': 'Language for the UI.',
+                'help_text': 'Select the language you create your content in. Then select all languages you want to '
+                             'translate your content to.',
                 'settings': ['ndr_language',
                              'available_languages']
             },
