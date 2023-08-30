@@ -8,6 +8,7 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse, NoReverseMatch
+from django.utils.translation import get_language
 
 from ndr_core.ndr_settings import NdrSettings
 
@@ -105,6 +106,38 @@ class NdrCoreSearchField(models.Model):
 
     use_in_csv_export = models.BooleanField(default=False,
                                             help_text="Should this field be included in the CSV export?")
+
+    def translated_field_label(self):
+        """Returns the translated field label for a given language. If no translation exists, the default label is
+        returned. """
+
+        try:
+            translation = NdrCoreTranslation.objects.get(language=get_language(),
+                                                         table_name='NdrCoreSearchField',
+                                                         field_name='field_label',
+                                                         object_id=self.field_name)
+            if translation.translation != '':
+                return translation.translation
+            else:
+                return self.field_label
+        except NdrCoreTranslation.DoesNotExist:
+            return self.field_label
+
+    def translated_help_text(self):
+        """Returns the translated help text for a given language. If no translation exists, the default help text is
+        returned. """
+
+        try:
+            translation = NdrCoreTranslation.objects.get(language=get_language(),
+                                                         table_name='NdrCoreSearchField',
+                                                         field_name='help_text',
+                                                         object_id=self.field_name)
+            if translation.translation != '':
+                return translation.translation
+            else:
+                return self.help_text
+        except NdrCoreTranslation.DoesNotExist:
+            return self.help_text
 
     def get_list_choices(self):
         # read the list choices from the list_choices field
@@ -432,6 +465,10 @@ class NdrCorePage(models.Model):
                             help_text="The name of the page, e.g. the page's title")
     """This is the name/title of the page. It will be displayed as a <h2>title</h2>"""
 
+    show_page_title = models.BooleanField(default=True,
+                                          help_text="Should the page title be displayed?")
+    """If this is set to False, the page title will not be displayed. """
+
     label = models.CharField(max_length=200,
                              help_text="The label of the page, e.g. the page's navigation label")
     """This is the navigation label which is displayed in the navigation"""
@@ -467,6 +504,51 @@ class NdrCorePage(models.Model):
                                               "choose the parent page here")
     """Any NDR Core page might have children. Currently used for flip book. In the future to be used as navigation 
     hierarchy."""
+
+    def translated_name(self):
+        """Returns the translated name for a given language. If no translation exists, the default name is returned. """
+
+        try:
+            translation = NdrCoreTranslation.objects.get(language=get_language(),
+                                                         table_name='NdrCorePage',
+                                                         field_name='name',
+                                                         object_id=str(self.id))
+            if translation.translation != '':
+                return translation.translation
+            else:
+                return self.name
+        except NdrCoreTranslation.DoesNotExist:
+            return self.name
+
+    def translated_label(self):
+        """Returns the translated label for a given language.
+        If no translation exists, the default label is returned. """
+        try:
+            translation = NdrCoreTranslation.objects.get(language=get_language(),
+                                                         table_name='NdrCorePage',
+                                                         field_name='label',
+                                                         object_id=str(self.id))
+            if translation.translation != '':
+                return translation.translation
+            else:
+                return self.label
+        except NdrCoreTranslation.DoesNotExist:
+            return self.label
+
+    def translated_template_text(self):
+        """Returns the translated template_text for a given language.
+        If no translation exists, the default template_text is returned. """
+        try:
+            translation = NdrCoreRichTextTranslation.objects.get(language=get_language(),
+                                                                 table_name='NdrCorePage',
+                                                                 field_name='template_text',
+                                                                 object_id=str(self.id))
+            if translation.translation != '':
+                return translation.translation
+            else:
+                return self.template_text
+        except NdrCoreRichTextTranslation.DoesNotExist:
+            return self.template_text
 
     def url(self):
         """Returns the url of a given page or '#' if none is found"""
@@ -603,6 +685,7 @@ class NdrCoreValue(models.Model):
         BOOLEAN = "boolean", "Boolean"
         LIST = "list", "List"
         URL = "url", "URL"
+        MULTI_LIST = "multi_list", "Multi List"
 
     value_name = models.CharField(max_length=100, primary_key=True,
                                   help_text='This is the identifier of a NdrCoreValue. '
@@ -628,10 +711,13 @@ class NdrCoreValue(models.Model):
     """This is the actual value which can be updated by the user"""
 
     value_options = models.CharField(max_length=200, default='',
-                                     help_text='Used for value_type LIST: comma-separated list')
+                                     help_text='Used for value_type LIST and MULTI_LIST: comma-separated list')
 
     is_user_value = models.BooleanField(default=False)
     """Indicates if a value was created by a user"""
+
+    is_translatable = models.BooleanField(default=False)
+    """Indicates if a value can be translated"""
 
     def set_value(self, value):
         if self.value_type == NdrCoreValue.ValueType.BOOLEAN:
@@ -655,16 +741,37 @@ class NdrCoreValue(models.Model):
                 return True
             else:
                 return False
+        if self.value_type == NdrCoreValue.ValueType.MULTI_LIST:
+            return self.value_value.split(',')
 
     def get_options(self):
         """For lists there are options, saved as string in the form: (key1,value1);(key2,value2)"""
-        if self.value_type == NdrCoreValue.ValueType.LIST:
+        if self.value_type == NdrCoreValue.ValueType.LIST or self.value_type == NdrCoreValue.ValueType.MULTI_LIST:
             options = list()
             option_tuples = self.value_options.split(";")
             for ot in option_tuples:
-                options.append(ot.split(','))
+                ot = ot[1:-1]   # remove brackets
+                spl = ot.split(',')
+                options.append(spl)
             return options
         return None
+
+    def translated_value(self):
+        """Returns the translated field label for a given language. If no translation exists, the default label is
+                returned. """
+
+        try:
+            translation = NdrCoreTranslation.objects.get(language=get_language(),
+                                                         table_name='NdrCoreValue',
+                                                         field_name='value_value',
+                                                         object_id=self.value_name)
+            if translation.translation != '':
+                return translation.translation
+            else:
+                return self.value_value
+        except NdrCoreTranslation.DoesNotExist:
+            return self.value_value
+
 
     @staticmethod
     def get_or_initialize(value_name, init_value=None, init_label=None, init_type=ValueType.STRING):
@@ -687,7 +794,7 @@ class NdrCoreValue(models.Model):
 
 class NdrCoreDataSchema(models.Model):
     """NdrCore provides a number of already implemented schemas. For each schema it is known which search fields are
-     possible so they can be generated automatically. Example: NdrCore has a 'Historic Person Instances' schema
+     possible, so they can be generated automatically. Example: NdrCore has a 'Historic Person Instances' schema
      implemented for which we know we can search for last and given names, organization affiliation and locations
      (etc.). So we provide a django-fixture to automatically create these NdrCoreSearchField objects to use them in
      a search form.
@@ -793,6 +900,7 @@ class NdrCoreImage(models.Model):
     """ Directory of all images used outside the ckeditor and the logo. """
 
     class ImageGroup(models.TextChoices):
+        PAGE_LOGOS = "page_logos", "Page Logos"
         BGS = "backgrounds", "Background Images"
         ELEMENTS = "elements", "Slideshow Images"
         FIGURES = "figures", "Figures"
@@ -826,7 +934,8 @@ class NdrCoreImage(models.Model):
     """Actual image"""
 
     image_group = models.CharField(max_length=100,
-                                   choices=ImageGroup.choices)
+                                   choices=ImageGroup.choices,
+                                   help_text='Group the image belongs to.')
     """Group the image belongs to. """
 
     index_in_group = models.IntegerField(default=0)
@@ -834,6 +943,11 @@ class NdrCoreImage(models.Model):
 
     image_active = models.BooleanField(default=True)
     """To indicate that this image is not to be used in automatic collections."""
+
+    language = models.CharField(max_length=10, null=True, default=None,
+                                blank=True,
+                                help_text='Language of the image.')
+    """Language of the image. """
 
     def get_absolute_url(self):
         return reverse('ndr_core:view_images', kwargs={'group': self.image_group})
@@ -929,3 +1043,37 @@ class NdrCoreUiElementItem(models.Model):
 
     url = models.URLField(blank=True)
     """TODO """
+
+
+TRANSLATABLE_TABLES = (
+    ('NdrCoreSearchField', 'Search Field Table'),
+    ('NdrCorePage', 'Page Table'),
+    ('NdrCoreValue', 'Settings Table')
+)
+
+TRANSLATABLE_FIELDS = {
+    'NdrCoreSearchField': ('field_label', 'help_text'),
+    'NdrCorePage': ('name', 'label'),
+    'NdrCoreValue': ('value_value', )
+}
+
+
+class NdrCoreTranslation(models.Model):
+    """TODO"""
+
+    language = models.CharField(max_length=10)
+    table_name = models.CharField(max_length=100, choices=TRANSLATABLE_TABLES)
+    object_id = models.CharField(max_length=100)
+    field_name = models.CharField(max_length=100)
+    translation = models.CharField(max_length=255)
+
+
+class NdrCoreRichTextTranslation(models.Model):
+
+    language = models.CharField(max_length=10)
+    table_name = models.CharField(max_length=100, choices=TRANSLATABLE_TABLES)
+    object_id = models.CharField(max_length=100)
+    field_name = models.CharField(max_length=100)
+    translation = RichTextUploadingField(null=True, blank=True,
+                                         help_text='Text for your template page')
+    """Template Pages can be filled with RichText content (instead of 'manual' HTML). """
