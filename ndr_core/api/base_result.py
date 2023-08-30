@@ -168,6 +168,7 @@ class BaseResult(ABC):
 
         transformed_results = list()
         for result in self.results:
+            rid = '0'   # result['source']['selector']['id']
             transformed_result = {
                 "id": "",
                 "title": "",
@@ -179,7 +180,7 @@ class BaseResult(ABC):
                 },
                 "original_data": result,
                 "data_string": json.dumps(result, indent=4),
-                "options": self.get_result_options(result['source']['selector']['id'])  # TODO: Make this generic
+                "options": self.get_result_options(rid)  # TODO: Make this generic
             }
             transformed_results.append(transformed_result)
             hit_number += 1
