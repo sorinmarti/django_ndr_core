@@ -103,7 +103,8 @@ class _NdrCoreView(View):
     def pre_render_text(self):
         """ An NDR Core page can have a page text with certain [[style|tags]]. They are replaced by the respective
          HTML element by the TextPreRenderer. """
-        page_text = self.ndr_page.template_text
+
+        page_text = self.ndr_page.translated_template_text()
         if page_text is None or page_text == '':
             return ''
 
@@ -419,5 +420,6 @@ def set_language_view(request, language):
     if hasattr(request, 'session'):
         request.session['django_language'] = language
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+
 
     return response
