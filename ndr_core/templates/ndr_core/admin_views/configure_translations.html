@@ -1,0 +1,97 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load i18n %}
+{% load static %}
+{% load ndr_utils %}
+{% load ndr_values %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h2><i class="fa-regular fa-language"></i> Manage Translations</h2>
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Options</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:select_page_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_page_translations' or request.resolver_match.url_name == 'edit_page_translations' %}bg-selected{% endif %}">
+                        <i class="fa-regular fa-language"></i>
+                        Translate Page Titles and Labels
+                    </a>
+                    <a href="{% url 'ndr_core:select_field_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_field_translations' or request.resolver_match.url_name == 'edit_field_translations' %}bg-selected{% endif %}">
+                        <i class="fa-regular fa-language"></i>
+                        Translate Form Fields
+                    </a>
+                    <a href="{% url 'ndr_core:select_settings_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_settings_translations' or request.resolver_match.url_name == 'edit_settings_translations' %}bg-selected{% endif %}">
+                        <i class="fa-regular fa-language"></i>
+                        Translate Settings
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'translations' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Help
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3" style="max-height: 50vh;">
+            <div class="overflow-auto">
+                <div class="card-body">
+                    {% if available_languages %}
+                    <h5 class="card-title">Select Language</h5>
+                    <ul class="list-group">
+                        {% for alang in available_languages %}
+                           <li class="list-group-item list-group-item-action d-flex py-2 px-2{% if selected_language == alang.0 %} bg-selected {% endif%}">
+                                <p class="p-0 m-0 flex-grow-1">
+                                    <i class="fa-regular fa-file-lines"></i>
+                                    {% if request.resolver_match.url_name == 'select_page_translations' or request.resolver_match.url_name == 'edit_page_translations' %}
+                                        {% if selected_language == alang.0 %}
+                                            {{ alang.1 }}<br/>
+                                        {% else %}
+                                            <a href="{% url 'ndr_core:edit_page_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
+                                        {%  endif %}
+                                    {% elif request.resolver_match.url_name == 'select_field_translations' or request.resolver_match.url_name == 'edit_field_translations' %}
+                                        {% if selected_language == alang.0 %}
+                                            {{ alang.1 }}<br/>
+                                        {% else %}
+                                            <a href="{% url 'ndr_core:edit_field_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
+                                        {%  endif %}
+                                    {% elif request.resolver_match.url_name == 'select_settings_translations' or request.resolver_match.url_name == 'edit_settings_translations' %}
+                                        {% if selected_language == alang.0 %}
+                                            {{ alang.1 }}<br/>
+                                        {% else %}
+                                            <a href="{% url 'ndr_core:edit_settings_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
+                                        {%  endif %}
+                                    {% else %}
+                                        Not implemented: {{ request.resolver_match.url_name }}
+                                    {% endif %}
+                                </p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if selected_language is not None %}
+       <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Translate to "{{ selected_language }}"</h5>
+                {% crispy form %}
+            </div>
+        </div>
+    {% else %}
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                Select a language to translate.
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="alert alert-info small" role="alert">
+        <i class="fa-regular fa-circle-info"></i>
+        Each language has a unique set of translations. If you have translated a page or field in one language, you will need to translate it again in another language.
+        Select the available languages you wish to use in the <a href="{% url 'ndr_core:configure_settings' %}">settings</a>.
+    </div>
+
+{% endblock %}
