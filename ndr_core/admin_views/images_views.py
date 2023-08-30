@@ -12,6 +12,9 @@ from ndr_core.models import NdrCoreImage
 from ndr_core.ndr_settings import NdrSettings
 
 image_groups = [
+    {'name': 'page_logos',
+     'label': 'Page Logos',
+     'help_text': 'Upload logo images. You\'ll need only one but can add translated logos.'},
     {'name': 'figures',
      'label': 'Figure Images',
      'help_text': 'Upload images to be displayed in your text with captions and source information..'},
@@ -48,8 +51,7 @@ class ImagesGroupView(LoginRequiredMixin, View):
     template_name = 'ndr_core/admin_views/configure_images.html'
 
     def get_context_data(self):
-        context = {'logo_path': f'{NdrSettings.APP_NAME}/images/logo.png',
-                   'groups': image_groups}
+        context = {'groups': image_groups}
         group = self.kwargs['group']
 
         if group in NdrCoreImage.ImageGroup.values:

@@ -13,7 +13,7 @@ class ImageForm(forms.ModelForm):
 
     class Meta:
         model = NdrCoreImage
-        fields = ['image_group', 'image', 'title', 'caption', 'citation', 'url']
+        fields = ['image_group', 'image', 'title', 'caption', 'citation', 'url', 'language']
 
     @property
     def helper(self):
@@ -40,6 +40,12 @@ class ImageForm(forms.ModelForm):
             Column('citation', css_class='form-group col-md-6 mb-0'),
             Column('url', css_class='form-group col-md-6 mb-0'),
             css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column("language", css_class="form-group col-md-6 mb-0"),
+            css_class="form-row",
         )
         layout.append(form_row)
         return helper

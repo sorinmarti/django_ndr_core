@@ -10,10 +10,6 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:import_logo' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-copyright"></i>
-                        Change Logo Image
-                    </a>
                     <a href="{% url 'ndr_core:create_image' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-file-import"></i>
                         Upload Image
@@ -22,11 +18,6 @@
                         <i class="fa-regular fa-circle-info"></i>
                         Help
                     </a>
-                </div>
-                <p></p>
-                <h5 class="card-title">Logo Image</h5>
-                <div class="col-12">
-                    <img src="{% static logo_path %}" class="img-fluid" />
                 </div>
             </div>
         </div>
