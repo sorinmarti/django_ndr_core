@@ -78,14 +78,21 @@ def reduce_iiif_size(image_url, target_percent_of_size):
 @register.filter
 def translate_dict_value(value, dict_name):
     """Translates a value in a dictionary."""
+    if dict_name == 'tags':
+        print(value)
+
     if value is None:
         return ''
 
     try:
         field = NdrCoreSearchField.objects.get(field_name=dict_name)
         choices = field.get_list_choices_as_dict()
-        return choices.get(value, value)
+        val = choices.get(value, f"{value} (def)")
+        if dict_name == 'tags':
+            print(val)
+        return val
     except NdrCoreSearchField.DoesNotExist:
+        print('Field does not exist')
         return value
 
 
@@ -102,6 +109,7 @@ def translate_to_color(value, lightness=50):
 
     return f'hsl({hash_value%360}, {100}%, {lightness}%)'
 
+
 @register.filter
 def format_date(date_string):
     """Formats a date string."""
@@ -112,3 +120,16 @@ def format_date(date_string):
         split_date = date_string.split('-')
         return f'{split_date[2]}.{split_date[1]}.{split_date[0]}'
     return date_string
+
+
+@register.filter
+def clean_list(list_object):
+    """Formats a list object."""
+    if list_object is None:
+        return []
+
+    type_of_list = type(list_object)
+    if type_of_list is list:
+        return list_object
+    if type_of_list is str:
+        return [list_object]
