@@ -83,7 +83,7 @@
                                             </a>
                                         </div>
                                     </li>
-                                    <li class="nav-item dropdown{% if "/configure/ui_elements/" in request.path or "/configure/images/" in request.path or "/configure/uploads/" in request.path %} active{% endif %}">
+                                    <li class="nav-item dropdown{% if "/configure/ui_elements/" in request.path or "/configure/images/" in request.path or "/configure/uploads/" in request.path or "/configure/translations" in request.path %} active{% endif %}">
                                         <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
                                             <i class="fa-regular fa-folder-open"></i>
                                             Resources
@@ -100,6 +100,10 @@
                                             <a class="dropdown-item" href="{% url 'ndr_core:configure_uploads' %}">
                                                 <i class="fa-regular fa-file-upload"></i>
                                                 Manage File Uploads
+                                            </a>
+                                            <a class="dropdown-item" href="{% url 'ndr_core:configure_translations' %}">
+                                                <i class="fa-regular fa-language"></i>
+                                                Manage Translations
                                             </a>
                                         </div>
                                     </li>
