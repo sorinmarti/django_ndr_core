@@ -1,0 +1,4 @@
+{% load static %}
+<option value="{{ widget.value|stringformat:'s' }}"{% include "django/forms/widgets/attrs.html" %} data-img-src="{{ widget.label }}" data-img-class="img-fluid image-picker-test">
+    {{ widget.label }}
+</option>
