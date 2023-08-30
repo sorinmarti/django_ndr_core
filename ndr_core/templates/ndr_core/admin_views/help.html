@@ -59,6 +59,9 @@
                     <a href="{% url 'ndr_core:help_chapter' 'files' %}" class="list-group-item small list-group-item-action py-2{% if "/help/files/" in request.path %} active{% endif %}">
                         Files
                     </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'translations' %}" class="list-group-item small list-group-item-action py-2{% if "/help/translations/" in request.path %} active{% endif %}">
+                        Translations
+                    </a>
                 </div>
             </div>
         </div>
