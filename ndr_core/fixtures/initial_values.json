@@ -22,10 +22,21 @@
     "model": "ndr_core.NdrCoreValue",
     "fields": {
       "value_name": "ndr_language",
-      "value_label": "UI language",
-      "value_help_text": "UI language of the frontend. The administration interface is english only.",
+      "value_label": "Basel language",
+      "value_help_text": "Base of the frontend. The administration interface is english only.",
       "value_type": "list",
       "value_value": "en",
+      "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano)"
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
+      "value_name": "available_languages",
+      "value_label": "Additional Languages",
+      "value_help_text": "What languages are available? (Hold Ctrl to select multiple)",
+      "value_value": "en",
+      "value_type": "multi_list",
       "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano)"
     }
   },
@@ -314,17 +325,6 @@
       "value_label": "Project title",
       "value_help_text": "The project's or web page's title.",
       "value_value": ""
-    }
-  },
-  {
-    "model": "ndr_core.NdrCoreValue",
-    "fields": {
-      "value_name": "available_languages",
-      "value_label": "Available Languages",
-      "value_help_text": "What languages are available?",
-      "value_value": "en",
-      "value_type": "multi_list",
-      "value_options": "(en,English);(de,Deutsch);"
     }
   }
 ]
