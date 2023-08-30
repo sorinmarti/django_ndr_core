@@ -91,6 +91,9 @@ class PageCreateView(LoginRequiredMixin, CreateView):
         self.object.index = new_index
         self.object.save()
 
+        # create objects for the translations
+        form.save_translations()
+
         new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{form.cleaned_data["view_name"]}.html'
         if os.path.isfile(new_filename):
             messages.error(self.request, "The file name already existed. No new template was generated.")
@@ -141,6 +144,8 @@ class PageEditView(LoginRequiredMixin, UpdateView):
 
         if old_filename != new_filename:
             os.rename(old_filename, new_filename)
+
+        form.save_translations()
 
         response = super(PageEditView, self).form_valid(form)
         return response

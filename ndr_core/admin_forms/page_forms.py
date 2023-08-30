@@ -1,4 +1,6 @@
 """Contains forms used in the NDRCore admin interface for the creation or edit of NDR pages."""
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML
 from django import forms
@@ -7,7 +9,8 @@ from django_select2 import forms as s2forms
 
 from ndr_core.admin_forms.settings_forms import SettingsListForm
 from ndr_core.admin_forms.admin_forms import get_form_buttons
-from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreFilterableListConfiguration, NdrCorePage
+from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreFilterableListConfiguration, NdrCorePage, NdrCoreValue, \
+    NdrCoreRichTextTranslation
 
 
 class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
@@ -51,12 +54,27 @@ class PageForm(forms.ModelForm):
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCorePage
-        fields = ['name', 'label', 'page_type', 'parent_page',
+        fields = ['name', 'show_page_title', 'label', 'page_type', 'parent_page',
                   'simple_api', 'search_configs', 'list_configs', 'view_name', 'template_text']
 
     def __init__(self, *args, **kwargs):
         """Init class and create form helper."""
         super(PageForm, self).__init__(*args, **kwargs)
+
+        self.main_language = NdrCoreValue.objects.get(value_name='ndr_language').get_value()
+        self.additional_languages = NdrCoreValue.objects.get(value_name='available_languages').get_value()
+
+        for lang in self.additional_languages:
+            self.fields[f'template_text_{lang}'] = forms.CharField(label=f"Template Text ({lang})", required=False,
+                                                                   widget=CKEditorUploadingWidget)
+            try:
+                translation = NdrCoreRichTextTranslation.objects.get(language=lang,
+                                                                        table_name='NdrCorePage',
+                                                                        object_id=self.instance.pk,
+                                                                        field_name='template_text')
+                self.initial[f'template_text_{lang}'] = translation.translation
+            except NdrCoreRichTextTranslation.DoesNotExist:
+                pass
 
     def clean(self):
         """clean() is executed when the form is sent to check it. Here, page types are checked against its
@@ -97,6 +115,17 @@ class PageForm(forms.ModelForm):
         else:
             pass
 
+    def save_translations(self):
+        """Saves the translations for the page."""
+        for lang in self.additional_languages:
+            if f'template_text_{lang}' in self.cleaned_data:
+                trans = NdrCoreRichTextTranslation.objects.get_or_create(language=lang,
+                                                                         table_name='NdrCorePage',
+                                                                         object_id=self.instance.pk,
+                                                                         field_name='template_text')
+                trans[0].translation = self.cleaned_data[f'template_text_{lang}']
+                trans[0].save()
+
     @property
     def helper(self):
         """Creates and returns the form helper property."""
@@ -108,6 +137,12 @@ class PageForm(forms.ModelForm):
             Column('name', css_class='form-group col-md-6 mb-0'),
             Column('label', css_class='form-group col-md-6 mb-0'),
             css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column("show_page_title", css_class="form-group col-md-6 mb-0"),
+            css_class="form-row",
         )
         layout.append(form_row)
 
@@ -150,11 +185,24 @@ class PageForm(forms.ModelForm):
         )
         layout.append(form_row)
 
-        form_row = Row(
-            Column('template_text', css_class='form-group center col-md-12 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
+        if len(self.additional_languages) > 0:
+            # Tabs for additional languages
+            tab_holder = TabHolder(Tab(self.main_language, 'template_text'))
+            for lang in self.additional_languages:
+                tab_holder.append(Tab(lang, f'template_text_{lang}'))
+
+            form_row = Row(
+                Column(tab_holder, css_class='form-group center col-md-12 mb-0'),
+                css_class='form-row'
+            )
+            layout.append(form_row)
+        else:
+            # No tabs needed
+            form_row = Row(
+                Column('template_text', css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'
+            )
+            layout.append(form_row)
 
         return helper
 
