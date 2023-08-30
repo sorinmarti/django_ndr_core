@@ -73,11 +73,11 @@ class _NdrCoreSearchForm(_NdrCoreForm):
         """Create form fields for simple search. """
 
         self.fields['search_term'] = forms.CharField(label=NdrCoreValue.get_or_initialize("search_simple_field_label",
-                                                                                          init_value="Search Term").value_value,
+                                                                                          init_value="Search Term").translated_value(),
                                                      required=False,
                                                      max_length=100,
                                                      help_text=NdrCoreValue.get_or_initialize("search_simple_help_text",
-                                                                                              init_value="Search for anything!").value_value)
+                                                                                              init_value="Search for anything!").translated_value())
 
         self.fields['and_or_field'] = forms.ChoiceField(label=_('And or Or Search'),
                                                         choices=[('and', _('AND search')), ('or', _('OR search'))],
@@ -235,34 +235,34 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
 
                 # Text field
                 if search_field.field_type == search_field.FieldType.STRING:
-                    form_field = forms.CharField(label=search_field.field_label,
+                    form_field = forms.CharField(label=search_field.translated_field_label(),
                                                  required=search_field.field_required,
                                                  help_text=help_text)
                 # Number field
                 if search_field.field_type == search_field.FieldType.NUMBER:
-                    form_field = forms.IntegerField(label=search_field.field_label,
+                    form_field = forms.IntegerField(label=search_field.translated_field_label(),
                                                     required=search_field.field_required,
                                                     help_text=help_text)
                 # Number Range field
                 if search_field.field_type == search_field.FieldType.NUMBER_RANGE:
-                    form_field = NumberRangeField(label=search_field.field_label,
+                    form_field = NumberRangeField(label=search_field.translated_field_label(),
                                                   required=search_field.field_required,
                                                   help_text=help_text,
                                                   lowest_number=search_field.lower_value if search_field.lower_value is not None else 1,
                                                   highest_number=search_field.upper_value if search_field.upper_value is not None else 999999)
                 # Boolean field (checkbox)
                 if search_field.field_type == search_field.FieldType.BOOLEAN:
-                    form_field = forms.BooleanField(label=search_field.field_label,
+                    form_field = forms.BooleanField(label=search_field.translated_field_label(),
                                                     required=search_field.field_required,
                                                     help_text=help_text)
                 # Date field
                 if search_field.field_type == search_field.FieldType.DATE:
-                    form_field = forms.DateField(label=search_field.field_label,
+                    form_field = forms.DateField(label=search_field.translated_field_label(),
                                                  required=search_field.field_required,
                                                  help_text=help_text)
                 # Date range field
                 if search_field.field_type == search_field.FieldType.DATE_RANGE:
-                    form_field = fields.DateRangeField(label=search_field.field_label,
+                    form_field = fields.DateRangeField(label=search_field.translated_field_label(),
                                                        required=search_field.field_required,
                                                        help_text=help_text,
                                                        input_formats=['%d.%m.%Y'],
@@ -279,13 +279,13 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                                                        ))
                 # List field (dropdown)
                 if search_field.field_type == search_field.FieldType.LIST:
-                    form_field = forms.ChoiceField(label=search_field.field_label,
+                    form_field = forms.ChoiceField(label=search_field.translated_field_label(),
                                                    choices=[('', _('Please Choose'))] + search_field.get_list_choices(),
                                                    required=search_field.field_required,
                                                    help_text=help_text)
                 # Multi list field (multiple select with Select2)
                 if search_field.field_type == search_field.FieldType.MULTI_LIST:
-                    form_field = forms.MultipleChoiceField(label=search_field.field_label,
+                    form_field = forms.MultipleChoiceField(label=search_field.translated_field_label(),
                                                            choices=search_field.get_list_choices(),
                                                            widget=FilteredListWidget(attrs={'data-minimum-input-length': 0}),
                                                            required=search_field.field_required,
@@ -329,13 +329,13 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                         form_field = Div(HTML(mark_safe(
                             f'<div class="alert alert-info small" role="alert">'
                             f'<i class="fa-regular fa-circle-info"></i>&nbsp;'
-                            f'<strong>{column.search_field.field_label}</strong><br/>'
+                            f'<strong>{column.search_field.translated_field_label()}</strong><br/>'
                             f"{column.search_field.list_choices}"
                             f'</div>'
                         )), css_class=f'col-md-{column.field_size}')
                     else:
                         form_field = Field(f'{search_config.conf_name}_{column.search_field.field_name}',
-                                           placeholder=column.search_field.field_label,
+                                           placeholder=column.search_field.translated_field_label(),
                                            wrapper_class=f'col-md-{column.field_size}')
                         # Checkboxes are displayed inline.
                         if column.search_field.field_type == column.search_field.FieldType.BOOLEAN:
@@ -386,7 +386,8 @@ class ContactForm(ModelForm, _NdrCoreForm):
     def __init__(self, *args, **kwargs):
         super(ContactForm, self).__init__(*args, **kwargs)
 
-        self.fields['message_subject'].initial = NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').get_value()
+        print(NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').translated_value())
+        self.fields['message_subject'].initial = NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').translated_value()
         self.fields['message_subject'].label = _('Message Subject')
         self.fields['message_ret_email'].label = _('Your E-Mail address')
         self.fields['message_text'].label = _('Message Text')
