@@ -8,7 +8,7 @@ from ndr_core.models import NdrCoreUIElement, NdrCoreImage, NdrCoreUpload, NdrCo
 class TextPreRenderer:
 
     MAX_ITERATIONS = 50
-    ui_element_regex = r'\[\[(card|slideshow|carousel|jumbotron|figure|banner)\|([0-9]*)\]\]'
+    ui_element_regex = r'\[\[(card|slideshow|carousel|jumbotron|figure|banner|iframe)\|([0-9]*)\]\]'
     link_element_regex = r'\[\[(file|page)\|([0-9]*)\]\]'
     container_regex = r'\[\[(start|end)_(block)\]\]'
     link_element_classes = {'figure': NdrCoreImage, 'file': NdrCoreUpload, 'page': NdrCorePage}
