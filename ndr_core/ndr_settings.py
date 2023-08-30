@@ -1,6 +1,7 @@
 """This file holds the NdrSettings class."""
 import os.path
 from pathlib import Path
+from django.utils.translation import gettext_lazy as _
 
 import ndr_core
 from django.conf import settings
@@ -77,7 +78,6 @@ class NdrSettings:
 
         return urls
 
-
     @staticmethod
     def get_templates_path():
         """Returns the ndr-app's template path. Convenience method. """
@@ -142,3 +142,7 @@ CKEDITOR_UPLOAD_PATH = 'uploads/'
 
 GEOIP_PATH = os.path.join('geoip/')
 """Needed for the geoip functionality."""
+
+LANGUAGE_CODE = 'en'
+LANGUAGE_COOKIE_NAME = 'django_ndr_language'
+"""Default language code and cookie name."""
