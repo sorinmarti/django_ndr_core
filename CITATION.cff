@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Marti"
+  given-names: "Sorin"
+  orcid: "https://orcid.org/0000-0002-9541-1202"
+title: "NDR Core"
+version: 0.9.1
+doi: 10.5281/zenodo.7893008
+date-released: 2023-08-30
+url: "https://github.com/sorinmarti/django_ndr_core/"
