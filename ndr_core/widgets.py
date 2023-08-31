@@ -8,11 +8,11 @@ from ndr_core.ndr_helpers import get_search_field_config
 class BootstrapSwitchWidget(forms.Widget):
 
     def render(self, name, value, attrs=None, renderer=None):
-        selecteed = ""
+        selected = ""
         if value:
-            selecteed = "checked"
+            selected = "checked"
         html = '<div class="custom-control custom-switch">' \
-               f'  <input type="checkbox" {selecteed} name="{name}" class="custom-control-input" id="{attrs["id"]}">' \
+               f'  <input type="checkbox" {selected} name="{name}" class="custom-control-input" id="{attrs["id"]}">' \
                f'  <label class="custom-control-label small" for="{attrs["id"]}">{ self.attrs.get("label", "") }</label>' \
                '</div>'
         return mark_safe(html)
