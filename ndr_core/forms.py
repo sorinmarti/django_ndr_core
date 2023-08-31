@@ -254,7 +254,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                                                   if search_field.upper_value is not None else 999999)
                 # Boolean field (checkbox)
                 if search_field.field_type == search_field.FieldType.BOOLEAN:
-                    form_field = forms.BooleanField(label='',
+                    form_field = forms.BooleanField(label=mark_safe('&nbsp;'),
                                                     required=search_field.field_required,
                                                     help_text=help_text,
                                                     widget=BootstrapSwitchWidget(
@@ -388,7 +388,8 @@ class ContactForm(ModelForm, _NdrCoreForm):
         super(ContactForm, self).__init__(*args, **kwargs)
 
         print(NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').translated_value())
-        self.fields['message_subject'].initial = NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').translated_value()
+        self.fields['message_subject'].initial = NdrCoreValue.get_or_initialize(
+            value_name='contact_form_default_subject').translated_value()
         self.fields['message_subject'].label = _('Message Subject')
         self.fields['message_ret_email'].label = _('Your E-Mail address')
         self.fields['message_text'].label = _('Message Text')
