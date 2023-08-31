@@ -248,13 +248,17 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                     form_field = NumberRangeField(label=search_field.translated_field_label(),
                                                   required=search_field.field_required,
                                                   help_text=help_text,
-                                                  lowest_number=search_field.lower_value if search_field.lower_value is not None else 1,
-                                                  highest_number=search_field.upper_value if search_field.upper_value is not None else 999999)
+                                                  lowest_number=search_field.lower_value
+                                                  if search_field.lower_value is not None else 1,
+                                                  highest_number=search_field.upper_value
+                                                  if search_field.upper_value is not None else 999999)
                 # Boolean field (checkbox)
                 if search_field.field_type == search_field.FieldType.BOOLEAN:
-                    form_field = forms.BooleanField(label=search_field.translated_field_label(),
+                    form_field = forms.BooleanField(label='',
                                                     required=search_field.field_required,
-                                                    help_text=help_text)
+                                                    help_text=help_text,
+                                                    widget=BootstrapSwitchWidget(
+                                                        attrs={'label': search_field.translated_field_label()}))
                 # Date field
                 if search_field.field_type == search_field.FieldType.DATE:
                     form_field = forms.DateField(label=search_field.translated_field_label(),
@@ -325,6 +329,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                 form_row = Div(css_class='form-row')
                 # The column is the inner loop.
                 for column in search_config.search_form_fields.filter(field_row=row).order_by('field_column'):
+                    # Type is INFO_TEXT, so we create a div with the text.
                     if column.search_field.field_type == column.search_field.FieldType.INFO_TEXT:
                         form_field = Div(HTML(mark_safe(
                             f'<div class="alert alert-info small" role="alert">'
@@ -333,15 +338,11 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                             f"{column.search_field.list_choices}"
                             f'</div>'
                         )), css_class=f'col-md-{column.field_size}')
+                    # All other types are form fields.
                     else:
                         form_field = Field(f'{search_config.conf_name}_{column.search_field.field_name}',
                                            placeholder=column.search_field.translated_field_label(),
                                            wrapper_class=f'col-md-{column.field_size}')
-                        # Checkboxes are displayed inline.
-                        if column.search_field.field_type == column.search_field.FieldType.BOOLEAN:
-                            form_field.wrapper_class += 'custom-control-inline pt-3'
-                            if column.field_column > 1:
-                                form_field.wrapper_class += ' pl-5'
 
                     form_row.append(form_field)
 
