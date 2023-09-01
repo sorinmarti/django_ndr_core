@@ -320,7 +320,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
 
         # For each search configuration, create a tab and add the form fields to it.
         for search_config in self.search_configs:
-            tab = Tab(search_config.conf_label, css_id=search_config.conf_name)
+            tab = Tab(search_config.translated_conf_label(), css_id=search_config.conf_name)
 
             # The form fields are grouped by row and column. The row is the outer loop.
             max_row = search_config.search_form_fields.all().aggregate(Max('field_row'))

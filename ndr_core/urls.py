@@ -2,9 +2,17 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
-from ndr_core.admin_views.translation_views import ConfigureTranslations, SelectPageTranslationView, \
-    SelectFieldTranslationView, TranslatePageValuesView, TranslateFieldValuesView, SelectSettingsTranslationView, \
-    TranslateSettingsValuesView
+from ndr_core.admin_views.translation_views import (
+    ConfigureTranslations,
+    SelectPageTranslationView,
+    SelectFieldTranslationView,
+    TranslatePageValuesView,
+    TranslateFieldValuesView,
+    SelectSettingsTranslationView,
+    TranslateSettingsValuesView,
+    TranslateFormValuesView,
+    SelectFormTranslationView,
+)
 from ndr_core.admin_views.uploads_views import ConfigureUploads, UploadCreateView, UploadEditView, UploadDeleteView
 from ndr_core.admin_views.result_views import ConfigureResultsView, ResultsConfigurationDetailView
 from ndr_core.admin_views.export_views import export_color_palette, export_settings, export_messages
@@ -86,6 +94,8 @@ urlpatterns = [
     path('configure/translations/edit/fields/<str:lang>/', TranslateFieldValuesView.as_view(), name='edit_field_translations'),
     path('configure/translations/edit/settings/', SelectSettingsTranslationView.as_view(), name='select_settings_translations'),
     path('configure/translations/edit/settings/<str:lang>/', TranslateSettingsValuesView.as_view(), name='edit_settings_translations'),
+    path('configure/translations/edit/form/', SelectFormTranslationView.as_view(), name='select_form_translations'),
+    path('configure/translations/edit/form/<str:lang>/', TranslateFormValuesView.as_view(), name='edit_form_translations'),
 
     # USER MESSAGES
     path('configure/messages/', ConfigureMessages.as_view(), name='configure_messages'),

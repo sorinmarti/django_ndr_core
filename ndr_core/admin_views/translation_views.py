@@ -8,6 +8,7 @@ from ndr_core.admin_forms.translation_forms import (
     TranslatePageForm,
     TranslateFieldForm,
     TranslateSettingsForm,
+    TranslateFormForm,
 )
 from ndr_core.models import NdrCoreTranslation, NdrCoreValue
 
@@ -53,6 +54,16 @@ class SelectFieldTranslationView(View):
 
 
 class SelectSettingsTranslationView(View):
+
+    def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
+        context = {'available_languages': get_available_languages()}
+        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+                      context=context)
+
+
+class SelectFormTranslationView(View):
 
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
@@ -129,6 +140,28 @@ class TranslateSettingsValuesView(TranslateView):
         """POST request for this view. Gets executed when values are saved."""
 
         form = TranslateSettingsForm(request.POST, lang=self.kwargs.get('lang', 'en'))
+        form.save_translations()
+
+        context = self.get_context_data()
+        context['form'] = form
+
+        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+                      context=context)
+
+
+class TranslateFormValuesView(TranslateView):
+
+    def get(self, request, *args, **kwargs):
+        form = TranslateFormForm(lang=self.kwargs.get('lang', 'en'))
+        context = self.get_context_data()
+        context['form'] = form
+        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+                      context=context)
+
+    def post(self, request, *args, **kwargs):
+        """POST request for this view. Gets executed when values are saved."""
+
+        form = TranslateFormForm(request.POST, lang=self.kwargs.get('lang', 'en'))
         form.save_translations()
 
         context = self.get_context_data()

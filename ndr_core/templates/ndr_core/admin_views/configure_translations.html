@@ -16,6 +16,10 @@
                         <i class="fa-regular fa-language"></i>
                         Translate Page Titles and Labels
                     </a>
+                    <a href="{% url 'ndr_core:select_form_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_form_translations' or request.resolver_match.url_name == 'edit_form_translations' %}bg-selected{% endif %}">
+                        <i class="fa-regular fa-language"></i>
+                        Translate Forms
+                    </a>
                     <a href="{% url 'ndr_core:select_field_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_field_translations' or request.resolver_match.url_name == 'edit_field_translations' %}bg-selected{% endif %}">
                         <i class="fa-regular fa-language"></i>
                         Translate Form Fields
@@ -59,6 +63,12 @@
                                             {{ alang.1 }}<br/>
                                         {% else %}
                                             <a href="{% url 'ndr_core:edit_settings_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
+                                        {%  endif %}
+                                    {% elif request.resolver_match.url_name == 'select_form_translations' or request.resolver_match.url_name == 'edit_form_translations' %}
+                                        {% if selected_language == alang.0 %}
+                                            {{ alang.1 }}<br/>
+                                        {% else %}
+                                            <a href="{% url 'ndr_core:edit_form_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
                                         {%  endif %}
                                     {% else %}
                                         Not implemented: {{ request.resolver_match.url_name }}

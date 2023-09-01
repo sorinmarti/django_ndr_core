@@ -54,7 +54,7 @@ class NdrCoreSearchField(models.Model):
                                   primary_key=True,
                                   help_text="Choose a name for the field. Can't contain spaces or special characters"
                                             "and must be unique")
-    """The field_name is used as the HTML form name"""
+    """The field_name is used as the HTML form name. This value is translatable."""
 
     field_label = models.CharField(max_length=100,
                                    help_text="This is the form field's label")
@@ -366,10 +366,25 @@ class NdrCoreSearchConfiguration(models.Model):
                                                                                  init_type=NdrCoreValue.ValueType.BOOLEAN).get_value()
         return search_config
 
+    def translated_conf_label(self):
+        """Returns the translated conf label for a given language. If no translation exists, the default label is
+        returned. """
+
+        try:
+            translation = NdrCoreTranslation.objects.get(language=get_language(),
+                                                         table_name='NdrCoreSearchConfiguration',
+                                                         field_name='conf_label',
+                                                         object_id=self.conf_name)
+            if translation.translation != '':
+                return translation.translation
+            else:
+                return self.conf_label
+        except NdrCoreTranslation.DoesNotExist:
+            return self.conf_label
+
 
 class NdrCoreResultMapping(models.Model):
     """An NDR Core Result template mapping maps result jsons to html templates."""
-
 
 
 class NdrCoreResultTemplateField(models.Model):
@@ -463,7 +478,7 @@ class NdrCorePage(models.Model):
     name = models.CharField(verbose_name="Page Title",
                             max_length=200,
                             help_text="The name of the page, e.g. the page's title")
-    """This is the name/title of the page. It will be displayed as a <h2>title</h2>"""
+    """This is the name/title of the page. It will be displayed as a <h2>title</h2>. This value is translatable."""
 
     show_page_title = models.BooleanField(default=True,
                                           help_text="Should the page title be displayed?")
@@ -471,10 +486,11 @@ class NdrCorePage(models.Model):
 
     label = models.CharField(max_length=200,
                              help_text="The label of the page, e.g. the page's navigation label")
-    """This is the navigation label which is displayed in the navigation"""
+    """This is the navigation label which is displayed in the navigation. This value is translatable."""
 
     show_in_navigation = models.BooleanField(default=True,
                                              help_text="Should the page be displayed in the navigation?")
+    """If this is set to False, the page will not be displayed in the navigation. """
 
     nav_icon = models.CharField(max_length=200,
                                 help_text='The fontawesome nav icon (leave blank if none)',
@@ -711,7 +727,7 @@ class NdrCoreValue(models.Model):
 
     value_value = models.CharField(max_length=100,
                                    help_text='This is the actual value which can be updated')
-    """This is the actual value which can be updated by the user"""
+    """This is the actual value which can be updated by the user. This value is translatable."""
 
     value_options = models.CharField(max_length=200, default='',
                                      help_text='Used for value_type LIST and MULTI_LIST: comma-separated list')
@@ -898,6 +914,11 @@ class NdrCoreSearchStatisticEntry(models.Model):
     search_location = models.CharField(max_length=20, null=True)
     """The location the user searched from. """
 
+    language = models.CharField(max_length=10, null=True, default=None,
+                                blank=True,
+                                help_text='Language of the search.')
+    """Language of the search. """
+
 
 class NdrCoreImage(models.Model):
     """ Directory of all images used outside the ckeditor and the logo. """
@@ -1051,13 +1072,15 @@ class NdrCoreUiElementItem(models.Model):
 TRANSLATABLE_TABLES = (
     ('NdrCoreSearchField', 'Search Field Table'),
     ('NdrCorePage', 'Page Table'),
-    ('NdrCoreValue', 'Settings Table')
+    ('NdrCoreValue', 'Settings Table'),
+    ('NdrCoreSearchConfiguration', 'Search Configuration Table'),
 )
 
 TRANSLATABLE_FIELDS = {
     'NdrCoreSearchField': ('field_label', 'help_text'),
     'NdrCorePage': ('name', 'label'),
-    'NdrCoreValue': ('value_value', )
+    'NdrCoreValue': ('value_value', ),
+    'NdrCoreSearchConfiguration': ('conf_label', ),
 }
 
 

@@ -2,12 +2,14 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column
 from django import forms
+
 from ndr_core.admin_forms.admin_forms import get_form_buttons
 from ndr_core.models import (
     NdrCorePage,
     NdrCoreTranslation,
     NdrCoreSearchField,
     NdrCoreValue,
+    NdrCoreSearchConfiguration
 )
 
 
@@ -19,6 +21,7 @@ class TranslateForm(forms.Form):
             self.lang = kwargs.pop('lang')
 
         super(TranslateForm, self).__init__(*args, **kwargs)
+
 
 class TranslatePageForm(TranslateForm):
     """Form to translate page values """
@@ -234,4 +237,63 @@ class TranslateSettingsForm(TranslateForm):
                                                                             field_name='value_value',
                                                                             object_id=field.value_name)
             i18n_object_settings[0].translation = self.cleaned_data[f"setting_{field.value_name}"]
+            i18n_object_settings[0].save()
+
+
+class TranslateFormForm(TranslateForm):
+    """Form to translate settings values. """
+
+    ndr_search_conf = None
+
+    def __init__(self, *args, **kwargs):
+        super(TranslateFormForm, self).__init__(*args, **kwargs)
+        self.ndr_search_conf = NdrCoreSearchConfiguration.objects.all()
+
+        initial_values = {}
+        for field in self.ndr_search_conf:
+            self.fields[f"setting_{field.conf_name}"] = forms.CharField(
+                label=f"Translate: '{field.conf_label}'",
+                required=False,
+                max_length=100,
+                help_text=f"Value of the configuration <b>{field.conf_name}</b></i>)")
+            try:
+                conf_label = NdrCoreTranslation.objects.get(language=self.lang,
+                                                            table_name='NdrCoreSearchConfiguration',
+                                                            field_name='conf_label',
+                                                            object_id=field.conf_name)
+                initial_values[f"setting_{field.conf_name}"] = conf_label.translation
+            except NdrCoreTranslation.DoesNotExist:
+                pass
+
+        self.initial = initial_values
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+
+        helper = FormHelper()
+        helper.form_method = "POST"
+        layout = helper.layout = Layout()
+
+        for field in self.ndr_search_conf:
+            form_row = Row(
+                Column(f"setting_{field.conf_name}", css_class='form-group col-md-12 mb-0'),
+                css_class='form-row'
+            )
+            layout.append(form_row)
+
+        layout.append(get_form_buttons('Save Form Configuration Translations'))
+
+        return helper
+
+    def save_translations(self):
+        """Saves the translations to the database. """
+        self.is_valid()
+
+        for field in self.ndr_search_conf:
+            i18n_object_settings = NdrCoreTranslation.objects.get_or_create(language=self.lang,
+                                                                            table_name='NdrCoreSearchConfiguration',
+                                                                            field_name='conf_label',
+                                                                            object_id=field.conf_name)
+            i18n_object_settings[0].translation = self.cleaned_data[f"setting_{field.conf_name}"]
             i18n_object_settings[0].save()
