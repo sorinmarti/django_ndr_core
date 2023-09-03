@@ -106,6 +106,12 @@ class NdrCoreSearchField(models.Model):
 
     use_in_csv_export = models.BooleanField(default=False,
                                             help_text="Should this field be included in the CSV export?")
+    """Should this field be included in the CSV export?"""
+
+    initial_value = models.CharField(max_length=100,
+                                     blank=True,
+                                     default='',
+                                     help_text="Initial value of the field")
 
     def translated_field_label(self):
         """Returns the translated field label for a given language. If no translation exists, the default label is
@@ -154,6 +160,16 @@ class NdrCoreSearchField(models.Model):
         if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
             list_choices = {line.split(',')[0]: line.split(',')[1] for line in self.list_choices.splitlines()}
         return list_choices
+
+    def get_initial_value(self):
+        """Returns the initial value of a search field. This is used to pre-fill the form with a value. """
+        if self.field_type == self.FieldType.BOOLEAN:
+            if self.initial_value == 'true':
+                return True
+            else:
+                return False
+
+        return self.initial_value
 
     def __str__(self):
         return f'{self.field_name} ({self.field_label})'

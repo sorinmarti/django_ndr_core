@@ -248,7 +248,7 @@ class SearchView(_NdrCoreSearchView):
     def get(self, request, *args, **kwargs):
         requested_search = None
         context = self.get_ndr_context_data()
-        form = self.form_class(request.GET, ndr_page=self.ndr_page)
+        form = self.form_class(ndr_page=self.ndr_page)
 
         # Check if/which a search button has been pressed
         for value in request.GET.keys():
@@ -303,6 +303,7 @@ class SearchView(_NdrCoreSearchView):
                     context.update({'result': result})
         else:
             # If no button has been pressed
+
             pass
 
         context.update({'form': form, 'requested_search': requested_search})

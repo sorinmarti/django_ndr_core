@@ -72,22 +72,22 @@ class _NdrCoreSearchForm(_NdrCoreForm):
     def init_simple_search_fields(self):
         """Create form fields for simple search. """
 
-        self.fields['search_term'] = forms.CharField(label=NdrCoreValue.get_or_initialize("search_simple_field_label",
-                                                                                          init_value="Search Term").translated_value(),
-                                                     required=False,
-                                                     max_length=100,
-                                                     help_text=NdrCoreValue.get_or_initialize("search_simple_help_text",
-                                                                                              init_value="Search for anything!").translated_value())
+        self.fields['search_term'] = forms.CharField(label=NdrCoreValue.get_or_initialize(
+            "search_simple_field_label",
+            init_value="Search Term").translated_value(),
+            required=False,
+            max_length=100,
+            help_text=NdrCoreValue.get_or_initialize("search_simple_help_text",
+                                                     init_value=_("Search for anything!")).translated_value())
 
         self.fields['and_or_field'] = forms.ChoiceField(label=_('And or Or Search'),
                                                         choices=[('and', _('AND search')), ('or', _('OR search'))],
-                                                        required=False,
-                                                        )
+                                                        required=False)
 
         if NdrCoreSearchConfiguration.get_simple_search_mockup_config(None).search_has_compact_result:
             self.fields['compact_view_simple'] = forms.BooleanField(required=False,
                                                                     widget=BootstrapSwitchWidget(
-                                                                        attrs={'label': 'Compact Result View'}),
+                                                                        attrs={'label': _('Compact Result View')}),
                                                                     label='')
 
     @staticmethod
@@ -101,12 +101,16 @@ class _NdrCoreSearchForm(_NdrCoreForm):
     @staticmethod
     def get_search_button(conf_name):
         """Create and return right aligned search button. """
+        compact_field = None
+        if NdrCoreSearchConfiguration.get_simple_search_mockup_config(None).search_has_compact_result:
+            compact_field = Field(f'compact_view_{conf_name}')
+
         div = Div(
             Div(
                 css_class="col-md-5"
             ),
             Div(
-                Field(f'compact_view_{conf_name}'),
+                compact_field,
                 css_class="col-md-4"
             ),
             Div(
@@ -237,14 +241,17 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                 if search_field.field_type == search_field.FieldType.STRING:
                     form_field = forms.CharField(label=search_field.translated_field_label(),
                                                  required=search_field.field_required,
-                                                 help_text=help_text)
+                                                 help_text=help_text,
+                                                 initial=search_field.get_initial_value())
                 # Number field
                 if search_field.field_type == search_field.FieldType.NUMBER:
                     form_field = forms.IntegerField(label=search_field.translated_field_label(),
                                                     required=search_field.field_required,
-                                                    help_text=help_text)
+                                                    help_text=help_text,
+                                                    initial=search_field.get_initial_value())
                 # Number Range field
                 if search_field.field_type == search_field.FieldType.NUMBER_RANGE:
+                    # TODO initial value
                     form_field = NumberRangeField(label=search_field.translated_field_label(),
                                                   required=search_field.field_required,
                                                   help_text=help_text,
@@ -258,14 +265,17 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                                                     required=search_field.field_required,
                                                     help_text=help_text,
                                                     widget=BootstrapSwitchWidget(
-                                                        attrs={'label': search_field.translated_field_label()}))
+                                                        attrs={'label': search_field.translated_field_label()}),
+                                                    initial=search_field.get_initial_value())
                 # Date field
                 if search_field.field_type == search_field.FieldType.DATE:
+                    # TODO initial value
                     form_field = forms.DateField(label=search_field.translated_field_label(),
                                                  required=search_field.field_required,
                                                  help_text=help_text)
                 # Date range field
                 if search_field.field_type == search_field.FieldType.DATE_RANGE:
+                    # TODO initial value
                     form_field = fields.DateRangeField(label=search_field.translated_field_label(),
                                                        required=search_field.field_required,
                                                        help_text=help_text,
@@ -283,12 +293,14 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                                                        ))
                 # List field (dropdown)
                 if search_field.field_type == search_field.FieldType.LIST:
+                    # TODO initial value
                     form_field = forms.ChoiceField(label=search_field.translated_field_label(),
                                                    choices=[('', _('Please Choose'))] + search_field.get_list_choices(),
                                                    required=search_field.field_required,
                                                    help_text=help_text)
                 # Multi list field (multiple select with Select2)
                 if search_field.field_type == search_field.FieldType.MULTI_LIST:
+                    # TODO initial value
                     form_field = forms.MultipleChoiceField(label=search_field.translated_field_label(),
                                                            choices=search_field.get_list_choices(),
                                                            widget=FilteredListWidget(attrs={'data-minimum-input-length': 0}),
@@ -341,7 +353,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                     # All other types are form fields.
                     else:
                         form_field = Field(f'{search_config.conf_name}_{column.search_field.field_name}',
-                                           placeholder=column.search_field.translated_field_label(),
+                                           # placeholder=column.search_field.translated_field_label(),
                                            wrapper_class=f'col-md-{column.field_size}')
 
                     form_row.append(form_field)
