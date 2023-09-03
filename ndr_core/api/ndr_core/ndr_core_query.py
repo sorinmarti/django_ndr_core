@@ -8,7 +8,7 @@ class NdrCoreQuery(BaseQuery):
     def __init__(self, api_configuration, page=1):
         super().__init__(api_configuration, page)
 
-    def get_simple_query(self, search_term, add_page_and_size=True):
+    def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
         self.search_term = search_term
         query = self.get_ndr_base_string("basic", add_page_and_size=add_page_and_size)
         if add_page_and_size:

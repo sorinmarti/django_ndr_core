@@ -399,7 +399,7 @@ class ContactForm(ModelForm, _NdrCoreForm):
     def __init__(self, *args, **kwargs):
         super(ContactForm, self).__init__(*args, **kwargs)
 
-        print(NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').translated_value())
+        # print(NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').translated_value())
         self.fields['message_subject'].initial = NdrCoreValue.get_or_initialize(
             value_name='contact_form_default_subject').translated_value()
         self.fields['message_subject'].label = _('Message Subject')

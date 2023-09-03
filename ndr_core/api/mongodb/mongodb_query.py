@@ -9,20 +9,23 @@ from ndr_core.api.base_query import BaseQuery
 
 class MongoDBQuery(BaseQuery):
 
-    def get_simple_query(self, search_term, add_page_and_size=True):
+    def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
         """ Not Implemented """
+
+        search_words = search_term.split(' ')
+        if and_or == 'and':
+            regex_string = '^(?=.*' + ')(?=.*'.join(search_words) + ')'
+        else:
+            regex_string = f"({'|'.join(search_words)})"
+
+        print(regex_string)
+
         query = {
             'filter': {
-                '$or': [
-                    {'transcription.original': {
-                        '$regex': search_term,
-                        '$options': 'i'
-                    }},
-                    {'transcription.corrected': {
-                        '$regex': search_term,
-                        '$options': 'i'
-                    }}
-                ]
+                'transcription.original': {
+                    '$regex': regex_string,
+                    '$options': 'msi'
+                }
             },
             'sort': list({'date.ref': 1}.items()),
             'page': int(self.page)
@@ -46,11 +49,13 @@ class MongoDBQuery(BaseQuery):
                         value = {"$regex": self.values[field_name], "$options": "i"}
                 elif field.field_type == NdrCoreSearchField.FieldType.NUMBER:
                     value = self.values[field_name]
+                elif field.field_type == NdrCoreSearchField.FieldType.NUMBER_RANGE:
+                    value = {'$regex': f'({"|".join(map(str, self.values[field_name]))})-??-??'}
                 elif field.field_type == NdrCoreSearchField.FieldType.LIST:
                     if self.values[field_name] != '':
                         value = self.values[field_name]
                 elif field.field_type == NdrCoreSearchField.FieldType.MULTI_LIST:
-                    print(self.values[field_name])
+                    # print(self.values[field_name])
                     if type(self.values[field_name]) == list and len(self.values[field_name]) > 0:
                         # TODO - This should be configurable
                         value = {"$all": self.values[field_name]}
@@ -63,7 +68,8 @@ class MongoDBQuery(BaseQuery):
                         date_from = self.values[field_name][0].strftime('%Y-%m-%d')
                         date_to = self.values[field_name][1].strftime('%Y-%m-%d')
                         value = {"$gte": date_from, "$lte": date_to}
-                elif field.field_type == NdrCoreSearchField.FieldType.NUMBER_RANGE:
+                elif field.field_type == NdrCoreSearchField.FieldType.BOOLEAN:
+
                     pass
 
                 if value is not None:

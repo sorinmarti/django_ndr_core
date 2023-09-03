@@ -272,7 +272,9 @@ class SearchView(_NdrCoreSearchView):
                     search_config = self.get_simple_search_mockup_config()
                     api_factory = ApiFactory(search_config)
                     query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
-                    query_string = query_obj.get_simple_query(request.GET.get('search_term', ''))
+                    query_string = query_obj.get_simple_query(request.GET.get('search_term', ''),
+                                                              request.GET.get("page", 1),
+                                                              and_or=request.GET.get('and_or_field', 'and'))
                 else:
                     has_values = False
                     for field in form.fields:
@@ -324,7 +326,9 @@ class SimpleSearchView(_NdrCoreSearchView):
                 search_config = self.get_simple_search_mockup_config()
                 api_factory = ApiFactory(search_config)
                 query = api_factory.get_query_instance()
-                query_string = query.get_simple_query(request.GET.get('search_term', ''), request.GET.get("page", 1))
+                query_string = query.get_simple_query(request.GET.get('search_term', ''),
+                                                      request.GET.get("page", 1),
+                                                      and_or=request.GET.get('and_or_field', 'and'))
                 result = api_factory.get_result_instance(query_string, self.request)
                 result.load_result()
                 context.update({'api_config': search_config.api_configuration})

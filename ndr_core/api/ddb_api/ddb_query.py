@@ -3,7 +3,7 @@ from ndr_core.api.base_query import BaseQuery
 
 class DDBQuery(BaseQuery):
 
-    def get_simple_query(self, search_term, add_page_and_size=True):
+    def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
         """ Not Implemented """
         return None
 

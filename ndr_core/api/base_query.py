@@ -23,7 +23,7 @@ class BaseQuery(ABC):
         self.search_term = ''
 
     @abstractmethod
-    def get_simple_query(self, search_term, add_page_and_size=True):
+    def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
         pass
 
     @abstractmethod

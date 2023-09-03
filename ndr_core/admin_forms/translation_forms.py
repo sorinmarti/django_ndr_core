@@ -125,7 +125,7 @@ class TranslateFieldForm(TranslateForm):
                                                              field_name='field_label',
                                                              object_id=field.field_name)
                 initial_values[f"field_label_{field.field_name}"] = field_label.translation
-                print(field_label.translation)
+                # print(field_label.translation)
             except NdrCoreTranslation.DoesNotExist:
                 pass
 
