@@ -1,4 +1,26 @@
 {% load static %}
-<option value="{{ widget.value|stringformat:'s' }}"{% include "django/forms/widgets/attrs.html" %} data-img-src="{{ widget.label }}" data-img-class="img-fluid image-picker-test">
-    {{ widget.label }}
-</option>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Universal Viewer</title>
+      <script src="{% static 'tify/dist/tify.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'tify/dist/tify.css' %}">
+  </head>
+  <body>
+    <div id="tify" style="height: 640px"></div>
+
+    <script>
+      new Tify({
+          container: '#tify',
+          manifestUrl: '{% static 'ndr_core/manifest.json' %}',
+          language: 'en',
+          pageLabelFormat: 'P',
+          pages: [3]
+        })
+    </script>
+  </body>
+</html>
+

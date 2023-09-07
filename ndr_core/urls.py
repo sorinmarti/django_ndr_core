@@ -13,7 +13,15 @@ from ndr_core.admin_views.translation_views import (
     TranslateFormValuesView,
     SelectFormTranslationView,
 )
-from ndr_core.admin_views.uploads_views import ConfigureUploads, UploadCreateView, UploadEditView, UploadDeleteView
+from ndr_core.admin_views.uploads_views import (
+    ConfigureUploads,
+    UploadCreateView,
+    UploadEditView,
+    UploadDeleteView,
+    ManifestUploadCreateView,
+    ManifestUploadEditView,
+    ManifestUploadDeleteView,
+)
 from ndr_core.admin_views.result_views import ConfigureResultsView, ResultsConfigurationDetailView
 from ndr_core.admin_views.export_views import export_color_palette, export_settings, export_messages
 from ndr_core.admin_views.admin_views import NdrCoreDashboard, HelpView, StatisticsView, \
@@ -85,6 +93,9 @@ urlpatterns = [
     path('configure/uploads/create/new/', UploadCreateView.as_view(), name='create_upload'),
     path('configure/uploads/edit/<int:pk>/', UploadEditView.as_view(), name='edit_upload'),
     path('configure/uploads/delete/<int:pk>/', UploadDeleteView.as_view(), name='delete_upload'),
+    path('configure/manifest/uploads/create/new/', ManifestUploadCreateView.as_view(), name='create_manifest_upload'),
+    path('configure/manifest/uploads/edit/<int:pk>/', ManifestUploadEditView.as_view(), name='edit_manifest_upload'),
+    path('configure/manifest/uploads/delete/<int:pk>/', ManifestUploadDeleteView.as_view(), name='delete_manifest_upload'),
 
     # TRANSLATIONS
     path('configure/translations/', ConfigureTranslations.as_view(), name='configure_translations'),
@@ -188,5 +199,7 @@ urlpatterns = [
     path('language/<str:language>/', set_language_view, name='set_language'),
 
     # TEST SERVER
-    path('query/<str:api_request>', ApiTestView.as_view(), name='api_test')
+    path('query/<str:api_request>', ApiTestView.as_view(), name='api_test'),
+
+    path('test/', TemplateView.as_view(template_name='ndr_core/test.html'), name='test')
 ]

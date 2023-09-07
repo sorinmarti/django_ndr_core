@@ -16,7 +16,7 @@
                         <strong>Page Settings</strong>: Set project and browser tab titles.
                     </li>
                     <li>
-                        <strong>Language Settings</strong>: Set the language of the resulting web site. The
+                        <strong>Language Settings</strong>: Set the language of the resulting website. The
                         administration interface is english only.
                     </li>
                     <li>
@@ -40,9 +40,16 @@
                 </ul>
             </p>
 
+            <h6>Language Settings</h6>
+            <p class="card-text">
+                You choose e a base language to create your page in. You can then choose additional languages to
+                translate the page into. Refer to <a href="{% url 'ndr_core:configure_translations' %}">Manage
+                Translations</a>  to translate your elements. Page texts can be translated in the page editor.
+            </p>
+
             <h6>Import/Export Settings</h6>
             <p class="card-text">
-                You can import or export your settings so you can store them or use them in another project. The export
+                You can import or export your settings, so you can store them or use them in another project. The export
                 function produces a JSON file which can be deserialized into NDR Core's data model. Refer to
                 <a href="#">NDR Core settings serialization</a> for more information.
             </p>

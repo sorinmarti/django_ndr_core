@@ -481,6 +481,9 @@ class NdrCorePage(models.Model):
         ABOUT_PAGE = 8, "About Us Page"
         """TODO """
 
+        VIEWER_PAGE = 9, "Viewer Page"
+
+
     view_name = models.CharField(max_length=200,
                                  help_text='The url part of your page (e.g. https://yourdomain.org/p/view_name)',
                                  unique=True)
@@ -1003,6 +1006,18 @@ class NdrCoreUpload(models.Model):
 
     file = models.FileField(upload_to='uploads/')
     """Actual file"""
+
+
+class NdrCoreManifest(models.Model):
+    title = models.CharField(max_length=200, blank=True, default='',
+                             help_text='Title of the manifest. Is shown in the dropdown of the page.')
+    """Title of the upload"""
+
+    file = models.FileField(upload_to='uploads/manifests/')
+    """Actual file"""
+
+    def __str__(self):
+        return self.title
 
 
 class NdrCoreUIElement(models.Model):

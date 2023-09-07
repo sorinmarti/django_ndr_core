@@ -20,13 +20,18 @@
         $(document).ready(function(){
             let imageBaseUrl = "{% url 'ndr_core:preview_image' 'image_string' %}";
             configureRows(20, imageBaseUrl);
-            initializeAddAndRemoveButtons();
 
+            let visible_buttons = 1;
             for(let i = 0; i < 20; i++){
                 if($('#id_search_field_' + i).val() === '') {
                     $('#search_field_config_row_' + i).hide();
                 }
+                else {
+                    visible_buttons++;
+                }
             }
+
+            initializeAddAndRemoveButtons(visible_buttons);
 
             let maskedUrl = getMaskedUrl(imageBaseUrl);
             let previewImage = $('#preview_image');

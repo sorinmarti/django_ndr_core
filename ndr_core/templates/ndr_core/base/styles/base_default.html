@@ -10,6 +10,9 @@
     <head>
         {% include 'ndr_core/base/base_header_tags.html' %}
         <link href="{% static 'ndr_core/css/ndr_core_default.css' %}" rel="stylesheet">
+        {% block module_css %}
+            <!-- custom css -->
+        {% endblock %}
         {% block custom_css %}
             <!-- custom css -->
         {% endblock %}

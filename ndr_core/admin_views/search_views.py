@@ -9,7 +9,12 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
 from ndr_core.form_preview import get_image_from_raw_data
-from ndr_core.admin_forms.search_forms import SearchConfigurationForm, SearchFieldEditForm, SearchFieldCreateForm
+from ndr_core.admin_forms.search_forms import (
+    SearchFieldEditForm,
+    SearchFieldCreateForm,
+    SearchConfigurationEditForm,
+    SearchConfigurationCreateForm,
+)
 from ndr_core.models import NdrCoreDataSchema, NdrCoreSearchField, NdrCoreSearchConfiguration, \
     NdrCoreSearchFieldFormConfiguration
 
@@ -40,7 +45,7 @@ class SearchConfigurationCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new API configuration """
 
     model = NdrCoreSearchConfiguration
-    form_class = SearchConfigurationForm
+    form_class = SearchConfigurationCreateForm
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/search_config_create.html'
 
@@ -73,7 +78,7 @@ class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
     """ View to edit an existing API configuration """
 
     model = NdrCoreSearchConfiguration
-    form_class = SearchConfigurationForm
+    form_class = SearchConfigurationEditForm
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/search_config_edit.html'
 
@@ -92,7 +97,8 @@ class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
         return form
 
     def form_valid(self, form):
-        return super(SearchConfigurationEditView, self).form_valid(form)
+        response = super(SearchFieldConfigurationCreateView, self).form_valid(form)
+        return response
 
 
 class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):

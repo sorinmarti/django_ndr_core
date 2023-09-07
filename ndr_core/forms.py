@@ -11,7 +11,13 @@ from django.forms import ModelForm
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from ndr_core.models import NdrCoreValue, NdrCorePage, NdrCoreUserMessage, NdrCoreSearchConfiguration
+from ndr_core.models import (
+    NdrCoreValue,
+    NdrCorePage,
+    NdrCoreUserMessage,
+    NdrCoreSearchConfiguration,
+    NdrCoreManifest,
+)
 from django_select2 import forms as s2forms
 from bootstrap_daterangepicker import widgets, fields
 
@@ -235,7 +241,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                 search_field = field.search_field
                 form_field = None
                 help_text = mark_safe(f'<small id="{search_field.field_name}Help" class="form-text text-muted">'
-                                      f'{search_field.help_text}</small>')
+                                      f'{search_field.translated_help_text()}</small>')
 
                 # Text field
                 if search_field.field_type == search_field.FieldType.STRING:
@@ -436,6 +442,39 @@ class ContactForm(ModelForm, _NdrCoreForm):
             layout.append(form_row)
 
         layout.append(_NdrCoreForm.get_button_line('submit', _('Send Message')))
+
+        return helper
+
+
+class ManifestSelectionForm(_NdrCoreForm):
+    """TODO """
+
+    def __init__(self, *args, **kwargs):
+        """TODO """
+
+        super().__init__(*args, **kwargs)
+
+        self.fields['manifest'] = forms.ModelChoiceField(label=_('Manifest'),
+                                                         queryset=NdrCoreManifest.objects.all(),
+                                                         required=True,
+                                                         help_text=_('Choose the manifest to display.'))
+
+
+    @property
+    def helper(self):
+        """TODO """
+
+        helper = FormHelper()
+        helper.form_method = "GET"
+        helper.form_show_labels = False
+        layout = helper.layout = Layout()
+
+        form_row = Row(
+            Column('manifest', css_class='form-group col-md-9 mb-0'),
+            Column(MySubmit('submit', _('Show')), css_class='form-group col-md-3 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
 
         return helper
 

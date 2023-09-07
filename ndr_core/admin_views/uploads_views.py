@@ -4,8 +4,13 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
 
-from ndr_core.admin_forms.upload_forms import UploadCreateForm, UploadEditForm
-from ndr_core.models import NdrCoreUpload
+from ndr_core.admin_forms.upload_forms import (
+    UploadCreateForm,
+    UploadEditForm,
+    ManifestUploadCreateForm,
+    ManifestUploadEditForm,
+)
+from ndr_core.models import NdrCoreUpload, NdrCoreManifest
 
 
 class ConfigureUploads(LoginRequiredMixin, View):
@@ -14,7 +19,8 @@ class ConfigureUploads(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        context = {'files': NdrCoreUpload.objects.all()}
+        context = {'files': NdrCoreUpload.objects.all(),
+                   'manifests': NdrCoreManifest.objects.all()}
         return render(self.request, template_name='ndr_core/admin_views/configure_uploads.html',
                       context=context)
 
@@ -46,7 +52,7 @@ class UploadEditView(LoginRequiredMixin, UpdateView):
 
 
 class UploadDeleteView(LoginRequiredMixin, DeleteView):
-    """ View to delete an image from the database. Asks to confirm."""
+    """ View to delete an upload from the database. Asks to confirm."""
 
     model = NdrCoreUpload
     success_url = reverse_lazy('ndr_core:configure_uploads')
@@ -54,3 +60,40 @@ class UploadDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         return super(UploadDeleteView, self).form_valid(form)
+
+
+class ManifestUploadCreateView(LoginRequiredMixin, CreateView):
+    """ View to create a manifest """
+
+    model = NdrCoreManifest
+    form_class = ManifestUploadCreateForm
+    success_url = reverse_lazy('ndr_core:configure_uploads')
+    template_name = 'ndr_core/admin_views/manifest_upload_create.html'
+
+    def form_valid(self, form):
+        response = super(ManifestUploadCreateView, self).form_valid(form)
+        return response
+
+
+class ManifestUploadEditView(LoginRequiredMixin, UpdateView):
+    """ View to edit an existing manifest """
+
+    model = NdrCoreManifest
+    form_class = ManifestUploadEditForm
+    success_url = reverse_lazy('ndr_core:configure_uploads')
+    template_name = 'ndr_core/admin_views/manifest_upload_edit.html'
+
+    def form_valid(self, form):
+        response = super(ManifestUploadEditView, self).form_valid(form)
+        return response
+
+
+class ManifestUploadDeleteView(LoginRequiredMixin, DeleteView):
+    """ View to delete an image from the database. Asks to confirm."""
+
+    model = NdrCoreManifest
+    success_url = reverse_lazy('ndr_core:configure_uploads')
+    template_name = 'ndr_core/admin_views/manifest_upload_confirm_delete.html'
+
+    def form_valid(self, form):
+        return super(ManifestUploadDeleteView, self).form_valid(form)

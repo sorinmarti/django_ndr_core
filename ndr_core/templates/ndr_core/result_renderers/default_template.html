@@ -28,7 +28,7 @@
     <p class="text-center pt-3">
         {% if result.original_data.tags.tags %}
             Categories:
-            {% with result.original_data.tags.tags|key_value:'tags.tags' as tag_list %}
+            {% with result.original_data.tags.tags as tag_list %}
                 {% for tag in tag_list|clean_list %}
                     <a href="#" class="badge border border-secondary small text-dark" style="font-weight: normal; background-color: {{ tag|translate_to_color:80 }};">{{ tag|translate_dict_value:'tags' }}</a>
                 {% endfor %}
@@ -52,7 +52,9 @@
     <p class="text-center p-3 border rounded">
         {% if result.original_data.source.selector.fragment|is_list %}
             {% for frag in result.original_data.source.selector.fragment %}
-                <img class="img-fluid" src="{{ frag|reduce_iiif_size:25 }}" alt="IIIF fragment">
+                {% if frag %}
+                    <img class="img-fluid" src="{{ frag|reduce_iiif_size:25 }}" alt="IIIF fragment">
+                {% endif %}
             {% endfor %}
         {% else %}
             {% if result.original_data.source.selector.fragment|reduce_iiif_size:25 != '' %}

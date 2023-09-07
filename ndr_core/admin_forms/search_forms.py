@@ -173,9 +173,6 @@ class SearchConfigurationForm(forms.ModelForm):
         )
         layout.append(form_row)
 
-        helper.add_input(Submit('submit', 'Create Search Configuration'))
-        helper.add_input(Button('add_row', 'Add Row', css_class='btn btn-secondary'))
-        helper.add_input(Button('remove_row', 'Remove Row', css_class='btn btn-secondary'))
         return helper
 
 

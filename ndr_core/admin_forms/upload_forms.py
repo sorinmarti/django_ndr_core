@@ -4,7 +4,7 @@ from crispy_forms.layout import Layout, Row, Column
 from django import forms
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons
-from ndr_core.models import NdrCoreUpload
+from ndr_core.models import NdrCoreUpload, NdrCoreManifest
 
 
 class UploadForm(forms.ModelForm):
@@ -51,4 +51,51 @@ class UploadEditForm(UploadForm):
         """Creates and returns the form helper property."""
         helper = super(UploadEditForm, self).helper
         helper.layout.append(get_form_buttons('Save File'))
+        return helper
+
+
+class ManifestUploadForm(forms.ModelForm):
+    """Form to upload manifest files. """
+
+    class Meta:
+        model = NdrCoreManifest
+        fields = ['title', 'file']
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+
+        helper = FormHelper()
+        helper.form_method = "POST"
+        layout = helper.layout = Layout()
+
+        form_row = Row(
+            Column('title', css_class='form-group col-md-6 mb-0'),
+            Column('file', css_class='form-group col-md-6 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        return helper
+
+
+class ManifestUploadCreateForm(UploadForm):
+    """Form to upload downloadable files."""
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = super(ManifestUploadCreateForm, self).helper
+        helper.layout.append(get_form_buttons('Upload Manifest File'))
+        return helper
+
+
+class ManifestUploadEditForm(UploadForm):
+    """Form to edit downloadable files."""
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = super(ManifestUploadEditForm, self).helper
+        helper.layout.append(get_form_buttons('Save Manifest File'))
         return helper

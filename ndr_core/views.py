@@ -15,9 +15,18 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import translation
 
 from django_ndr_core import settings
-from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm
-from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreUserMessage, NdrCoreImage, \
-    NdrCoreCorrection, NdrCoreSearchConfiguration, NdrCoreValue
+from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm, \
+    ManifestSelectionForm
+from ndr_core.models import (
+    NdrCorePage,
+    NdrCoreApiConfiguration,
+    NdrCoreUserMessage,
+    NdrCoreImage,
+    NdrCoreCorrection,
+    NdrCoreSearchConfiguration,
+    NdrCoreValue,
+    NdrCoreManifest,
+)
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
 from ndr_core.templatetags.ndr_utils import url_deparse
@@ -73,6 +82,9 @@ def dispatch(request, ndr_page=None):
         elif page.page_type == page.PageType.ABOUT_PAGE:
             return AboutUsView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                        ndr_page=page)(request)
+        elif page.page_type == page.PageType.VIEWER_PAGE:
+            return ViewerView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
+                                      ndr_page=page)(request)
         else:
             return HttpResponseNotFound("Page Type Not Found")
     except NdrCorePage.DoesNotExist:
@@ -389,6 +401,40 @@ class FlipBookView(_NdrCoreView):
         context = {}
         context.update(self.get_ndr_context_data())
         return context
+
+
+class ViewerView(_NdrCoreView):
+    """A view to show a IIIF viewer. """
+    def get_context_data(self, **kwargs):
+        context = {}
+        context.update(self.get_ndr_context_data())
+        return context
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data()
+
+        manifests = NdrCoreManifest.objects.all()
+
+        form = None
+        manifest_url = None
+
+        if manifests.count() == 0:
+            messages.error(request, _("No manifests found."))
+        elif manifests.count() == 1:
+            manifest_url = manifests[0].file.url
+        else:
+            form = ManifestSelectionForm(request.GET)
+            if form.is_valid():
+                manifest_url = form.cleaned_data['manifest'].file.url
+            else:
+                form = ManifestSelectionForm(initial={'manifest': manifests[0].id})
+                manifest_url = manifests[0].file.url
+
+        context['form'] = form
+        context['manifest_url'] = manifest_url
+        context['page_to_display'] = request.GET.get('page', 1)
+
+        return render(request, self.template_name, context)
 
 
 class ApiTestView(View):

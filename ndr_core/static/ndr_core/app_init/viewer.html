@@ -1,0 +1,39 @@
+{% extends 'ndr/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{# block page_title #}
+{# endblock #}
+
+{# block content #}
+{# endblock #}
+
+{% block generated_content %}
+    <div class="container">
+        {% if form %}
+            {% crispy form %}
+        {% endif %}
+        <div id="tify" style="height: 640px"></div>
+    </div>
+{% endblock %}
+
+{% block module_css %}
+    <link rel="stylesheet" href="{% static 'tify/dist/tify.css' %}">
+{% endblock %}
+
+{% block page_js %}
+    {% if manifest_url %}
+        {% get_current_language as LANGUAGE_CODE %}
+        <script src="{% static 'tify/dist/tify.js' %}"></script>
+        <script>
+          new Tify({
+              container: '#tify',
+              manifestUrl: '{{ manifest_url }}',
+              language: '{{ LANGUAGE_CODE }}',
+              pageLabelFormat: 'P',
+              pages: [{{ page_to_display }}]
+            });
+        </script>
+    {% endif %}
+{% endblock %}

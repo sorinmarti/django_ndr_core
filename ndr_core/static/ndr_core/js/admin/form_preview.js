@@ -74,12 +74,9 @@ function configureDropdown(selectElement, totalElements, updateFunc) {
     });
 }
 
-function initializeAddAndRemoveButtons() {
+function initializeAddAndRemoveButtons(visible_buttons=1) {
     let addButton = $('#button-id-add_row');
     let removeButton = $('#button-id-remove_row');
-
-    // Set visible buttons to 1
-    let visible_buttons = 0;
 
     addButton.on('click', function () {
         removeButton.show();
