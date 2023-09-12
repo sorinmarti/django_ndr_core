@@ -44,9 +44,11 @@ def dispatch(request, ndr_page=None):
     :return: A configured view or 404 if not found
     """
 
-    if NdrCoreValue.get_or_initialize("under_construction",
-                                      init_type=NdrCoreValue.ValueType.BOOLEAN,
-                                      init_value="false").get_value():
+    page_is_under_construction = NdrCoreValue.get_or_initialize("under_construction",
+                                                                init_type=NdrCoreValue.ValueType.BOOLEAN,
+                                                                init_value="false").get_value()
+
+    if page_is_under_construction:
         return TemplateView.as_view(template_name='ndr_core/under_construction.html')(request)
 
     if ndr_page is None:

@@ -1,6 +1,6 @@
 """Forms used in the NDRCore admin interface for in-app settings."""
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Row, Column, Div, HTML
+from crispy_forms.layout import Layout, Row, Column, Div, HTML, ButtonHolder, Submit
 from django import forms
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons
@@ -190,4 +190,65 @@ class SettingsImportForm(forms.Form):
         helper.layout.append(form_row)
 
         helper.layout.append(get_form_buttons('Import Settings'))
+        return helper
+
+
+class SettingsSetReadonlyForm(forms.Form):
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_method = "POST"
+        helper.layout = Layout()
+
+        bh = ButtonHolder(
+            Submit("submit", "Set Page Read Only", css_class="btn-default"), css_class="modal-footer"
+        )
+        helper.layout.append(bh)
+        return helper
+
+
+class SettingsSetEditableForm(forms.Form):
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_method = "POST"
+        helper.layout = Layout()
+    
+        bh = ButtonHolder(
+            Submit("submit", "Set Page Editable", css_class="btn-default"),
+            css_class="modal-footer",
+        )
+        helper.layout.append(bh)
+        return helper
+
+
+class SettingsSetUnderConstructionForm(forms.Form):
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_method = "POST"
+        helper.layout = Layout()
+
+        bh = ButtonHolder(
+            Submit("submit", "Set Page Under Construction", css_class="btn-default"),
+            css_class="modal-footer",
+        )
+        helper.layout.append(bh)
+        return helper
+
+
+class SettingsSetLiveForm(forms.Form):
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_method = "POST"
+        helper.layout = Layout()
+
+        bh = ButtonHolder(
+            Submit("submit", "Set Page Live", css_class="btn-default"),
+            css_class="modal-footer",
+        )
+        helper.layout.append(bh)
         return helper

@@ -1,0 +1,18 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <a href="{% url 'ndr_core:configure_settings' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Really set Page Read Only?</h5>
+            <p>When you're done editing your pages and search forms, it is a good idea to set your NDR Core
+            installation to "read only". This means that you can no longer edit your pages or your search forms.
+            The admin interface only shows the options for message management and statistics.</p>
+            <p>You can turn on editing anytime again, if you want to continue editing your pages.</p>
+            {% crispy form %}
+        </div>
+    </div>
+{% endblock %}

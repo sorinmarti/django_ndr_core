@@ -12,7 +12,7 @@ from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
 from ndr_core.models import NdrCorePage, NdrCoreSearchConfiguration, NdrCoreValue, NdrCoreApiConfiguration, \
-    NdrCoreUiStyle, NdrCoreColorScheme, NdrCoreSearchStatisticEntry
+    NdrCoreUiStyle, NdrCoreColorScheme, NdrCoreSearchStatisticEntry, NdrCoreUserMessage
 from ndr_core.ndr_settings import NdrSettings
 from ndr_core.admin_tables import StatisticsTable
 
@@ -23,29 +23,10 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        try:
-            ui_style = NdrCoreUiStyle.objects.get(name=NdrCoreValue.objects.get(value_name='ui_style').value_value).label
-        except NdrCoreValue.DoesNotExist:
-            ui_style = None
-
-        try:
-            color_scheme = NdrCoreColorScheme.objects.get(
-                scheme_name=NdrCoreValue.objects.get(value_name='ui_color_scheme').value_value).scheme_label
-        except NdrCoreValue.DoesNotExist:
-            color_scheme = None
-
         return render(self.request,
                       template_name='ndr_core/admin_views/dashboard.html',
-                      context={'ndr_inizialized': NdrSettings.app_exists(),
-
-                               'numbers': {
-                                   'api': NdrCoreApiConfiguration.objects.all().count(),
-                                   'search': NdrCoreSearchConfiguration.objects.all().count(),
-                                   'page': NdrCorePage.objects.all().count(),
-                                   'messages': 0
-                               },
-                               'ui_style': ui_style,
-                               'color_scheme': color_scheme})
+                      context={'new_messages': NdrCoreUserMessage.objects.filter(message_archived=False).count(),
+                               'total_searches': NdrCoreSearchStatisticEntry.objects.all().count()})
 
 
 class HelpView(LoginRequiredMixin, View):

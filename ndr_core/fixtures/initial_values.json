@@ -2,11 +2,23 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
+      "value_name": "page_is_editable",
+      "value_label": "Page Is Editable",
+      "value_help_text": "Deactivates most of the frontend editing features. Useful for production.",
+      "value_type": "boolean",
+      "value_value": "false",
+      "is_translatable": false
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreValue",
+    "fields": {
       "value_name": "under_construction",
       "value_label": "Page Is Under Construction",
       "value_help_text": "Shows a \"Under Construction\" page instead of your configured home page",
       "value_type": "boolean",
-      "value_value": "false"
+      "value_value": "false",
+      "is_translatable": false
     }
   },
   {
@@ -15,18 +27,20 @@
       "value_name": "under_construction_text",
       "value_label": "Under Construction Text",
       "value_help_text": "Text if page is under construction",
-      "value_value": "This page is currently under construction."
+      "value_value": "This page is currently under construction.",
+      "is_translatable": true
     }
   },
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
       "value_name": "ndr_language",
-      "value_label": "Basel language",
+      "value_label": "Base language",
       "value_help_text": "Base of the frontend. The administration interface is english only.",
       "value_type": "list",
       "value_value": "en",
-      "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano)"
+      "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano)",
+      "is_translatable": false
     }
   },
   {
@@ -35,9 +49,10 @@
       "value_name": "available_languages",
       "value_label": "Additional Languages",
       "value_help_text": "What languages are available? (Hold Ctrl to select multiple)",
-      "value_value": "en",
+      "value_value": "",
       "value_type": "multi_list",
-      "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano)"
+      "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano)",
+      "is_translatable": false
     }
   },
   {
@@ -47,7 +62,8 @@
       "value_label": "Allow single result downloads?",
       "value_help_text": "Results can be downloaded one by one",
       "value_type": "boolean",
-      "value_value": "true"
+      "value_value": "true",
+      "is_translatable": false
     }
   },
   {
@@ -57,7 +73,8 @@
       "value_label": "Allow list result downloads?",
       "value_help_text": "Results can be downloaded together as json list",
       "value_type": "boolean",
-      "value_value": "true"
+      "value_value": "true",
+      "is_translatable": false
     }
   },
   {
@@ -67,7 +84,8 @@
       "value_label": "Allow list result downloads?",
       "value_help_text": "Results can be downloaded together as csv list",
       "value_type": "boolean",
-      "value_value": "true"
+      "value_value": "true",
+      "is_translatable": false
     }
   },
   {
@@ -77,7 +95,8 @@
       "value_label": "Max results to download",
       "value_help_text": "Search results can be downloaded. This number defines the maximum number of results.",
       "value_type": "integer",
-      "value_value": "250"
+      "value_value": "250",
+      "is_translatable": false
     }
   },
   {
@@ -86,7 +105,8 @@
       "value_name": "search_simple_field_label",
       "value_label": "Simple Search Field label",
       "value_help_text": "Label for the text field used to enter the simple search term.",
-      "value_value": "Search Term"
+      "value_value": "Search Term",
+      "is_translatable": true
     }
   },
   {
@@ -95,7 +115,8 @@
       "value_name": "search_simple_help_text",
       "value_label": "Simple Search Field Help Text",
       "value_help_text": "Help text for the text field used to enter the simple search term.",
-      "value_value": "Search for anything!"
+      "value_value": "Search for anything!",
+      "is_translatable": true
     }
   },
   {
@@ -104,7 +125,9 @@
       "value_name": "search_simple_has_compact_result_view",
       "value_label": "Simple Search has compact result view",
       "value_help_text": "If true, the simple search form will feature a 'compact view' trigger.",
-      "value_value": "false"
+      "value_type": "boolean",
+      "value_value": "false",
+      "is_translatable": false
     }
   },
   {
@@ -114,7 +137,8 @@
       "value_label": "Show partner images",
       "value_help_text": "Add partnering institution logos to your images to display and link them.",
       "value_type": "boolean",
-      "value_value": "true"
+      "value_value": "true",
+      "is_translatable": false
     }
   },
   {
@@ -124,7 +148,8 @@
       "value_label": "Show navigation",
       "value_help_text": "Show main navigation links in footer.",
       "value_type": "boolean",
-      "value_value": "true"
+      "value_value": "true",
+      "is_translatable": false
     }
   },
   {
@@ -134,7 +159,8 @@
       "value_label": "Show Social Networks",
       "value_help_text": "Show social networks icons with links to your pages.",
       "value_type": "boolean",
-      "value_value": "true"
+      "value_value": "true",
+      "is_translatable": false
     }
   },
   {
@@ -143,7 +169,8 @@
       "value_name": "footer_copyright_text",
       "value_label": "Copyright text",
       "value_help_text": "Small text at the bottom of the footer",
-      "value_value": "powered by NDR Core"
+      "value_value": "powered by NDR Core",
+      "is_translatable": true
     }
   },
   {
@@ -153,7 +180,8 @@
       "value_label": "Twitter Link",
       "value_help_text": "Link to your Twitter account.",
       "value_type": "url",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": false
     }
   },
   {
@@ -163,7 +191,8 @@
       "value_label": "Instagram Link",
       "value_help_text": "Link to your Instagram account.",
       "value_type": "url",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": false
     }
   },
   {
@@ -173,7 +202,8 @@
       "value_label": "Facebook Link",
       "value_help_text": "Link to your Facebook account.",
       "value_type": "url",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": false
     }
   },
   {
@@ -183,7 +213,8 @@
       "value_label": "Mastodon Link",
       "value_help_text": "Link to your Mastodon account.",
       "value_type": "url",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": false
     }
   },
   {
@@ -192,7 +223,8 @@
       "value_name": "ui_style",
       "value_label": "UI Style",
       "value_help_text": "UI Style",
-      "value_value": "default"
+      "value_value": "default",
+      "is_translatable": false
     }
   },
   {
@@ -201,7 +233,8 @@
       "value_name": "ui_color_scheme",
       "value_label": "UI Color Scheme",
       "value_help_text": "UI Color Scheme",
-      "value_value": "default"
+      "value_value": "default",
+      "is_translatable": false
     }
   },
   {
@@ -211,7 +244,8 @@
       "value_label": "Correction Feature Enabled",
       "value_help_text": "true if users can suggest corrections, false otherwise.",
       "value_type": "boolean",
-      "value_value": "true"
+      "value_value": "true",
+      "is_translatable": false
     }
   },
   {
@@ -221,7 +255,8 @@
       "value_label": "Statistics Feature Enabled",
       "value_help_text": "true if searches are logged.",
       "value_type": "boolean",
-      "value_value": "false"
+      "value_value": "false",
+      "is_translatable": false
     }
   },
   {
@@ -232,7 +267,8 @@
       "value_help_text": "Keep the messages or forward them?",
       "value_value": "keep",
       "value_type": "list",
-      "value_options": "(forward,Forward messages);(keep,Keep messages on server)"
+      "value_options": "(forward,Forward messages);(keep,Keep messages on server)",
+      "is_translatable": false
     }
   },
   {
@@ -241,7 +277,8 @@
       "value_name": "contact_form_send_to_address",
       "value_label": "E-Mail address for Contact Form",
       "value_help_text": "Messages from the contact form are sent to this address",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": false
     }
   },
   {
@@ -250,7 +287,8 @@
       "value_name": "contact_form_send_from_address",
       "value_label": "E-Mail address for Contact Form",
       "value_help_text": "Messages from the contact form are sent from this address",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": false
     }
   },
   {
@@ -259,7 +297,8 @@
       "value_name": "contact_form_default_subject",
       "value_label": "Default Subject",
       "value_help_text": "Default message subject",
-      "value_value": "Question about..."
+      "value_value": "Question about...",
+      "is_translatable": true
     }
   },
   {
@@ -269,7 +308,8 @@
       "value_label": "Use Captcha?",
       "value_help_text": "Captcha is used to prevent spam. You'll need a valid reCAPTCHA API key pair.",
       "value_type": "boolean",
-      "value_value": "false"
+      "value_value": "false",
+      "is_translatable": false
     }
   },
   {
@@ -278,7 +318,8 @@
       "value_name": "email_config_host",
       "value_label": "E-Mail host to send messages",
       "value_help_text": "",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": false
     }
   },
   {
@@ -287,7 +328,8 @@
       "value_name": "email_config_timeout",
       "value_label": "E-Mail send Timeout",
       "value_help_text": "",
-      "value_value": "10"
+      "value_value": "10",
+      "is_translatable": false
     }
   },
 
@@ -297,7 +339,8 @@
       "value_name": "header_default_title",
       "value_label": "Default Header title",
       "value_help_text": "The title which will appear as title in your browser tab",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": true
     }
   },
   {
@@ -306,7 +349,8 @@
       "value_name": "header_description",
       "value_label": "Description in HTML header",
       "value_help_text": "",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": true
     }
   },
   {
@@ -315,7 +359,8 @@
       "value_name": "header_author",
       "value_label": "Author in HTML header",
       "value_help_text": "",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": false
     }
   },
   {
@@ -324,7 +369,8 @@
       "value_name": "project_title",
       "value_label": "Project title",
       "value_help_text": "The project's or web page's title.",
-      "value_value": ""
+      "value_value": "",
+      "is_translatable": true
     }
   }
 ]

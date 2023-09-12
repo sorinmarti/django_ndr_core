@@ -53,79 +53,16 @@
             <div class="mb-auto p-2">
                 <h5 class="card-title">Welcome to the NDR-Core administration interface</h5>
                 <p class="card-text">
-                    Refer to the navigation on top to manage and edit your web page.
+                    <ul>
+                        <li>You have <strong>{{ new_messages }}</strong> <a href="{% url 'ndr_core:configure_messages' %}">new messages</a>.</li>
+                <li>Your database has been searched <strong>{{ total_searches }}</strong> times.</li>
+                    </ul>
                 </p>
             </div>
             <div class="mb-0 p-0 w-100">
                 <div class="container p-0 m-0">
                     <div class="row p-0 m-0">
-                        <div class="col-sm p-0 m-0">
-                            <p class="text-muted small font-italic p-0 m-0" style="position: absolute; left: 0px; bottom: 0px;">(Image created with <a href="https://labs.openai.com/">DALL-E</a>.)</p>
-                        </div>
-                        <div class="col-sm-auto p-0 m-0">
-                            <a href="{% url 'ndr_core:configure_messages' %}" class="btn btn-sm btn-primary">Check Messages</a>
-                            <a href="{% url 'ndr_core:search_statistics' %}" class="btn btn-sm btn-primary">See Search Statistics</a>
-                            <a href="{% url 'ndr_core:configure_corrections' %}" class="btn btn-sm btn-primary">View Entries To Correct</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="card bg-light">
-        <div class="card-body border d-flex align-items-start flex-column m-0">
-            <div class="mb-auto p-2">
-                <h5 class="card-title">Access Your Data</h5>
-                <p class="card-text">
-                    NDR Core is a frontend for your research data. It provides a number of API implementations which
-                    let you access your data. Check out which one is for you.
-                </p>
-                <p class="card-text">
-                    If you are a developer, you can create an implementation for your own database. Check out the
-                    documentation for more information.
-                </p>
-            </div>
-            <div class="mb-0 p-0 w-100">
-                <div class="container p-0 m-0">
-                    <div class="row p-0 m-0">
-                        <div class="col-sm-auto p-0 m-0">
-                            <a href="{% url 'ndr_core:help_chapter' 'apis' %}" class="btn btn-sm btn-primary">API Implementations</a>
-                        </div>
-                        <div class="col-sm p-0 m-0">
-                            <p class="text-muted small font-italic p-0 m-0" style="position: absolute; right: 0px; bottom: 0px;">(Image created with <a href="https://labs.openai.com/">DALL-E</a>.)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <img src="{% static 'ndr_core/images/admin/dashboard/data.png' %}" class="card-img-top card-img-right" />
-    </div>
-
-    <div class="card bg-light">
-        <img src="{% static 'ndr_core/images/admin/dashboard/help.png' %}" class="card-img-top card-img-left" />
-        <div class="card-body border d-flex align-items-start flex-column m-0">
-            <div class="mb-auto p-2">
-                <h5 class="card-title">Find Help</h5>
-                <p class="card-text">
-                    NDR Core features help pages which help you with your existing installation. Learn about pages,
-                    UI elements, Search forms and API configurations.
-                </p>
-                <p class="card-text">
-                    If you plan to install NDR Core, you can find the installation guide and the repository here.
-                </p>
-            </div>
-            <div class="mb-0 p-0 w-100">
-                <div class="container p-0 m-0">
-                    <div class="row p-0 m-0">
-                        <div class="col-sm p-0 m-0">
-                            <p class="text-muted small font-italic p-0 m-0" style="position: absolute; left: 0px; bottom: 0px;">(Image created with <a href="https://labs.openai.com/">DALL-E</a>.)</p>
-                        </div>
-                        <div class="col-sm-auto p-0 m-0">
-                            <a href="{% url 'ndr_core:help' %}" class="btn btn-sm btn-primary">NDR Core Help</a>
-                            <a href="#" class="btn btn-sm btn-primary">Installation Guide</a>
-                            <a href="#" class="btn btn-sm btn-primary">Repository</a>
-                        </div>
                     </div>
                 </div>
             </div>

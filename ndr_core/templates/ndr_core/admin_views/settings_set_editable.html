@@ -1,0 +1,16 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <a href="{% url 'ndr_core:configure_settings' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Really set Page to "editable"?</h5>
+            <p>You only need to make your page editable again, if you want to change pages or search forms.
+            Continue?</p>
+            {% crispy form %}
+        </div>
+    </div>
+{% endblock %}

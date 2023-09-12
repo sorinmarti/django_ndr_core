@@ -1,13 +1,23 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
 from django.core.serializers.base import DeserializationError
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, TemplateView, FormView
 
-from ndr_core.admin_forms.settings_forms import SettingsListForm, SettingCreateForm, SettingEditForm, SettingsImportForm
+from ndr_core.admin_forms.settings_forms import (
+    SettingsListForm,
+    SettingCreateForm,
+    SettingEditForm,
+    SettingsImportForm,
+    SettingsSetReadonlyForm,
+    SettingsSetEditableForm,
+    SettingsSetUnderConstructionForm,
+    SettingsSetLiveForm,
+)
 from ndr_core.models import NdrCoreValue
 
 settings_group_list = {
@@ -189,4 +199,48 @@ class SettingsImportView(LoginRequiredMixin, FormView):
         except DeserializationError:
             messages.error(self.request, 'Could not deserialize object.')
 
+        return super().form_valid(form)
+
+
+class SetPageReadOnlyView(LoginRequiredMixin, FormView):
+
+    template_name = "ndr_core/admin_views/settings_set_readonly.html"
+    form_class = SettingsSetReadonlyForm
+    success_url = reverse_lazy("ndr_core:configure_settings")
+
+    def form_valid(self, form):
+        NdrCoreValue.objects.filter(value_name='page_is_editable').update(value_value='false')
+        return super().form_valid(form)
+
+
+class SetPageEditableView(LoginRequiredMixin, FormView):
+
+    template_name = "ndr_core/admin_views/settings_set_readonly.html"
+    form_class = SettingsSetEditableForm
+    success_url = reverse_lazy("ndr_core:configure_settings")
+
+    def form_valid(self, form):
+        NdrCoreValue.objects.filter(value_name='page_is_editable').update(value_value='true')
+        return super().form_valid(form)
+
+
+class SetPageUnderConstructionView(LoginRequiredMixin, FormView):
+
+    template_name = "ndr_core/admin_views/settings_set_under_construction.html"
+    form_class = SettingsSetUnderConstructionForm
+    success_url = reverse_lazy("ndr_core:configure_settings")
+
+    def form_valid(self, form):
+        NdrCoreValue.objects.filter(value_name='under_construction').update(value_value='true')
+        return super().form_valid(form)
+
+
+class SetPageLiveView(LoginRequiredMixin, FormView):
+
+    template_name = "ndr_core/admin_views/settings_set_live.html"
+    form_class = SettingsSetLiveForm
+    success_url = reverse_lazy("ndr_core:configure_settings")
+
+    def form_valid(self, form):
+        NdrCoreValue.objects.filter(value_name='under_construction').update(value_value='false')
         return super().form_valid(form)

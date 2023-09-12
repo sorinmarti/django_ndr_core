@@ -1,85 +1,121 @@
 {% extends 'ndr_core/admin_views/base.html' %}
 {% load django_tables2 %}
 {% load crispy_forms_tags %}
+{% load ndr_values %}
 
 {% block content %}
     <h2><i class="fa-regular fa-gear"></i> Settings</h2>
-    <div class="card-deck">
+    {% config_value 'page_is_editable' as is_editable %}
 
-        <div class="card bg-light mb-3">
-            <div class="card-body">
-                <h5 class="card-title">Options</h5>
-                <div class="list-group">
-                    <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-table-list"></i>
-                        Create Custom Setting
-                    </a>
-                    <a href="{% url 'ndr_core:import_settings' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-file-import"></i>
-                        Import Settings
-                    </a>
-                    <a href="{% url 'ndr_core:export_settings' %}" class="list-group-item list-group-item-action py-2" target="_blank">
-                        <i class="fa-regular fa-file-export"></i>
-                        Export Settings
-                    </a>
-                    <a href="{% url 'ndr_core:change_password' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-lock"></i>
-                        Set Admin Password
-                    </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'settings' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-circle-info"></i>
-                        Help
-                    </a>
-                </div>
-                <p></p>
-                <h5 class="card-title">Danger Zone</h5>
-                <div class="list-group">
-                    <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-danger py-2 disabled">
-                        <i class="fa-regular fa-exclamation-circle"></i>
-                        Reset to defaults
-                    </a>
-                    <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-danger py-2 disabled">
-                        <i class="fa-regular fa-exclamation-circle"></i>
-                        Delete NDR Application
-                    </a>
-                </div>
+    {% if is_editable %}
+        <div class="card-deck">
 
-            </div>
-        </div>
-
-        <div class="card bg-light mb-3" style="max-height: 50vh;">
-            <div class="overflow-auto">
+            <div class="card bg-light mb-3">
                 <div class="card-body">
-                    <h5 class="card-title">Settings</h5>
-                    <ul class="list-group">
-                        {% for name, value in settings_list.items %}
-                            <li class="list-group-item list-group-item-action d-flex py-2 px-2">
-                                <p class="p-0 m-0 flex-grow-1">
-                                    <i class="fa-regular fa-bars"></i>
-                                    <a href="{% url 'ndr_core:view_settings' name %}">{{ value.title }}</a><br/>
-                                </p>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                    <h5 class="card-title">Options</h5>
+                    <div class="list-group">
+                        <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-table-list"></i>
+                            Create Custom Setting
+                        </a>
+                        <a href="{% url 'ndr_core:import_settings' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-file-import"></i>
+                            Import Settings
+                        </a>
+                        <a href="{% url 'ndr_core:export_settings' %}" class="list-group-item list-group-item-action py-2" target="_blank">
+                            <i class="fa-regular fa-file-export"></i>
+                            Export Settings
+                        </a>
+                        <a href="{% url 'ndr_core:change_password' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-lock"></i>
+                            Set Admin Password
+                        </a>
+                        <a href="{% url 'ndr_core:help_chapter' 'settings' %}" class="list-group-item list-group-item-action py-2">
+                            <i class="fa-regular fa-circle-info"></i>
+                            Help
+                        </a>
+                    </div>
+                    <p></p>
+                    <h5 class="card-title">Danger Zone</h5>
+                    <div class="list-group">
+                        {% config_value 'page_is_editable' as is_editable %}
+                        {% if is_editable %}
+                            <a href="{% url 'ndr_core:set_page_read_only' %}" class="list-group-item list-group-item-warning py-2">
+                                <i class="fa-regular fa-exclamation-circle"></i>
+                                Set Page to "Read Only Mode"
+                            </a>
+                        {% else %}
+                            <a href="{% url 'ndr_core:set_page_editable' %}" class="list-group-item list-group-item-warning py-2">
+                                <i class="fa-regular fa-exclamation-circle"></i>
+                                Set Page to "Editable Mode"
+                            </a>
+                        {% endif %}
+
+                        {% config_value 'under_construction' as is_under_construction %}
+                        {% if is_under_construction %}
+                            <a href="{% url 'ndr_core:set_page_live' %}" class="list-group-item list-group-item-warning py-2">
+                                <i class="fa-regular fa-exclamation-circle"></i>
+                                Set Page to "Live Mode"
+                            </a>
+                        {% else %}
+                            <a href="{% url 'ndr_core:set_page_under_construction' %}" class="list-group-item list-group-item-danger py-2">
+                                <i class="fa-regular fa-exclamation-circle"></i>
+                                Set Page to "Under Construction Mode"
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'ndr_core:create_setting' %}" class="list-group-item list-group-item-danger py-2 disabled">
+                            <i class="fa-regular fa-exclamation-circle"></i>
+                            Reset to defaults
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="card bg-light mb-3" style="max-height: 50vh;">
+                <div class="overflow-auto">
+                    <div class="card-body">
+                        <h5 class="card-title">Settings</h5>
+                        <ul class="list-group">
+                            {% for name, value in settings_list.items %}
+                                <li class="list-group-item list-group-item-action d-flex py-2 px-2">
+                                    <p class="p-0 m-0 flex-grow-1">
+                                        <i class="fa-regular fa-bars"></i>
+                                        <a href="{% url 'ndr_core:view_settings' name %}">{{ value.title }}</a><br/>
+                                    </p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    {% if object %}
+        {% if object %}
+            <div class="card bg-light mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ object.title }}</h5>
+                    <p>{{ object.help_text }}</p>
+                    {% crispy form %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="alert alert-info small" role="alert">
+            <i class="fa-regular fa-circle-info"></i>
+            View and Change Various Settings.
+        </div>
+
+    {% else %}
         <div class="card bg-light mb-3">
             <div class="card-body">
-                <h5 class="card-title">{{ object.title }}</h5>
-                <p>{{ object.help_text }}</p>
-                {% crispy form %}
+                <a href="{% url 'ndr_core:set_page_editable' %}" class="list-group-item list-group-item-warning py-2">
+                    <i class="fa-regular fa-exclamation-circle"></i>
+                    Set Page to "Editable Mode"
+                </a>
             </div>
         </div>
     {% endif %}
-
-    <div class="alert alert-info small" role="alert">
-        <i class="fa-regular fa-circle-info"></i>
-        View and Change Various Settings.
-    </div>
 
 
 {% endblock %}

@@ -26,8 +26,15 @@ from ndr_core.admin_views.result_views import ConfigureResultsView, ResultsConfi
 from ndr_core.admin_views.export_views import export_color_palette, export_settings, export_messages
 from ndr_core.admin_views.admin_views import NdrCoreDashboard, HelpView, StatisticsView, \
     set_statistics_option
-from ndr_core.admin_views.page_views import ManagePages, PageCreateView, PageEditView, PageDeleteView, PageDetailView, \
-    move_page_up, ManagePageFooter
+from ndr_core.admin_views.page_views import (
+    ManagePages,
+    PageCreateView,
+    PageEditView,
+    PageDeleteView,
+    PageDetailView,
+    move_page_up,
+    ManagePageFooter,
+)
 from ndr_core.admin_views.api_views import ConfigureApi, ApiConfigurationCreateView, ApiConfigurationEditView, \
     ApiConfigurationDeleteView, ApiConfigurationDetailView
 from ndr_core.admin_views.search_views import ConfigureSearch, SearchConfigurationCreateView, \
@@ -38,8 +45,18 @@ from ndr_core.admin_views.color_views import ConfigureColorPalettes, ColorPalett
 from ndr_core.admin_views.corrections_views import ConfigureCorrections, set_correction_option
 from ndr_core.admin_views.images_views import ConfigureImages, ImagesGroupView, LogoUploadView, ImagesCreateView, \
     ImagesEditView, ImagesDeleteView, move_image_up
-from ndr_core.admin_views.settings_views import ConfigureSettingsView, SettingCreateView, SettingsDetailView, \
-    SettingEditView, SettingDeleteView, SettingsImportView
+from ndr_core.admin_views.settings_views import (
+    ConfigureSettingsView,
+    SettingCreateView,
+    SettingsDetailView,
+    SettingEditView,
+    SettingDeleteView,
+    SettingsImportView,
+    SetPageReadOnlyView,
+    SetPageEditableView,
+    SetPageUnderConstructionView,
+    SetPageLiveView,
+)
 from ndr_core.admin_views.ui_style_views import ConfigureUI, choose_ui_style, UIStyleDetailView
 from ndr_core.admin_views.ui_element_views import ConfigureUIElements, UIElementDetailView, UIElementCreateView, \
     UIElementEditView, UIElementDeleteView
@@ -73,6 +90,11 @@ urlpatterns = [
     path('configure/colors/export/', export_settings, name='export_settings'),
     path('configure/settings/edit/<str:pk>/', SettingEditView.as_view(), name='edit_setting'),
     path('configure/settings/delete/<str:pk>/', SettingDeleteView.as_view(), name='delete_setting'),
+    path('configure/settings/set/readonly/', SetPageReadOnlyView.as_view(), name='set_page_read_only'),
+    path('configure/settings/set/editable/', SetPageEditableView.as_view(), name='set_page_editable'),
+    path('configure/settings/set/under_construction/', SetPageUnderConstructionView.as_view(), name='set_page_under_construction'),
+    path('configure/settings/set/live/', SetPageLiveView.as_view(), name='set_page_live'),
+
 
     # UI STYLE
     path('configure/ui_settings/', ConfigureUI.as_view(), name='ui_settings'),

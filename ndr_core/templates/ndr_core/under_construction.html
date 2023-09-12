@@ -1,28 +1,33 @@
 {% load static %}
 {% load ndr_values %}
+{% load i18n %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Under Construction</title>
+    <title>{% translate 'Under Construction' %}</title>
     {% include 'ndr_core/base/base_header_tags.html' %}
 </head>
-<body style="background-color: #171a1d;">
+<body class="d-flex flex-column min-vh-100" style="background: url({% static 'ndr_core/images/various/under_construction.png' %}) no-repeat center center fixed; background-size: cover;">
     <div class="container">
         <div class="row">
             <div class="col text-center">
-                <h1 style="color: #dad8d8;">Under Construction</h1>
-                <p style="color: #dad8d8;">
-                    {% config_value 'under_construction_text' %}
-                </p>
+                <h2 style="color: #dad8d8;" class="pt-3">{% translate 'This page is currently under construction.' %}</h2>
             </div>
         </div>
         <div class="row">
             <div class="col text-center">
-                <img src="{% static 'ndr_core/images/various/under_construction.png' %}" style="height: auto; max-width: 50%;" />
+                <div style="color: #dad8d8; background: #999999; width: fit-content; margin: 0 auto; border-radius: 4px;" class="mt-3 p-3 border">
+                    {% translated_config_value 'under_construction_text' %}
+                </div>
             </div>
         </div>
     </div>
+
+    <footer class="mt-auto bg-secondary text-center">
+        {% translate 'This is an NDR Core installation. You are seeing this page because it has been sto to "under construction".' %}
+    </footer>
 
 </body>
 </html>
