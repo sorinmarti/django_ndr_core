@@ -171,11 +171,18 @@ class _NdrCoreSearchView(_NdrCoreView):
         form = self.form_class(self.request.GET, search_config=search_config)
         form.is_valid()
 
-        for key in self.request.GET.keys():
+        for field in form.fields:
+            if field.startswith(requested_search):
+                # This removes the search conf name, leaving the actual field name
+                actual_key = field[len(requested_search) + 1:]
+                if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
+                    query_obj.set_value(actual_key, form.cleaned_data[field])
+
+        """for key in self.request.GET.keys():
             if key.startswith(requested_search):
                 actual_key = key[len(requested_search) + 1:]
                 if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
-                    query_obj.set_value(actual_key, form.cleaned_data[key])
+                    query_obj.set_value(actual_key, form.cleaned_data[key])"""
 
 
 class NdrDownloadView(_NdrCoreSearchView):
@@ -318,9 +325,8 @@ class SearchView(_NdrCoreSearchView):
                     context.update({'api_config': search_config.api_configuration})
                     context.update({'result': result})
         else:
-            # If no button has been pressed
-
-            pass
+            if "refine" in request.GET.keys():
+                form = self.form_class(request.GET, ndr_page=self.ndr_page)
 
         context.update({'form': form, 'requested_search': requested_search})
         return render(request, self.template_name, context)
@@ -458,21 +464,16 @@ class ApiTestView(View):
         return JsonResponse(json_response)
 
 
-def set_language_view(request, language):
+def set_language_view(request, new_language):
     """A view to set the language of the page. """
-
-    translation.activate(language)
-    request.LANGUAGE_CODE = language
+    print(f"SET TO {new_language}")
+    translation.activate(new_language)
 
     redirect_url = request.META.get('HTTP_REFERER')
     if redirect_url is None:
         redirect_url = reverse(f'{NdrSettings.APP_NAME}:index')
 
     response = HttpResponseRedirect(redirect_url)
-
-    if hasattr(request, 'session'):
-        request.session['django_language'] = language
-    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
-
+    response.set_cookie(settings.LANGUAGE_COOKIE_NAME, new_language)
 
     return response
