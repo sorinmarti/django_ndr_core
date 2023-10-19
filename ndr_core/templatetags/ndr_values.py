@@ -37,6 +37,7 @@ def get_available_languages():
     try:
         base_language = NdrCoreValue.objects.get(value_name='ndr_language')
         additional_languages = NdrCoreValue.objects.get(value_name='available_languages')
+        print("LANGS", additional_languages.get_value_type_display(), additional_languages.get_value())
         langs = [base_language.get_value()]
         for lang in additional_languages.get_value():
             langs.append(lang)
