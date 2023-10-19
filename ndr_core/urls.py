@@ -21,6 +21,7 @@ from ndr_core.admin_views.uploads_views import (
     ManifestUploadCreateView,
     ManifestUploadEditView,
     ManifestUploadDeleteView,
+    ManifestGroupCreateView,
 )
 from ndr_core.admin_views.result_views import ConfigureResultsView, ResultsConfigurationDetailView
 from ndr_core.admin_views.export_views import export_color_palette, export_settings, export_messages
@@ -118,6 +119,7 @@ urlpatterns = [
     path('configure/manifest/uploads/create/new/', ManifestUploadCreateView.as_view(), name='create_manifest_upload'),
     path('configure/manifest/uploads/edit/<int:pk>/', ManifestUploadEditView.as_view(), name='edit_manifest_upload'),
     path('configure/manifest/uploads/delete/<int:pk>/', ManifestUploadDeleteView.as_view(), name='delete_manifest_upload'),
+    path('configure/manifest/groups/create/', ManifestGroupCreateView.as_view(), name='create_manifest_group'),
 
     # TRANSLATIONS
     path('configure/translations/', ConfigureTranslations.as_view(), name='configure_translations'),
@@ -218,7 +220,7 @@ urlpatterns = [
     path('mark/to/correct/<str:api_config>/<str:record_id>/', NdrMarkForCorrectionView.as_view(), name='mark_record'),
 
     # Language
-    path('language/<str:language>/', set_language_view, name='set_language'),
+    path('language/<str:new_language>/', set_language_view, name='set_language'),
 
     # TEST SERVER
     path('query/<str:api_request>', ApiTestView.as_view(), name='api_test'),
