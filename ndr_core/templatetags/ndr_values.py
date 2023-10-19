@@ -52,6 +52,5 @@ def get_logo_image_path():
         logo_image = NdrCoreImage.objects.get(image_group=NdrCoreImage.ImageGroup.PAGE_LOGOS,
                                               language=get_language()).image.url
     except NdrCoreImage.DoesNotExist:
-        print("No logo image found for language " + get_language())
-        logo_image = NdrSettings.get_static_path() + 'images/logo.png'
+        logo_image = 'static/ndr_core/images/logo.png'
     return logo_image
