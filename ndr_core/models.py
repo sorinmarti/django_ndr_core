@@ -837,7 +837,9 @@ class NdrCoreValue(models.Model):
             else:
                 return False
         if self.value_type == NdrCoreValue.ValueType.MULTI_LIST:
-            return self.value_value.split(',')
+            val = self.value_value.split(',')
+            if val == ['']:
+                return []
 
     def get_options(self):
         """For lists there are options, saved as string in the form: (key1,value1);(key2,value2)"""
