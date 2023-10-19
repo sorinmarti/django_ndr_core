@@ -97,7 +97,7 @@ class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
         return form
 
     def form_valid(self, form):
-        response = super(SearchFieldConfigurationCreateView, self).form_valid(form)
+        response = super(SearchConfigurationEditView, self).form_valid(form)
         return response
 
 
