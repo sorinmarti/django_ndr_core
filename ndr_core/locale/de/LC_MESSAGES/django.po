@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-30 12:19+0200\n"
-"PO-Revision-Date: 2023-08-30 12:18+0200\n"
+"POT-Creation-Date: 2023-09-25 23:50+0200\n"
+"PO-Revision-Date: 2023-09-25 23:27+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -35,89 +35,101 @@ msgstr "Abfrage konnte nicht angefordert werden"
 msgid "The server returned status code: {result.status_code}"
 msgstr "Der Server hat den Statuscode zurückgegeben: {result.status_code}"
 
+#: .\api\base_result.py:135
+msgid "Download the record as a JSON file"
+msgstr "Laden Sie den Datensatz als JSON-Datei herunter"
+
+#: .\api\base_result.py:147
+msgid "View The Data Repository"
+msgstr "Sehen Sie sich das Daten-Repositorium an"
+
+#: .\api\base_result.py:161
+msgid "Report this entry as incorrect"
+msgstr "Melden diesen Eintrag als falsch"
+
+#: .\api\base_result.py:178
+msgid "View this snippet in context"
+msgstr "Sehen Sie sich diesen Ausschnitt im Kontext an"
+
+#: .\api\base_result.py:189
+msgid "Copy Citation"
+msgstr "Kopiere Zitierweise"
+
 #: .\api\mongodb\mongodb_result.py:48
 msgid "Timed out"
 msgstr "Time Out"
 
-#: .\forms.py:82
+#: .\forms.py:87
+msgid "Search for anything!"
+msgstr "Suche nach allem!"
+
+#: .\forms.py:89
 msgid "And or Or Search"
 msgstr "\"Und\" oder \"Oder\" suchen"
 
-#: .\forms.py:83
+#: .\forms.py:90
 msgid "AND search"
 msgstr "UND Suche"
 
-#: .\forms.py:83
+#: .\forms.py:90
 msgid "OR search"
 msgstr "ODER suchen"
 
-#: .\forms.py:114
+#: .\forms.py:96
+msgid "Compact Result View"
+msgstr "Kompakte Ergebnisanzeige"
+
+#: .\forms.py:124
 msgid "Search"
 msgstr "Suche"
 
-#: .\forms.py:183
+#: .\forms.py:193
 msgid "Invalid value: Format is \"1,2,3-5,7\""
 msgstr "Ungültiger Wert: Format ist \"1,2,3-5,7\""
 
-#: .\forms.py:193 .\forms.py:196
-#, fuzzy
+#: .\forms.py:203 .\forms.py:206
 msgid "Value is out of range. ({}-{})"
 msgstr "Der Wert liegt außerhalb des zulässigen Bereichs. ({}-{})"
 
-#: .\forms.py:199
+#: .\forms.py:209
 msgid "Invalid value"
 msgstr "Ungültiger Wert"
 
-#: .\forms.py:283
+#: .\forms.py:304
 msgid "Please Choose"
 msgstr "Bitte auswählen"
 
-#: .\forms.py:310
+#: .\forms.py:333
 msgid "Simple Search"
 msgstr "Einfache Suche"
 
-#: .\forms.py:390
+#: .\forms.py:412
 msgid "Message Subject"
 msgstr "Betreff der Nachricht"
 
-#: .\forms.py:391
+#: .\forms.py:413
 msgid "Your E-Mail address"
 msgstr "Ihre E-Mail-Adresse"
 
-#: .\forms.py:392
+#: .\forms.py:414
 msgid "Message Text"
-msgstr "Hinweis Text"
+msgstr "Nachrichts-Text"
 
-#: .\forms.py:423
+#: .\forms.py:445
 msgid "Send Message"
 msgstr "Nachricht senden"
 
-#: .\static\ndr_core\app_init\combined_search.html:19
-#: .\static\ndr_core\app_init\search.html:12
-msgid "Search Results"
-msgstr "Suchergebnisse"
+#: .\forms.py:458
+msgid "Manifest"
+msgstr "Manifest"
 
-#: .\static\ndr_core\app_init\combined_search.html:22
-#: .\static\ndr_core\app_init\search.html:15
-msgid "refine search"
-msgstr "Suche verfeinern"
+#: .\forms.py:461
+msgid "Choose the manifest to display."
+msgstr "Suchen Sie das Manifest aus, das angezeigt werden soll."
 
-#: .\static\ndr_core\app_init\combined_search.html:25
-msgid "start a search"
-msgstr "Starten Sie eine Suche"
-
-#: .\static\ndr_core\app_init\combined_search.html:32
-#, fuzzy, python-format
-msgid ""
-"\n"
-"                Your search returned %(meta.total)s results, showing page %"
-"(meta.page)s of %(meta.num_pages)s.\n"
-"            "
-msgstr ""
-"\n"
-"Ihre Suche ergab %(meta.total)s-Ergebnisse, wobei die Seite %(meta.page)s "
-"von %(meta.num_pages)s angezeigt wurde.\n"
-"            "
+#: .\forms.py:476
+msgid "Show"
+msgstr "Anzeigen"
 
 #: .\static\ndr_core\app_init\contact.html:15
 msgid "Fill in the form below to contact us with any queries."
@@ -125,7 +137,7 @@ msgstr ""
 "Füllen Sie das untenstehende Formular aus, um uns bei Fragen zu kontaktieren."
 
 #: .\static\ndr_core\app_init\filtered_list.html:15
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "            Showing %(meta.total)s items. Showing page %(meta.page)s of %"
@@ -137,9 +149,17 @@ msgstr ""
 "num_pages)s wird angezeigt.\n"
 "        "
 
+#: .\static\ndr_core\app_init\search.html:12
+msgid "Search Results"
+msgstr "Suchergebnisse"
+
+#: .\static\ndr_core\app_init\search.html:15
+msgid "Refine Search"
+msgstr "Suche verfeinern"
+
 #: .\static\ndr_core\app_init\search.html:18
-msgid "start a new search"
-msgstr "Starten Sie eine neue Suche"
+msgid "New Search"
+msgstr "Neue Suche"
 
 #: .\static\ndr_core\app_init\search.html:25
 msgid "Download"
@@ -153,8 +173,13 @@ msgstr "JSON herunterladen"
 msgid "Download CSV"
 msgstr "CSV herunterladen"
 
+#: .\static\ndr_core\app_init\search.html:36
+#, python-format
+msgid "(Downloads are limited to %(max_results)s results.)"
+msgstr "(Downloads sind auf %(max_results)s Ergebnisse beschränkt.)"
+
 #: .\static\ndr_core\app_init\search.html:46
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "\n"
 "                Your search returned %(total)s results, showing page %(page)"
@@ -174,9 +199,30 @@ msgstr "zurück"
 msgid "next"
 msgstr "weiter"
 
-#: .\templates\ndr_core\base\footer.html:33
+#: .\templates\ndr_core\base\footer.html:38
 msgid "Connect"
 msgstr "Verbinden"
+
+#: .\templates\ndr_core\result_renderers\default_template.html:31
+msgid "Categories:"
+msgstr "Katgorien:"
+
+#: .\templates\ndr_core\result_renderers\default_template.html:68
+msgid "(no image found)"
+msgstr "(kein Bild gefunden)"
+
+#: .\templates\ndr_core\result_renderers\default_template.html:76
+msgid "Cite:"
+msgstr "Zitieren:"
+
+#: .\templates\ndr_core\result_renderers\styles\renderer_transcription_and_fragment.html:14
+#, python-format
+msgid ""
+"\n"
+"                            Result %(result.result_meta.result_number)s of %"
+"(result.result_meta.total_results)s\n"
+"                        "
+msgstr ""
 
 #: .\templates\ndr_core\ui_elements\slideshow.html:30
 msgid "Previous"
@@ -186,22 +232,54 @@ msgstr "Zurück"
 msgid "Next"
 msgstr "Weiter"
 
-#: .\views.py:268
+#: .\templates\ndr_core\under_construction.html:9
+msgid "Under Construction"
+msgstr ""
+
+#: .\templates\ndr_core\under_construction.html:16
+msgid "This page is currently under construction."
+msgstr "Diese Seite befindet sich derzeit im Aufbau."
+
+#: .\templates\ndr_core\under_construction.html:29
+msgid ""
+"This is an NDR Core installation. You are seeing this page because it has "
+"been sto to \"under construction\"."
+msgstr ""
+
+#: .\views.py:289
 msgid "Please enter a search term."
 msgstr "Geben Sie bitte einen Suchbegriff ein."
 
-#: .\views.py:285
+#: .\views.py:308
 msgid "Please fill out at least one search field."
 msgstr "Bitte füllen Sie mindestens ein Suchfeld aus."
 
-#: .\views.py:300
+#: .\views.py:323
 msgid "No results found."
 msgstr "Keine Ergebnisse gefunden."
 
-#: .\views.py:350
+#: .\views.py:375
 msgid "Thank you! The message has been sent."
 msgstr "Vielen Dank! Die Nachricht wurde gesendet."
 
-#: .\views.py:359
+#: .\views.py:384
 msgid "Please correct the errors below."
 msgstr "Bitte korrigieren Sie die untenstehenden Fehler."
+
+#: .\views.py:430
+msgid "No manifests found."
+msgstr "Keine Ergebnisse gefunden."
+
+#~ msgid ""
+#~ "\n"
+#~ "                Your search returned %(meta.total)s results, showing page "
+#~ "%(meta.page)s of %(meta.num_pages)s.\n"
+#~ "            "
+#~ msgstr ""
+#~ "\n"
+#~ "Ihre Suche ergab %(meta.total)s-Ergebnisse, wobei die Seite %(meta.page)s "
+#~ "von %(meta.num_pages)s angezeigt wurde.\n"
+#~ "            "
+
+#~ msgid "start a new search"
+#~ msgstr "Starten Sie eine neue Suche"
