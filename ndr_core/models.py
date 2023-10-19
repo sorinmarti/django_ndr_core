@@ -840,6 +840,7 @@ class NdrCoreValue(models.Model):
             val = self.value_value.split(',')
             if val == ['']:
                 return []
+            return val
 
     def get_options(self):
         """For lists there are options, saved as string in the form: (key1,value1);(key2,value2)"""
