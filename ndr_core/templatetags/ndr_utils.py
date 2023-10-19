@@ -2,8 +2,9 @@ import re
 import urllib
 
 from django import template
+from django.utils.translation import get_language
 
-from ndr_core.models import NdrCoreSearchField
+from ndr_core.models import NdrCoreSearchField, NdrCoreValue
 
 register = template.Library()
 
@@ -76,24 +77,44 @@ def reduce_iiif_size(image_url, target_percent_of_size):
 
 
 @register.filter
-def translate_dict_value(value, dict_name):
-    """Translates a value in a dictionary."""
-    if dict_name == 'tags':
-        print(value)
+def translate_dict_value(key_to_translate, dict_name):
+    return translate_dict_foo(key_to_translate, dict_name, 'value')
 
-    if value is None:
+
+@register.filter
+def translate_dict_info(key_to_translate, dict_name):
+    return translate_dict_foo(key_to_translate, dict_name, 'info')
+
+
+def translate_dict_foo(key_to_translate, dict_name, target_key):
+    """Translates a value in a dictionary."""
+    if key_to_translate is None:
         return ''
 
     try:
         field = NdrCoreSearchField.objects.get(field_name=dict_name)
+
         choices = field.get_list_choices_as_dict()
-        val = choices.get(value, f"{value} (def)")
-        if dict_name == 'tags':
-            print(val)
-        return val
+
+        default_language = NdrCoreValue.objects.get(value_name='ndr_language').get_value()
+        additional_languages = NdrCoreValue.objects.get(value_name="available_languages").get_value()
+        selected_language = get_language()
+
+        if key_to_translate in choices:
+            value_object = choices[key_to_translate]
+
+            if selected_language == default_language:
+                return value_object[target_key]
+            elif selected_language in additional_languages:
+                key = f'{target_key}_{selected_language}'
+                if key in value_object:
+                    return value_object[key]
+
+            return f'{key_to_translate} (TNF)'
+
+        return f'{key_to_translate} (KNF)'
     except NdrCoreSearchField.DoesNotExist:
-        print('Field does not exist')
-        return value
+        return f'{key_to_translate} (VNF)'
 
 
 @register.filter

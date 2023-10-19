@@ -1,7 +1,9 @@
 """
 models.py contains ndr_core's database models.
 """
+import csv
 import os.path
+from io import StringIO
 
 from ckeditor_uploader.fields import RichTextUploadingField
 from colorfield.fields import ColorField
@@ -112,6 +114,19 @@ class NdrCoreSearchField(models.Model):
                                      blank=True,
                                      default='',
                                      help_text="Initial value of the field")
+    """Initial value of the field"""
+
+    data_field_type = models.CharField(max_length=100,
+                                       blank=True,
+                                       default='',
+                                       help_text="Type of the field in the data source. This may change the way data "
+                                                 "is queried.")
+
+    input_transformation_regex = models.CharField(max_length=100,
+                                                  blank=True,
+                                                  default='',
+                                                  help_text="Regex to transform the input value before sending it "
+                                                            "to the API.")
 
     def translated_field_label(self):
         """Returns the translated field label for a given language. If no translation exists, the default label is
@@ -145,21 +160,63 @@ class NdrCoreSearchField(models.Model):
         except NdrCoreTranslation.DoesNotExist:
             return self.help_text
 
-    def get_list_choices(self):
-        # read the list choices from the list_choices field
-        # TODO ignore invalid lines
-        list_choices = []
-        if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
-            list_choices = [tuple(line.split(',')[0:2]) for line in self.list_choices.splitlines()]
-        return list_choices
-
     def get_list_choices_as_dict(self):
+        """Returns the list choices as a dictionary. This is used to render the dropdowns in the search form and
+        result template lists."""
+        if not self.field_type == self.FieldType.LIST and not self.field_type == self.FieldType.MULTI_LIST:
+            return {}
+
+        file_handle = StringIO(self.list_choices)
+        reader = csv.reader(file_handle, delimiter=',')
+        row_number = 0
+        header = []
+        result_list = {}
+
+        for row in reader:
+            if row_number == 0:
+                header = row
+            else:
+                result_list[row[0]] = {}
+                for i in range(len(row)):
+                    result_list[row[0]][header[i]] = row[i]
+            row_number += 1
+        return result_list
+
+    def get_list_choices(self):
+        if not self.field_type == self.FieldType.LIST and not self.field_type == self.FieldType.MULTI_LIST:
+            return {}
+
+        file_handle = StringIO(self.list_choices)
+        reader = csv.reader(file_handle, delimiter=',')
+        row_number = 0
+        header = []
+        result_list = []
+
+        for row in reader:
+            if row_number == 0:
+                header = row
+            else:
+                try:
+                    val = row[header.index(f'value_{get_language()}')]
+                except ValueError:
+                    val = row[header.index('value')]
+                result_list.append((row[header.index('key')], val))
+
+            row_number += 1
+
+        return result_list
+
+    """def get_list_choices_as_dict(self):
         # read the list choices from the list_choices field
         # TODO ignore invalid lines
         list_choices = {}
         if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
-            list_choices = {line.split(',')[0]: line.split(',')[1] for line in self.list_choices.splitlines()}
-        return list_choices
+            for line in self.list_choices.splitlines():
+                split_line = line.split(',')
+                list_choices[split_line[0]] = {'value': split_line[1]}
+
+            list_choices = {line.split(',')[0]: {'value': line.split(',')[1]} for line in self.list_choices.splitlines()}
+        return list_choices"""
 
     def get_initial_value(self):
         """Returns the initial value of a search field. This is used to pre-fill the form with a value. """
@@ -1004,8 +1061,27 @@ class NdrCoreUpload(models.Model):
                              help_text='Title of the upload.')
     """Title of the upload"""
 
-    file = models.FileField(upload_to='uploads/')
+    file = models.FileField(upload_to='uploads/files/')
     """Actual file"""
+
+
+class NdrCoreManifestGroup(models.Model):
+
+    title = models.CharField(max_length=200,
+                             help_text='Title of the manifest group.')
+    """Title of the manifest group."""
+
+    order_value_1_title = models.CharField(max_length=200, blank=True, null=True, default=None,
+                                           help_text='Order value 1 title')
+    """Order value 1 title"""
+
+    order_value_2_title = models.CharField(max_length=200, blank=True, null=True, default=None,
+                                           help_text='Order value 2 title')
+    """Order value 2 title"""
+
+    order_value_3_title = models.CharField(max_length=200, blank=True, null=True, default=None,
+                                           help_text='Order value 3 title')
+    """Order value 3 title"""
 
 
 class NdrCoreManifest(models.Model):
@@ -1013,8 +1089,20 @@ class NdrCoreManifest(models.Model):
                              help_text='Title of the manifest. Is shown in the dropdown of the page.')
     """Title of the upload"""
 
+    manifest_group = models.ForeignKey(NdrCoreManifestGroup, on_delete=models.CASCADE)
+    """Group of the manifest"""
+
     file = models.FileField(upload_to='uploads/manifests/')
     """Actual file"""
+
+    order_value_1 = models.CharField(max_length=200, blank=True, null=True, default=None)
+    """Order value 1"""
+
+    order_value_2 = models.CharField(max_length=200, blank=True, null=True, default=None)
+    """Order value 2"""
+
+    order_value_3 = models.CharField(max_length=200, blank=True, null=True, default=None)
+    """Order value 3"""
 
     def __str__(self):
         return self.title

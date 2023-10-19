@@ -10,6 +10,10 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
+                    <a href="{% url 'ndr_core:create_manifest_group' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-file-import"></i>
+                        Create IIIF Manifest Group
+                    </a>
                     <a href="{% url 'ndr_core:create_manifest_upload' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-file-import"></i>
                         Upload IIIF Manifest

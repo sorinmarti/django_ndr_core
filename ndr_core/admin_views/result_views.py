@@ -4,7 +4,12 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
 
-from ndr_core.admin_forms.result_forms import RenderConfigurationForm, MyTestForm
+from ndr_core.admin_forms.result_forms import (
+    RenderConfigurationForm,
+    MyTestForm,
+    ResultDisplayForm,
+    ResultDisplayConfigurationForm
+)
 from ndr_core.models import NdrCoreSearchConfiguration
 from ndr_core.admin_forms.api_forms import ApiCreateForm, ApiEditForm
 from ndr_core.models import NdrCoreApiConfiguration
@@ -18,7 +23,7 @@ class ConfigureResultsView(LoginRequiredMixin, View):
 
         context = {'searches': NdrCoreSearchConfiguration.objects.all().order_by('conf_label'),
                    'form': RenderConfigurationForm(),
-                   't_form': MyTestForm()}
+                   'form_display': ResultDisplayForm()}
 
         return render(self.request, template_name='ndr_core/admin_views/configure_results.html',
                       context=context)

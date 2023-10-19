@@ -108,7 +108,7 @@ class PageCreateView(LoginRequiredMixin, CreateView):
                 base_file = finders.find('ndr_core/app_init/search.html')
                 shutil.copyfile(base_file, new_filename)
             elif self.object.page_type == self.object.PageType.COMBINED_SEARCH:
-                base_file = finders.find('ndr_core/app_init/combined_search.html')
+                base_file = finders.find('ndr_core/app_init/search.html')
                 shutil.copyfile(base_file, new_filename)
             elif self.object.page_type == self.object.PageType.FILTER_LIST:
                 base_file = finders.find('ndr_core/app_init/filtered_list.html')

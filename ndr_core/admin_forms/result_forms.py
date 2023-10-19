@@ -4,6 +4,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Field, HTML
 from django_select2 import forms as s2forms
 
+from ndr_core.models import NdrCoreApiConfiguration
+
 
 class RenderConfigurationForm(forms.Form):
 
@@ -76,15 +78,14 @@ class RenderConfigurationForm(forms.Form):
 
 class RenderConfigurationForm(forms.Form):
     render_configuration = [
-        {'field_name': 'test',
-         'field_label': 'Title Line',
-         'field_type': 'text'},
-        {'field_name': 'test2',
-         'field_label': 'First Text Line',
-         'field_type': 'text'},
-        {'field_name': 'test3',
-         'field_label': 'Fragment Image',
-         'field_type': 'text'}]
+        {"field_name": "test", "field_label": "Title Line", "field_type": "text"},
+        {"field_name": "test2", "field_label": "First Text Line", "field_type": "text"},
+        {"field_name": "test3", "field_label": "Fragment Image", "field_type": "list"},
+        {"field_name": "test2", "field_label": "First Text Line", "field_type": "image"},
+        {"field_name": "test3", "field_label": "Fragment Image", "field_type": "text"},
+        {"field_name": "test2", "field_label": "First Text Line", "field_type": "text"},
+        {"field_name": "test3", "field_label": "Fragment Image", "field_type": "text"}
+        ]
 
     def __init__(self, *args, **kwargs):
         """Initialises all needed form fields. """
@@ -148,6 +149,45 @@ class FilteredListWidget(s2forms.Select2MultipleWidget):
     ]
 
 
+class ResultDisplayForm(forms.Form):
+
+    api_configuration = forms.ModelChoiceField(
+        label="API Configuration",
+        help_text="Select the API configuration you want to create a renderer for.",
+        queryset=NdrCoreApiConfiguration.objects.all()
+    )
+    result_renderer = forms.ChoiceField(
+        help_text="Select the renderer to configure",
+        choices=[('1', 'Default Result Renderer'), ('2', 'Another Renderer'),]
+    )
+    sample_data = forms.CharField(
+        help_text="Copy your sample JSON data in here",
+        widget=forms.Textarea
+    )
+
+
+class ResultDisplayConfigurationForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        """Initialises all needed form fields."""
+        super().__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_method = "POST"
+        helper.layout = layout = Layout()
+    
+        tabs = TabHolder(css_id="id_tabs")
+
+        tab = Tab("label", css_id=tab_conf["field_name"])
+        tabs.append(tab)
+    
+        layout.append(tabs)
+    
+        return helper
+
+
 class MyTestForm(forms.Form):
 
     format_field = forms.CharField(label='Format', max_length=100)
@@ -156,3 +196,12 @@ class MyTestForm(forms.Form):
     dropdown_field = forms.MultipleChoiceField(label='Dropdown',
                                                choices=[('1', 'One'), ('2', 'Two'), ('3', 'Three'), ('4', 'Four')],
                                                widget=FilteredListWidget(attrs={'data-minimum-input-length': 0}))
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_class = "form-horizontal"
+        helper.label_class = "col-sm-3"
+        helper.field_class = "col-sm-9"
+
+        return helper

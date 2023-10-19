@@ -9,9 +9,11 @@ class TextPreRenderer:
 
     MAX_ITERATIONS = 50
     ui_element_regex = r'\[\[(card|slideshow|carousel|jumbotron|figure|banner|iframe)\|([0-9]*)\]\]'
-    link_element_regex = r'\[\[(file|page)\|([0-9]*)\]\]'
+    link_element_regex = r'\[\[(file|page)\|([0-9a-zA-Z]*)\]\]'
     container_regex = r'\[\[(start|end)_(block)\]\]'
     link_element_classes = {'figure': NdrCoreImage, 'file': NdrCoreUpload, 'page': NdrCorePage}
+    link_element_keys = {"page": "view_name"}
+
     text = None
 
     def __init__(self, text, request):
@@ -99,9 +101,15 @@ class TextPreRenderer:
             element_class = NdrCoreUIElement
 
         try:
-            element = element_class.objects.get(id=int(element_id))
+            if template in self.link_element_keys:
+                kw = {self.link_element_keys[template]: element_id}
+            else:
+                kw = {'id': int(element_id)}
+            element = element_class.objects.get(**kw)
+            print(f"Element found {element_class} / {element_id}: {element}")
             return element
         except element_class.DoesNotExist:
+            print(f"Element not found {element_class} / {element_id}")
             return None
 
     def get_pre_rendered_text(self):

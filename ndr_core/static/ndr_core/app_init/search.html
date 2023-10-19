@@ -12,10 +12,10 @@
             {% translate 'Search Results' %}
             <div class="btn-group float-right">
                 <a href="{{ result.form_links.refine }}" type="button" class="btn btn-sm btn-secondary ">
-                    {% translate 'refine search' %}
+                    {% translate 'Refine Search' %}
                 </a>
                 <a href="{{ result.form_links.new }}" type="button" class="btn btn-sm btn-secondary float-right">
-                    {% translate 'start a new search' %}
+                    {% translate 'New Search' %}
                 </a>
                 {% config_value 'search_allow_download_list_json' as allow_json %}
                 {% config_value 'search_allow_download_list_csv' as allow_csv %}
@@ -33,7 +33,7 @@
                             {% endif %}
                             {% config_value 'search_download_max_results' as max_results %}
                             {% if result.total > max_results %}
-                                <span class="dropdown-item small font-italic">(Downloads are limited to {{ max_results }} results.)</span>
+                                <span class="dropdown-item small font-italic">{% blocktranslate %}(Downloads are limited to {{ max_results }} results.){% endblocktranslate %}</span>
                             {% endif %}
                         </div>
                     </div>

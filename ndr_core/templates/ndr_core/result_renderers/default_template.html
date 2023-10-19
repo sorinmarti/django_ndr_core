@@ -1,10 +1,11 @@
 {% extends 'ndr_core/result_renderers/styles/renderer_transcription_and_fragment.html' %}
 {% load ndr_utils %}
+{% load i18n %}
 
 {% block result_tags %}
-    <a href="#">
-        <span  data-toggle="tooltip" data-placement="top" title="Type of the snippet" class="badge badge-secondary small" style="font-weight: normal; background-color: {{ result.original_data.type.id|translate_to_color:30 }};">{{ result.original_data.snippet_type.id|translate_dict_value:'type' }}</span>
-    </a>
+
+    <span  data-toggle="tooltip" data-placement="top" title="{{ result.original_data.snippet_type.id|translate_dict_info:'type' }}" class="badge badge-secondary small" style="font-weight: normal; background-color: {{ result.original_data.type.id|translate_to_color:30 }};">{{ result.original_data.snippet_type.id|translate_dict_value:'type' }}</span>
+
     {% if result.original_data.snippet_type.is_reprint %}
         <span class="badge badge-secondary small" style="font-weight: normal; background-color: #e4606d;">Reprint</span>
     {% else %}
@@ -27,10 +28,14 @@
 {% block tags %}
     <p class="text-center pt-3">
         {% if result.original_data.tags.tags %}
-            Categories:
+            {% translate 'Categories:' %}
             {% with result.original_data.tags.tags as tag_list %}
                 {% for tag in tag_list|clean_list %}
-                    <a href="#" class="badge border border-secondary small text-dark" style="font-weight: normal; background-color: {{ tag|translate_to_color:80 }};">{{ tag|translate_dict_value:'tags' }}</a>
+                    <span class="badge border border-secondary small text-dark"
+                          style="font-weight: normal; background-color: {{ tag|translate_to_color:80 }};"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="{{ tag|translate_dict_info:'tags' }}">{{ tag|translate_dict_value:'tags' }}</span>
                 {% endfor %}
             {% endwith %}
         {% endif %}
@@ -60,7 +65,7 @@
             {% if result.original_data.source.selector.fragment|reduce_iiif_size:25 != '' %}
                 <img class="img-fluid" src="{{ result.original_data.source.selector.fragment|reduce_iiif_size:25 }}" alt="IIIF fragment">
             {% else %}
-                (no image found)
+                {% translate '(no image found)' %}
             {% endif %}
         {% endif %}
 
@@ -68,8 +73,8 @@
 {% endblock %}
 
 {% block citation_info %}
-    Cite:
-    <span id="copyTarget_{{ result.original_data.source.selector.id|url_parse }}">
-        {{ result.original_data.source.title }}, {{ result.original_data.date.ref }} (Issue {{ result.original_data.source.issue }}), p. {{ result.original_data.source.selector.page }}, https://avisblatt.philhist.unibas.ch
+    {% translate 'Cite:' %}
+    <span id="copyTarget_{{ result.original_data.source.id|url_parse }}">
+        {{ result.original_data.source.title }}, {{ result.original_data.date.ref }} (Issue {{ result.original_data.source.issue }}), p. {{ result.original_data.source.selector.page }}, {{ result.original_data.source.collection }}
     </span>
 {% endblock %}

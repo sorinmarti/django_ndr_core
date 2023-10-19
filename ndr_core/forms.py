@@ -21,7 +21,7 @@ from ndr_core.models import (
 from django_select2 import forms as s2forms
 from bootstrap_daterangepicker import widgets, fields
 
-from ndr_core.widgets import BootstrapSwitchWidget
+from ndr_core.widgets import BootstrapSwitchWidget, SwitchGroupWidget
 
 
 class _NdrCoreForm(forms.Form):
@@ -310,6 +310,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                     form_field = forms.MultipleChoiceField(label=search_field.translated_field_label(),
                                                            choices=search_field.get_list_choices(),
                                                            widget=FilteredListWidget(attrs={'data-minimum-input-length': 0}),
+                                                           # widget=SwitchGroupWidget(),
                                                            required=search_field.field_required,
                                                            help_text=help_text)
 
@@ -457,7 +458,8 @@ class ManifestSelectionForm(_NdrCoreForm):
         self.fields['manifest'] = forms.ModelChoiceField(label=_('Manifest'),
                                                          queryset=NdrCoreManifest.objects.all(),
                                                          required=True,
-                                                         help_text=_('Choose the manifest to display.'))
+                                                         help_text=_('Choose the manifest to display.'),
+                                                         widget=s2forms.Select2Widget())
 
 
     @property

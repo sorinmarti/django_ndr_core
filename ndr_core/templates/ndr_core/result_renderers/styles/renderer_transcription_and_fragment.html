@@ -1,5 +1,6 @@
 {% extends 'ndr_core/result_renderers/base_renderer.html' %}
 {% load ndr_utils %}
+{% load i18n %}
 
 <!-- This block is used to render the whole result line content. -->
 {% block search_result_base_content %}
@@ -9,7 +10,11 @@
                 <!-- This is the top bar.
                      It consists of the number of the search result and a list of tags. -->
                 <div class="d-inline-block mb-2 text-secondary">
-                    <small>Result {{ result.result_meta.result_number }} of {{ result.result_meta.total_results }}</small>
+                    <small>
+                        {% blocktrans %}
+                            Result {{ result.result_meta.result_number }} of {{ result.result_meta.total_results }}
+                        {% endblocktrans %}
+                    </small>
                     &nbsp;&nbsp;
                     {% block result_tags %}
                          <!-- This block is overwritten by the template implementation. -->

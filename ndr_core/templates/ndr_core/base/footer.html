@@ -13,7 +13,7 @@
             <div class="row">
                 <div class="col-2">
                     <a href="/">
-                        <img src="/static/ndr/images/logo.png" class="img-fluid">
+                        <img src="{% logo_image_path %}" class="img-fluid">
                     </a>
                 </div>
                 <div class="col-6 offset-2">
@@ -30,31 +30,33 @@
 
                 <div>
                     {% if show_socials %}
-                        {% translate 'Connect' %}
+                        {% config_value 'socials_twitter' as socials_twitter %}
+                        {% config_value 'socials_instagram' as socials_instagram %}
+                        {% config_value 'socials_facebook' as socials_facebook %}
+                        {% config_value 'socials_mastodon' as socials_mastodon %}
+                        {% if socials_twitter or socials_instagram or socials_facebook or socials_mastodon %}
+                            {% translate 'Connect' %}
+                        {% endif %}
                         <div class="col-0">
                             <div class="">
-                                {% config_value 'socials_twitter' as socials_twitter %}
                                 {% if socials_twitter %}
                                     <a class="link-bottom" href="{{ socials_twitter }}" target="_blank">
                                         <i class="fa-brands fa-twitter"></i>
                                     </a>
                                 {% endif %}
 
-                                {% config_value 'socials_instagram' as socials_instagram %}
                                 {% if socials_instagram %}
                                     <a class="link-bottom" href="{{ socials_instagram }}" target="_blank">
                                         <i class="fa-brands fa-instagram"></i>
                                     </a>
                                 {% endif %}
 
-                                {% config_value 'socials_facebook' as socials_facebook %}
                                 {% if socials_facebook %}
                                     <a class="link-bottom" href="{{ socials_facebook }}" target="_blank">
                                         <i class="fa-brands fa-facebook"></i>
                                     </a>
                                 {% endif %}
 
-                                {% config_value 'socials_mastodon' as socials_mastodon %}
                                 {% if socials_mastodon %}
                                     <a class="link-bottom" href="{{ socials_mastodon }}" target="_blank">
                                         <i class="fa-brands fa-mastodon"></i>

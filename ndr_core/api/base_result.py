@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from ndr_core.geo_ip_utils import get_user_ip, get_geolocation
-from ndr_core.models import NdrCoreValue, NdrCoreSearchStatisticEntry
+from ndr_core.models import NdrCoreValue, NdrCoreSearchStatisticEntry, NdrCoreManifest
 from ndr_core.templatetags.ndr_utils import url_parse
 
 
@@ -107,12 +107,19 @@ class BaseResult(ABC):
         """Fill the actual results from the search in the hit list"""
         pass
 
-    def get_result_options(self, record_id):
-        """
-        :param record_id: The id of the record to create the options for
+    def get_result_options(self, result):
+        """ This function creates the options for a result.
+        If the download feature is turned on, a download button is added.
+        If the correction feature is turned on, a correction button is added.
+        If the data repository is configured, a link to the data repository is added.
+
+        :param result: The record to create the options for
         :return: Return a list of dicts with the options for a result."""
 
         result_options = []
+        record_id = result["source"]["id"]   # TODO: Make this generic
+
+        # Download single record
         if NdrCoreValue.get_or_initialize("search_allow_download_single",
                                           init_type=NdrCoreValue.ValueType.BOOLEAN,
                                           init_value="true").get_value():
@@ -125,18 +132,19 @@ class BaseResult(ABC):
                 "class": "btn btn-sm btn-secondary",
                 "data-toggle": "tooltip",
                 "data-placement": "top",
-                "title": "Download the record as a JSON file"
+                "title": _("Download the record as a JSON file")
             })
 
+        # Open Repository
         if self.api_configuration.api_repository_url is not None:
             result_options.append({
-                "href": self.api_configuration.api_repository_url,
+                "href": result['source']['collection'],
                 "target": "_blank",
                 "label": '<i class="fa-regular fa-vault"></i>',
                 "class": "btn btn-sm btn-secondary",
                 "data-toggle": "tooltip",
                 "data-placement": "top",
-                "title": "View The Data Repository"
+                "title": _("View The Data Repository")
             })
 
         correction_feature = NdrCoreValue.get_or_initialize("correction_feature").get_value()
@@ -150,8 +158,27 @@ class BaseResult(ABC):
                 "class": "btn btn-sm btn-secondary",
                 "data-toggle": "tooltip",
                 "data-placement": "top",
-                "title": "Report this entry as incorrect"
+                "title": _("Report this entry as incorrect")
             })
+
+        # Show Source
+        # TODO Waaaaaaaaaaaaaaaaaahhhhhhhhhh!!!!!!!!!!!!!
+        try:
+            manifest_id = NdrCoreManifest.objects.get(order_value_1=result['date']['ref'].split('-')[0],
+                                                      order_value_2=f"{result['source']['issue']:03d}").id
+            view_source_url = (reverse('ndr:ndr_view', kwargs={'ndr_page': 'sources_viewer'}) +
+                               f"?manifest={manifest_id}")
+
+            result_options.append({
+                "href": view_source_url,
+                "label": '<i class="fa-regular fa-book"></i>',
+                "class": "btn btn-sm btn-secondary",
+                "data-toggle": "tooltip",
+                "data-placement": "top",
+                "title": _("View this snippet in context")
+            })
+        except NdrCoreManifest.DoesNotExist:
+            pass
 
         result_options.append({
             "onclick": f"copyToClipboard('{url_parse(record_id)}')",
@@ -159,7 +186,7 @@ class BaseResult(ABC):
             "class": "btn btn-sm btn-secondary",
             "data-toggle": "tooltip",
             "data-placement": "top",
-            "title": "Copy Citation"
+            "title": _("Copy Citation")
         })
         return result_options
 
@@ -168,7 +195,6 @@ class BaseResult(ABC):
 
         transformed_results = list()
         for result in self.results:
-            rid = '0'   # result['source']['selector']['id']
             transformed_result = {
                 "id": "",
                 "title": "",
@@ -180,7 +206,7 @@ class BaseResult(ABC):
                 },
                 "original_data": result,
                 "data_string": json.dumps(result, indent=4),
-                "options": self.get_result_options(rid)  # TODO: Make this generic
+                "options": self.get_result_options(result)
             }
             transformed_results.append(transformed_result)
             hit_number += 1
@@ -309,10 +335,10 @@ class BaseResult(ABC):
                 del (updated_url['tab'])
         except KeyError:
             pass
-        form_links['refine'] = self.request.path + "?" + updated_url.urlencode() + "&tab=" + self.search_configuration.conf_name
+        form_links['refine'] = self.request.path + "?" + updated_url.urlencode() + "&refine=1&tab=" + self.search_configuration.conf_name
 
-        # New Search URL (TODO change this to view name)
-        form_links['new'] = self.request.path
+        # New Search URL
+        form_links['new'] = self.request.path + "?tab=" + self.search_configuration.conf_name
 
         form_links['bulk_download_json'] = reverse('ndr_core:download_list',
                                                    kwargs={'search_config': self.search_configuration.conf_name}) + "?" + updated_url.urlencode()
