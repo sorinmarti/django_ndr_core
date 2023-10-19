@@ -9,7 +9,7 @@
         <div class="card-body">
             <h5 class="card-title">Really delete File Upload?</h5>
             <form method="post">{% csrf_token %}
-                <p>Are you sure you want to delete "{{ file.title }}"?</p>
+                <p>Are you sure you want to delete the file <strong>"{{ object.title }}"</strong>?</p>
                 <input type="submit" class="btn btn-danger" value="Confirm Delete">
             </form>
         </div>
