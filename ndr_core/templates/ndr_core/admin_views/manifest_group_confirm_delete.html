@@ -1,0 +1,18 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <a href="{% url 'ndr_core:configure_uploads' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Really delete This Manifest Group?</h5>
+            <form method="post">{% csrf_token %}
+                <p>Are you sure you want to delete "{{ object }}"?</p>
+                <p class="text-danger">Deleting this group will also delete all manifests associated with it.</p>
+                <input type="submit" class="btn btn-danger" value="Confirm Delete">
+            </form>
+        </div>
+    </div>
+{% endblock %}
