@@ -1,7 +1,9 @@
+import json
 import re
 import urllib
 
 from django import template
+from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 
 from ndr_core.models import NdrCoreSearchField, NdrCoreValue
@@ -15,6 +17,18 @@ def render_result(result_object, api_config):
     render_template = 'ndr_core/result_renderers/default_template.html'
     return {'template': render_template,
             'result': result_object}
+
+
+@register.filter
+def pretty_json(value):
+    pretty_json_str = json.dumps(value, indent=4)
+    pretty_json_str = pretty_json_str.replace('\n', '<br>').replace(' ', '&nbsp;')
+    pretty_json_str = re.sub(
+        r"https?:\/\/((www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}|localhost)(:[0-9]{2,4})?\b([-a-zA-Z0-9()@:%_\+.~#?&\/=,]*)",
+        lambda x: f'<a href="{x.group(0)}">{x.group(0)}</a>',
+        pretty_json_str)
+
+    return mark_safe(pretty_json_str)
 
 
 @register.filter
@@ -104,7 +118,9 @@ def translate_dict_foo(key_to_translate, dict_name, target_key):
             value_object = choices[key_to_translate]
 
             if selected_language == default_language:
-                return value_object[target_key]
+                if target_key in value_object:
+                    return value_object[target_key]
+                return f'{key_to_translate} (DNF)'
             elif selected_language in additional_languages:
                 key = f'{target_key}_{selected_language}'
                 if key in value_object:

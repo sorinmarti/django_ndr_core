@@ -29,7 +29,7 @@ class ConfigureTranslations(LoginRequiredMixin, View):
         """GET request for this view. """
 
         context = {'files': NdrCoreTranslation.objects.filter(table_name='NdrCorePage')}
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
 
@@ -39,7 +39,7 @@ class SelectPageTranslationView(View):
         """GET request for this view. """
 
         context = {'available_languages': get_available_languages() }
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
 
@@ -49,7 +49,7 @@ class SelectFieldTranslationView(View):
         """GET request for this view. """
 
         context = {'available_languages': get_available_languages()}
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
 
@@ -59,7 +59,7 @@ class SelectSettingsTranslationView(View):
         """GET request for this view. """
 
         context = {'available_languages': get_available_languages()}
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
 
@@ -69,7 +69,7 @@ class SelectFormTranslationView(View):
         """GET request for this view. """
 
         context = {'available_languages': get_available_languages()}
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
 
@@ -89,7 +89,7 @@ class TranslatePageValuesView(TranslateView):
         context['form'] = form
 
         messages.success(request, "Saved Changes")
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
     def post(self, request, *args, **kwargs):
@@ -101,7 +101,7 @@ class TranslatePageValuesView(TranslateView):
         context = self.get_context_data()
         context['form'] = form
 
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
 
@@ -111,7 +111,7 @@ class TranslateFieldValuesView(TranslateView):
         form = TranslateFieldForm(lang=self.kwargs.get('lang', 'en'))
         context = self.get_context_data()
         context['form'] = form
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
     def post(self, request, *args, **kwargs):
@@ -123,7 +123,7 @@ class TranslateFieldValuesView(TranslateView):
         context = self.get_context_data()
         context['form'] = form
 
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
 
@@ -133,7 +133,7 @@ class TranslateSettingsValuesView(TranslateView):
         form = TranslateSettingsForm(lang=self.kwargs.get('lang', 'en'))
         context = self.get_context_data()
         context['form'] = form
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
     def post(self, request, *args, **kwargs):
@@ -145,7 +145,7 @@ class TranslateSettingsValuesView(TranslateView):
         context = self.get_context_data()
         context['form'] = form
 
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
 
@@ -155,7 +155,7 @@ class TranslateFormValuesView(TranslateView):
         form = TranslateFormForm(lang=self.kwargs.get('lang', 'en'))
         context = self.get_context_data()
         context['form'] = form
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
     def post(self, request, *args, **kwargs):
@@ -167,5 +167,5 @@ class TranslateFormValuesView(TranslateView):
         context = self.get_context_data()
         context['form'] = form
 
-        return render(self.request, template_name='ndr_core/admin_views/configure_translations.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)

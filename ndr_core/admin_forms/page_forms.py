@@ -9,7 +9,7 @@ from django_select2 import forms as s2forms
 
 from ndr_core.admin_forms.settings_forms import SettingsListForm
 from ndr_core.admin_forms.admin_forms import get_form_buttons
-from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreFilterableListConfiguration, NdrCorePage, NdrCoreValue, \
+from ndr_core.models import NdrCoreSearchConfiguration, NdrCorePage, NdrCoreValue, \
     NdrCoreRichTextTranslation
 
 
@@ -19,15 +19,6 @@ class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
     model = NdrCoreSearchConfiguration
     search_fields = [
         'conf_name__icontains'
-    ]
-
-
-class FilteredListWidget(s2forms.ModelSelect2MultipleWidget):
-    """Widget to display a multi select2 dropdown for list configurations. """
-
-    model = NdrCoreFilterableListConfiguration
-    search_fields = [
-        'list_name__icontains'
     ]
 
 
@@ -41,12 +32,6 @@ class PageForm(forms.ModelForm):
         widget=SearchConfigurationWidget(
             attrs={'data-minimum-input-length': 0}))
 
-    list_configs = forms.ModelMultipleChoiceField(queryset=NdrCoreFilterableListConfiguration.objects.all(). \
-                                                  order_by('list_name'),
-                                                  required=False,
-                                                  widget=FilteredListWidget(
-                                                      attrs={'data-minimum-input-length': 0}))
-
     parent_page = forms.ModelChoiceField(queryset=NdrCorePage.objects.filter(parent_page=None),
                                          required=False, help_text="If you want this page to be a sub-page of another "
                                                                    "one, you can choose the parent page here")
@@ -55,7 +40,7 @@ class PageForm(forms.ModelForm):
         """Configure the model form. Provide model class and form fields."""
         model = NdrCorePage
         fields = ['name', 'show_page_title', 'label', 'show_in_navigation', 'page_type', 'parent_page',
-                  'simple_api', 'search_configs', 'list_configs', 'view_name', 'template_text']
+                  'search_configs', 'view_name', 'template_text']
 
     def __init__(self, *args, **kwargs):
         """Init class and create form helper."""
@@ -69,9 +54,9 @@ class PageForm(forms.ModelForm):
                                                                    widget=CKEditorUploadingWidget)
             try:
                 translation = NdrCoreRichTextTranslation.objects.get(language=lang,
-                                                                        table_name='NdrCorePage',
-                                                                        object_id=self.instance.pk,
-                                                                        field_name='template_text')
+                                                                     table_name='NdrCorePage',
+                                                                     object_id=self.instance.pk,
+                                                                     field_name='template_text')
                 self.initial[f'template_text_{lang}'] = translation.translation
             except NdrCoreRichTextTranslation.DoesNotExist:
                 pass

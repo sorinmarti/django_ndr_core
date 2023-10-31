@@ -18,7 +18,7 @@
     <script src="{% static 'ndr_core/js/admin/form_preview.js' %}"></script>
     <script>
         $(document).ready(function(){
-            let imageBaseUrl = "{% url 'ndr_core:preview_image' 'image_string' %}";
+            let imageBaseUrl = "{% url 'ndr_core:preview_search_form_image' 'image_string' %}";
             configureRows(20, imageBaseUrl);
 
             let visible_buttons = 1;
@@ -34,7 +34,7 @@
             initializeAddAndRemoveButtons(visible_buttons);
 
             let maskedUrl = getMaskedUrl(imageBaseUrl);
-            let previewImage = $('#preview_image');
+            let previewImage = $('#preview_search_form_image');
             previewImage.attr('src', maskedUrl);
         });
     </script>

@@ -4,8 +4,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Field, HTML
 from django_select2 import forms as s2forms
 
-from ndr_core.models import NdrCoreApiConfiguration
-
 
 class RenderConfigurationForm(forms.Form):
 
@@ -151,11 +149,6 @@ class FilteredListWidget(s2forms.Select2MultipleWidget):
 
 class ResultDisplayForm(forms.Form):
 
-    api_configuration = forms.ModelChoiceField(
-        label="API Configuration",
-        help_text="Select the API configuration you want to create a renderer for.",
-        queryset=NdrCoreApiConfiguration.objects.all()
-    )
     result_renderer = forms.ChoiceField(
         help_text="Select the renderer to configure",
         choices=[('1', 'Default Result Renderer'), ('2', 'Another Renderer'),]
@@ -180,7 +173,7 @@ class ResultDisplayConfigurationForm(forms.Form):
     
         tabs = TabHolder(css_id="id_tabs")
 
-        tab = Tab("label", css_id=tab_conf["field_name"])
+        tab = Tab("label", css_id='tab_conf["field_name"]')
         tabs.append(tab)
     
         layout.append(tabs)

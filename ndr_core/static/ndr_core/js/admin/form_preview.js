@@ -32,7 +32,7 @@ function configureRows(number, imageBaseUrl) {
      * preview image.
      */
     let updateFunc = function updateImage() {
-        let previewImage = $('#preview_image');
+        let previewImage = $('#preview_search_form_image');
         let maskedUrl = getMaskedUrl(imageBaseUrl);
         previewImage.attr('src', maskedUrl);
     }

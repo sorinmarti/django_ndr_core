@@ -2,6 +2,10 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
+from ndr_core.admin_views.result_views import ResultFieldCreateView, ResultFieldEditView, preview_result_card_image, \
+    ResultFieldDeleteView
+from ndr_core.admin_views.search_field_views import SearchFieldCreateView, SearchFieldEditView, \
+    preview_search_form_image, SearchFieldDeleteView
 from ndr_core.admin_views.translation_views import (
     ConfigureTranslations,
     SelectPageTranslationView,
@@ -23,7 +27,6 @@ from ndr_core.admin_views.uploads_views import (
     ManifestUploadDeleteView,
     ManifestGroupCreateView,
 )
-from ndr_core.admin_views.result_views import ConfigureResultsView, ResultsConfigurationDetailView
 from ndr_core.admin_views.export_views import export_color_palette, export_settings, export_messages
 from ndr_core.admin_views.admin_views import NdrCoreDashboard, HelpView, StatisticsView, \
     set_statistics_option
@@ -36,15 +39,14 @@ from ndr_core.admin_views.page_views import (
     move_page_up,
     ManagePageFooter,
 )
-from ndr_core.admin_views.api_views import ConfigureApi, ApiConfigurationCreateView, ApiConfigurationEditView, \
-    ApiConfigurationDeleteView, ApiConfigurationDetailView
+
 from ndr_core.admin_views.search_views import ConfigureSearch, SearchConfigurationCreateView, \
-    SearchConfigurationEditView, SearchConfigurationDeleteView, SearchFieldConfigurationCreateView, \
-    SearchFieldConfigurationEditView, SearchFieldConfigurationDeleteView, preview_image, create_search_fields
+    SearchConfigurationEditView, SearchConfigurationDeleteView, SearchConfigurationFormEditView, \
+    SearchConfigurationResultEditView
 from ndr_core.admin_views.color_views import ConfigureColorPalettes, ColorPaletteCreateView, ColorPaletteEditView, \
     ColorPaletteDeleteView, ColorPaletteImportView, ColorPaletteDetailView, choose_color_palette
 from ndr_core.admin_views.corrections_views import ConfigureCorrections, set_correction_option
-from ndr_core.admin_views.images_views import ConfigureImages, ImagesGroupView, LogoUploadView, ImagesCreateView, \
+from ndr_core.admin_views.images_views import ConfigureImages, ImagesGroupView, ImagesCreateView, \
     ImagesEditView, ImagesDeleteView, move_image_up
 from ndr_core.admin_views.settings_views import (
     ConfigureSettingsView,
@@ -63,11 +65,9 @@ from ndr_core.admin_views.ui_element_views import ConfigureUIElements, UIElement
     UIElementEditView, UIElementDeleteView
 from ndr_core.admin_views.messages_views import ConfigureMessages, MessagesView, MessagesDeleteView, \
     delete_all_messages, archive_message, ArchivedMessages
-from ndr_core.admin_views.sample_data_views import SampleDataView, SampleDataDetailView, SampleDataUploadView, \
-    SampleDataDeleteView
 
 from ndr_core.admin_forms.admin_forms import NdrCoreLoginForm, NdrCoreChangePasswordForm
-from ndr_core.views import ApiTestView, NdrDownloadView, NdrMarkForCorrectionView, NdrListDownloadView, \
+from ndr_core.views import NdrDownloadView, NdrMarkForCorrectionView, NdrListDownloadView, \
     NdrCSVListDownloadView, set_language_view
 
 app_name = 'ndr_core'
@@ -105,7 +105,6 @@ urlpatterns = [
     # IMAGES
     path('configure/images/', ConfigureImages.as_view(), name='configure_images'),
     path('configure/images/view/<str:group>/', ImagesGroupView.as_view(), name='view_images'),
-    path('configure/images/change/logo/', LogoUploadView.as_view(), name='import_logo'),
     path('configure/images/create/new/', ImagesCreateView.as_view(), name='create_image'),
     path('configure/images/edit/<int:pk>/', ImagesEditView.as_view(), name='edit_image'),
     path('configure/images/delete/<int:pk>/', ImagesDeleteView.as_view(), name='delete_image'),
@@ -162,35 +161,25 @@ urlpatterns = [
     path('configure/ui_elements/edit/<str:pk>/', UIElementEditView.as_view(), name='edit_ui_element'),
     path('configure/ui_elements/delete/<str:pk>/', UIElementDeleteView.as_view(), name='delete_ui_element'),
 
-    # API
-    path('configure/api/', ConfigureApi.as_view(), name='configure_api'),
-    path('configure/api/view/<str:pk>/', ApiConfigurationDetailView.as_view(), name='view_api'),
-    path('configure/api/create/new/', ApiConfigurationCreateView.as_view(), name='create_api'),
-    path('configure/api/edit/<str:pk>/', ApiConfigurationEditView.as_view(), name='edit_api'),
-    path('configure/api/delete/<str:pk>/', ApiConfigurationDeleteView.as_view(), name='delete_api'),
-
-    # SEARCH CONFIG
+    # SEARCH CONFIGURATIONS
     path('configure/search/', ConfigureSearch.as_view(), name='configure_search'),
-    path('configure/search/create/new/', SearchConfigurationCreateView.as_view(), name='create_search'),
-    path('configure/search/edit/<str:pk>/', SearchConfigurationEditView.as_view(), name='edit_search'),
-    path('configure/search/delete/<str:pk>/', SearchConfigurationDeleteView.as_view(), name='delete_search'),
-    path('configure/search/image/preview/<str:img_config>/', preview_image, name='preview_image'),
 
-    # SEARCH FIELDS
-    path('configure/search/fields/create/new/', SearchFieldConfigurationCreateView.as_view(), name='create_search_field'),
-    path('configure/search/fields/edit/<str:pk>/', SearchFieldConfigurationEditView.as_view(), name='edit_search_field'),
-    path('configure/search/fields/delete/<str:pk>/', SearchFieldConfigurationDeleteView.as_view(), name='delete_search_field'),
-    path('configure/search/fields/schema/<int:schema_pk>/', create_search_fields, name='create_fields_from_schema'),
+    path('configure/search/create/new/config/', SearchConfigurationCreateView.as_view(), name='create_search_config'),
+    path('configure/search/create/new/search_field/', SearchFieldCreateView.as_view(), name='create_search_field'),
+    path('configure/search/create/new/result_field/', ResultFieldCreateView.as_view(), name='create_result_field'),
 
-    # CONFIGURE DATA
-    path('configure/data/', SampleDataView.as_view(), name='configure_sample_data'),
-    path('configure/data/view/<str:pk>/<str:filename>/', SampleDataDetailView.as_view(), name='view_sample_data'),
-    path('configure/data/delete/<str:pk>/<str:filename>/', SampleDataDeleteView.as_view(), name='delete_sample_data_file'),
-    path('configure/data/upload/', SampleDataUploadView.as_view(), name='upload_sample_data'),
+    path('configure/search/edit/config/<str:pk>/', SearchConfigurationEditView.as_view(), name='edit_search_config'),
+    path('configure/search/edit/form/<str:pk>/', SearchConfigurationFormEditView.as_view(), name='edit_search_form'),
+    path('configure/search/edit/card/<str:pk>/', SearchConfigurationResultEditView.as_view(), name='edit_result_card'),
+    path('configure/search/edit/search_field/<str:pk>/', SearchFieldEditView.as_view(), name='edit_search_field'),
+    path('configure/search/edit/result_field/<str:pk>/', ResultFieldEditView.as_view(), name='edit_result_field'),
 
-    # RESULTS
-    path('configure/results/', ConfigureResultsView.as_view(), name='configure_results'),
-    path('configure/results/<str:search_config>/', ResultsConfigurationDetailView.as_view(), name='configure_result'),
+    path('configure/search/delete/config/<str:pk>/', SearchConfigurationDeleteView.as_view(), name='delete_search_config'),
+    path('configure/search/delete/search_field/<str:pk>/', SearchFieldDeleteView.as_view(), name='delete_search_field'),
+    path('configure/search/delete/result_field/<str:pk>/', ResultFieldDeleteView.as_view(), name='delete_result_field'),
+
+    path('configure/search/form/preview/<str:img_config>/', preview_search_form_image, name='preview_search_form_image'),
+    path('configure/search/result/preview/<str:img_config>/', preview_result_card_image, name='preview_result_card_image'),
 
     # SEARCH STATS
     path('search/statistics/', StatisticsView.as_view(), name='search_statistics'),
@@ -222,8 +211,6 @@ urlpatterns = [
     # Language
     path('language/<str:new_language>/', set_language_view, name='set_language'),
 
-    # TEST SERVER
-    path('query/<str:api_request>', ApiTestView.as_view(), name='api_test'),
-
-    path('test/', TemplateView.as_view(template_name='ndr_core/test.html'), name='test')
+    path('test/', TemplateView.as_view(template_name='ndr_core/test.html'), name='test'),
+    path('niy/', TemplateView.as_view(template_name='ndr_core/test.html'), name='not_implemented')
 ]

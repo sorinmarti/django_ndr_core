@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from django.contrib.staticfiles import finders
 
-from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreApiImplementation, NdrCoreValue
+from ndr_core.models import NdrCorePage, NdrCoreApiImplementation, NdrCoreValue
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -76,7 +76,6 @@ class Command(BaseCommand):
         fixtures_to_load = [
             'initial_values.json',
             'api_implementations.json',
-            'schemas.json',
             'base_styles.json',
             'color_palettes.json',
         ]
@@ -150,7 +149,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Creating admin user...'))
         if force_delete_admin_user:
             User.objects.filter(username='ndr_core_admin').delete()
-            self.stdout.write(self.style.SUCCESS(f'>>> Deleted user "ndr_core_admin"'))
+            self.stdout.write(self.style.WARN(f'>>> Deleted user "ndr_core_admin"'))
 
         if User.objects.filter(username='ndr_core_admin').count() == 0:
             User.objects.create_user(username='ndr_core_admin',
@@ -160,6 +159,8 @@ class Command(BaseCommand):
         else:
             self.stdout.write(f'>>> Skipped creating new user "ndr_core_admin". Already exists.')
 
+
+
         # (8) CREATE PAGES
         # Home Page
         NdrCorePage.objects.create(page_type=NdrCorePage.PageType.TEMPLATE,
@@ -168,27 +169,7 @@ class Command(BaseCommand):
                                    view_name='index',
                                    nav_icon='fas-fa home',
                                    index=0)
-
-        # Test Search
-        api_conf = NdrCoreApiConfiguration.objects.create(api_name='test_api',
-                                                          api_host='localhost',
-                                                          api_type=NdrCoreApiImplementation.objects.get(name='ndr_core'),
-                                                          api_protocol=NdrCoreApiConfiguration.Protocol.HTTP,
-                                                          api_port=8000,
-                                                          api_label='Local Test API',
-                                                          api_description='This configuration queries your local '
-                                                                          'installation for test results.',
-                                                          api_page_size=10,
-                                                          api_url_stub='ndr_core')
-
-        NdrCorePage.objects.create(page_type=NdrCorePage.PageType.SIMPLE_SEARCH,
-                                   name='Test Search',
-                                   label='Test Search',
-                                   view_name='search',
-                                   nav_icon='fas-fa search',
-                                   index=1,
-                                   simple_api=api_conf)
-
+        self.stdout.write(self.style.SUCCESS(f'>>> Created new page "Home Page"'))
 
         # (9) FINISH
         self.stdout.write(self.style.SUCCESS('Finished.'))

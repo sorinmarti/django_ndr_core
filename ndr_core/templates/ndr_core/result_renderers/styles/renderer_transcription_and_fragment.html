@@ -11,8 +11,8 @@
                      It consists of the number of the search result and a list of tags. -->
                 <div class="d-inline-block mb-2 text-secondary">
                     <small>
-                        {% blocktrans %}
-                            Result {{ result.result_meta.result_number }} of {{ result.result_meta.total_results }}
+                        {% blocktrans with result.result_meta.result_number as result_number and result.result_meta.total_results as total_results %}
+                            Result {{ result_number }} of {{ total_results }}
                         {% endblocktrans %}
                     </small>
                     &nbsp;&nbsp;

@@ -14,9 +14,90 @@ from django.utils.translation import get_language
 
 from ndr_core.ndr_settings import NdrSettings
 
+TRANSLATABLE_TABLES = (
+    ('NdrCoreSearchField', 'Search Field Table'),
+    ('NdrCoreResultField', 'Result Field Table'),
+    ('NdrCorePage', 'Page Table'),
+    ('NdrCoreValue', 'Settings Table'),
+    ('NdrCoreSearchConfiguration', 'Search Configuration Table'),
+)
+"""Tables which contain translatable fields."""
+
+TRANSLATABLE_FIELDS = {
+    'NdrCoreSearchField': ('field_label', 'help_text'),
+    'NdrCoreResultField': ('expression', ),
+    'NdrCorePage': ('name', 'label'),
+    'NdrCoreValue': ('value_value', ),
+    'NdrCoreSearchConfiguration': ('conf_label', ),
+}
+"""Fields which are translatable. """
+
+
+class NdrCoreResultField(models.Model):
+    """An NdrCoreResultField is part of the display of a search result. Multiple result fields can be combined to
+    a result card. Each result field has a type (see FieldType) which determines how the field is displayed.
+    The expression (or rich_expression) is formed by mixing static text with data from the result.
+    Example:
+        The data provides a field 'person'. Its value is an object containing the fields 'first_name' and 'last_name'.
+        The expression is 'Hello {person.first_name} {person.last_name}!'. The result field will display the text
+        'Hello John Doe!' if the data contains the fields 'person.first_name' and 'person.last_name'."""
+
+    class FieldType(models.IntegerChoices):
+        STRING = 1, "String"
+        """This type produces a bootstrap div with the expression as content. The content
+        can be rendered as raw HTML or as markdown."""
+
+        RICH_STRING = 2, "Rich Text String"
+        """This type produces a bootstrap div with the rich_expression as content"""
+
+        IMAGE = 3, "Image"
+        """This type produces an image tag with the expression as source"""
+
+        IIIF_IMAGE = 4, "IIIF Image"
+        """This type produces an image tag with the expression as source. The field_filter
+        can be used to resize the image."""
+
+        TABLE = 5, "Table"
+        """This type produces a table with the expression as content. The expression must be a list of lists."""
+
+        MAP = 6, "Map"
+        """This type produces a map. The expression must be a list of dictionaries with the keys 'lat' and 'lng'."""
+
+    expression = models.TextField(default='', blank=True)
+    """The expression to display. This can be a static text or a template string which is filled with data from the
+    result. """
+
+    rich_expression = RichTextUploadingField(null=True, blank=True,
+                                             help_text='Rich text for your expression')
+    """The expression to display. This can be a static text or a template string which is filled with data from the
+    result. Rich text can be styled (bold, italic, etc.)"""
+
+    field_type = models.PositiveSmallIntegerField(choices=FieldType.choices,
+                                                  default=FieldType.STRING,
+                                                  help_text="Type of the display field")
+    """Type of the display field."""
+
+    field_filter = models.CharField(max_length=100, blank=True, default='',
+                                    help_text="A filter to apply to the expression.")
+
+    display_border = models.BooleanField(default=False,
+                                         help_text="Should the display have a border?")
+    """Should the display have a border?"""
+
+    html_display = models.BooleanField(default=False,
+                                       help_text="Is the expression HTML code?")
+    """Is the expression HTML code? If yes, it will be rendered as raw HTML."""
+
+    md_display = models.BooleanField(default=False,
+                                     help_text="Is this expression markdown?")
+    """Is this expression markdown? If yes, it will be rendered as markdown."""
+
+    def __str__(self):
+        return f'{self.expression} ({self.get_field_type_display()})'
+
 
 class NdrCoreSearchField(models.Model):
-    """A NdrCoreSearch field servers two purposes: First it can produce a HTML form field and second its information
+    """A NdrCoreSearch field serves two purposes: First it can produce an HTML form field and second its information
       is used to formulate an API request."""
 
     class FieldType(models.IntegerChoices):
@@ -96,14 +177,16 @@ class NdrCoreSearchField(models.Model):
                                     help_text="Comma separated list of choices for dropdowns")
     """Comma separated list of choices for dropdowns"""
 
-    lower_value = models.IntegerField(null=True,
-                                      blank=True,
-                                      help_text="The lower value of a range field")
+    lower_value = models.CharField(null=True,
+                                   blank=True,
+                                   max_length=100,
+                                   help_text="The lower value of a range field")
     """The lower value of a range field"""
 
-    upper_value = models.IntegerField(null=True,
-                                      blank=True,
-                                      help_text="The upper value of a range field")
+    upper_value = models.CharField(null=True,
+                                   blank=True,
+                                   max_length=100,
+                                   help_text="The upper value of a range field")
     """The upper value of a range field"""
 
     use_in_csv_export = models.BooleanField(default=False,
@@ -206,18 +289,6 @@ class NdrCoreSearchField(models.Model):
 
         return result_list
 
-    """def get_list_choices_as_dict(self):
-        # read the list choices from the list_choices field
-        # TODO ignore invalid lines
-        list_choices = {}
-        if self.field_type == self.FieldType.LIST or self.field_type == self.FieldType.MULTI_LIST:
-            for line in self.list_choices.splitlines():
-                split_line = line.split(',')
-                list_choices[split_line[0]] = {'value': split_line[1]}
-
-            list_choices = {line.split(',')[0]: {'value': line.split(',')[1]} for line in self.list_choices.splitlines()}
-        return list_choices"""
-
     def get_initial_value(self):
         """Returns the initial value of a search field. This is used to pre-fill the form with a value. """
         if self.field_type == self.FieldType.BOOLEAN:
@@ -230,6 +301,23 @@ class NdrCoreSearchField(models.Model):
 
     def __str__(self):
         return f'{self.field_name} ({self.field_label})'
+
+
+class NdrCoreResultFieldCardConfiguration(models.Model):
+
+    result_field = models.ForeignKey(NdrCoreResultField,
+                                     on_delete=models.CASCADE,
+                                     help_text="The result field to place in a card")
+    """The result field to place in a card"""
+
+    field_row = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)],
+                                    help_text="The row in the card. Starts with 1.")
+
+    field_column = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)],
+                                       help_text="The column in the card. Is a value between 1 and 12.")
+
+    field_size = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)],
+                                     help_text="The size of the field. Is a value between 1 and 12.")
 
 
 class NdrCoreSearchFieldFormConfiguration(models.Model):
@@ -272,6 +360,9 @@ class NdrCoreApiImplementation(models.Model):
     description = models.TextField(default='blank')
     """Description of this implementation. """
 
+    connection_string_example = models.CharField(max_length=512, default='<connection-string>')
+    """Example connection string. """
+
     supports_simple = models.BooleanField(default=True)
     """True if the API supports a catch all search with a simple search term. """
 
@@ -295,66 +386,38 @@ class NdrCoreApiImplementation(models.Model):
         return self.label
 
 
-class NdrCoreApiConfiguration(models.Model):
-    """An API configuration contains all necessary information to create a query to an API endpoint. """
+class NdrCoreSearchConfiguration(models.Model):
+    """ A search configuration describes a configured search. """
 
-    class Protocol(models.IntegerChoices):
-        """Defines the protocol of the API configuration """
-        HTTP = 1, "http"
-        HTTPS = 2, "https"
+    # NAMES
 
-    api_name = models.CharField(max_length=100,
-                                verbose_name="API Name",
-                                primary_key=True,
-                                help_text="The (form) name of the API. Can't contain special characters or spaces.")
-    """This name is used as identifier for the API Can't contain special characters or spaces"""
+    conf_name = models.CharField(verbose_name="Configuration Name",
+                                 max_length=100,
+                                 primary_key=True,
+                                 help_text="Name of this search configuration. "
+                                           "Can't contain spaces or special characters.")
+    """Name of the search configuration. Can't contain spaces or special characters. Can't be 'simple'.
+    Used as identifier."""
 
-    api_host = models.CharField(max_length=100,
-                                verbose_name="API Host",
-                                help_text="The API host (domain only, e.g. my-api-host.org)")
-    """The API host (domain only, e.g. my-api-host.org) """
+    conf_label = models.CharField(verbose_name="Configuration Label",
+                                  max_length=100,
+                                  unique=True,
+                                  help_text="Label of this search configuration")
+    """Label of the search configuration. This is the name which is displayed in the search form.
+    This value is translatable."""
 
-    api_protocol = models.PositiveSmallIntegerField(choices=Protocol.choices,
-                                                    verbose_name="Protocol",
-                                                    default=Protocol.HTTPS,
-                                                    help_text="The protocol used (http or https)")
-    """The protocol used (http or https) """
+    # CONNECTION
 
     api_type = models.ForeignKey(NdrCoreApiImplementation, on_delete=models.CASCADE,
                                  verbose_name="API Type",
                                  help_text="Choose the API implementation of your configuration.")
     """Refers to the API implementation used for this configuration."""
 
-    api_port = models.IntegerField(default=80,
-                                   verbose_name="Port",
-                                   help_text="Port to connect to.")
-    """The TCP port of the API """
-
-    api_label = models.CharField(max_length=250,
-                                 verbose_name="Displayable Label",
-                                 help_text="The API's label is the title of the queried repository. "
-                                           "Choose a short descriptive title.")
-    """The API's label is the title of the queried repository """
-
-    api_description = models.TextField(default='',
-                                       verbose_name="Description",
-                                       help_text="Description of this configuration")
-    """Description of this configuration."""
-
-    api_page_size = models.IntegerField(default=10,
-                                        verbose_name="Page Size",
-                                        help_text="Size of the result page (e.g. 'How many results at once')")
-    """The query results will return a page of the results. You can define the page size"""
-
-    api_url_stub = models.CharField(default=None, null=True, blank=True, max_length=50,
-                                    verbose_name="URL stub",
-                                    help_text="Static URL part after host, before API parameters.")
-    """Static URL part after host, before API parameters."""
-
-    api_repository_url = models.URLField(default=None, null=True, blank=True,
-                                         verbose_name="Repository URL",
-                                         help_text="URL to the data repository where this data is stored.")
-    """URL to the repository's website."""
+    api_connection_url = models.CharField(null=False, blank=False,
+                                          max_length=512,
+                                          verbose_name="Connection URL",
+                                          help_text="Connection URL for the API endpoint.")
+    """Connection URL for the API endpoint. """
 
     api_user_name = models.CharField(max_length=50, blank=True, default='',
                                      help_text="If the API needs user authentication, you can provide your username")
@@ -369,59 +432,42 @@ class NdrCoreApiConfiguration(models.Model):
                                               "key")
     """An API might need an authentication key to function. """
 
-    def get_base_url(self):
-        """
-        Get the base URL for a configured API
-        :return: base URL for a configured API
-        """
-        api_base_url = f'{self.get_api_protocol_display()}://{self.api_host}:{self.api_port}/'
-        if self.api_url_stub is not None:
-            api_base_url += self.api_url_stub + "/"
-        return api_base_url
-
-    def get_number_of_test_files(self):
-        path = f"{NdrSettings.get_sample_data_path()}/{self.api_name}"
-        if os.path.exists(path):
-            return len(os.listdir(path))
-        return 0
-
-    def get_test_files(self):
-        path = f"{NdrSettings.get_sample_data_path()}/{self.api_name}"
-        if os.path.exists(path):
-            return os.listdir(path)
-        return []
-
-    def __str__(self):
-        return f'{self.api_name} ({self.api_label})'
-
-
-class NdrCoreSearchConfiguration(models.Model):
-    """ A search configuration describes a configured search form which targets a specified API configuration. """
-
-    conf_name = models.CharField(max_length=100,
-                                 primary_key=True,
-                                 help_text="Name of this search configuration. "
-                                           "Can't contain spaces or special characters.")
-    """Name of the search configuration. Can't contain spaces or special characters. Can't be 'simple' """
-
-    conf_label = models.CharField(max_length=100,
-                                  unique=True,
-                                  help_text="Label of this search configuration")
-    """Name of the search configuration """
-
-    api_configuration = models.ForeignKey(NdrCoreApiConfiguration,
-                                          on_delete=models.CASCADE,
-                                          help_text="The API to query")
-    """The API to send the query to """
+    # SEARCH
 
     search_form_fields = models.ManyToManyField(NdrCoreSearchFieldFormConfiguration,
                                                 help_text="Fields associated with this configuration")
     """Fields associated with this configuration """
 
+    search_id_field = models.CharField(max_length=100, blank=False, default='id',
+                                       help_text="The ID field to identify an entry.")
+    """The ID field to identify an entry. """
+
+    sort_field = models.CharField(max_length=100, blank=False, default='id',
+                                  help_text="The field to sort the result by.")
+
+    simple_query_main_field = models.CharField(max_length=100, blank=False, default='transcription.original',
+                                               help_text="The main field to query for a simple search.")
+    """The main field to query for a simple search. """
+
+    # RESULT
+
+    result_card_fields = models.ManyToManyField(NdrCoreResultFieldCardConfiguration,
+                                                help_text="Fields associated with this configuration")
+
     search_has_compact_result = models.BooleanField(default=False,
                                                     help_text="If the result has a normal and a compact view, "
                                                               "check this box.")
     """If the result has a normal and a compact view, check this box."""
+
+    page_size = models.IntegerField(default=10,
+                                    verbose_name="Page Size",
+                                    help_text="Size of the result page (e.g. 'How many results at once')")
+    """The query results will return a page of the results. You can define the page size"""
+
+    repository_url = models.URLField(default=None, null=True, blank=True,
+                                     verbose_name="Repository URL",
+                                     help_text="URL to the data repository where this data is stored.")
+    """URL to the repository's website."""
 
     def __str__(self):
         return self.conf_name
@@ -434,9 +480,10 @@ class NdrCoreSearchConfiguration(models.Model):
         search_config = NdrCoreSearchConfiguration()
         search_config.api_configuration = api_configuration
         search_config.conf_name = 'simple'
-        search_config.search_has_compact_result = NdrCoreValue.get_or_initialize('search_simple_has_compact_result_view',
-                                                                                 init_value="false",
-                                                                                 init_type=NdrCoreValue.ValueType.BOOLEAN).get_value()
+        search_config.search_has_compact_result = (
+            NdrCoreValue.get_or_initialize('search_simple_has_compact_result_view',
+                                           init_value="false",
+                                           init_type=NdrCoreValue.ValueType.BOOLEAN).get_value())
         return search_config
 
     def translated_conf_label(self):
@@ -456,59 +503,9 @@ class NdrCoreSearchConfiguration(models.Model):
             return self.conf_label
 
 
-class NdrCoreResultMapping(models.Model):
-    """An NDR Core Result template mapping maps result jsons to html templates."""
-
-
-class NdrCoreResultTemplateField(models.Model):
-    """An NdrCoreResultTemplateField maps a json-result-value to a template-value """
-
-    class Renderer(models.IntegerChoices):
-        URL = 1, "url-link"
-        GEONAMES = 2, "geonames.org"
-
-    class Container(models.TextChoices):
-        OPTIONS = "options", "Options"
-        VALUE_LIST = "values", "Value List"
-
-    belongs_to = models.ForeignKey(NdrCoreResultMapping, on_delete=models.CASCADE)
-    """TODO """
-
-    target_field_name = models.CharField(max_length=100)
-    """Field name of the resulting structured response which is used to render a result line"""
-
-    source_field_name = models.CharField(max_length=100)
-    """Field name of the raw search result json. Nested objects are separated by '.'"""
-
-    alternate_field_name = models.CharField(max_length=100, null=True, blank=True)
-    """Field name of the raw search result json.  Used if 'source_field_name' does not exist or its value is None."""
-
-    field_none_value = models.CharField(max_length=100, default='')
-    """Displayed value if both 'source_field_name' and 'alternate_field_name' are None. """
-
-    field_label = models.CharField(max_length=100, null=True, blank=True)
-    """TODO """
-
-    field_container = models.CharField(max_length=100, choices=Container.choices)
-    """TODO """
-
-    field_renderer = models.IntegerField(choices=Renderer.choices, null=True, blank=True)
-    """TODO """
-
-
-class NdrCoreFilterableListConfiguration(models.Model):
-    """TODO """
-
-    list_name = models.CharField(max_length=100, unique=True)
-    """TODO """
-
-    api_configuration = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE, help_text="TODO")
-    """TODO """
-
-
 class NdrCorePage(models.Model):
     """ An NdrCorePage is a web page on the ndr_core website instance. Each page has a type (see PageType) and upon
-     creation, a HTML template is created and saved in the projects template folder. This allows users to create
+     creation, an HTML template is created and saved in the projects template folder. This allows users to create
      pages over the administration interface and then adapt its contents as needed."""
 
     class PageType(models.IntegerChoices):
@@ -529,9 +526,6 @@ class NdrCorePage(models.Model):
         CONTACT = 5, "Contact Form"
         """A contact from page displays a form to send a message to the project team"""
 
-        FILTER_LIST = 6, "Filterable List"
-        """A filter list page shows a list of data which can be filtered down"""
-
         FLIP_BOOK = 7, "Flip Book"
         """TODO """
 
@@ -539,7 +533,6 @@ class NdrCorePage(models.Model):
         """TODO """
 
         VIEWER_PAGE = 9, "Viewer Page"
-
 
     view_name = models.CharField(max_length=200,
                                  help_text='The url part of your page (e.g. https://yourdomain.org/p/view_name)',
@@ -580,15 +573,6 @@ class NdrCorePage(models.Model):
     search_configs = models.ManyToManyField(NdrCoreSearchConfiguration)
     """If the page is of one of the search types (SEARCH, COMBINED_SEARCH), a number of search configurations can 
     be saved. """
-
-    list_configs = models.ManyToManyField(NdrCoreFilterableListConfiguration)
-    """If the page is of the List type, a list configuration can be saved. """
-
-    simple_api = models.ForeignKey(NdrCoreApiConfiguration,
-                                   null=True, blank=True,
-                                   help_text='Api for simple search',
-                                   on_delete=models.SET_NULL)
-    """If the page is of type SIMPLE_SEARCH, a simple search configuration can be saved."""
 
     template_text = RichTextUploadingField(null=True, blank=True,
                                            help_text='Text for your template page')
@@ -735,9 +719,13 @@ class NdrCoreColorScheme(models.Model):
     """Color for hrefs."""
 
     form_field_bg = ColorField()
+    """Background color of form fields."""
+
     form_field_fg = ColorField()
+    """Foreground color of form fields."""
 
     footer_bg = ColorField()
+    """Background color of the footer."""
 
     accent_color_1 = ColorField(help_text='Accent color 1. Used as navigation background and the like.')
     """Accent color 1."""
@@ -784,7 +772,7 @@ class NdrCoreValue(models.Model):
 
     value_name = models.CharField(max_length=100, primary_key=True,
                                   help_text='This is the identifier of a NdrCoreValue. '
-                                            'Can\'t contain special characters.' )
+                                            'Can\'t contain special characters.')
     """This is the identifier of a NdrCoreValue. In the source, each value gets loaded by searching for this name"""
 
     value_type = models.CharField(choices=ValueType.choices,
@@ -870,7 +858,6 @@ class NdrCoreValue(models.Model):
         except NdrCoreTranslation.DoesNotExist:
             return self.value_value
 
-
     @staticmethod
     def get_or_initialize(value_name, init_value=None, init_label=None, init_type=ValueType.STRING):
         """Returns or creates an NdrCoreValue object. """
@@ -890,35 +877,12 @@ class NdrCoreValue(models.Model):
         return self.value_name
 
 
-class NdrCoreDataSchema(models.Model):
-    """NdrCore provides a number of already implemented schemas. For each schema it is known which search fields are
-     possible, so they can be generated automatically. Example: NdrCore has a 'Historic Person Instances' schema
-     implemented for which we know we can search for last and given names, organization affiliation and locations
-     (etc.). So we provide a django-fixture to automatically create these NdrCoreSearchField objects to use them in
-     a search form.
-     The list of available schemas is loaded when the management command 'init_ndr_core' is executed and can not
-     be manipulated by users."""
-
-    schema_url = models.URLField()
-    """This is a stable URL of the implemented schema"""
-
-    schema_label = models.CharField(max_length=100)
-    """This is a human readable label for the schema (e.g. its title)"""
-
-    schema_name = models.CharField(max_length=100)
-    """This is the name of the schema (e.g. its identifier within ndrCore)"""
-
-    fixture_name = models.CharField(max_length=100)
-    """This is the filename of the fixture to load the search fields from. This contains only the file name which must
-    be available in the ndr_core module in 'ndr_core/fixtures/'"""
-
-
 class NdrCoreCorrection(models.Model):
     """Users can be given the opportunity to correct entries which have errors. Each correction can consist of
      multiple field corrections. Users need to provide an ORCID. This does not automatically correct data
      but administrators can accept or reject corrections."""
 
-    corrected_dataset = models.ForeignKey(NdrCoreApiConfiguration,
+    corrected_dataset = models.ForeignKey(NdrCoreSearchConfiguration,
                                           on_delete=models.CASCADE)
     """TODO """
 
@@ -965,7 +929,7 @@ class NdrCoreUserMessage(models.Model):
     """Indicates if the message has been archived.  """
 
     message_forwarded = models.BooleanField(default=False)
-    """Indicates if the messagge has been forwarded to a specified e-mail address. """
+    """Indicates if the message has been forwarded to a specified e-mail address. """
 
     def __str__(self):
         return f"{self.message_subject} (from: {self.message_ret_email})"
@@ -975,7 +939,7 @@ class NdrCoreSearchStatisticEntry(models.Model):
     """Every time a search is executed, a NdrCoreSearchStatisticEntry object is created if the setting
     'statistics_feature' is set to 'true' """
 
-    search_api = models.ForeignKey(NdrCoreApiConfiguration, on_delete=models.CASCADE)
+    search_config = models.ForeignKey(NdrCoreSearchConfiguration, on_delete=models.CASCADE)
     """The API which was queried in the search. """
 
     search_term = models.CharField(max_length=100, default='')
@@ -1189,21 +1153,6 @@ class NdrCoreUiElementItem(models.Model):
 
     url = models.URLField(blank=True)
     """TODO """
-
-
-TRANSLATABLE_TABLES = (
-    ('NdrCoreSearchField', 'Search Field Table'),
-    ('NdrCorePage', 'Page Table'),
-    ('NdrCoreValue', 'Settings Table'),
-    ('NdrCoreSearchConfiguration', 'Search Configuration Table'),
-)
-
-TRANSLATABLE_FIELDS = {
-    'NdrCoreSearchField': ('field_label', 'help_text'),
-    'NdrCorePage': ('name', 'label'),
-    'NdrCoreValue': ('value_value', ),
-    'NdrCoreSearchConfiguration': ('conf_label', ),
-}
 
 
 class NdrCoreTranslation(models.Model):

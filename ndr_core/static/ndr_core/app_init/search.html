@@ -55,9 +55,13 @@
         {% include 'ndr_core/pagination.html' %}
 
     {% else %}
-        <h4 class="mt-4"></h4>
         {% include 'ndr_core/messages.html' %}
-        {% crispy form %}
+        <div class="row bg-white">
+            <div class="col-12 p-3">
+                {% crispy form %}
+            </div>
+        </div>
+
     {% endif %}
 
 {% endblock %}
