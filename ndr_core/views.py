@@ -17,9 +17,9 @@ from django.utils import translation
 from django_ndr_core import settings
 from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm, \
     ManifestSelectionForm
+from ndr_core.map_test import get_map
 from ndr_core.models import (
     NdrCorePage,
-    NdrCoreApiConfiguration,
     NdrCoreUserMessage,
     NdrCoreImage,
     NdrCoreCorrection,
@@ -189,23 +189,26 @@ class NdrDownloadView(_NdrCoreSearchView):
     """Returns a JSON record from an ID request to the API """
 
     def get(self, request, *args, **kwargs):
-        try:
-            api_factory = ApiFactory(self.get_search_config_from_name(self.kwargs['search_config']))
-            api = api_factory.get_query_instance()
-            record_id = url_deparse(self.kwargs['record_id'])
-            query = api.get_record_query(record_id)
-            result = api_factory.get_result_instance(query, self.request)
-            result.load_result(transform_result=False)
-            return JsonResponse(result.raw_result)
-        except NdrCoreApiConfiguration.DoesNotExist:
-            return JsonResponse({})
+        api_factory = ApiFactory(self.get_search_config_from_name(self.kwargs['search_config']))
+        api = api_factory.get_query_instance()
+        record_id = url_deparse(self.kwargs['record_id'])
+        query = api.get_record_query(record_id)
+        result = api_factory.get_result_instance(query, self.request)
+        result.load_result(transform_result=False)
+        return JsonResponse(result.raw_result)  # TODO RFQ: Is raw_result the right one?
 
 
 class NdrListDownloadView(_NdrCoreSearchView):
     """Returns a JSON record list from a search result. """
 
+    def __init__(self):
+        super().__init__()
+        self.page_size = None
+
     def create_result_for_response(self):
-        api_factory = ApiFactory(self.get_search_config_from_name(self.kwargs['search_config']))
+        search_config = self.get_search_config_from_name(self.kwargs['search_config'])
+        api_factory = ApiFactory(search_config)
+
         query_obj = api_factory.get_query_instance(page=self.request.GET.get("page", 1))
         self.fill_search_query_values(self.kwargs['search_config'], query_obj)
         query_string = query_obj.get_advanced_query()
@@ -217,35 +220,31 @@ class NdrListDownloadView(_NdrCoreSearchView):
         return result
 
     def get(self, request, *args, **kwargs):
-        try:
-            result = self.create_result_for_response()
-            return JsonResponse(result.raw_result)
-        except NdrCoreApiConfiguration.DoesNotExist:
-            return JsonResponse({})
+        result = self.create_result_for_response()
+        return JsonResponse(result.raw_result)   # TODO RFQ: Is raw_result the right one?
 
 
 class NdrCSVListDownloadView(NdrListDownloadView):
     def get(self, request, *args, **kwargs):
-        try:
-            result = self.create_result_for_response()
-            mapping = [
-                # TODO: Add id field
-            ]
-            search_config = self.get_search_config_from_name(self.kwargs['search_config'])
-            for field in search_config.search_form_fields.all():
-                if field.search_field.use_in_csv_export:
-                    mapping.append({"field": field.search_field.api_parameter, "header": field.search_field.field_label})
+        search_config = self.get_search_config_from_name(self.kwargs['search_config'])
 
-            csv_string = create_csv_export_string(result.raw_result['hits'], mapping)
-            return HttpResponse(csv_string, content_type="text/csv")
-        except NdrCoreApiConfiguration.DoesNotExist:
-            return HttpResponse("")
+        result = self.create_result_for_response()
+        mapping = [
+            {"field": search_config.api_configuration.api_id_field, "header": "ID"},
+        ]
+        search_config = self.get_search_config_from_name(self.kwargs['search_config'])
+        for field in search_config.search_form_fields.all():
+            if field.search_field.use_in_csv_export:
+                mapping.append({"field": field.search_field.api_parameter, "header": field.search_field.field_label})
+
+        csv_string = create_csv_export_string(result.raw_result['hits'], mapping)
+        return HttpResponse(csv_string, content_type="text/csv")
 
 
 class NdrMarkForCorrectionView(View):
     def get(self, request, *args, **kwargs):
-        api_config = NdrCoreApiConfiguration.objects.get(api_name=self.kwargs['api_config'])
-        NdrCoreCorrection.objects.create(corrected_dataset=api_config,
+        search_config = NdrCoreSearchConfiguration.objects.get(conf_name=self.kwargs['search_config'])
+        NdrCoreCorrection.objects.create(corrected_dataset=search_config,
                                          corrected_record_id=url_deparse(self.kwargs['record_id']))
         return HttpResponse("OK")
 
@@ -323,6 +322,15 @@ class SearchView(_NdrCoreSearchView):
                     messages.error(request, _('No results found.'))
                 else:
                     context.update({'api_config': search_config.api_configuration})
+                    for r in result.results:
+                        origin = r['data']['port_of_origin']['scheme']
+                        destination = r['data']['port_of_destination']['scheme']
+                        amap = get_map([
+                            [origin['identifier'], origin['name'], origin['lat'], origin['lng']],
+                            [destination['identifier'], destination['name'], destination['lat'], destination['lng']]
+                        ])
+                        r['map'] = amap
+
                     context.update({'result': result})
         else:
             if "refine" in request.GET.keys():
@@ -443,25 +451,6 @@ class ViewerView(_NdrCoreView):
         context['page_to_display'] = request.GET.get('page', 1)
 
         return render(request, self.template_name, context)
-
-
-class ApiTestView(View):
-    """TODO """
-
-    def get(self, request, *args, **kwargs):
-        api_request = self.kwargs['api_request']
-        json_response = {}
-
-        if api_request == 'basic':
-            json_response = json.load(open(finders.find('ndr_core/test_server_assets/test.json')))
-        elif api_request == 'advanced':
-            json_response = {}
-        elif api_request == 'fulldata':
-            json_response = json.load(open(finders.find('ndr_core/test_server_assets/test.json')))["hits"][0]
-        elif api_request == 'list':
-            json_response = {}
-
-        return JsonResponse(json_response)
 
 
 def set_language_view(request, new_language):
