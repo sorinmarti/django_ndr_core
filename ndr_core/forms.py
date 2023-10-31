@@ -257,13 +257,12 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                                                     initial=search_field.get_initial_value())
                 # Number Range field
                 if search_field.field_type == search_field.FieldType.NUMBER_RANGE:
-                    # TODO initial value
                     form_field = NumberRangeField(label=search_field.translated_field_label(),
                                                   required=search_field.field_required,
                                                   help_text=help_text,
-                                                  lowest_number=search_field.lower_value
+                                                  lowest_number=int(search_field.lower_value)
                                                   if search_field.lower_value is not None else 1,
-                                                  highest_number=search_field.upper_value
+                                                  highest_number=int(search_field.upper_value)
                                                   if search_field.upper_value is not None else 999999)
                 # Boolean field (checkbox)
                 if search_field.field_type == search_field.FieldType.BOOLEAN:
@@ -281,17 +280,25 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
                                                  help_text=help_text)
                 # Date range field
                 if search_field.field_type == search_field.FieldType.DATE_RANGE:
-                    # TODO initial value
+                    # search_field.lower_value is in the form YYYY-MM-DD. Convert it to DD.MM.YYYY
+                    lower_value = search_field.lower_value
+                    if lower_value is not None:
+                        lower_value = f'{lower_value[8:10]}.{lower_value[5:7]}.{lower_value[0:4]}'
+                    # Do the same with upper_value
+                    upper_value = search_field.upper_value
+                    if upper_value is not None:
+                        upper_value = f'{upper_value[8:10]}.{upper_value[5:7]}.{upper_value[0:4]}'
+
                     form_field = fields.DateRangeField(label=search_field.translated_field_label(),
                                                        required=search_field.field_required,
                                                        help_text=help_text,
                                                        input_formats=['%d.%m.%Y'],
                                                        widget=widgets.DateRangeWidget(
                                                            format='%d.%m.%Y',
-                                                           picker_options={'startDate': "01.01.1729",
-                                                                           'endDate': "31.12.1840",
-                                                                           'minYear': 1729,
-                                                                           'maxYear': 1840,
+                                                           picker_options={'startDate': lower_value,
+                                                                           'endDate': "upper_value",
+                                                                           'minYear': int(lower_value[6:10]),
+                                                                           'maxYear': int(upper_value[6:10]),
                                                                            "maxSpan": {
                                                                                "years": 500
                                                                            },
