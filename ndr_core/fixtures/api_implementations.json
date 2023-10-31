@@ -19,26 +19,14 @@
       "name": "mongodb",
       "label": "Mongo DB",
       "url": "https://www.mongodb.com/",
-      "description": "",
+      "description": "Direct access to a MongoDB database over pymongo",
+      "connection_string_example": "mongodb://localhost:27017/<database>/<collection>",
       "supports_simple": true,
       "supports_simple_and_or": true,
       "supports_advanced": true,
       "supports_lists": false,
-      "supports_facets": false
-    }
-  },
-  {
-    "model": "ndr_core.NdrCoreApiImplementation",
-    "fields": {
-      "name": "ddb",
-      "label": "DDB",
-      "url": "https://pro.deutsche-digitale-bibliothek.de/daten-nutzen/schnittstellen",
-      "description": "",
-      "supports_simple": false,
-      "supports_simple_and_or": false,
-      "supports_advanced": true,
-      "supports_lists": false,
-      "supports_facets": false
+      "supports_facets": false,
+      "supports_single_result": true
     }
   },
   {
@@ -48,11 +36,13 @@
       "label": "API Ninjas",
       "url": "https://api-ninjas.com/",
       "description": "",
+      "connection_string_example": "https://api-ninjas.com/api/v1/<collection>",
       "supports_simple": false,
       "supports_simple_and_or": false,
       "supports_advanced": true,
       "supports_lists": false,
-      "supports_facets": false
+      "supports_facets": false,
+      "supports_single_result": false
     }
   }
 ]
