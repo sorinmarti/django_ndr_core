@@ -91,7 +91,7 @@ settings_group_list = {
 class ConfigureSettingsView(LoginRequiredMixin, TemplateView):
     """View to view and change value settings of NDR Core (such as HTML page title tags, etc.). """
 
-    template_name = 'ndr_core/admin_views/configure_settings.html'
+    template_name = 'ndr_core/admin_views/overview/configure_settings.html'
 
     @staticmethod
     def get_context_data():
@@ -127,7 +127,7 @@ class SettingsDetailView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         return render(self.request,
-                      template_name='ndr_core/admin_views/configure_settings.html',
+                      template_name='ndr_core/admin_views/overview/configure_settings.html',
                       context=self.get_context_data())
 
     def post(self, request, *args, **kwargs):
@@ -140,7 +140,7 @@ class SettingsDetailView(LoginRequiredMixin, View):
 
         messages.success(request, "Saved Changes")
         return render(self.request,
-                      template_name='ndr_core/admin_views/configure_settings.html',
+                      template_name='ndr_core/admin_views/overview/configure_settings.html',
                       context=context)
 
 
@@ -150,7 +150,7 @@ class SettingCreateView(LoginRequiredMixin, CreateView):
     model = NdrCoreValue
     form_class = SettingCreateForm
     success_url = reverse_lazy('ndr_core:view_settings', kwargs={'group': 'custom'})
-    template_name = 'ndr_core/admin_views/setting_create.html'
+    template_name = 'ndr_core/admin_views/create/setting_create.html'
 
     def form_valid(self, form):
         self.object = form.save(False)
@@ -173,7 +173,7 @@ class SettingDeleteView(LoginRequiredMixin, DeleteView):
 
     model = NdrCoreValue
     success_url = reverse_lazy('ndr_core:view_settings', kwargs={'group': 'custom'})
-    template_name = 'ndr_core/admin_views/setting_confirm_delete.html'
+    template_name = 'ndr_core/admin_views/delete/setting_confirm_delete.html'
 
     def form_valid(self, form):
         return super(SettingDeleteView, self).form_valid(form)

@@ -22,7 +22,7 @@ class ConfigureUI(LoginRequiredMixin, View):
                    'ui_style': NdrCoreUiStyle.objects.get(name=value.value_value)}
 
         return render(self.request,
-                      template_name='ndr_core/admin_views/configure_ui.html',
+                      template_name='ndr_core/admin_views/overview/configure_ui.html',
                       context=context)
 
 
@@ -30,7 +30,7 @@ class UIStyleDetailView(LoginRequiredMixin, DetailView):
     """View to show details about a UI style. """
 
     model = NdrCoreUiStyle
-    template_name = 'ndr_core/admin_views/configure_ui.html'
+    template_name = 'ndr_core/admin_views/overview/configure_ui.html'
 
     def get_context_data(self, **kwargs):
         context = super(UIStyleDetailView, self).get_context_data(**kwargs)

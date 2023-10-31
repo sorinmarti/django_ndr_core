@@ -27,7 +27,7 @@ class ManagePages(LoginRequiredMixin, View):
         context = {'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index')}
 
         return render(self.request,
-                      template_name='ndr_core/admin_views/configure_pages.html',
+                      template_name='ndr_core/admin_views/overview/configure_pages.html',
                       context=context)
 
 
@@ -41,7 +41,7 @@ class ManagePageFooter(LoginRequiredMixin, View):
                    'footer_form': FooterForm()}
 
         return render(self.request,
-                      template_name='ndr_core/admin_views/configure_pages.html',
+                      template_name='ndr_core/admin_views/overview/configure_pages.html',
                       context=context)
 
     def post(self, request, *args, **kwargs):
@@ -55,7 +55,7 @@ class ManagePageFooter(LoginRequiredMixin, View):
         messages.success(request, "Saved Changes")
 
         return render(self.request,
-                      template_name='ndr_core/admin_views/configure_pages.html',
+                      template_name='ndr_core/admin_views/overview/configure_pages.html',
                       context=context)
 
 
@@ -64,7 +64,7 @@ class PageDetailView(LoginRequiredMixin, DetailView):
     The list of pages is still shown on the right side."""
 
     model = NdrCorePage
-    template_name = 'ndr_core/admin_views/configure_pages.html'
+    template_name = 'ndr_core/admin_views/overview/configure_pages.html'
 
     def get_context_data(self, **kwargs):
         context = super(PageDetailView, self).get_context_data(**kwargs)
@@ -78,7 +78,7 @@ class PageCreateView(LoginRequiredMixin, CreateView):
     model = NdrCorePage
     form_class = PageCreateForm
     success_url = reverse_lazy('ndr_core:configure_pages')
-    template_name = 'ndr_core/admin_views/page_create.html'
+    template_name = 'ndr_core/admin_views/create/page_create.html'
 
     def form_valid(self, form):
         """Overwrites form_valid function of CreateView. Sets the index of the newly created page object and creates
@@ -160,7 +160,7 @@ class PageDeleteView(LoginRequiredMixin, DeleteView):
 
     model = NdrCorePage
     success_url = reverse_lazy('ndr_core:configure_pages')
-    template_name = 'ndr_core/admin_views/page_confirm_delete.html'
+    template_name = 'ndr_core/admin_views/delete/page_confirm_delete.html'
 
     def form_valid(self, form):
         """Overwrites form_valid function of DeleteView. Deletes the object and its template."""

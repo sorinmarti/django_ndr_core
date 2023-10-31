@@ -20,7 +20,7 @@ class ConfigureMessages(LoginRequiredMixin, View):
 
         context = {'ndr_messages': NdrCoreUserMessage.objects.filter(message_archived=False).order_by('-message_time')}
 
-        return render(self.request, template_name='ndr_core/admin_views/configure_messages.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_messages.html',
                       context=context)
 
 
@@ -32,14 +32,14 @@ class ArchivedMessages(LoginRequiredMixin, View):
 
         context = {'ndr_messages': NdrCoreUserMessage.objects.filter(message_archived=True).order_by('-message_time')}
 
-        return render(self.request, template_name='ndr_core/admin_views/configure_messages.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_messages.html',
                       context=context)
 
 
 class MessagesView(LoginRequiredMixin, DetailView):
     """ View to show a user message."""
     model = NdrCoreUserMessage
-    template_name = 'ndr_core/admin_views/configure_messages.html'
+    template_name = 'ndr_core/admin_views/overview/configure_messages.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,7 +52,7 @@ class MessagesDeleteView(LoginRequiredMixin, DeleteView):
 
     model = NdrCoreUserMessage
     success_url = reverse_lazy('ndr_core:configure_messages')
-    template_name = 'ndr_core/admin_views/message_confirm_delete.html'
+    template_name = 'ndr_core/admin_views/delete/message_confirm_delete.html'
 
     def form_valid(self, form):
         return super(MessagesDeleteView, self).form_valid(form)

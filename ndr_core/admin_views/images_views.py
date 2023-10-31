@@ -41,7 +41,7 @@ class ConfigureImages(LoginRequiredMixin, View):
 
         context = {'logo_path': f'{NdrSettings.APP_NAME}/images/logo.png',
                    'groups': image_groups}
-        return render(self.request, template_name='ndr_core/admin_views/configure_images.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_images.html',
                       context=context)
 
 
@@ -73,7 +73,7 @@ class ImagesCreateView(LoginRequiredMixin, CreateView):
     model = NdrCoreImage
     form_class = ImageCreateForm
     # success_url = reverse_lazy('ndr_core:configure_images')
-    template_name = 'ndr_core/admin_views/image_create.html'
+    template_name = 'ndr_core/admin_views/create/image_create.html'
 
     def form_valid(self, form):
         response = super(ImagesCreateView, self).form_valid(form)
@@ -108,24 +108,6 @@ class ImagesDeleteView(LoginRequiredMixin, DeleteView):
     def form_valid(self, form):
         self.object.file.delete()
         return super(ImagesDeleteView, self).form_valid(form)
-
-
-class LogoUploadView(LoginRequiredMixin, FormView):
-    """ View to upload a new logo image. """
-
-    template_name = 'ndr_core/admin_views/logo_upload.html'
-    form_class = LogoUploadForm
-    success_url = reverse_lazy('ndr_core:configure_images')
-
-    def form_valid(self, form):
-        file_path = f"{NdrSettings.get_images_path()}/logo.png"
-        f = form.files['upload_file']
-
-        with open(file_path, 'wb+') as destination:
-            for chunk in f.chunks():
-                destination.write(chunk)
-        messages.success(self.request, 'Changed logo file (You may need to reload this page).')
-        return super().form_valid(form)
 
 
 @login_required

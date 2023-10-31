@@ -1,65 +1,59 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
+from django.views.generic import CreateView, UpdateView, DeleteView
 
-from ndr_core.admin_forms.result_forms import (
-    RenderConfigurationForm,
-    MyTestForm,
-    ResultDisplayForm,
-    ResultDisplayConfigurationForm
-)
-from ndr_core.models import NdrCoreSearchConfiguration
-from ndr_core.admin_forms.api_forms import ApiCreateForm, ApiEditForm
-from ndr_core.models import NdrCoreApiConfiguration
+from ndr_core.form_preview import get_search_form_image_from_raw_data
+from ndr_core.admin_forms.result_field_forms import ResultFieldCreateForm, ResultFieldEditForm
+from ndr_core.models import NdrCoreResultField
 
+class ResultFieldCreateView(LoginRequiredMixin, CreateView):
+    """ View to create a new Search Field """
 
-class ConfigureResultsView(LoginRequiredMixin, View):
-    """View to add/edit/delete API configurations. """
-
-    def get(self, request, *args, **kwargs):
-        """GET request for this view. """
-
-        context = {'searches': NdrCoreSearchConfiguration.objects.all().order_by('conf_label'),
-                   'form': RenderConfigurationForm(),
-                   'form_display': ResultDisplayForm()}
-
-        return render(self.request, template_name='ndr_core/admin_views/configure_results.html',
-                      context=context)
-
-    def post(self, request, *args, **kwargs):
-        values = {"last_name": "Caesar", "first_name": "Julius", "age": 44, "battles": ["Alesia", "Pharsalus"],
-                  "various": {"a": 1, "b": 2, "c": 3}, "date": "2019-01-01"}
-        form = MyTestForm(self.request.POST)
-        if form.is_valid():
-            print("VALID")
-            print(form.cleaned_data)
-            format_string = form.cleaned_data['format_field']
-            print(format_string)
-            print(format_string.format(**values))
-
-        context = {'searches': NdrCoreSearchConfiguration.objects.all().order_by('conf_label'),
-                   'form': RenderConfigurationForm(),
-                   't_form': MyTestForm()}
-
-        return render(self.request, template_name='ndr_core/admin_views/configure_results.html',
-                      context=context)
-
-class ResultsConfigurationDetailView(LoginRequiredMixin, FormView):
-
-    template_name = 'ndr_core/admin_views/configure_results.html'
-
-    def get(self, request, *args, **kwargs):
-        """GET request for this view. """
-        conf_name = kwargs['search_config']
-        context = {'searches': NdrCoreSearchConfiguration.objects.all().order_by('conf_label'),
-                   'configuration': NdrCoreSearchConfiguration.objects.get(conf_name=conf_name),
-                   'form': RenderConfigurationForm()}
-        return render(self.request, template_name='ndr_core/admin_views/configure_results.html',
-                      context=context)
+    model = NdrCoreResultField
+    form_class = ResultFieldCreateForm
+    success_url = reverse_lazy('ndr_core:configure_search')
+    template_name = 'ndr_core/admin_views/create/result_field_create.html'
 
     def form_valid(self, form):
+        response = super(ResultFieldCreateView, self).form_valid(form)
+        return response
 
-        return super().form_valid(form)
 
+class ResultFieldEditView(LoginRequiredMixin, UpdateView):
+    """ View to edit an existing Search field """
+
+    model = NdrCoreResultField
+    form_class = ResultFieldEditForm
+    success_url = reverse_lazy('ndr_core:configure_search')
+    template_name = 'ndr_core/admin_views/edit/result_field_edit.html'
+
+
+class ResultFieldDeleteView(LoginRequiredMixin, DeleteView):
+    """ View to delete a Search Field from the database. Asks to confirm."""
+
+    model = NdrCoreResultField
+    success_url = reverse_lazy('ndr_core:configure_search')
+    template_name = 'ndr_core/admin_views/delete/result_field_confirm_delete.html'
+
+    def form_valid(self, form):
+        return super(ResultFieldDeleteView, self).form_valid(form)
+
+
+def preview_result_card_image(request, img_config):
+    """Creates a result card preview image of a result form configuration. """
+
+    data = []
+    config_rows = img_config.split(",")
+    for row in config_rows:
+        config_row = row.split("~")
+        if '' not in config_row:
+            field = NdrCoreResultField.objects.get(pk=config_row[3])
+            data.append({
+                'row': int(config_row[0]),
+                'col': int(config_row[1]),
+                'size': int(config_row[2]),
+                'text': '',
+                'type': field.field_type})
+    image_data = get_search_form_image_from_raw_data(data)
+    return HttpResponse(image_data, content_type="image/png")

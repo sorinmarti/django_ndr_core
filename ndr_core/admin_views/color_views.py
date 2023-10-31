@@ -23,7 +23,7 @@ class ConfigureColorPalettes(LoginRequiredMixin, View):
         context = {'palettes': NdrCoreColorScheme.objects.all().order_by('scheme_label'),
                    'palette':  NdrCoreColorScheme.objects.get(scheme_name=value.value_value)}
 
-        return render(self.request, template_name='ndr_core/admin_views/configure_colors.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_colors.html',
                       context=context)
 
 
@@ -31,7 +31,7 @@ class ColorPaletteDetailView(LoginRequiredMixin, DetailView):
     """View to show details about a color palette. """
 
     model = NdrCoreColorScheme
-    template_name = 'ndr_core/admin_views/configure_colors.html'
+    template_name = 'ndr_core/admin_views/overview/configure_colors.html'
 
     def get_context_data(self, **kwargs):
         context = super(ColorPaletteDetailView, self).get_context_data(**kwargs)
@@ -47,7 +47,7 @@ class ColorPaletteCreateView(LoginRequiredMixin, CreateView):
     model = NdrCoreColorScheme
     form_class = ColorPaletteCreateForm
     success_url = reverse_lazy('ndr_core:configure_colors')
-    template_name = 'ndr_core/admin_views/palette_create.html'
+    template_name = 'ndr_core/admin_views/create/palette_create.html'
 
     def form_valid(self, form):
         response = super(ColorPaletteCreateView, self).form_valid(form)
@@ -68,7 +68,7 @@ class ColorPaletteDeleteView(LoginRequiredMixin, DeleteView):
 
     model = NdrCoreColorScheme
     success_url = reverse_lazy('ndr_core:configure_colors')
-    template_name = 'ndr_core/admin_views/palette_confirm_delete.html'
+    template_name = 'ndr_core/admin_views/delete/palette_confirm_delete.html'
 
     def form_valid(self, form):
         return super(ColorPaletteDeleteView, self).form_valid(form)

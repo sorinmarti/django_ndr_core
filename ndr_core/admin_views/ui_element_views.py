@@ -19,7 +19,7 @@ class ConfigureUIElements(LoginRequiredMixin, View):
 
         context = {'ui_elements': NdrCoreUIElement.objects.all()}
 
-        return render(self.request, template_name='ndr_core/admin_views/configure_ui_elements.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_ui_elements.html',
                       context=context)
 
 
@@ -27,7 +27,7 @@ class UIElementDetailView(LoginRequiredMixin, DetailView):
     """TODO """
 
     model = NdrCoreUIElement
-    template_name = 'ndr_core/admin_views/configure_ui_elements.html'
+    template_name = 'ndr_core/admin_views/overview/configure_ui_elements.html'
 
     def get_context_data(self, **kwargs):
         context = super(UIElementDetailView, self).get_context_data(**kwargs)
@@ -40,7 +40,7 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
 
     model = NdrCoreUIElement
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
-    template_name = 'ndr_core/admin_views/ui_element_create.html'
+    template_name = 'ndr_core/admin_views/create/ui_element_create.html'
 
     def get_form_class(self):
         if self.kwargs['type'] == "card":
@@ -172,5 +172,5 @@ class UIElementDeleteView(LoginRequiredMixin, DeleteView):
 
     model = NdrCoreUIElement
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
-    template_name = 'ndr_core/admin_views/ui_element_confirm_delete.html'
+    template_name = 'ndr_core/admin_views/delete/ui_element_confirm_delete.html'
 

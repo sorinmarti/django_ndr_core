@@ -24,7 +24,7 @@ class ConfigureUploads(LoginRequiredMixin, View):
 
         context = {'files': NdrCoreUpload.objects.all(),
                    'manifests': NdrCoreManifest.objects.all()}
-        return render(self.request, template_name='ndr_core/admin_views/configure_uploads.html',
+        return render(self.request, template_name='ndr_core/admin_views/overview/configure_uploads.html',
                       context=context)
 
 
@@ -34,7 +34,7 @@ class UploadCreateView(LoginRequiredMixin, CreateView):
     model = NdrCoreUpload
     form_class = UploadCreateForm
     success_url = reverse_lazy('ndr_core:configure_uploads')
-    template_name = 'ndr_core/admin_views/upload_create.html'
+    template_name = 'ndr_core/admin_views/create/upload_create.html'
 
     def form_valid(self, form):
         response = super(UploadCreateView, self).form_valid(form)
@@ -59,7 +59,7 @@ class UploadDeleteView(LoginRequiredMixin, DeleteView):
 
     model = NdrCoreUpload
     success_url = reverse_lazy('ndr_core:configure_uploads')
-    template_name = 'ndr_core/admin_views/upload_confirm_delete.html'
+    template_name = 'ndr_core/admin_views/delete/upload_confirm_delete.html'
 
     def form_valid(self, form):
         self.object.file.delete()
@@ -72,7 +72,7 @@ class ManifestUploadCreateView(LoginRequiredMixin, CreateView):
     model = NdrCoreManifest
     form_class = ManifestUploadCreateForm
     success_url = reverse_lazy('ndr_core:configure_uploads')
-    template_name = 'ndr_core/admin_views/manifest_upload_create.html'
+    template_name = 'ndr_core/admin_views/create/manifest_upload_create.html'
 
     def form_valid(self, form):
         response = super(ManifestUploadCreateView, self).form_valid(form)
@@ -97,7 +97,7 @@ class ManifestUploadDeleteView(LoginRequiredMixin, DeleteView):
 
     model = NdrCoreManifest
     success_url = reverse_lazy('ndr_core:configure_uploads')
-    template_name = 'ndr_core/admin_views/manifest_upload_confirm_delete.html'
+    template_name = 'ndr_core/admin_views/delete/manifest_upload_confirm_delete.html'
 
     def form_valid(self, form):
         self.object.file.delete()
@@ -110,7 +110,7 @@ class ManifestGroupCreateView(LoginRequiredMixin, CreateView):
     model = NdrCoreManifestGroup
     form_class = ManifestGroupCreateForm
     success_url = reverse_lazy('ndr_core:configure_uploads')
-    template_name = 'ndr_core/admin_views/manifest_group_create.html'
+    template_name = 'ndr_core/admin_views/create/manifest_group_create.html'
 
     def form_valid(self, form):
         response = super(ManifestGroupCreateView, self).form_valid(form)
@@ -135,7 +135,7 @@ class ManifestGroupDeleteView(LoginRequiredMixin, DeleteView):
 
     model = NdrCoreManifestGroup
     success_url = reverse_lazy('ndr_core:configure_uploads')
-    template_name = 'ndr_core/admin_views/manifest_group_confirm_delete.html'
+    template_name = 'ndr_core/admin_views/delete/manifest_group_confirm_delete.html'
 
     def form_valid(self, form):
         return super(ManifestGroupDeleteView, self).form_valid(form)
