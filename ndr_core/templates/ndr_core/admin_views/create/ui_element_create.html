@@ -1,17 +1,11 @@
-{% extends 'ndr_core/admin_views/base.html' %}
-{% load crispy_forms_tags %}
+{% extends 'ndr_core/admin_views/create/_create.html' %}
 
-{% block content %}
-    <div class="card bg-light mb-3">
-        <div class="card-header">
-            <a href="{% url 'ndr_core:configure_ui_elements' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">{{ view_title }}</h5>
-            {% crispy form %}
-        </div>
-    </div>
+{% block card_title %}
+    {{ view_title }}
+{% endblock %}
 
+{% block back_url %}
+    {% url 'ndr_core:configure_ui_elements' %}
 {% endblock %}
 
 {% block page_js %}

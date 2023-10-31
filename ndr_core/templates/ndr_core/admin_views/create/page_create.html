@@ -1,0 +1,14 @@
+{% extends 'ndr_core/admin_views/create/_create.html' %}
+{% load static %}
+
+{% block card_title %}
+    Create New Page
+{% endblock %}
+
+{% block back_url %}
+    {% url 'ndr_core:configure_pages' %}
+{% endblock %}
+
+{% block page_js %}
+    <script src="{% static 'ndr_core/js/admin/page_create_edit.js' %}"></script>
+{% endblock %}

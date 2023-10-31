@@ -1,18 +1,12 @@
-{% extends 'ndr_core/admin_views/base.html' %}
+{% extends 'ndr_core/admin_views/create/_create.html' %}
 {% load static %}
-{% load crispy_forms_tags %}
 
-{% block content %}
+{% block card_title %}
+    Create New Search Configuration
+{% endblock %}
 
-    <div class="card bg-light mb-3">
-        <div class="card-header">
-            <a href="{% url 'ndr_core:configure_search' %}" class="btn btn-outline-secondary " role="button">Go Back</a>
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">Create New Search Configuration</h5>
-            {% crispy form %}
-        </div>
-    </div>
+{% block back_url %}
+    {% url 'ndr_core:configure_search' %}
 {% endblock %}
 
 {% block page_js %}
@@ -20,7 +14,7 @@
 
     <script>
         $(document).ready(function(){
-            let imageBaseUrl = "{% url 'ndr_core:preview_image' 'image_string' %}";
+            let imageBaseUrl = "{% url 'ndr_core:preview_search_form_image' 'image_string' %}";
             configureRows(20, imageBaseUrl);
             initializeAddAndRemoveButtons();
 
