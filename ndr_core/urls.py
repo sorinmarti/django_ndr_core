@@ -186,15 +186,15 @@ urlpatterns = [
     path('search/statistics/enable/<str:option>/', set_statistics_option, name='set_statistics_option'),
 
     # Login / Logout
-    path('login/', auth_views.LoginView.as_view(template_name='ndr_core/admin_views/login.html',
+    path('login/', auth_views.LoginView.as_view(template_name='ndr_core/admin_views/user_management/login.html',
                                                 form_class=NdrCoreLoginForm), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='ndr_core/admin_views/logout.html'), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='ndr_core/admin_views/user_management/logout.html'), name='logout'),
     path('change_password/',
-         auth_views.PasswordChangeView.as_view(template_name='ndr_core/admin_views/change_password.html',
+         auth_views.PasswordChangeView.as_view(template_name='ndr_core/admin_views/user_management/change_password.html',
                                                form_class=NdrCoreChangePasswordForm,
                                                success_url=reverse_lazy('ndr_core:password_change_done')),
          name='change_password'),
-    path('password_changed/', TemplateView.as_view(template_name='ndr_core/admin_views/password_changed.html'), name='password_change_done'),
+    path('password_changed/', TemplateView.as_view(template_name='ndr_core/admin_views/user_management/password_changed.html'), name='password_change_done'),
 
     # Help
     path('help/', HelpView.as_view(), name='help'),

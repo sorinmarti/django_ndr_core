@@ -4,9 +4,6 @@ from ndr_core.api.api_ninjas.api_ninjas_query import ApiNinjasQuery
 from ndr_core.api.api_ninjas.api_ninjas_result import ApiNinjasResult
 from ndr_core.api.ndr_core.ndr_core_query import NdrCoreQuery
 from ndr_core.api.ndr_core.ndr_core_result import NdrCoreResult
-from ndr_core.api.ddb_api.ddb_query import DDBQuery
-from ndr_core.api.ddb_api.ddb_result import DDBResult
-
 
 class ApiFactory:
     """The API factory returns Query and Result classes for a selected API implementation. """
@@ -15,7 +12,6 @@ class ApiFactory:
         "ndr_core": {"query": NdrCoreQuery, "result": NdrCoreResult},
         "api_ninjas": {"query": ApiNinjasQuery, "result": ApiNinjasResult},
         "mongodb": {"query": MongoDBQuery, "result": MongoDBResult},
-        "ddb": {"query": DDBQuery, "result": DDBResult}
     }
 
     def __init__(self, search_configuration):

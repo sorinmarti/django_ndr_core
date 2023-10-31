@@ -20,7 +20,7 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
         """GET request for this view. """
 
         return render(self.request,
-                      template_name='ndr_core/admin_views/dashboard.html',
+                      template_name='ndr_core/admin_views/overview/dashboard.html',
                       context={'new_messages': NdrCoreUserMessage.objects.filter(message_archived=False).count(),
                                'total_searches': NdrCoreSearchStatisticEntry.objects.all().count()})
 
@@ -32,7 +32,7 @@ class HelpView(LoginRequiredMixin, View):
         if "chapter" in kwargs:
             chapter = kwargs["chapter"]
         return render(self.request,
-                      template_name='ndr_core/admin_views/help.html',
+                      template_name='ndr_core/admin_views/overview/help.html',
                       context={'chapter': chapter})
 
 
@@ -45,7 +45,7 @@ class StatisticsView(LoginRequiredMixin, SingleTableMixin, FilterView):
     """TODO """
     table_class = StatisticsTable
     model = NdrCoreSearchStatisticEntry
-    template_name = 'ndr_core/admin_views/view_statistics.html'
+    template_name = 'ndr_core/admin_views/overview/view_statistics.html'
     paginate_by = 25
 
     filterset_class = StatisticsFilter

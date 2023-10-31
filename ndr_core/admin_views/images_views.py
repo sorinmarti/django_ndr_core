@@ -103,7 +103,7 @@ class ImagesDeleteView(LoginRequiredMixin, DeleteView):
 
     model = NdrCoreImage
     success_url = reverse_lazy('ndr_core:configure_images')
-    template_name = 'ndr_core/admin_views/image_confirm_delete.html'
+    template_name = 'ndr_core/admin_views/delete/image_confirm_delete.html'
 
     def form_valid(self, form):
         self.object.file.delete()

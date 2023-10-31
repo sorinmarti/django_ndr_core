@@ -77,7 +77,7 @@ class ColorPaletteDeleteView(LoginRequiredMixin, DeleteView):
 class ColorPaletteImportView(LoginRequiredMixin, FormView):
     """View to import a exported color palette. """
 
-    template_name = 'ndr_core/admin_views/palette_import.html'
+    template_name = 'ndr_core/admin_views/import/palette_import.html'
     form_class = ColorPaletteImportForm
     success_url = reverse_lazy('ndr_core:configure_colors')
 

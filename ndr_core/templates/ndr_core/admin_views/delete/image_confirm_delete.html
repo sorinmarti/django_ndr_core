@@ -1,0 +1,17 @@
+{% extends 'ndr_core/admin_views/delete/_confirm_delete.html' %}
+
+{% block title %}
+    Really delete API configuration?
+{% endblock %}
+
+{% block back_url %}
+    {% url 'ndr_core:configure_images' %}
+{% endblock %}
+
+{% block confirm_text %}
+    Are you sure you want to delete <img src="{{ object.image.url }}" class="img-thumbnail" style="width: 15ch;">?
+{% endblock %}
+
+{% block danger_text %}
+    This will be permanent!
+{% endblock %}

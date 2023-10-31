@@ -182,7 +182,7 @@ class SettingDeleteView(LoginRequiredMixin, DeleteView):
 class SettingsImportView(LoginRequiredMixin, FormView):
     """View to import a exported color palette. """
 
-    template_name = 'ndr_core/admin_views/settings_import.html'
+    template_name = 'ndr_core/admin_views/import/settings_import.html'
     form_class = SettingsImportForm
     success_url = reverse_lazy('ndr_core:configure_settings')
 
@@ -204,7 +204,7 @@ class SettingsImportView(LoginRequiredMixin, FormView):
 
 class SetPageReadOnlyView(LoginRequiredMixin, FormView):
 
-    template_name = "ndr_core/admin_views/settings_set_readonly.html"
+    template_name = "ndr_core/admin_views/page_state/settings_set_readonly.html"
     form_class = SettingsSetReadonlyForm
     success_url = reverse_lazy("ndr_core:configure_settings")
 
@@ -215,7 +215,7 @@ class SetPageReadOnlyView(LoginRequiredMixin, FormView):
 
 class SetPageEditableView(LoginRequiredMixin, FormView):
 
-    template_name = "ndr_core/admin_views/settings_set_readonly.html"
+    template_name = "ndr_core/admin_views/page_state/settings_set_readonly.html"
     form_class = SettingsSetEditableForm
     success_url = reverse_lazy("ndr_core:configure_settings")
 
@@ -226,7 +226,7 @@ class SetPageEditableView(LoginRequiredMixin, FormView):
 
 class SetPageUnderConstructionView(LoginRequiredMixin, FormView):
 
-    template_name = "ndr_core/admin_views/settings_set_under_construction.html"
+    template_name = "ndr_core/admin_views/page_state/settings_set_under_construction.html"
     form_class = SettingsSetUnderConstructionForm
     success_url = reverse_lazy("ndr_core:configure_settings")
 
@@ -237,7 +237,7 @@ class SetPageUnderConstructionView(LoginRequiredMixin, FormView):
 
 class SetPageLiveView(LoginRequiredMixin, FormView):
 
-    template_name = "ndr_core/admin_views/settings_set_live.html"
+    template_name = "ndr_core/admin_views/page_state/settings_set_live.html"
     form_class = SettingsSetLiveForm
     success_url = reverse_lazy("ndr_core:configure_settings")
 
