@@ -43,32 +43,14 @@
                                             <li class="nav-item{% if "/configure/pages/" in request.path %} active{% endif %}">
                                                 <a class="nav-link" href="{% url 'ndr_core:configure_pages' %}">
                                                     <i class="fa-regular fa-file"></i>
-                                                    Manage Pages
+                                                    Pages
                                                 </a>
                                             </li>
-                                            <li class="nav-item dropdown{% if "/configure/api/" in request.path or "/configure/search/" in request.path  or "/configure/data/" in request.path %} active{% endif %}">
-                                                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false">
+                                            <li class="nav-item{% if "/configure/search/" in request.path %} active{% endif %}">
+                                                <a class="nav-link" href="{% url 'ndr_core:configure_search' %}">
                                                     <i class="fa-solid fa-magnifying-glass"></i>
-                                                    Search & API
+                                                    Searches
                                                 </a>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="{% url 'ndr_core:configure_api' %}">
-                                                        <i class="fa-regular fa-code"></i>
-                                                        Configure API
-                                                    </a>
-                                                    <a class="dropdown-item" href="{% url 'ndr_core:configure_search' %}">
-                                                        <i class="fa-solid fa-magnifying-glass"></i>
-                                                        Configure Search
-                                                    </a>
-                                                    <a class="dropdown-item" href="{% url 'ndr_core:configure_sample_data' %}">
-                                                        <i class="fa-regular fa-file-code"></i>
-                                                        Upload Sample Data
-                                                    </a>
-                                                    <a class="dropdown-item" href="{% url 'ndr_core:configure_results' %}">
-                                                        <i class="fa-regular fa-circle-nodes"></i>
-                                                        Map Data To Result Render
-                                                    </a>
-                                                </div>
                                             </li>
                                             <li class="nav-item dropdown{% if "/configure/ui_settings/" in request.path or "/configure/colors/" in request.path %} active{% endif %}">
                                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
