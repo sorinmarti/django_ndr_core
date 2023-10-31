@@ -7,6 +7,7 @@ from ndr_core.form_preview import get_search_form_image_from_raw_data
 from ndr_core.admin_forms.result_field_forms import ResultFieldCreateForm, ResultFieldEditForm
 from ndr_core.models import NdrCoreResultField
 
+
 class ResultFieldCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new Search Field """
 

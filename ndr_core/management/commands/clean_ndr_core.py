@@ -3,9 +3,9 @@ import shutil
 
 from django.core.management.base import BaseCommand
 
-from ndr_core.models import NdrCoreApiConfiguration, NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration, \
+from ndr_core.models import NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration, \
     NdrCoreCorrectedField, NdrCoreCorrection, NdrCoreColorScheme, NdrCoreUiStyle, NdrCoreValue, NdrCorePage, \
-    NdrCoreDataSchema, NdrCoreSearchField, NdrCoreFilterableListConfiguration, NdrCoreApiImplementation
+    NdrCoreSearchField, NdrCoreApiImplementation
 from ndr_core.ndr_settings import NdrSettings
 
 
@@ -36,14 +36,11 @@ class Command(BaseCommand):
             NdrCoreColorScheme.objects.all().delete()
             NdrCoreUiStyle.objects.all().delete()
             NdrCorePage.objects.all().delete()
-            NdrCoreDataSchema.objects.all().delete()
             NdrCoreSearchField.objects.all().delete()
             NdrCoreSearchConfiguration.objects.all().delete()
             NdrCoreSearchFieldFormConfiguration.objects.all().delete()
-            NdrCoreApiConfiguration.objects.all().delete()
             NdrCoreCorrectedField.objects.all().delete()
             NdrCoreCorrection.objects.all().delete()
-            NdrCoreFilterableListConfiguration.objects.all().delete()
             NdrCoreApiImplementation.objects.all().delete()
 
             self.stdout.write('NDR installation deleted')

@@ -1,6 +1,4 @@
 """This file contains the main NDR Core views. For the views for the administration interface, see admin_views/* """
-import json
-
 from django.contrib import messages
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render

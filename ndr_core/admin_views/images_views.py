@@ -5,9 +5,9 @@ from django.db.models import Max
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, UpdateView, DeleteView, FormView
+from django.views.generic import CreateView, UpdateView, DeleteView
 
-from ndr_core.admin_forms.images_forms import ImageCreateForm, LogoUploadForm, ImageEditForm
+from ndr_core.admin_forms.images_forms import ImageCreateForm, ImageEditForm
 from ndr_core.models import NdrCoreImage
 from ndr_core.ndr_settings import NdrSettings
 

@@ -6,9 +6,9 @@ from ndr_core.api.base_result import BaseResult
 class ApiNinjasResult(BaseResult):
     """Simple implementation of the ninja-api API. """
 
-    def __init__(self, api_configuration, query, request):
-        super(ApiNinjasResult, self).__init__(api_configuration, query, request)
-        self.api_request_headers['X-Api-Key'] = self.api_configuration.api_auth_key
+    def __init__(self, search_configuration, query, request):
+        super(ApiNinjasResult, self).__init__(search_configuration, query, request)
+        self.api_request_headers['X-Api-Key'] = self.search_configuration.api_auth_key
 
     def save_raw_result(self, text):
         """API Ninjas returns a JSON response. Save it as dict, so it can be accessed easily. """
@@ -21,7 +21,7 @@ class ApiNinjasResult(BaseResult):
             self.error_code = BaseResult.LOADED
             return
 
-    def fill_meta_data(self):
+    def fill_search_result_meta_data(self):
         self.total = len(self.raw_result)
         self.page = 1
         self.page_size = self.total

@@ -1,7 +1,7 @@
 """Forms used in the NDRCore admin interface for UI elements."""
 from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Row, Column, HTML
+from crispy_forms.layout import Layout, Row, Column
 from django import forms
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons

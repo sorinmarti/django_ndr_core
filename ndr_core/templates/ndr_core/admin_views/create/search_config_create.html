@@ -8,24 +8,3 @@
 {% block back_url %}
     {% url 'ndr_core:configure_search' %}
 {% endblock %}
-
-{% block page_js %}
-    <script src="{% static 'ndr_core/js/admin/form_preview.js' %}"></script>
-
-    <script>
-        $(document).ready(function(){
-            let imageBaseUrl = "{% url 'ndr_core:preview_search_form_image' 'image_string' %}";
-            configureRows(20, imageBaseUrl);
-            initializeAddAndRemoveButtons();
-
-            // When document is ready:
-            // Hide remove row
-            $('#button-id-remove_row').hide();
-            // Hide rows 2-20
-            for (let i = 1; i < 20; i++) {
-              $('#search_field_config_row_'+i).hide();
-            }
-
-        });
-    </script>
-{% endblock %}

@@ -5,8 +5,8 @@ from ndr_core.models import NdrCoreSearchField
 class NdrCoreQuery(BaseQuery):
     """TODO """
 
-    def __init__(self, api_configuration, page=1):
-        super().__init__(api_configuration, page)
+    def __init__(self, search_configuration, page=1):
+        super().__init__(search_configuration, page)
 
     def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
         self.search_term = search_term
@@ -74,5 +74,5 @@ class NdrCoreQuery(BaseQuery):
         base_string += f'query/{query_type}'
 
         if add_page_and_size:
-            base_string += f"?s={self.api_config.api_page_size}&p={self.page}"
+            base_string += f"?s={self.search_config.page_size}&p={self.page}"
         return base_string

@@ -17,7 +17,7 @@ class NdrCoreResult(BaseResult):
             self.error_code = BaseResult.LOADED
             return
 
-    def fill_meta_data(self):
+    def fill_search_result_meta_data(self):
         """Set the meta data. """
         self.total = int(self.raw_result['total'])
         self.page = int(self.raw_result['page'])

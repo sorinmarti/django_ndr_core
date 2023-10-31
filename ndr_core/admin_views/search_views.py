@@ -1,12 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic import CreateView, UpdateView, DeleteView
 
-from ndr_core.form_preview import get_search_form_image_from_raw_data
-from ndr_core.admin_forms.search_field_forms import SearchFieldCreateForm, SearchFieldEditForm
 from ndr_core.admin_forms.search_forms import (
     SearchConfigurationEditForm,
     SearchConfigurationCreateForm,

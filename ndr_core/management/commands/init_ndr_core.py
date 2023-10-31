@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from django.contrib.staticfiles import finders
 
-from ndr_core.models import NdrCorePage, NdrCoreApiImplementation, NdrCoreValue
+from ndr_core.models import NdrCorePage, NdrCoreValue
 from ndr_core.ndr_settings import NdrSettings
 
 
