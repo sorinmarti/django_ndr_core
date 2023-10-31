@@ -1,6 +1,5 @@
 from django import forms
 from django.utils.safestring import mark_safe
-
 from ndr_core.ndr_helpers import get_search_field_config
 
 

@@ -1,6 +1,3 @@
-import csv
-import os
-
 from captcha.fields import ReCaptchaField
 from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper

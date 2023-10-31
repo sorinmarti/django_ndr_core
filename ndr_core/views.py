@@ -2,7 +2,6 @@
 import json
 
 from django.contrib import messages
-from django.contrib.staticfiles import finders
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy

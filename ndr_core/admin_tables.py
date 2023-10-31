@@ -12,7 +12,7 @@ class StatisticsTable(tables.Table):
     """Shows a list of searches made by guests."""
 
     class Meta:
-        template_name = "django_tables2/bootstrap4-responsive.html"
+        template_name = "ndr_core/admin_views/bootstrap4-responsive.html"
         attrs = default_table_attrs
         model = NdrCoreSearchStatisticEntry
         fields = ("search_api", "search_term", "search_query", "search_no_results", "search_time")

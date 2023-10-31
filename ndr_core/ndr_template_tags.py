@@ -1,7 +1,5 @@
 import re
-
 from django.template.loader import render_to_string
-
 from ndr_core.models import NdrCoreUIElement, NdrCoreImage, NdrCoreUpload, NdrCorePage
 
 
@@ -128,4 +126,4 @@ class TextPreRenderer:
 
 
 class PreRenderError(Exception):
-    """ TODO """
+    pass

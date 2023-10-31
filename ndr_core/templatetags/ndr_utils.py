@@ -1,6 +1,5 @@
 import json
 import re
-import urllib
 
 from django import template
 from django.utils.safestring import mark_safe

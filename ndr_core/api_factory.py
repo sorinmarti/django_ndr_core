@@ -5,6 +5,7 @@ from ndr_core.api.api_ninjas.api_ninjas_result import ApiNinjasResult
 from ndr_core.api.ndr_core.ndr_core_query import NdrCoreQuery
 from ndr_core.api.ndr_core.ndr_core_result import NdrCoreResult
 
+
 class ApiFactory:
     """The API factory returns Query and Result classes for a selected API implementation. """
 

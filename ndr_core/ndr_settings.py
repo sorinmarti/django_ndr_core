@@ -1,13 +1,11 @@
 """This file holds the NdrSettings class."""
 import os.path
 from pathlib import Path
-from django.utils.translation import gettext_lazy as _
-
-import ndr_core
 from django.conf import settings
 from django.urls import path, include, re_path, reverse_lazy
 from django.views.static import serve
 from django.contrib import messages
+
 
 class NdrSettings:
     """Contains mostly static, mostly django-related settings. Not to be confused with NdrCoreValue objects

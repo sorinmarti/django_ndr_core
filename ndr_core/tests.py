@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from ndr_core.api.mongodb.mongodb_query import MongoDBQuery
-from ndr_core.models import NdrCorePage, NdrCoreApiConfiguration, NdrCoreSearchField, \
+from ndr_core.models import NdrCorePage, NdrCoreSearchField, \
     NdrCoreSearchConfiguration, NdrCoreSearchFieldFormConfiguration, NdrCoreApiImplementation
 from ndr_core.api_factory import ApiFactory
 
@@ -10,7 +10,7 @@ class TestMongoDBApi(TestCase):
 
     def setUp(self):
         api_type = NdrCoreApiImplementation.objects.create(name="mongodb")
-        api_conf = NdrCoreApiConfiguration.objects.create(api_name='mongodb_test',
+        """api_conf = NdrCoreApiConfiguration.objects.create(api_name='mongodb_test',
                                                           api_type=api_type,
                                                           api_host='localhost',
                                                           api_protocol=NdrCoreApiConfiguration.Protocol.HTTP,
@@ -19,7 +19,7 @@ class TestMongoDBApi(TestCase):
                                                           api_page_size=10)
 
         search_conf = NdrCoreSearchConfiguration.objects.create(api_configuration=api_conf)
-        search_conf.save()
+        search_conf.save()"""
 
     def test_mongodb_api(self):
         conf = NdrCoreSearchConfiguration.objects.get(api_configuration__api_name="mongodb_test")
@@ -37,13 +37,13 @@ class SearchConfigurationTestCase(TestCase):
     def setUp(self):
         api_type = NdrCoreApiImplementation.objects.create(name="ndr_core")
 
-        api_conf = NdrCoreApiConfiguration.objects.create(api_name='asia_dir',
+        """api_conf = NdrCoreApiConfiguration.objects.create(api_name='asia_dir',
                                                           api_type=api_type,
                                                           api_host='asiadir.int',
                                                           api_protocol=NdrCoreApiConfiguration.Protocol.HTTP,
                                                           api_port=8080,
                                                           api_label='Asia Directories',
-                                                          api_page_size=15)
+                                                          api_page_size=15)"""
 
         field_1 = NdrCoreSearchField.objects.create(field_name='first_name',
                                                     field_label='First Name(s)',
@@ -69,10 +69,10 @@ class SearchConfigurationTestCase(TestCase):
                                                                           field_column=1,
                                                                           field_size=4)
 
-        search_conf = NdrCoreSearchConfiguration.objects.create(api_configuration=api_conf)
+        """search_conf = NdrCoreSearchConfiguration.objects.create(api_configuration=api_conf)
         search_conf.search_form_fields.add(field_1_conf)
         search_conf.search_form_fields.add(field_2_conf)
-        search_conf.save()
+        search_conf.save()"""
 
     def test_api_configuration(self):
         conf = NdrCoreSearchConfiguration.objects.get(api_configuration__api_name="asia_dir")
