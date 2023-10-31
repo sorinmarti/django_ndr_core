@@ -1,37 +1,32 @@
 <!-- This is the base renderer which is used to render the results. It needs to be extended. -->
 {% load static %}
 {% load ndr_utils %}
+{% load i18n %}
 
 <!-- This card is the top element of one result. -->
 <div class="card mb-2 box-shadow">
+    <!-- Header of the card. Contains the title and the image. -->
+    <div class="card-header p-0 pl-3">
+        <small>
+            {% blocktrans with result.result_meta.result_number as result_number and result.result_meta.total_results as total_results %}
+                Result {{ result_number }} of {{ total_results }}
+            {% endblocktrans %}
+        </small>
+    </div>
+
+    <!--Body of the card. Contains the image and the content. -->
     <div class="card-body d-flex flex-column align-items-start">
-        {% block search_result_base_content %}
-            <!--  -->
-        {% endblock %}
-
         <div class="row">
-            <div class="col-{% if False %}8{% else %}12{% endif %}">
-
-
-                {% block card_content %}
-                    {% block custom_content %}
-                    {% endblock %}
-
-                    {% block values_content %}
-                    {% endblock %}
+            <div class="col-sm-12">
+                {% block search_result_content %}
+                    <!--  -->
                 {% endblock %}
             </div>
-
-            {% if False %}
-                <div class="col-md-4">
-                    <a href="{{ result.ndr.page_image }}" target="_blank">
-                        <img class="card-img-top w-100 p-0 m-0" src="{{ result.original_data.source.selector.canvas|reduce_iiif_size:10 }}">
-                    </a>
-                </div>
-            {% endif %}
-      </div>
+        </div>
     </div>
-  <div class="card-footer bg-white">
+
+    <!-- Footer of the card. Contains the options and the citation info. -->
+    <div class="card-footer bg-white">
         {% block options %}
             <div class="row">
                 <div class="col-sm-12">
@@ -45,7 +40,7 @@
                             <span>{{ option.label|safe }}</span>
                         </a>
                     {% endfor %}
-                    <div id="copyNotification_{{ result.original_data.source.id|url_parse }}" class="btn btn-sm notification-box"></div>
+                    <div id="copyNotification_{{ result.original_data.id|url_parse }}" class="btn btn-sm notification-box"></div> <!-- TODO -->
                     <small class="text-muted float-right">
                         {% block citation_info %}
                         {% endblock %}
@@ -53,7 +48,7 @@
                 </div>
             </div>
         {% endblock %}
-  </div>
+    </div>
 </div>
 
 
