@@ -30,7 +30,7 @@ class NdrSettings:
         'colorfield',
         'fontawesomefree',
         'django.forms',
-        'bootstrap_daterangepicker'
+        'bootstrap_daterangepicker',
     ]
     """NDR Core uses many third party modules which need to be in the INSTALLED_APPS list in the django settings. 
     To make things easier for users, this list is joined with the installed apps list."""
