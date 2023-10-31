@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-import json
 
 import requests
 from django.urls import reverse
@@ -11,8 +10,11 @@ from ndr_core.templatetags.ndr_utils import url_parse
 
 
 class BaseResult(ABC):
-    """ The result class is used to actually retrieve a result from a server,
-    load it and transform it, so ndr-core can render it."""
+    """ The result class is used to retrieve a result from a server,
+    load it and transform it, so ndr-core can render it.
+    The result class is abstract and needs to be implemented for each API.
+    Implementations are used as follows: Create instance -> call load_result() -> use result.
+    """
 
     TIMEOUT = -100
     REQUEST = -101
@@ -22,11 +24,8 @@ class BaseResult(ABC):
     def __init__(self, search_configuration, query, request):
         if search_configuration is None:
             raise ValueError("search_configuration must not be None")
-        if search_configuration.api_configuration is None:
-            raise ValueError("api_configuration must not be None")
 
         self.search_configuration = search_configuration
-        self.api_configuration = self.search_configuration.api_configuration
         self.query = query
         self.request = request
         self.api_request_headers = {}
@@ -36,29 +35,34 @@ class BaseResult(ABC):
 
         self.total = 0
         self.page = 1
-        self.page_size = self.api_configuration.api_page_size
+        self.page_size = self.search_configuration.page_size
         self.num_pages = 0
         self.page_links = {}
         self.form_links = {}
         self.results = list()
 
     def load_result(self, transform_result=True):
-        """Convenience function to undertake all the necessary steps to have a sanitized search result."""
+        """Convenience function to undertake all the necessary steps to have a sanitized search result.
+        This function is called by the view and should not be overwritten.
+        :param transform_result: If true, the result is transformed to be rendered by the template."""
+
         # 1.) download the text and save it to self.raw_result
         self.download_result()
         if self.raw_result is None:
+            # If the download failed, the error is already set.
+            # This will return an empty result
             return
 
-        # 2.) fill meta data (self.total, self.page, self.page_size, self.num_pages)
-        self.fill_meta_data()
+        # 2.) fill metadata (self.total, self.page, self.page_size, self.num_pages)
+        self.fill_search_result_meta_data()
 
         # 3.) With the metadata known (current page, total results, etc.), create pagination links
-        self.page_links = self.get_page_list()
+        self.page_links = self.get_pagination_links()
 
         # 4.) Create links to refine search or start a new one
         self.form_links = self.get_form_links()
 
-        # 4.) Fill the result list with dict objects
+        # 5.) Fill the result list with dict objects. Each dict object represents a result.
         self.fill_results()
 
         if transform_result:
@@ -98,14 +102,24 @@ class BaseResult(ABC):
         pass
 
     @abstractmethod
-    def fill_meta_data(self):
-        """Fill the meta-data variables from the raw result"""
+    def fill_search_result_meta_data(self):
+        """Fill the meta-data variables from the raw result. NDR Core excepts the following variables:
+        self.total: The total number of results
+        self.page: The current page
+        self.num_pages: The total number of pages
+        """
         pass
 
     @abstractmethod
     def fill_results(self):
-        """Fill the actual results from the search in the hit list"""
+        """Fill the results list with dict objects. Each dict object represents a result.
+        The dict object must contain the following keys:
+        """
         pass
+
+    def get_id_value(self, result):
+        """ This function returns the id of a result. """
+        return result[self.search_configuration.search_id_field]
 
     def get_result_options(self, result):
         """ This function creates the options for a result.
@@ -117,7 +131,7 @@ class BaseResult(ABC):
         :return: Return a list of dicts with the options for a result."""
 
         result_options = []
-        record_id = result["source"]["id"]   # TODO: Make this generic
+        record_id = url_parse(self.get_id_value(result))
 
         # Download single record
         if NdrCoreValue.get_or_initialize("search_allow_download_single",
@@ -126,7 +140,7 @@ class BaseResult(ABC):
             result_options.append({
                 "href": reverse('ndr_core:download_record',
                                 kwargs={'search_config': self.search_configuration.conf_name,
-                                        'record_id': url_parse(record_id)}),
+                                        'record_id': record_id}),
                 "target": "_blank",
                 "label": '<i class="fa-regular fa-file-arrow-down"></i>',
                 "class": "btn btn-sm btn-secondary",
@@ -136,7 +150,7 @@ class BaseResult(ABC):
             })
 
         # Open Repository
-        if self.api_configuration.api_repository_url is not None:
+        if self.search_configuration.repository_url is not None:
             result_options.append({
                 "href": result['source']['collection'],
                 "target": "_blank",
@@ -150,10 +164,10 @@ class BaseResult(ABC):
         correction_feature = NdrCoreValue.get_or_initialize("correction_feature").get_value()
         if correction_feature:
             correction_url = reverse('ndr_core:mark_record',
-                                     kwargs={'api_config': self.api_configuration.api_name,
-                                             'record_id': url_parse(record_id)})
+                                     kwargs={'search_config': self.search_configuration.conf_name,
+                                             'record_id': record_id})
             result_options.append({
-                "onclick": f"callUrl('{correction_url}', '{url_parse(record_id)}')",
+                "onclick": f"callUrl('{correction_url}', '{record_id}')",
                 "label": '<i class="fa-regular fa-check-double"></i>',
                 "class": "btn btn-sm btn-secondary",
                 "data-toggle": "tooltip",
@@ -164,8 +178,9 @@ class BaseResult(ABC):
         # Show Source
         # TODO Waaaaaaaaaaaaaaaaaahhhhhhhhhh!!!!!!!!!!!!!
         try:
-            manifest_id = NdrCoreManifest.objects.get(order_value_1=result['date']['ref'].split('-')[0],
-                                                      order_value_2=f"{result['source']['issue']:03d}").id
+            """manifest_id = NdrCoreManifest.objects.get(order_value_1=result['date']['ref'].split('-')[0],
+                                                      order_value_2=f"{result['source']['issue']:03d}").id"""
+            manifest_id = NdrCoreManifest.objects.get(id=1).id
             view_source_url = (reverse('ndr:ndr_view', kwargs={'ndr_page': 'sources_viewer'}) +
                                f"?manifest={manifest_id}")
 
@@ -181,7 +196,7 @@ class BaseResult(ABC):
             pass
 
         result_options.append({
-            "onclick": f"copyToClipboard('{url_parse(record_id)}')",
+            "onclick": f"copyToClipboard('{record_id}')",
             "label": '<i class="fa-regular fa-copy"></i>',
             "class": "btn btn-sm btn-secondary",
             "data-toggle": "tooltip",
@@ -191,21 +206,24 @@ class BaseResult(ABC):
         return result_options
 
     def transform_results(self):
+        """Transforms the results to be rendered by the template.
+        The results are transformed into a list of dicts. Each dict contains the following keys:
+        id: The id of the result
+        data: The data of the result
+        result_meta: The result metadata (result_number, total_results)
+        options: The options of the result (download, correction, etc.)
+        """
         hit_number = self.page * self.page_size - self.page_size + 1
 
         transformed_results = list()
         for result in self.results:
             transformed_result = {
-                "id": "",
-                "title": "",
-                "transcription": "",
-                "values": [],
+                "id": self.get_id_value(result),
+                "data": result,
                 "result_meta": {
                     "result_number": hit_number,
                     "total_results": self.total
                 },
-                "original_data": result,
-                "data_string": json.dumps(result, indent=4),
                 "options": self.get_result_options(result)
             }
             transformed_results.append(transformed_result)
@@ -219,7 +237,7 @@ class BaseResult(ABC):
             location = get_geolocation(get_user_ip(self.request))
             search_term = ''
 
-            NdrCoreSearchStatisticEntry.objects.create(search_api=self.api_configuration,
+            NdrCoreSearchStatisticEntry.objects.create(search_config=self.search_configuration,
                                                        search_term=search_term,
                                                        search_query=self.query,
                                                        search_no_results=self.total,
@@ -310,7 +328,7 @@ class BaseResult(ABC):
             # TODO Options
             transformed_data["options"] = [
                 {
-                    "url": reverse('ndr_core:download_record', kwargs={'api_config': self.api_configuration.api_name, 'record_id': hit['id']}),
+                    "url": reverse('ndr_core:download_record', kwargs={'search_config': self.search_configuration.conf_name, 'record_id': hit['id']}),
                     "target": "_blank", "label": "View Repository"
                 },
                 {
@@ -325,6 +343,7 @@ class BaseResult(ABC):
         return results
 
     def get_form_links(self):
+        """Returns a dict with links to refine the search or start a new one."""
         form_links = {}
 
         # Refine URL
@@ -347,7 +366,7 @@ class BaseResult(ABC):
                                                   kwargs={'search_config': self.search_configuration.conf_name}) + "?" + updated_url.urlencode()
         return form_links
 
-    def get_page_list(self):
+    def get_pagination_links(self):
         """Returns list of objects containing the page number and the url to the result page.
         If there are more than 8 Pages, only part of all pages are shown. This is used for
         pagination."""
@@ -386,7 +405,8 @@ class BaseResult(ABC):
         for page in page_list:
             enriched_page_list.append({'page': page, 'url': url + "page=" + page})
 
-        return {'pages': enriched_page_list, 'prev': f"{url}page={self.page - 1}",
+        return {'pages': enriched_page_list,
+                'prev': f"{url}page={self.page - 1}",
                 'next': f"{url}page={self.page + 1}"}
 
     @staticmethod

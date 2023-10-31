@@ -10,13 +10,11 @@ class BaseQuery(ABC):
     Q_ADVANCED = 'ADVANCED'
     Q_LIST = 'LIST'
 
-    api_config = None
     search_config = None
     page = 1
 
     def __init__(self, search_configuration, page=1):
         self.search_config = search_configuration
-        self.api_config = self.search_config.api_configuration
         self.page = page
 
         self.values = {}
@@ -44,15 +42,7 @@ class BaseQuery(ABC):
 
     def get_base_string(self, show_port=True):
         """ Composes the base string for the API. Example https://api-host.com:80/query/ """
-
-        base_string = f"{self.api_config.Protocol(self.api_config.api_protocol).label}://{self.api_config.api_host}"
-        if show_port:
-            base_string += f":{self.api_config.api_port}"
-        base_string += "/"
-        if self.api_config.api_url_stub is not None:
-            base_string += f'{self.api_config.api_url_stub}'
-
-        return base_string
+        return self.search_config.api_connection_url
 
     def set_value(self, field_name, value):
         """Sets a value=key setting to compose a query from"""

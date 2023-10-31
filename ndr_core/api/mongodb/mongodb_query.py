@@ -1,11 +1,6 @@
 from ndr_core.models import NdrCoreSearchField
 from ndr_core.api.base_query import BaseQuery
 
-# TODO
-# - The simple query field name is hardcoded to 'transcription.original'
-# - The id field name is hardcoded to 'source.selector.id'
-# - The sort field name is hardcoded to 'date.ref' and the sort order is hardcoded to 1 (ascending)
-# The above should be configurable in the API configuration
 
 class MongoDBQuery(BaseQuery):
 
@@ -20,12 +15,12 @@ class MongoDBQuery(BaseQuery):
 
         query = {
             'filter': {
-                'transcription.original': {
+                self.search_config.simple_query_main_field: {
                     '$regex': regex_string,
                     '$options': 'msi'
                 }
             },
-            'sort': list({'date.ref': 1}.items()),
+            'sort': list({self.search_config.sort_field: 1}.items()),
             'page': int(self.page)
         }
         return query
@@ -33,7 +28,7 @@ class MongoDBQuery(BaseQuery):
     def get_advanced_query(self, *kwargs):
         query = {
             'filter': {},
-            'sort': list({'date.ref': 1}.items()),
+            'sort': list({self.search_config.sort_field: 1}.items()),
             'page': int(self.page)
         }
 
@@ -82,6 +77,7 @@ class MongoDBQuery(BaseQuery):
             except NdrCoreSearchField.DoesNotExist:
                 pass
 
+        print(query)
         return query
 
     def get_list_query(self, list_name, add_page_and_size=True, search_term=None, tags=None):
@@ -90,7 +86,7 @@ class MongoDBQuery(BaseQuery):
 
     def get_record_query(self, record_id):
         """ Not Implemented """
-        record_query = {'filter': {"source.id": record_id}, 'type': 'single'}
+        record_query = {'filter': {self.search_config.search_id_field: record_id}, 'type': 'single'}
         return record_query
 
     def get_explain_query(self, search_type):
