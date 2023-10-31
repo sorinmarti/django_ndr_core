@@ -33,7 +33,7 @@ class SearchFieldEditView(LoginRequiredMixin, UpdateView):
     model = NdrCoreSearchField
     form_class = SearchFieldEditForm
     success_url = reverse_lazy('ndr_core:configure_search')
-    template_name = 'ndr_core/admin_views/search_field_edit.html'
+    template_name = 'ndr_core/admin_views/edit/search_field_edit.html'
 
 
 class SearchFieldDeleteView(LoginRequiredMixin, DeleteView):

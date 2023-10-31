@@ -1,0 +1,18 @@
+{% extends 'ndr_core/admin_views/edit/_edit.html' %}
+{% load static %}
+
+{% block back_url %}
+    {% url 'ndr_core:configure_images' %}
+{% endblock %}
+
+{% block title %}
+    Update Page
+{% endblock %}
+
+{% block extra_css %}
+    {{ client_form.media.css }}
+{% endblock %}
+
+{% block page_js %}
+    <script src="{% static 'ndr_core/js/admin/page_create_edit.js' %}"></script>
+{% endblock %}

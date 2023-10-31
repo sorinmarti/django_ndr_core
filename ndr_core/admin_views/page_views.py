@@ -134,7 +134,7 @@ class PageEditView(LoginRequiredMixin, UpdateView):
     model = NdrCorePage
     form_class = PageEditForm
     success_url = reverse_lazy('ndr_core:configure_pages')
-    template_name = 'ndr_core/admin_views/page_edit.html'
+    template_name = 'ndr_core/admin_views/edit/page_edit.html'
 
     def form_valid(self, form):
         """Overwrites form_valid function of CreateView. Sets the index of the newly created page object and creates

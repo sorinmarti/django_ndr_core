@@ -136,7 +136,7 @@ class UIElementEditView(LoginRequiredMixin, UpdateView):
 
     model = NdrCoreUIElement
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
-    template_name = 'ndr_core/admin_views/ui_element_edit.html'
+    template_name = 'ndr_core/admin_views/edit/ui_element_edit.html'
 
     def get_form_class(self):
         if self.object.type == NdrCoreUIElement.UIElementType.CARD:

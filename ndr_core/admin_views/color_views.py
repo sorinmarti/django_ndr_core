@@ -60,7 +60,7 @@ class ColorPaletteEditView(LoginRequiredMixin, UpdateView):
     model = NdrCoreColorScheme
     form_class = ColorPaletteEditForm
     success_url = reverse_lazy('ndr_core:configure_colors')
-    template_name = 'ndr_core/admin_views/palette_edit.html'
+    template_name = 'ndr_core/admin_views/edit/palette_edit.html'
 
 
 class ColorPaletteDeleteView(LoginRequiredMixin, DeleteView):

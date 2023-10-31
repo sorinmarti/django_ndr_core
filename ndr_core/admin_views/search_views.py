@@ -71,7 +71,7 @@ class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
     model = NdrCoreSearchConfiguration
     form_class = SearchConfigurationEditForm
     success_url = reverse_lazy('ndr_core:configure_search')
-    template_name = 'ndr_core/admin_views/search_config_edit.html'
+    template_name = 'ndr_core/admin_views/edit/search_config_edit.html'
 
     def get_form(self, form_class=None):
         form = super(SearchConfigurationEditView, self).get_form(form_class=form_class)

@@ -91,7 +91,7 @@ class ImagesEditView(LoginRequiredMixin, UpdateView):
     model = NdrCoreImage
     form_class = ImageEditForm
     success_url = reverse_lazy('ndr_core:configure_images')
-    template_name = 'ndr_core/admin_views/image_edit.html'
+    template_name = 'ndr_core/admin_views/edit/image_edit.html'
 
     def form_valid(self, form):
         response = super(ImagesEditView, self).form_valid(form)

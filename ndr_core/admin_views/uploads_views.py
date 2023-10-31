@@ -47,7 +47,7 @@ class UploadEditView(LoginRequiredMixin, UpdateView):
     model = NdrCoreUpload
     form_class = UploadEditForm
     success_url = reverse_lazy('ndr_core:configure_uploads')
-    template_name = 'ndr_core/admin_views/upload_edit.html'
+    template_name = 'ndr_core/admin_views/edit/upload_edit.html'
 
     def form_valid(self, form):
         response = super(UploadEditView, self).form_valid(form)
@@ -85,7 +85,7 @@ class ManifestUploadEditView(LoginRequiredMixin, UpdateView):
     model = NdrCoreManifest
     form_class = ManifestUploadEditForm
     success_url = reverse_lazy('ndr_core:configure_uploads')
-    template_name = 'ndr_core/admin_views/manifest_upload_edit.html'
+    template_name = 'ndr_core/admin_views/edit/manifest_upload_edit.html'
 
     def form_valid(self, form):
         response = super(ManifestUploadEditView, self).form_valid(form)
@@ -123,7 +123,7 @@ class ManifestGroupEditView(LoginRequiredMixin, UpdateView):
     model = NdrCoreManifestGroup
     form_class = ManifestGroupEditForm
     success_url = reverse_lazy('ndr_core:configure_uploads')
-    template_name = 'ndr_core/admin_views/manifest_group_edit.html'
+    template_name = 'ndr_core/admin_views/edit/manifest_group_edit.html'
 
     def form_valid(self, form):
         response = super(ManifestGroupEditView, self).form_valid(form)

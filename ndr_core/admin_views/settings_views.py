@@ -165,7 +165,7 @@ class SettingEditView(LoginRequiredMixin, UpdateView):
     model = NdrCoreValue
     form_class = SettingEditForm
     success_url = reverse_lazy('ndr_core:view_settings', kwargs={'group': 'custom'})
-    template_name = 'ndr_core/admin_views/setting_edit.html'
+    template_name = 'ndr_core/admin_views/edit/setting_edit.html'
 
 
 class SettingDeleteView(LoginRequiredMixin, DeleteView):
