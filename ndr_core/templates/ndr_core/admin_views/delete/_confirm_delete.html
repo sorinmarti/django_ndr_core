@@ -1,0 +1,17 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+
+{% block content %}
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <a href="{% block back_url %}{% url 'ndr_core:dashboard' %}{% endblock %}" class="btn btn-outline-secondary" role="button">Go Back</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{% block title %}Really delete?{% endblock %}</h5>
+            <form method="post">{% csrf_token %}
+                <p>{% block confirm_text %}Are you sure you want to delete "{{ object }}"?{% endblock %}</p>
+                <p class="text-danger">{% block danger_text %}This will be permanent!{% endblock %}</p>
+                <input type="submit" class="btn btn-danger" value="Confirm Delete">
+            </form>
+        </div>
+    </div>
+{% endblock %}
