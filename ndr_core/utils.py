@@ -9,9 +9,17 @@ def get_nested_value(obj, path):
     """Get a nested value from an object."""
     try:
         for key in path.split("."):
-            obj = obj[key]
+            if type(obj) == list and len(obj) > 0:
+                sublist = []
+                for item in obj:
+                    sublist.append(item[key])
+                obj = ", ".join(sublist)
+            else:
+                obj = obj[key]
     except KeyError:
         return "Key Not found"
+    except TypeError:
+        return "TypeError"
     return obj
 
 
@@ -20,16 +28,17 @@ def create_csv_export_string(list_of_results, mapping):
     output = StringIO()
     writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     lines = []
-    title_rows = []
+    title_row = []
 
     for field in mapping:
-        title_rows.append(field['header'])
-    lines.append(title_rows)
+        title_row.append(field['header'])
+    lines.append(title_row)
 
     for result in list_of_results:
         rows = []
         for field in mapping:
             rows.append(get_nested_value(result, field['field']))
+
         lines.append(rows)
 
     writer.writerows(lines)
