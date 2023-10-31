@@ -1,19 +1,15 @@
 """Contains basic views used in the NDRCore admin interface."""
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.management import call_command
 from django.shortcuts import render, redirect
 from django.views import View
-from django.views.generic import ListView
 from django_filters import FilterSet
 from django_filters.views import FilterView
 from django_tables2 import SingleTableMixin
 
-from ndr_core.models import NdrCorePage, NdrCoreSearchConfiguration, NdrCoreValue, NdrCoreApiConfiguration, \
-    NdrCoreUiStyle, NdrCoreColorScheme, NdrCoreSearchStatisticEntry, NdrCoreUserMessage
-from ndr_core.ndr_settings import NdrSettings
+from ndr_core.models import NdrCoreValue, \
+    NdrCoreSearchStatisticEntry, NdrCoreUserMessage
 from ndr_core.admin_tables import StatisticsTable
 
 
