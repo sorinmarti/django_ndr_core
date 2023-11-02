@@ -1,7 +1,6 @@
 """Contains general forms used in the NDRCore admin interface."""
-
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, ButtonHolder
+from crispy_forms.layout import Submit, ButtonHolder, HTML
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 
@@ -34,3 +33,12 @@ def get_form_buttons(submit_text):
         )
     return bh
 
+
+def get_info_box(text, item_id="id_info_box", box_id="info_box"):
+    alert_html = f'<div class="alert alert-info small m-3" role="alert" id="{box_id}">' \
+                 f'  <i class="fa-regular fa-circle-info"></i>' \
+                 f'  <span id="{item_id}">' \
+                 f'    {text}' \
+                 f'  </span>' \
+                 f'</div>'
+    return HTML(alert_html)

@@ -6,31 +6,16 @@
 {% endblock %}
 
 {% block title %}
-    Update Configuration
+    Configure Result Configuration
 {% endblock %}
 
 {% block page_js %}
+    <script src="{% static 'ndr_core/js/admin/preview.js' %}"></script>
     <script src="{% static 'ndr_core/js/admin/result_card_preview.js' %}"></script>
     <script>
         $(document).ready(function(){
             let imageBaseUrl = "{% url 'ndr_core:preview_result_card_image' 'image_string' %}";
-            configureRows(20, imageBaseUrl);
-
-            let visible_buttons = 1;
-            for(let i = 0; i < 20; i++){
-                if($('#id_result_field_' + i).val() === '') {
-                    $('#result_field_config_row_' + i).hide();
-                }
-                else {
-                    visible_buttons++;
-                }
-            }
-
-            initializeAddAndRemoveButtons(visible_buttons);
-
-            let maskedUrl = getMaskedUrl(imageBaseUrl);
-            let previewImage = $('#preview_result_card_image');
-            previewImage.attr('src', maskedUrl);
+            init_preview(imageBaseUrl);
         });
     </script>
 {% endblock %}

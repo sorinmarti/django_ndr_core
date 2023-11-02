@@ -8,7 +8,7 @@ from django.urls import reverse
 from django_select2 import forms as s2forms
 
 from ndr_core.admin_forms.settings_forms import SettingsListForm
-from ndr_core.admin_forms.admin_forms import get_form_buttons
+from ndr_core.admin_forms.admin_forms import get_form_buttons, get_info_box
 from ndr_core.models import NdrCoreSearchConfiguration, NdrCorePage, NdrCoreValue, \
     NdrCoreRichTextTranslation
 
@@ -142,11 +142,7 @@ class PageForm(forms.ModelForm):
         form_row = Row(
             Column('page_type', css_class='form-group col-md-6 mb-0'),
             Column(
-                HTML('<div class="alert alert-info small m-3" role="alert">'
-                     '  <i class="fa-regular fa-circle-info"></i>'
-                     '  <span id="page_type_info"></span>'
-                     '</div>'
-                     ),
+                get_info_box('', 'page_type_info'),
                 css_class='form-group col-md-6 mb-0'
             ),
             css_class='form-row'

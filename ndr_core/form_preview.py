@@ -127,7 +127,7 @@ class PreviewImage:
                       fill=self.text_color)
 
     @staticmethod
-    def get_highest_row(self, data):
+    def get_highest_row(data):
         highest_row = 0
         for data_point in data:
             if data_point['row'] > highest_row:
@@ -142,7 +142,7 @@ class PreviewImage:
         the field spans. The 'text' key contains the label of the field."""
 
         self.row_height = 50
-        highest_row = self.get_highest_row()
+        highest_row = self.get_highest_row(data)
 
         img = Image.new('RGB', ((12*self.col_width) + self.margin, highest_row * self.row_height + self.margin), color=self.image_background_color)
         draw = ImageDraw.Draw(img)

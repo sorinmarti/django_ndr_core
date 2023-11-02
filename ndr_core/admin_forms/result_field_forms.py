@@ -1,9 +1,9 @@
-"""Contains forms used in the NDRCore admin interface for the creation or edit of Search form configurations."""
+"""Contains forms used in the NDRCore admin interface for the creation or edit of result fields."""
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column
 from django import forms
 
-from ndr_core.admin_forms.admin_forms import get_form_buttons
+from ndr_core.admin_forms.admin_forms import get_form_buttons, get_info_box
 from ndr_core.models import NdrCoreResultField
 
 
@@ -23,6 +23,28 @@ class ResultFieldForm(forms.ModelForm):
         helper.form_method = "POST"
 
         form_row = Row(
+            Column('field_type', css_class='form-group col-6'),
+            Column(
+                get_info_box('', 'page_type_info'),
+                css_class='form-group col-6'
+            ),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('field_filter', css_class='form-group col-6'),
+            Column(
+                get_info_box('Here comes information about the filters',
+                             item_id='none',
+                             box_id='filter_info_box'),
+                css_class='form-group col-6'
+            ),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
             Column('expression', css_class='form-group col-12'),
             css_class='form-row'
         )
@@ -35,16 +57,18 @@ class ResultFieldForm(forms.ModelForm):
         layout.append(form_row)
 
         form_row = Row(
-            Column('field_type', css_class='form-group col-6'),
-            Column('field_filter', css_class='form-group col-6'),
+            Column('display_border', css_class='form-group col-4'),
+            Column('html_display', css_class='form-group col-4'),
+            Column('md_display', css_class='form-group col-4'),
             css_class='form-row'
         )
         layout.append(form_row)
 
         form_row = Row(
-            Column('display_border', css_class='form-group col-4'),
-            Column('html_display', css_class='form-group col-4'),
-            Column('md_display', css_class='form-group col-4'),
+            Column(
+                get_info_box('Access your variables in the following form', 'xxx_info'),
+                css_class='form-group col-12'
+            ),
             css_class='form-row'
         )
         layout.append(form_row)

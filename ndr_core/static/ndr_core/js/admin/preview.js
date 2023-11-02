@@ -8,46 +8,20 @@
  * @param baseUrl - The base url for the preview image. It must contain the string "image_string"
  * @returns {*} - The masked url for the preview image.
  */
-function getMaskedUrl(baseUrl) {
+function getMaskedUrl(baseUrl, dropdown_field_id, field_count=20){
     let data_array = [];
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < field_count; i++) {
         let row_field =  $('#id_row_field_'+i);
         let column_field =  $('#id_column_field_'+i);
         let size_field = $('#id_size_field_'+i);
-        let search_field = $('#id_search_field_'+i);
-        data_array[i]=row_field.val()+"~"+column_field.val()+"~"+size_field.val()+"~"+search_field.val();
+        let dropdown_field = $(dropdown_field_id+'_'+i);
+        console.log(dropdown_field, dropdown_field_id+'_'+i, dropdown_field.val());
+        data_array[i]=row_field.val()+"~"+column_field.val()+"~"+size_field.val()+"~"+dropdown_field.val();
     }
     return baseUrl.replace("image_string", data_array);
 }
 
-/**
- * This function is used to configure the rows for the form. It loops through the number of rows and configures the
- * dropdowns for each row. It also adds the change event to the row, column and size fields.
- * @param number - The number of rows to configure
- * @param imageBaseUrl - The base url for the preview image. It must contain the string "image_string"
- */
-function configureRows(number, imageBaseUrl) {
-    /**
-     * This function is used to update the preview image. It gets the masked url and updates the src attribute of the
-     * preview image.
-     */
-    let updateFunc = function updateImage() {
-        let previewImage = $('#preview_search_form_image');
-        let maskedUrl = getMaskedUrl(imageBaseUrl);
-        previewImage.attr('src', maskedUrl);
-    }
-
-    for (let i = 0; i < number; i++) {
-        let selectElement = $('#id_search_field_'+i);
-        configureDropdown(selectElement, number, updateFunc);
-
-        $('#id_row_field_'+i).on('change', updateFunc);
-        $('#id_column_field_'+i).on('change', updateFunc);
-        $('#id_size_field_'+i).on('change', updateFunc);
-    }
-}
-
-function configureDropdown(selectElement, totalElements, updateFunc) {
+function configureDropdown(selectElement, totalElements, updateFunc, dropdown_field_id) {
 
     selectElement.change(function(e) {
         let before_change = $(this).data('pre');//get the pre data
@@ -57,14 +31,14 @@ function configureDropdown(selectElement, totalElements, updateFunc) {
         if(before_change !== '') {
             for (let x = 0; x < totalElements; x++) {
                 if(x !== parseInt(this_index)) {
-                    $('#id_search_field_'+x+' option[value="'+before_change+'"]').removeAttr("disabled");
+                    $(dropdown_field_id+'_'+x+' option[value="'+before_change+'"]').removeAttr("disabled");
                 }
             }
         }
         if(after_change !== '') {
             for (let x = 0; x < totalElements; x++) {
                 if(x !== parseInt(this_index)) {
-                    $('#id_search_field_'+x+' option[value="'+after_change+'"]').attr("disabled", "disabled");
+                    $(dropdown_field_id+'_'+x+' option[value="'+after_change+'"]').attr("disabled", "disabled");
                 }
             }
         }
@@ -74,7 +48,38 @@ function configureDropdown(selectElement, totalElements, updateFunc) {
     });
 }
 
-function initializeAddAndRemoveButtons(visible_buttons=1) {
+/**
+ * This function is used to configure the rows for the form. It loops through the number of rows and configures the
+ * dropdowns for each row. It also adds the change event to the row, column and size fields.
+ * @param number - The number of rows to configure
+ * @param imageBaseUrl - The base url for the preview image. It must contain the string "image_string"
+ */
+function configureRows(number, imageBaseUrl, dropdown_field_id, image_field_id) {
+    /**
+     * This function is used to update the preview image. It gets the masked url and updates the src attribute of the
+     * preview image.
+     */
+    let updateFunc = function updateImage() {
+        let previewImage = $(image_field_id);
+        let maskedUrl = getMaskedUrl(imageBaseUrl, dropdown_field_id);
+        previewImage.attr('src', maskedUrl);
+    }
+
+    for (let i = 0; i < number; i++) {
+        let selectElement = $(dropdown_field_id+'_'+i);
+        configureDropdown(selectElement, number, updateFunc, dropdown_field_id);
+
+        $('#id_row_field_'+i).on('change', updateFunc);
+        $('#id_column_field_'+i).on('change', updateFunc);
+        $('#id_size_field_'+i).on('change', updateFunc);
+    }
+}
+
+/**
+ *
+ * @param visible_buttons
+ */
+function initializeAddAndRemoveButtons(row_id, dropdown_id, visible_buttons=1) {
     let addButton = $('#button-id-add_row');
     let removeButton = $('#button-id-remove_row');
 
@@ -82,7 +87,7 @@ function initializeAddAndRemoveButtons(visible_buttons=1) {
         removeButton.show();
         if (visible_buttons < 19) {
             visible_buttons += 1;
-            $('#search_field_config_row_' + visible_buttons).show();
+            $(row_id + '_' + visible_buttons).show(); // #search_field_config_row_x
         }
         if (visible_buttons === 19) {
             addButton.hide();
@@ -93,13 +98,13 @@ function initializeAddAndRemoveButtons(visible_buttons=1) {
 
     removeButton.on('click', function () {
         if(visible_buttons > 0) {
-            let sField = $('#id_search_field_'+visible_buttons);
+            let sField = $(dropdown_id + '_'+visible_buttons);
             sField.val(null);
             sField.change();
             $('#id_row_field_'+visible_buttons).val("");
             $('#id_column_field_'+visible_buttons).val("");
             $('#id_size_field_'+visible_buttons).val("");
-            $('#search_field_config_row_'+visible_buttons).hide();
+            $(row_id + '_'+visible_buttons).hide();
 
             if (visible_buttons === 1) {
                 removeButton.hide();

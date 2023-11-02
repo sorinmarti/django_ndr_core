@@ -1,8 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView, View, FormView
 
+from ndr_core.admin_forms.result_card_forms import SearchConfigurationResultEditForm
 from ndr_core.form_preview import get_search_form_image_from_raw_data
 from ndr_core.admin_forms.result_field_forms import ResultFieldCreateForm, ResultFieldEditForm
 from ndr_core.models import NdrCoreResultField
@@ -41,9 +42,14 @@ class ResultFieldDeleteView(LoginRequiredMixin, DeleteView):
         return super(ResultFieldDeleteView, self).form_valid(form)
 
 
+class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
+
+    form_class = SearchConfigurationResultEditForm
+    template_name = 'ndr_core/admin_views/edit/result_card_edit.html'
+
+
 def preview_result_card_image(request, img_config):
     """Creates a result card preview image of a result form configuration. """
-
     data = []
     config_rows = img_config.split(",")
     for row in config_rows:

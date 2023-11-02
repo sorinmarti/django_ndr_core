@@ -2,12 +2,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.views.generic import CreateView, UpdateView, DeleteView, FormView
 
-from ndr_core.admin_forms.search_forms import (
-    SearchConfigurationEditForm,
-    SearchConfigurationCreateForm,
-)
+from ndr_core.admin_forms.search_config_forms import SearchConfigurationCreateForm, SearchConfigurationEditForm
+from ndr_core.admin_forms.search_form_forms import SearchConfigurationFormEditForm
 from ndr_core.models import NdrCoreSearchField, NdrCoreSearchConfiguration, \
     NdrCoreSearchFieldFormConfiguration, NdrCoreResultField
 
@@ -100,8 +98,7 @@ class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
         return super(SearchConfigurationDeleteView, self).form_valid(form)
 
 
-class SearchConfigurationFormEditView(LoginRequiredMixin, View):
-    pass
+class SearchConfigurationFormEditView(LoginRequiredMixin, FormView):
 
-class SearchConfigurationResultEditView(LoginRequiredMixin, View):
-    pass
+    form_class = SearchConfigurationFormEditForm
+    template_name = 'ndr_core/admin_views/edit/search_form_edit.html'
