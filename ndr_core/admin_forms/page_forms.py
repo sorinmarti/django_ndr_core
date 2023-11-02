@@ -67,16 +67,14 @@ class PageForm(forms.ModelForm):
         cleaned_data = super().clean()
         page_type = cleaned_data['page_type']
         search_configs = cleaned_data['search_configs']
-        list_configs = cleaned_data['list_configs']
-        simple_api = cleaned_data['simple_api']
 
         if page_type == NdrCorePage.PageType.TEMPLATE:
             # no additional fields required
             pass
         elif page_type == NdrCorePage.PageType.SIMPLE_SEARCH:
-            if simple_api is None:
-                msg = "You must provide an API configuration for Simple Search pages."
-                self.add_error('simple_api', msg)
+            if search_configs.count() != 1:
+                msg = "Select exactly one Search configuration."
+                self.add_error('search_configs', msg)
         elif page_type == NdrCorePage.PageType.SEARCH:
             if search_configs.count() == 0:
                 msg = "You must provide at least one Search configuration for Search pages."
@@ -85,13 +83,6 @@ class PageForm(forms.ModelForm):
             if search_configs.count() == 0:
                 msg = "You must provide at least one Search configuration for Combined Search pages."
                 self.add_error('search_configs', msg)
-            if simple_api is None:
-                msg = "You must provide an API configuration for Combined Search pages."
-                self.add_error('simple_api', msg)
-        elif page_type == NdrCorePage.PageType.FILTER_LIST:
-            if list_configs.count() == 0:
-                msg = "You must provide at least one List configuration for List pages."
-                self.add_error('list_configs', msg)
         elif page_type == NdrCorePage.PageType.CONTACT:
             if NdrCorePage.objects.filter(page_type=NdrCorePage.PageType.CONTACT).count() > 0:
                 if self.instance.pk is None:

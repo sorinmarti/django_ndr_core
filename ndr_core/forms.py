@@ -18,7 +18,7 @@ from ndr_core.models import (
 from django_select2 import forms as s2forms
 from bootstrap_daterangepicker import widgets, fields
 
-from ndr_core.widgets import BootstrapSwitchWidget, SwitchGroupWidget
+from ndr_core.widgets import BootstrapSwitchWidget
 
 
 class _NdrCoreForm(forms.Form):
@@ -37,9 +37,9 @@ class _NdrCoreForm(forms.Form):
 
         super(forms.Form, self).__init__(*args, **kwargs)
 
-    def querydict_to_dict(self, query_dict):
+    @staticmethod
+    def query_dict_to_dict(query_dict):
         """Translates query dict of form return to default dict and removes single value lists. """
-
         data = {}
         for key in query_dict.keys():
             v = query_dict.getlist(key)
@@ -53,18 +53,11 @@ class _NdrCoreForm(forms.Form):
         """Create and return right aligned search button. """
 
         div = Div(
-            Div(
-                css_class="col-md-8"
-            ),
-            Div(
-                Div(
-                    MySubmit(button_name, button_label),
-                    css_class="text-right"
-                ),
-                css_class="col-md-4"
-            ),
-            css_class="form-row"
-        )
+            Div(css_class="col-md-8"),
+            Div(Div(NdrCoreFormSubmit(button_name, button_label),
+                css_class="text-right" ),
+                css_class="col-md-4"),
+            css_class="form-row")
         return div
 
 
@@ -87,7 +80,8 @@ class _NdrCoreSearchForm(_NdrCoreForm):
                                                         choices=[('and', _('AND search')), ('or', _('OR search'))],
                                                         required=False)
 
-        if NdrCoreSearchConfiguration.get_simple_search_mockup_config(None).search_has_compact_result:
+        search_has_compact_result = False # TODO: Fix this
+        if search_has_compact_result:
             self.fields['compact_view_simple'] = forms.BooleanField(required=False,
                                                                     widget=BootstrapSwitchWidget(
                                                                         attrs={'label': _('Compact Result View')}),
@@ -105,7 +99,8 @@ class _NdrCoreSearchForm(_NdrCoreForm):
     def get_search_button(conf_name):
         """Create and return right aligned search button. """
         compact_field = None
-        if NdrCoreSearchConfiguration.get_simple_search_mockup_config(None).search_has_compact_result:
+        search_has_compact_result = False # TODO: Fix this
+        if search_has_compact_result:
             compact_field = Field(f'compact_view_{conf_name}')
 
         div = Div(
@@ -118,7 +113,7 @@ class _NdrCoreSearchForm(_NdrCoreForm):
             ),
             Div(
                 Div(
-                    MySubmit(f'search_button_{conf_name}', _('Search')),
+                    NdrCoreFormSubmit(f'search_button_{conf_name}', _('Search')),
                     css_class="text-right"
                 ),
                 css_class="col-md-3"
@@ -222,7 +217,7 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
 
         self.query_dict = {}
         if len(args) > 0:
-            self.query_dict = self.querydict_to_dict(args[0])
+            self.query_dict = self.query_dict_to_dict(args[0])
 
         if self.ndr_page is not None and self.ndr_page.page_type == NdrCorePage.PageType.COMBINED_SEARCH:
             self.init_simple_search_fields()
@@ -381,26 +376,8 @@ class AdvancedSearchForm(_NdrCoreSearchForm):
         return helper
 
 
-class FilterForm(_NdrCoreForm):
-    """TODO """
-
-    def __init__(self, *args, **kwargs):
-        """TODO """
-
-        super().__init__(*args, **kwargs)
-
-    @property
-    def helper(self):
-        """Creates and returns the form helper class with the layout-ed form fields. """
-        helper = FormHelper()
-        helper.form_method = "GET"
-        helper.form_show_labels = False
-        layout = helper.layout = Layout()
-        return helper
-
-
 class ContactForm(ModelForm, _NdrCoreForm):
-    """TODO """
+    """Provides a form to send a message to the site admin. """
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
@@ -452,11 +429,10 @@ class ContactForm(ModelForm, _NdrCoreForm):
 
 
 class ManifestSelectionForm(_NdrCoreForm):
-    """TODO """
+    """Form class for the manifest selection. Provides a dropdown to select a manifest and a button to show it. """
 
     def __init__(self, *args, **kwargs):
-        """TODO """
-
+        """Initialises the form fields. """
         super().__init__(*args, **kwargs)
 
         self.fields['manifest'] = forms.ModelChoiceField(label=_('Manifest'),
@@ -465,10 +441,9 @@ class ManifestSelectionForm(_NdrCoreForm):
                                                          help_text=_('Choose the manifest to display.'),
                                                          widget=s2forms.Select2Widget())
 
-
     @property
     def helper(self):
-        """TODO """
+        """Sets the layout of the form fields. """
 
         helper = FormHelper()
         helper.form_method = "GET"
@@ -477,7 +452,7 @@ class ManifestSelectionForm(_NdrCoreForm):
 
         form_row = Row(
             Column('manifest', css_class='form-group col-md-9 mb-0'),
-            Column(MySubmit('submit', _('Show')), css_class='form-group col-md-3 mb-0'),
+            Column(NdrCoreFormSubmit('submit', _('Show')), css_class='form-group col-md-3 mb-0'),
             css_class='form-row'
         )
         layout.append(form_row)
@@ -486,19 +461,18 @@ class ManifestSelectionForm(_NdrCoreForm):
 
 
 class TestForm(_NdrCoreForm):
-    """TODO """
+    """ Test form to test the layout settings in a test view. """
     field_1 = forms.CharField()
     field_2 = forms.BooleanField()
     field_3 = forms.ChoiceField(choices=[('1', 'Choice'), ('2', 'Choice 2'), ('3', 'Choice 3')])
 
 
-class MySubmit(BaseInput):
-    """TODO """
+class NdrCoreFormSubmit(BaseInput):
+    """Creates a submit button for crispy forms. """
 
     input_type = "submit"
 
     def __init__(self, *args, **kwargs):
-        """TODO """
-
+        """Init the submit button. """
         self.field_classes = "btn btn-primary w-100"
         super().__init__(*args, **kwargs)

@@ -472,20 +472,6 @@ class NdrCoreSearchConfiguration(models.Model):
     def __str__(self):
         return self.conf_name
 
-    @staticmethod
-    def get_simple_search_mockup_config(api_configuration):
-        """All search related functions expect a SearchConfiguration but the simple search only provides an
-                ApiConfiguration. This returns a mockup config with the simple-search-api-configuration."""
-
-        search_config = NdrCoreSearchConfiguration()
-        search_config.api_configuration = api_configuration
-        search_config.conf_name = 'simple'
-        search_config.search_has_compact_result = (
-            NdrCoreValue.get_or_initialize('search_simple_has_compact_result_view',
-                                           init_value="false",
-                                           init_type=NdrCoreValue.ValueType.BOOLEAN).get_value())
-        return search_config
-
     def translated_conf_label(self):
         """Returns the translated conf label for a given language. If no translation exists, the default label is
         returned. """

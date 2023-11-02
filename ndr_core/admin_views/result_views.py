@@ -6,7 +6,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, View, FormV
 from ndr_core.admin_forms.result_card_forms import SearchConfigurationResultEditForm
 from ndr_core.form_preview import get_search_form_image_from_raw_data
 from ndr_core.admin_forms.result_field_forms import ResultFieldCreateForm, ResultFieldEditForm
-from ndr_core.models import NdrCoreResultField
+from ndr_core.models import NdrCoreResultField, NdrCoreSearchConfiguration, NdrCoreResultFieldCardConfiguration
 
 
 class ResultFieldCreateView(LoginRequiredMixin, CreateView):
@@ -46,6 +46,52 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
 
     form_class = SearchConfigurationResultEditForm
     template_name = 'ndr_core/admin_views/edit/result_card_edit.html'
+    success_url = reverse_lazy('ndr_core:configure_search')
+
+    def get_form(self, form_class=None):
+        form = super(SearchConfigurationResultEditView, self).get_form(form_class=form_class)
+        fields = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).result_card_fields.all()
+
+        form_row = 0
+        for field in fields:
+            form.fields[f'result_field_{form_row}'].initial = field.result_field
+            form.fields[f'row_field_{form_row}'].initial = field.field_row
+            form.fields[f'column_field_{form_row}'].initial = field.field_column
+            form.fields[f'size_field_{form_row}'].initial = field.field_size
+            form_row += 1
+
+        return form
+
+    def form_valid(self, form):
+        """TODO """
+        response = super(SearchConfigurationResultEditView, self).form_valid(form)
+        conf_object = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
+
+        for row in range(20):
+            if f'result_field_{row}' in form.cleaned_data and \
+                    f'row_field_{row}' in form.cleaned_data and \
+                    f'column_field_{row}' in form.cleaned_data and \
+                    f'size_field_{row}' in form.cleaned_data and \
+                    form.cleaned_data[f'result_field_{row}'] is not None and \
+                    form.cleaned_data[f'row_field_{row}'] is not None and \
+                    form.cleaned_data[f'column_field_{row}'] is not None and \
+                    form.cleaned_data[f'size_field_{row}'] is not None:
+
+                # There is a valid row of configuration. Check if it already exists in the database.
+                try:
+                    updatable_obj = conf_object.result_card_fields.get(result_field=form.cleaned_data[f'result_field_{row}'])
+                    updatable_obj.field_row = form.cleaned_data[f'row_field_{row}']
+                    updatable_obj.field_column = form.cleaned_data[f'column_field_{row}']
+                    updatable_obj.field_size = form.cleaned_data[f'size_field_{row}']
+                    updatable_obj.save()
+                except NdrCoreResultFieldCardConfiguration.DoesNotExist:
+                    new_field = NdrCoreResultFieldCardConfiguration.objects.create(
+                        result_field=form.cleaned_data[f'result_field_{row}'],
+                        field_row=form.cleaned_data[f'row_field_{row}'],
+                        field_column=form.cleaned_data[f'column_field_{row}'],
+                        field_size=form.cleaned_data[f'size_field_{row}'])
+                    conf_object.result_card_fields.add(new_field)
+        return response
 
 
 def preview_result_card_image(request, img_config):

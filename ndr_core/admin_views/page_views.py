@@ -32,7 +32,7 @@ class ManagePages(LoginRequiredMixin, View):
 
 
 class ManagePageFooter(LoginRequiredMixin, View):
-    """TODO """
+    """Creates a form to edit the footer of the page. """
 
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
@@ -86,6 +86,7 @@ class PageCreateView(LoginRequiredMixin, CreateView):
 
         response = super(PageCreateView, self).form_valid(form)
 
+        # set the index of the new page (for ordering)
         max_index = NdrCorePage.objects.aggregate(Max('index'))
         new_index = max_index["index__max"] + 1
         self.object.index = new_index
@@ -98,33 +99,9 @@ class PageCreateView(LoginRequiredMixin, CreateView):
         if os.path.isfile(new_filename):
             messages.error(self.request, "The file name already existed. No new template was generated.")
         else:
-            if self.object.page_type == self.object.PageType.TEMPLATE:
-                base_file = finders.find('ndr_core/app_init/template.html')
-                shutil.copyfile(base_file, new_filename)
-            elif self.object.page_type == self.object.PageType.SIMPLE_SEARCH:
-                base_file = finders.find('ndr_core/app_init/search.html')
-                shutil.copyfile(base_file, new_filename)
-            elif self.object.page_type == self.object.PageType.SEARCH:
-                base_file = finders.find('ndr_core/app_init/search.html')
-                shutil.copyfile(base_file, new_filename)
-            elif self.object.page_type == self.object.PageType.COMBINED_SEARCH:
-                base_file = finders.find('ndr_core/app_init/search.html')
-                shutil.copyfile(base_file, new_filename)
-            elif self.object.page_type == self.object.PageType.FILTER_LIST:
-                base_file = finders.find('ndr_core/app_init/filtered_list.html')
-                shutil.copyfile(base_file, new_filename)
-            elif self.object.page_type == self.object.PageType.CONTACT:
-                base_file = finders.find('ndr_core/app_init/contact.html')
-                shutil.copyfile(base_file, new_filename)
-            elif self.object.page_type == self.object.PageType.FLIP_BOOK:
-                base_file = finders.find('ndr_core/app_init/flip_book.html')
-                shutil.copyfile(base_file, new_filename)
-            elif self.object.page_type == self.object.PageType.ABOUT_PAGE:
-                base_file = finders.find('ndr_core/app_init/about_us.html')
-                shutil.copyfile(base_file, new_filename)
-            elif self.object.page_type == self.object.PageType.VIEWER_PAGE:
-                base_file = finders.find('ndr_core/app_init/viewer.html')
-                shutil.copyfile(base_file, new_filename)
+            base_file = get_base_file_name(self.object.page_type)
+            shutil.copyfile(base_file, new_filename)
+
         return response
 
 
@@ -147,6 +124,12 @@ class PageEditView(LoginRequiredMixin, UpdateView):
 
         if old_filename != new_filename:
             os.rename(old_filename, new_filename)
+
+        # The file has been renamed. If the page type has changed, we need to replace the file
+        if original_instance.page_type != updated_instance.page_type:
+            # Page Type Changed
+            base_file = get_base_file_name(updated_instance.page_type)
+            shutil.copyfile(base_file, new_filename)
 
         form.save_translations()
 
@@ -206,3 +189,30 @@ def move_page_up(request, pk):
         messages.success(request, "Moved up")
 
     return redirect('ndr_core:configure_pages')
+
+
+def get_base_file_name(page_type):
+    """Returns the base file name for a page type. This is the file that is copied when a new page is created."""
+    base_file = None
+
+    if page_type == NdrCorePage.PageType.TEMPLATE:
+        base_file = finders.find('ndr_core/app_init/template.html')
+    elif page_type == NdrCorePage.PageType.SIMPLE_SEARCH:
+        base_file = finders.find('ndr_core/app_init/search.html')
+    elif page_type == NdrCorePage.PageType.SEARCH:
+        base_file = finders.find('ndr_core/app_init/search.html')
+    elif page_type == NdrCorePage.PageType.COMBINED_SEARCH:
+        base_file = finders.find('ndr_core/app_init/search.html')
+    elif page_type == NdrCorePage.PageType.CONTACT:
+        base_file = finders.find('ndr_core/app_init/contact.html')
+    elif page_type == NdrCorePage.PageType.FLIP_BOOK:
+        base_file = finders.find('ndr_core/app_init/flip_book.html')
+    elif page_type == NdrCorePage.PageType.ABOUT_PAGE:
+        base_file = finders.find('ndr_core/app_init/about_us.html')
+    elif page_type == NdrCorePage.PageType.VIEWER_PAGE:
+        base_file = finders.find('ndr_core/app_init/viewer.html')
+
+    if base_file is None:
+        raise FileNotFoundError(f'Base file for page type {page_type} not found.')
+
+    return base_file

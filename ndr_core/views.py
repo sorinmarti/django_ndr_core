@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import translation
 
 from django_ndr_core import settings
-from ndr_core.forms import FilterForm, ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm, \
+from ndr_core.forms import ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm, \
     ManifestSelectionForm
 from ndr_core.map_test import get_map
 from ndr_core.models import (
@@ -57,9 +57,6 @@ def dispatch(request, ndr_page=None):
         if page.page_type == page.PageType.TEMPLATE:
             return NdrTemplateView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                            ndr_page=page)(request)
-        elif page.page_type == page.PageType.FILTER_LIST:
-            return FilterListView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                          ndr_page=page)(request)
         elif page.page_type == page.PageType.SIMPLE_SEARCH:
             return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                       ndr_page=page,
@@ -147,11 +144,6 @@ class _NdrCoreSearchView(_NdrCoreView):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-    def get_simple_search_mockup_config(self):
-        """All search related functions expect a SearchConfiguration but the simple search only provides an
-        ApiConfiguration. This returns a mockup config with the simple-search-api-configuration."""
-        return NdrCoreSearchConfiguration.get_simple_search_mockup_config(self.ndr_page.simple_api)
 
     @staticmethod
     def get_search_config_from_name(name):
@@ -246,19 +238,6 @@ class NdrMarkForCorrectionView(View):
         return HttpResponse("OK")
 
 
-class FilterListView(_NdrCoreView):
-    """TODO This function is not implemented yet."""
-
-    def get(self, request, *args, **kwargs):
-        form = FilterForm()
-        choices = list()
-        search_metadata = {}
-
-        context = self.get_ndr_context_data()
-        context.update({'results': choices, 'form': form, 'meta': search_metadata})
-        return render(request, self.template_name, context)
-
-
 class SearchView(_NdrCoreSearchView):
     """A view to search for records in the configured API. """
 
@@ -286,7 +265,7 @@ class SearchView(_NdrCoreSearchView):
                         context.update({'form': form, 'requested_search': requested_search})
                         return render(request, self.template_name, context)
 
-                    search_config = self.get_simple_search_mockup_config()
+                    search_config = self.get_search_config_from_name(requested_search)
                     api_factory = ApiFactory(search_config)
                     query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
                     query_string = query_obj.get_simple_query(request.GET.get('search_term', ''),
@@ -334,32 +313,6 @@ class SearchView(_NdrCoreSearchView):
                 form = self.form_class(request.GET, ndr_page=self.ndr_page)
 
         context.update({'form': form, 'requested_search': requested_search})
-        return render(request, self.template_name, context)
-
-
-class SimpleSearchView(_NdrCoreSearchView):
-    """TODO """
-
-    def get(self, request, *args, **kwargs):
-        form = SimpleSearchForm(ndr_page=self.ndr_page)
-        context = self.get_ndr_context_data()
-
-        if request.method == "GET":
-            form = SimpleSearchForm(request.GET, ndr_page=self.ndr_page)
-
-            if "search_button_simple" in request.GET.keys():
-                search_config = self.get_simple_search_mockup_config()
-                api_factory = ApiFactory(search_config)
-                query = api_factory.get_query_instance()
-                query_string = query.get_simple_query(request.GET.get('search_term', ''),
-                                                      request.GET.get("page", 1),
-                                                      and_or=request.GET.get('and_or_field', 'and'))
-                result = api_factory.get_result_instance(query_string, self.request)
-                result.load_result()
-                context.update({'api_config': search_config.api_configuration})
-                context.update({'result': result})
-
-        context.update({'form': form})
         return render(request, self.template_name, context)
 
 

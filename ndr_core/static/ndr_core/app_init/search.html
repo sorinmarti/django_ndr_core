@@ -49,7 +49,7 @@
         </div>
 
         {% for result_line in result.results %}
-            {% render_result result_line api_config %}
+            {% render_result result_line search_config %}
         {% endfor %}
 
         {% include 'ndr_core/pagination.html' %}

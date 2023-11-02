@@ -35,30 +35,6 @@ class SearchConfigurationCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/create/search_config_create.html'
 
-    def form_valid(self, form):
-        """TODO """
-
-        response = super(SearchConfigurationCreateView, self).form_valid(form)
-
-        for row in range(20):
-            if f'search_field_{row}' in form.cleaned_data and \
-               f'row_field_{row}' in form.cleaned_data and \
-               f'column_field_{row}' in form.cleaned_data and \
-               f'size_field_{row}' in form.cleaned_data and \
-               form.cleaned_data[f'search_field_{row}'] is not None and \
-               form.cleaned_data[f'row_field_{row}'] is not None and \
-               form.cleaned_data[f'column_field_{row}'] is not None and  \
-               form.cleaned_data[f'size_field_{row}'] is not None:
-                print("SF", form.cleaned_data[f'search_field_{row}'])
-                new_field = NdrCoreSearchFieldFormConfiguration.objects.create(
-                    search_field=form.cleaned_data[f'search_field_{row}'],
-                    field_row=form.cleaned_data[f'row_field_{row}'],
-                    field_column=form.cleaned_data[f'column_field_{row}'],
-                    field_size=form.cleaned_data[f'size_field_{row}'])
-                self.object.search_form_fields.add(new_field)
-
-        return response
-
 
 class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
     """ View to edit an existing API configuration """
@@ -67,24 +43,6 @@ class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
     form_class = SearchConfigurationEditForm
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/edit/search_config_edit.html'
-
-    def get_form(self, form_class=None):
-        form = super(SearchConfigurationEditView, self).get_form(form_class=form_class)
-        fields = self.object.search_form_fields.all()
-
-        form_row = 0
-        for field in fields:
-            form.fields[f'search_field_{form_row}'].initial = field.search_field
-            form.fields[f'row_field_{form_row}'].initial = field.field_row
-            form.fields[f'column_field_{form_row}'].initial = field.field_column
-            form.fields[f'size_field_{form_row}'].initial = field.field_size
-            form_row += 1
-
-        return form
-
-    def form_valid(self, form):
-        response = super(SearchConfigurationEditView, self).form_valid(form)
-        return response
 
 
 class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
@@ -102,3 +60,49 @@ class SearchConfigurationFormEditView(LoginRequiredMixin, FormView):
 
     form_class = SearchConfigurationFormEditForm
     template_name = 'ndr_core/admin_views/edit/search_form_edit.html'
+    success_url = reverse_lazy('ndr_core:configure_search')
+
+    def get_form(self, form_class=None):
+        form = super(SearchConfigurationFormEditView, self).get_form(form_class=form_class)
+        fields = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).search_form_fields.all()
+
+        form_row = 0
+        for field in fields:
+            form.fields[f'search_field_{form_row}'].initial = field.search_field
+            form.fields[f'row_field_{form_row}'].initial = field.field_row
+            form.fields[f'column_field_{form_row}'].initial = field.field_column
+            form.fields[f'size_field_{form_row}'].initial = field.field_size
+            form_row += 1
+
+        return form
+
+    def form_valid(self, form):
+        """TODO """
+        response = super(SearchConfigurationFormEditView, self).form_valid(form)
+        conf_object = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
+
+        for row in range(20):
+            if f'search_field_{row}' in form.cleaned_data and \
+                    f'row_field_{row}' in form.cleaned_data and \
+                    f'column_field_{row}' in form.cleaned_data and \
+                    f'size_field_{row}' in form.cleaned_data and \
+                    form.cleaned_data[f'search_field_{row}'] is not None and \
+                    form.cleaned_data[f'row_field_{row}'] is not None and \
+                    form.cleaned_data[f'column_field_{row}'] is not None and \
+                    form.cleaned_data[f'size_field_{row}'] is not None:
+
+                # There is a valid row of configuration. Check if it already exists in the database.
+                try:
+                    updatable_obj = conf_object.search_form_fields.get(search_field=form.cleaned_data[f'search_field_{row}'])
+                    updatable_obj.field_row = form.cleaned_data[f'row_field_{row}']
+                    updatable_obj.field_column = form.cleaned_data[f'column_field_{row}']
+                    updatable_obj.field_size = form.cleaned_data[f'size_field_{row}']
+                    updatable_obj.save()
+                except NdrCoreSearchFieldFormConfiguration.DoesNotExist:
+                    new_field = NdrCoreSearchFieldFormConfiguration.objects.create(
+                        search_field=form.cleaned_data[f'search_field_{row}'],
+                        field_row=form.cleaned_data[f'row_field_{row}'],
+                        field_column=form.cleaned_data[f'column_field_{row}'],
+                        field_size=form.cleaned_data[f'size_field_{row}'])
+                    conf_object.search_form_fields.add(new_field)
+        return response
