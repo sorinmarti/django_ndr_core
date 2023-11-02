@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
 from ndr_core.admin_views.result_views import ResultFieldCreateView, ResultFieldEditView, preview_result_card_image, \
-    ResultFieldDeleteView
+    ResultFieldDeleteView, SearchConfigurationResultEditView
 from ndr_core.admin_views.search_field_views import SearchFieldCreateView, SearchFieldEditView, \
     preview_search_form_image, SearchFieldDeleteView
 from ndr_core.admin_views.translation_views import (
@@ -41,8 +41,7 @@ from ndr_core.admin_views.page_views import (
 )
 
 from ndr_core.admin_views.search_views import ConfigureSearch, SearchConfigurationCreateView, \
-    SearchConfigurationEditView, SearchConfigurationDeleteView, SearchConfigurationFormEditView, \
-    SearchConfigurationResultEditView
+    SearchConfigurationEditView, SearchConfigurationDeleteView, SearchConfigurationFormEditView
 from ndr_core.admin_views.color_views import ConfigureColorPalettes, ColorPaletteCreateView, ColorPaletteEditView, \
     ColorPaletteDeleteView, ColorPaletteImportView, ColorPaletteDetailView, choose_color_palette
 from ndr_core.admin_views.corrections_views import ConfigureCorrections, set_correction_option
