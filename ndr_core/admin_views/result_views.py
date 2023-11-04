@@ -1,7 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DeleteView, View, FormView
+from django.views.generic import CreateView, UpdateView, DeleteView, FormView
 
 from ndr_core.admin_forms.result_card_forms import SearchConfigurationResultEditForm
 from ndr_core.form_preview import get_search_form_image_from_raw_data
@@ -48,6 +48,10 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
     template_name = 'ndr_core/admin_views/edit/result_card_edit.html'
     success_url = reverse_lazy('ndr_core:configure_search')
 
+    @staticmethod
+    def get_row_fields(row):
+        return [f'result_field_{row}', f'row_field_{row}', f'column_field_{row}', f'size_field_{row}']
+
     def get_form(self, form_class=None):
         form = super(SearchConfigurationResultEditView, self).get_form(form_class=form_class)
         fields = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).result_card_fields.all()
@@ -63,19 +67,14 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
         return form
 
     def form_valid(self, form):
-        """TODO """
+        """Creates or updates the result card configuration for a search configuration. """
         response = super(SearchConfigurationResultEditView, self).form_valid(form)
         conf_object = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
 
         for row in range(20):
-            if f'result_field_{row}' in form.cleaned_data and \
-                    f'row_field_{row}' in form.cleaned_data and \
-                    f'column_field_{row}' in form.cleaned_data and \
-                    f'size_field_{row}' in form.cleaned_data and \
-                    form.cleaned_data[f'result_field_{row}'] is not None and \
-                    form.cleaned_data[f'row_field_{row}'] is not None and \
-                    form.cleaned_data[f'column_field_{row}'] is not None and \
-                    form.cleaned_data[f'size_field_{row}'] is not None:
+            fields = self.get_row_fields(row)
+            if all(field in form.cleaned_data for field in fields) and \
+                    all(form.cleaned_data[x] is not None for x in fields):
 
                 # There is a valid row of configuration. Check if it already exists in the database.
                 try:

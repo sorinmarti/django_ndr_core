@@ -33,6 +33,25 @@ TRANSLATABLE_FIELDS = {
 """Fields which are translatable. """
 
 
+class TranslatableMixin:
+
+    translatable_fields = []
+    """Fields which are translatable. """
+
+    def translated_field(self, orig_value, field_name, object_id):
+        try:
+            translation = NdrCoreTranslation.objects.get(language=get_language(),
+                                                         table_name=self._meta.model_name,
+                                                         field_name=field_name,
+                                                         object_id=object_id)
+            if translation.translation != '':
+                return translation.translation
+            else:
+                return orig_value
+        except NdrCoreTranslation.DoesNotExist:
+            return orig_value
+
+
 class NdrCoreResultField(models.Model):
     """An NdrCoreResultField is part of the display of a search result. Multiple result fields can be combined to
     a result card. Each result field has a type (see FieldType) which determines how the field is displayed.
@@ -96,7 +115,7 @@ class NdrCoreResultField(models.Model):
         return f'{self.expression} ({self.get_field_type_display()})'
 
 
-class NdrCoreSearchField(models.Model):
+class NdrCoreSearchField(TranslatableMixin, models.Model):
     """A NdrCoreSearch field serves two purposes: First it can produce an HTML form field and second its information
       is used to formulate an API request."""
 
@@ -214,34 +233,13 @@ class NdrCoreSearchField(models.Model):
     def translated_field_label(self):
         """Returns the translated field label for a given language. If no translation exists, the default label is
         returned. """
-
-        try:
-            translation = NdrCoreTranslation.objects.get(language=get_language(),
-                                                         table_name='NdrCoreSearchField',
-                                                         field_name='field_label',
-                                                         object_id=self.field_name)
-            if translation.translation != '':
-                return translation.translation
-            else:
-                return self.field_label
-        except NdrCoreTranslation.DoesNotExist:
-            return self.field_label
+        return self.translated_field(self.field_label, 'field_label', self.field_name)
 
     def translated_help_text(self):
         """Returns the translated help text for a given language. If no translation exists, the default help text is
         returned. """
+        return self.translated_field(self.help_text, 'help_text', self.field_name)
 
-        try:
-            translation = NdrCoreTranslation.objects.get(language=get_language(),
-                                                         table_name='NdrCoreSearchField',
-                                                         field_name='help_text',
-                                                         object_id=self.field_name)
-            if translation.translation != '':
-                return translation.translation
-            else:
-                return self.help_text
-        except NdrCoreTranslation.DoesNotExist:
-            return self.help_text
 
     def get_list_choices_as_dict(self):
         """Returns the list choices as a dictionary. This is used to render the dropdowns in the search form and
@@ -319,6 +317,12 @@ class NdrCoreResultFieldCardConfiguration(models.Model):
     field_size = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)],
                                      help_text="The size of the field. Is a value between 1 and 12.")
 
+    result_card_group = models.CharField(max_length=100,
+                                         choices=(('normal', 'Normal'), ('compact', 'Compact')),
+                                         default='normal',
+                                         help_text="The group of the result card. Normal is the default group.")
+    """The group of the result card. Normal is the default group."""
+
 
 class NdrCoreSearchFieldFormConfiguration(models.Model):
     """Search fields can be used in forms. In order to place them, they can be configured to fit in a grid with
@@ -373,12 +377,6 @@ class NdrCoreApiImplementation(models.Model):
     """True if the API supports a field based search where different search values can be searched for different 
     fields."""
 
-    supports_lists = models.BooleanField(default=True)
-    """True if the API supports static lists which can be requested by an API query. """
-
-    supports_facets = models.BooleanField(default=False)
-    """True if the different values of a result are grouped in filter options. """
-
     supports_single_result = models.BooleanField(default=False)
     """True if a single result can be downloaded. """
 
@@ -386,7 +384,7 @@ class NdrCoreApiImplementation(models.Model):
         return self.label
 
 
-class NdrCoreSearchConfiguration(models.Model):
+class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
     """ A search configuration describes a configured search. """
 
     # NAMES
@@ -445,14 +443,38 @@ class NdrCoreSearchConfiguration(models.Model):
     sort_field = models.CharField(max_length=100, blank=False, default='id',
                                   help_text="The field to sort the result by.")
 
+    sort_order = models.CharField(max_length=100, blank=False, default='asc',
+                                  choices=(('asc', 'Ascending'), ('desc', 'Descending')),
+                                  help_text="The order to sort the result by.")
+
+    has_simple_search = models.BooleanField(default=True,
+                                            help_text="Should this configuration feature a simple search?")
+    """Should this configuration feature a simple search? """
+
+    simple_search_first = models.BooleanField(default=True,
+                                              help_text="Should the simple search be displayed first?")
+
     simple_query_main_field = models.CharField(max_length=100, blank=False, default='transcription.original',
                                                help_text="The main field to query for a simple search.")
     """The main field to query for a simple search. """
 
+    simple_query_label = models.CharField(max_length=100, blank=False, default='Search',
+                                          help_text="The label for the simple search field.")
+    """The label for the simple search field. """
+
+    simple_query_help_text = models.CharField(max_length=100, blank=False, default='Search the database',
+                                              help_text="The help text for the simple search field.")
+
     # RESULT
 
+    result_card_template = models.CharField(max_length=200,
+                                            blank=False,
+                                            default='ndr_core/result_renderers/default_template.html',
+                                            help_text="The template to use for the result cards.")
+
+    """The template to use for the result cards. """
     result_card_fields = models.ManyToManyField(NdrCoreResultFieldCardConfiguration,
-                                                help_text="Fields associated with this configuration")
+                                                help_text="Result fields associated with this configuration")
 
     search_has_compact_result = models.BooleanField(default=False,
                                                     help_text="If the result has a normal and a compact view, "
@@ -463,6 +485,11 @@ class NdrCoreSearchConfiguration(models.Model):
                                     verbose_name="Page Size",
                                     help_text="Size of the result page (e.g. 'How many results at once')")
     """The query results will return a page of the results. You can define the page size"""
+
+    compact_page_size = models.IntegerField(default=10,
+                                            verbose_name="Compact Page Size",
+                                            help_text="Size of the compact result page (e.g. 'How many results at "
+                                                      "once')")
 
     repository_url = models.URLField(default=None, null=True, blank=True,
                                      verbose_name="Repository URL",
@@ -475,21 +502,19 @@ class NdrCoreSearchConfiguration(models.Model):
     def translated_conf_label(self):
         """Returns the translated conf label for a given language. If no translation exists, the default label is
         returned. """
+        return self.translated_field(self.conf_label, 'conf_label', self.conf_name)
 
-        try:
-            translation = NdrCoreTranslation.objects.get(language=get_language(),
-                                                         table_name='NdrCoreSearchConfiguration',
-                                                         field_name='conf_label',
-                                                         object_id=self.conf_name)
-            if translation.translation != '':
-                return translation.translation
-            else:
-                return self.conf_label
-        except NdrCoreTranslation.DoesNotExist:
-            return self.conf_label
+    def translated_simple_query_label(self):
+        """Returns the translated simple query label for a given language. If no translation exists, the default label
+        is returned. """
+        return self.translated_field(self.simple_query_label, 'simple_query_label', self.conf_name)
 
+    def translated_simple_query_help_text(self):
+        """Returns the translated simple query help text for a given language. If no translation exists, the default
+        help text is returned. """
+        return self.translated_field(self.simple_query_help_text, 'simple_query_help_text', self.conf_name)
 
-class NdrCorePage(models.Model):
+class NdrCorePage(TranslatableMixin, models.Model):
     """ An NdrCorePage is a web page on the ndr_core website instance. Each page has a type (see PageType) and upon
      creation, an HTML template is created and saved in the projects template folder. This allows users to create
      pages over the administration interface and then adapt its contents as needed."""
@@ -500,14 +525,8 @@ class NdrCorePage(models.Model):
         TEMPLATE = 1, "Template Page"
         """A template page is a static page. A HTML template is created which can be filled with any content"""
 
-        SIMPLE_SEARCH = 2, "Simple Search"
-        """A simple search page is a page which contains a form with a single catch-all search field"""
-
-        SEARCH = 3, "Custom Search"
+        SEARCH = 3, "Search Page"
         """A search page features a configured search form which contains a number of search fields"""
-
-        COMBINED_SEARCH = 4, "Simple/Custom Search"
-        """A combined search page contains both a simple and a configured search form which search the same repo."""
 
         CONTACT = 5, "Contact Form"
         """A contact from page displays a form to send a message to the project team"""
@@ -572,33 +591,12 @@ class NdrCorePage(models.Model):
 
     def translated_name(self):
         """Returns the translated name for a given language. If no translation exists, the default name is returned. """
-
-        try:
-            translation = NdrCoreTranslation.objects.get(language=get_language(),
-                                                         table_name='NdrCorePage',
-                                                         field_name='name',
-                                                         object_id=str(self.id))
-            if translation.translation != '':
-                return translation.translation
-            else:
-                return self.name
-        except NdrCoreTranslation.DoesNotExist:
-            return self.name
+        return self.translated_field(self.name, 'name', str(self.id))
 
     def translated_label(self):
         """Returns the translated label for a given language.
         If no translation exists, the default label is returned. """
-        try:
-            translation = NdrCoreTranslation.objects.get(language=get_language(),
-                                                         table_name='NdrCorePage',
-                                                         field_name='label',
-                                                         object_id=str(self.id))
-            if translation.translation != '':
-                return translation.translation
-            else:
-                return self.label
-        except NdrCoreTranslation.DoesNotExist:
-            return self.label
+        return self.translated_field(self.label, 'label', str(self.id))
 
     def translated_template_text(self):
         """Returns the translated template_text for a given language.
@@ -750,7 +748,7 @@ class NdrCoreValue(models.Model):
 
     class ValueType(models.TextChoices):
         STRING = "string", "String"
-        RICH_STRING = "rich_string", "Rich Text"
+        RICH_STRING = "rich", "Rich Text"
         INTEGER = "integer", "Integer"
         BOOLEAN = "boolean", "Boolean"
         LIST = "list", "List"

@@ -1,0 +1,244 @@
+from crispy_forms.bootstrap import TabHolder
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Field, Div
+from django import forms
+from django.utils.translation import gettext_lazy as _
+from ndr_core.forms import _NdrCoreForm
+from ndr_core.forms.widgets import BootstrapSwitchWidget, NdrCoreFormSubmit
+from ndr_core.models import NdrCoreSearchConfiguration
+
+
+class AdvancedSearchForm(_NdrCoreForm):
+    """Form class for the search. Needs a search config and then creates and configures the form from it. """
+
+    search_configs = None
+
+    def __init__(self, *args, **kwargs):
+        """Initializes all needed form fields for the configured search based on the page's search configuration. """
+
+        super().__init__(*args, **kwargs)
+        self.search_configs = self.ndr_page.search_configs.all()
+
+        self.query_dict = {}
+        if len(args) > 0:
+            self.query_dict = self.query_dict_to_dict(args[0])
+
+        # Search Form is composed of different search configurations. Each of them has its own tab.
+        # A search configuration may have a simple search tab as well.
+        for search_config in self.search_configs:
+
+            if search_config.has_simple_search:
+                self.init_simple_search_fields(search_config)
+
+            if search_config.search_has_compact_result:
+                self.fields[f'compact_view_{search_config.conf_name}'] = forms.BooleanField(required=False,
+                                                                                            widget=BootstrapSwitchWidget(
+                                                                                                attrs={'label': 'Compact Result View'}),
+                                                                                            label='')
+
+            for field in search_config.search_form_fields.all():
+                search_field = field.search_field
+                form_field = None
+                help_text = mark_safe(f'<small id="{search_field.field_name}Help" class="form-text text-muted">'
+                                      f'{search_field.translated_help_text()}</small>')
+
+                # Text field
+                if search_field.field_type == search_field.FieldType.STRING:
+                    form_field = forms.CharField(label=search_field.translated_field_label(),
+                                                 required=search_field.field_required,
+                                                 help_text=help_text,
+                                                 initial=search_field.get_initial_value())
+                # Number field
+                if search_field.field_type == search_field.FieldType.NUMBER:
+                    form_field = forms.IntegerField(label=search_field.translated_field_label(),
+                                                    required=search_field.field_required,
+                                                    help_text=help_text,
+                                                    initial=search_field.get_initial_value())
+                # Number Range field
+                if search_field.field_type == search_field.FieldType.NUMBER_RANGE:
+                    form_field = NumberRangeField(label=search_field.translated_field_label(),
+                                                  required=search_field.field_required,
+                                                  help_text=help_text,
+                                                  lowest_number=int(search_field.lower_value)
+                                                  if search_field.lower_value is not None else 1,
+                                                  highest_number=int(search_field.upper_value)
+                                                  if search_field.upper_value is not None else 999999)
+                # Boolean field (checkbox)
+                if search_field.field_type == search_field.FieldType.BOOLEAN:
+                    form_field = forms.BooleanField(label=mark_safe('&nbsp;'),
+                                                    required=search_field.field_required,
+                                                    help_text=help_text,
+                                                    widget=BootstrapSwitchWidget(
+                                                        attrs={'label': search_field.translated_field_label()}),
+                                                    initial=search_field.get_initial_value())
+                # Date field
+                if search_field.field_type == search_field.FieldType.DATE:
+                    # TODO initial value
+                    form_field = forms.DateField(label=search_field.translated_field_label(),
+                                                 required=search_field.field_required,
+                                                 help_text=help_text)
+                # Date range field
+                if search_field.field_type == search_field.FieldType.DATE_RANGE:
+                    # search_field.lower_value is in the form YYYY-MM-DD. Convert it to DD.MM.YYYY
+                    lower_value = search_field.lower_value
+                    if lower_value is not None:
+                        lower_value = f'{lower_value[8:10]}.{lower_value[5:7]}.{lower_value[0:4]}'
+                    # Do the same with upper_value
+                    upper_value = search_field.upper_value
+                    if upper_value is not None:
+                        upper_value = f'{upper_value[8:10]}.{upper_value[5:7]}.{upper_value[0:4]}'
+
+                    form_field = fields.DateRangeField(label=search_field.translated_field_label(),
+                                                       required=search_field.field_required,
+                                                       help_text=help_text,
+                                                       input_formats=['%d.%m.%Y'],
+                                                       widget=widgets.DateRangeWidget(
+                                                           format='%d.%m.%Y',
+                                                           picker_options={'startDate': lower_value,
+                                                                           'endDate': "upper_value",
+                                                                           'minYear': int(lower_value[6:10]),
+                                                                           'maxYear': int(upper_value[6:10]),
+                                                                           "maxSpan": {
+                                                                               "years": 500
+                                                                           },
+                                                                           'showDropdowns': True}
+                                                       ))
+                # List field (dropdown)
+                if search_field.field_type == search_field.FieldType.LIST:
+                    # TODO initial value
+                    form_field = forms.ChoiceField(label=search_field.translated_field_label(),
+                                                   choices=[('', _('Please Choose'))] + search_field.get_list_choices(),
+                                                   required=search_field.field_required,
+                                                   help_text=help_text)
+                # Multi list field (multiple select with Select2)
+                if search_field.field_type == search_field.FieldType.MULTI_LIST:
+                    # TODO initial value
+                    form_field = forms.MultipleChoiceField(label=search_field.translated_field_label(),
+                                                           choices=search_field.get_list_choices(),
+                                                           widget=FilteredListWidget(attrs={'data-minimum-input-length': 0}),
+                                                           # widget=SwitchGroupWidget(),
+                                                           required=search_field.field_required,
+                                                           help_text=help_text)
+
+                # Add the field to the form if it was created.
+                if form_field is not None:
+                    self.fields[f'{search_config.conf_name}_{search_field.field_name}'] = form_field
+
+    def init_simple_search_fields(self, search_config):
+        """Create form fields for simple search. """
+
+        self.fields['search_term'] = forms.CharField(label=search_config.translated_simple_query_label(),
+                                                     required=False,
+                                                     max_length=100,
+                                                     help_text=search_config.translated_simple_query_help_text())
+
+        self.fields['and_or_field'] = forms.ChoiceField(label=_('And or Or Search'),
+                                                        choices=[('and', _('AND search')), ('or', _('OR search'))],
+                                                        required=False)
+
+        if search_config.search_has_compact_result:
+            self.fields['compact_view_simple'] = forms.BooleanField(required=False,
+                                                                    widget=BootstrapSwitchWidget(
+                                                                        attrs={'label': _('Compact Result View')}),
+                                                                    label='')
+
+    @staticmethod
+    def get_simple_search_layout_fields(search_config):
+        """Create and return layout fields for the simple search fields. """
+
+        search_field = Field('search_term', wrapper_class='col-md-12')
+        type_field = Field('and_or_field', wrapper_class='col-md-4')
+
+        if search_config.search_has_compact_result:
+            compact_field = Field('compact_view_simple', wrapper_class='col-md-4')
+            return search_field, type_field, compact_field
+
+        return search_field, type_field
+
+    @staticmethod
+    def get_search_button(conf_name):
+        """Create and return right aligned search button. """
+        compact_field = None
+        search_has_compact_result = False  # TODO: Fix this
+        if search_has_compact_result:
+            compact_field = Field(f'compact_view_{conf_name}')
+
+        div = Div(
+            Div(
+                css_class="col-md-5"
+            ),
+            Div(
+                compact_field,
+                css_class="col-md-4"
+            ),
+            Div(
+                Div(
+                    NdrCoreFormSubmit(f'search_button_{conf_name}', _('Search')),
+                    css_class="text-right"
+                ),
+                css_class="col-md-3"
+            ),
+            css_class="form-row"
+        )
+        return div
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper class with the layout-ed form fields. """
+
+        helper = FormHelper()
+        helper.form_method = "GET"
+        layout = helper.layout = Layout()
+
+        # There can be multiple search configurations for one page. Each of them gets its own tab.
+        tabs = TabHolder(css_id='id_tabs')
+        # A combined search has a simple search tab as well.
+        if self.ndr_page.page_type == NdrCorePage.PageType.COMBINED_SEARCH:
+            tab_simple = Tab(_('Simple Search'), css_id='simple')
+            fields = self.get_simple_search_layout_fields()
+            tab_simple.append(Div(fields[0], css_class='form-row'))
+            tab_simple.append(Div(fields[1], css_class='form-row'))
+            if len(fields) > 2:
+                tab_simple.append(Div(fields[2], css_class='form-row'))
+
+            tab_simple.append(self.get_search_button('simple'))
+            tabs.append(tab_simple)
+
+        # For each search configuration, create a tab and add the form fields to it.
+        for search_config in self.search_configs:
+            tab = Tab(search_config.translated_conf_label(), css_id=search_config.conf_name)
+
+            # The form fields are grouped by row and column. The row is the outer loop.
+            max_row = search_config.search_form_fields.all().aggregate(Max('field_row'))
+            for row in range(max_row['field_row__max']):
+                row += 1
+                form_row = Div(css_class='form-row')
+                # The column is the inner loop.
+                for column in search_config.search_form_fields.filter(field_row=row).order_by('field_column'):
+                    # Type is INFO_TEXT, so we create a div with the text.
+                    if column.search_field.field_type == column.search_field.FieldType.INFO_TEXT:
+                        form_field = Div(HTML(mark_safe(
+                            f'<div class="alert alert-info small" role="alert">'
+                            f'<i class="fa-regular fa-circle-info"></i>&nbsp;'
+                            f'<strong>{column.search_field.translated_field_label()}</strong><br/>'
+                            f"{column.search_field.list_choices}"
+                            f'</div>'
+                        )), css_class=f'col-md-{column.field_size}')
+                    # All other types are form fields.
+                    else:
+                        form_field = Field(f'{search_config.conf_name}_{column.search_field.field_name}',
+                                           # placeholder=column.search_field.translated_field_label(),
+                                           wrapper_class=f'col-md-{column.field_size}')
+
+                    form_row.append(form_field)
+
+                tab.append(form_row)
+
+            tab.append(self.get_search_button(search_config.conf_name))
+            tabs.append(tab)
+
+        layout.append(tabs)
+
+        helper.form_show_labels = True
+
+        return helper

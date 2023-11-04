@@ -71,17 +71,9 @@ class PageForm(forms.ModelForm):
         if page_type == NdrCorePage.PageType.TEMPLATE:
             # no additional fields required
             pass
-        elif page_type == NdrCorePage.PageType.SIMPLE_SEARCH:
-            if search_configs.count() != 1:
-                msg = "Select exactly one Search configuration."
-                self.add_error('search_configs', msg)
         elif page_type == NdrCorePage.PageType.SEARCH:
             if search_configs.count() == 0:
                 msg = "You must provide at least one Search configuration for Search pages."
-                self.add_error('search_configs', msg)
-        elif page_type == NdrCorePage.PageType.COMBINED_SEARCH:
-            if search_configs.count() == 0:
-                msg = "You must provide at least one Search configuration for Combined Search pages."
                 self.add_error('search_configs', msg)
         elif page_type == NdrCorePage.PageType.CONTACT:
             if NdrCorePage.objects.filter(page_type=NdrCorePage.PageType.CONTACT).count() > 0:

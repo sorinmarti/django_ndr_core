@@ -13,8 +13,9 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import translation
 
 from django_ndr_core import settings
-from ndr_core.forms import ContactForm, AdvancedSearchForm, TestForm, \
-    ManifestSelectionForm
+from ndr_core.forms.forms_contact import ContactForm
+from ndr_core.forms.forms_manifest import ManifestSelectionForm
+from ndr_core.forms.forms_search import AdvancedSearchForm
 from ndr_core.map_test import get_map
 from ndr_core.models import (
     NdrCorePage,
@@ -58,18 +59,9 @@ def dispatch(request, ndr_page=None):
         if page.page_type == page.PageType.TEMPLATE:
             return NdrTemplateView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                            ndr_page=page)(request)
-        elif page.page_type == page.PageType.SIMPLE_SEARCH:
-            return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                      ndr_page=page,
-                                      form_class=AdvancedSearchForm)(request)
         elif page.page_type == page.PageType.SEARCH:
             return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                      ndr_page=page,
-                                      form_class=AdvancedSearchForm)(request)
-        elif page.page_type == page.PageType.COMBINED_SEARCH:
-            return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                      ndr_page=page,
-                                      form_class=AdvancedSearchForm)(request)
+                                      ndr_page=page)(request)
         elif page.page_type == page.PageType.CONTACT:
             return ContactView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                        ndr_page=page)(request)
@@ -127,16 +119,6 @@ class NdrTemplateView(_NdrCoreView):
     pass
 
 
-class NdrTestView(_NdrCoreView):
-    """ Shows a test view to test the UI settings. Features a form to test form rendering.
-     Users can change colors and style of their pages. With this test page they can see how
-     all the elements look. """
-
-    def get(self, request, *args, **kwargs):
-        form = TestForm()
-        return render(request, f"{NdrSettings.APP_NAME}/test.html", {'form': form})
-
-
 class _NdrCoreSearchView(_NdrCoreView):
     """ Base View for all NDR Core search views. A search view in this context means all views used to
      retrieve or display results. It is also the base view for all result download views."""
@@ -146,10 +128,12 @@ class _NdrCoreSearchView(_NdrCoreView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    @staticmethod
-    def get_search_config_from_name(name):
+    def get_search_config_from_name(self, name):
         """ Convenience method to get search config. """
         try:
+            if name == "simple" and self.ndr_page is not None:
+                return self.ndr_page.search_configs.first()
+
             return NdrCoreSearchConfiguration.objects.get(conf_name=name)
         except NdrCoreSearchConfiguration.DoesNotExist:
             return None
@@ -260,7 +244,8 @@ class SearchView(_NdrCoreSearchView):
                         context.update({'form': form, 'requested_search': requested_search})
                         return render(request, self.template_name, context)
 
-                    search_config = self.get_search_config_from_name(requested_search)
+                    search_config = self.get_search_config_from_name(requested_search, ndr_page=self.ndr_page)
+
                     api_factory = ApiFactory(search_config)
                     query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
                     query_string = query_obj.get_simple_query(request.GET.get('search_term', ''),

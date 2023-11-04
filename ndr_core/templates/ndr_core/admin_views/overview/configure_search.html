@@ -43,6 +43,9 @@
                             </p>
 
                             <p class="p-0 m-0">
+                                <a href="{% url 'ndr_core:copy_search_config' search.pk %}" class="btn btn-sm btn-secondary">
+                                    <i class="fa-regular fa-copy"></i>
+                                </a>
                                 <a href="{% url 'ndr_core:edit_search_config' search.pk %}" class="btn btn-sm btn-secondary">
                                     <i class="fa-regular fa-pen-to-square"></i>
                                 </a>

@@ -11,6 +11,8 @@ class SearchConfigurationFormEditForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(SearchConfigurationFormEditForm, self).__init__(*args, **kwargs)
 
+        self.fields['is_simple_search'] = forms.BooleanField(required=False, help_text="")
+
         for search_field_conf_row in range(20):
             required = False
             if search_field_conf_row == 0:

@@ -2,6 +2,8 @@ import json
 import re
 
 from django import template
+from django.template import TemplateDoesNotExist
+from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 
@@ -13,7 +15,15 @@ register = template.Library()
 @register.inclusion_tag('ndr_core/dummy.html')
 def render_result(result_object, search_config):
     """Renders a result object using the appropriate template."""
-    render_template = 'ndr_core/result_renderers/default_template.html'
+    if search_config is None:
+        return {'template': 'ndr_core/result_renderers/default_template.html',
+                'result': result_object}
+
+    try:
+        render_template = get_template(search_config.result_template)
+    except TemplateDoesNotExist:
+        render_template = 'ndr_core/result_renderers/default_template.html'
+
     return {'template': render_template,
             'result': result_object}
 

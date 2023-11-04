@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, FormView
@@ -54,6 +54,20 @@ class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         return super(SearchConfigurationDeleteView, self).form_valid(form)
+
+
+class SearchConfigurationCopyView(LoginRequiredMixin, View):
+    """ View to copy a Search configuration. """
+
+    def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
+        search_conf = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
+        search_conf.conf_name = f'{search_conf.conf_name}_copy'
+        search_conf.conf_label = f'{search_conf.conf_label} (Copy)'
+        search_conf.save()
+
+        return redirect('ndr_core:configure_search')
 
 
 class SearchConfigurationFormEditView(LoginRequiredMixin, FormView):

@@ -41,7 +41,8 @@ from ndr_core.admin_views.page_views import (
 )
 
 from ndr_core.admin_views.search_views import ConfigureSearch, SearchConfigurationCreateView, \
-    SearchConfigurationEditView, SearchConfigurationDeleteView, SearchConfigurationFormEditView
+    SearchConfigurationEditView, SearchConfigurationDeleteView, SearchConfigurationFormEditView, \
+    SearchConfigurationCopyView
 from ndr_core.admin_views.color_views import ConfigureColorPalettes, ColorPaletteCreateView, ColorPaletteEditView, \
     ColorPaletteDeleteView, ColorPaletteImportView, ColorPaletteDetailView, choose_color_palette
 from ndr_core.admin_views.corrections_views import ConfigureCorrections, set_correction_option
@@ -177,6 +178,7 @@ urlpatterns = [
     path('configure/search/delete/search_field/<str:pk>/', SearchFieldDeleteView.as_view(), name='delete_search_field'),
     path('configure/search/delete/result_field/<str:pk>/', ResultFieldDeleteView.as_view(), name='delete_result_field'),
 
+    path('configure/search/copy/config/<str:pk>/', SearchConfigurationCopyView.as_view(), name='copy_search_config'),
     path('configure/search/form/preview/<str:img_config>/', preview_search_form_image, name='preview_search_form_image'),
     path('configure/search/result/preview/<str:img_config>/', preview_result_card_image, name='preview_result_card_image'),
 
@@ -205,7 +207,7 @@ urlpatterns = [
     path('bulk-download/csv/<str:search_config>/', NdrCSVListDownloadView.as_view(), name='download_csv'),
 
     # Mark an entry for correction
-    path('mark/to/correct/<str:api_config>/<str:record_id>/', NdrMarkForCorrectionView.as_view(), name='mark_record'),
+    path('mark/to/correct/<str:search_config>/<str:record_id>/', NdrMarkForCorrectionView.as_view(), name='mark_record'),
 
     # Language
     path('language/<str:new_language>/', set_language_view, name='set_language'),

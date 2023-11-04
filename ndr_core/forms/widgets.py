@@ -1,6 +1,8 @@
+from crispy_forms.layout import BaseInput
 from django import forms
 from django.utils.safestring import mark_safe
 from ndr_core.ndr_helpers import get_search_field_config
+from django_select2 import forms as s2forms
 
 
 class BootstrapSwitchWidget(forms.Widget):
@@ -57,3 +59,23 @@ class CustomRange(forms.TextInput):
             "});"
 
         return mark_safe(html + "<script>" + inline_code + "</script>")
+
+
+class NdrCoreFormSubmit(BaseInput):
+    """Creates a submit button for crispy forms. """
+
+    input_type = "submit"
+
+    def __init__(self, *args, **kwargs):
+        """Init the submit button. """
+        self.field_classes = "btn btn-primary w-100"
+        super().__init__(*args, **kwargs)
+
+
+class FilteredListWidget(s2forms.Select2MultipleWidget):
+    # TODO: This is a copy of the original widget.
+    """Widget to display a multi select2 dropdown for list configurations. """
+
+    search_fields = [
+        'list_name__icontains'
+    ]

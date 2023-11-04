@@ -225,11 +225,7 @@ def get_base_file_name(page_type):
 
     if page_type == NdrCorePage.PageType.TEMPLATE:
         base_file = finders.find('ndr_core/app_init/template.html')
-    elif page_type == NdrCorePage.PageType.SIMPLE_SEARCH:
-        base_file = finders.find('ndr_core/app_init/search.html')
     elif page_type == NdrCorePage.PageType.SEARCH:
-        base_file = finders.find('ndr_core/app_init/search.html')
-    elif page_type == NdrCorePage.PageType.COMBINED_SEARCH:
         base_file = finders.find('ndr_core/app_init/search.html')
     elif page_type == NdrCorePage.PageType.CONTACT:
         base_file = finders.find('ndr_core/app_init/contact.html')
