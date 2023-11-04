@@ -91,5 +91,5 @@ class MongoDBResult(BaseResult):
 
     def get_id_value(self, result):
         """ Overwrite the default get_id_value method to get the id from the result. """
-        return get_nested_value(result, self.api_configuration.api_id_field)
+        return get_nested_value(result, self.search_configuration.search_id_field)
 

@@ -250,3 +250,45 @@ class FooterForm(SettingsListForm):
         layout.append(form_row)
         layout.append(get_form_buttons('Save Settings'))
         return helper
+
+
+class NotFoundForm(forms.Form):
+    """Form to edit the 404 page."""
+
+    def __init__(self, *args, **kwargs):
+        super(NotFoundForm, self).__init__(*args, **kwargs)
+
+    @property
+    def helper(self):
+        helper = super(NotFoundForm, self).helper
+        layout = helper.layout = Layout()
+
+        form_row = Row(
+            Column('save_footer_show_partners', css_class='form-group col-md-10 mb-0'),
+            Column(HTML(f'<a href="{reverse("ndr_core:view_images", kwargs={"group": "logos"})}" class="btn btn-sm btn-secondary">Manage Partner Logos</a>'),
+                   css_class='form-group col-md-2 mb-0 text-right'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('save_footer_show_main_navigation', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('save_footer_show_socials', css_class='form-group col-md-10 mb-0'),
+            Column(HTML(f'<a href="{reverse("ndr_core:view_settings", kwargs={"group": "socials"})}" class="btn btn-sm btn-secondary">Manage Social Links</a>'),
+                   css_class='form-group col-md-2 mb-0 text-right'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('save_footer_copyright_text', css_class='form-group col-md-12 mb-0'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+        layout.append(get_form_buttons('Save Settings'))
+        return helper

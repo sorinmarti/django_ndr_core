@@ -140,6 +140,15 @@
         </div>
     {% endif %}
 
+    {% if not_found_form %}
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Manage 404 Page</h5>
+                {% crispy not_found_form %}
+            </div>
+        </div>
+    {% endif %}
+
     <div class="alert alert-info small" role="alert">
         <i class="fa-regular fa-circle-info"></i>
         Your NDR Website consists of multiple pages with a type. You can configure them here.

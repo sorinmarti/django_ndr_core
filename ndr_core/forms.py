@@ -123,31 +123,6 @@ class _NdrCoreSearchForm(_NdrCoreForm):
         return div
 
 
-class SimpleSearchForm(_NdrCoreSearchForm):
-    """Form class for the simple search form. Provides a text field, an and/or option and a search button. """
-
-    def __init__(self, *args, **kwargs):
-        """Initializes the form fields."""
-        super().__init__(*args, **kwargs)
-        self.init_simple_search_fields()
-
-    @property
-    def helper(self):
-        """Creates and returns the form helper class with the layout-ed form fields. """
-
-        helper = FormHelper()
-        helper.form_method = 'GET'
-        layout = helper.layout = Layout()
-
-        search_field, type_field = self.get_simple_search_layout_fields()
-        layout.append(Div(search_field, css_class='form-row'))
-        layout.append(Div(type_field, css_class='form-row'))
-        layout.append(self.get_search_button('simple'))
-
-        helper.form_show_labels = False
-        return helper
-
-
 class FilteredListWidget(s2forms.Select2MultipleWidget):
     # TODO: This is a copy of the original widget.
     """Widget to display a multi select2 dropdown for list configurations. """
@@ -202,8 +177,7 @@ class NumberRangeField(forms.CharField):
 
 
 class AdvancedSearchForm(_NdrCoreSearchForm):
-    """Form class for the advanced (=configured) search. Needs a search config and then creates and configures
-    the form from it. """
+    """Form class for the search. Needs a search config and then creates and configures the form from it. """
 
     def __init__(self, *args, **kwargs):
         """Initialises  all needed form fields for the configured search based on the page's search configuration. """

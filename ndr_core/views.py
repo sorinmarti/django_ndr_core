@@ -1,4 +1,5 @@
-"""This file contains the main NDR Core views. For the views for the administration interface, see admin_views/* """
+"""This file contains the main NDR Core views. All Page views are defined here.
+For the views for the administration interface, see admin_views/* """
 from django.contrib import messages
 from django.http import HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -12,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import translation
 
 from django_ndr_core import settings
-from ndr_core.forms import ContactForm, AdvancedSearchForm, SimpleSearchForm, TestForm, \
+from ndr_core.forms import ContactForm, AdvancedSearchForm, TestForm, \
     ManifestSelectionForm
 from ndr_core.map_test import get_map
 from ndr_core.models import (
@@ -60,7 +61,7 @@ def dispatch(request, ndr_page=None):
         elif page.page_type == page.PageType.SIMPLE_SEARCH:
             return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                       ndr_page=page,
-                                      form_class=SimpleSearchForm)(request)
+                                      form_class=AdvancedSearchForm)(request)
         elif page.page_type == page.PageType.SEARCH:
             return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                       ndr_page=page,
@@ -167,12 +168,6 @@ class _NdrCoreSearchView(_NdrCoreView):
                 if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
                     query_obj.set_value(actual_key, form.cleaned_data[field])
 
-        """for key in self.request.GET.keys():
-            if key.startswith(requested_search):
-                actual_key = key[len(requested_search) + 1:]
-                if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
-                    query_obj.set_value(actual_key, form.cleaned_data[key])"""
-
 
 class NdrDownloadView(_NdrCoreSearchView):
     """Returns a JSON record from an ID request to the API """
@@ -219,7 +214,7 @@ class NdrCSVListDownloadView(NdrListDownloadView):
 
         result = self.create_result_for_response()
         mapping = [
-            {"field": search_config.api_configuration.api_id_field, "header": "ID"},
+            {"field": search_config.search_id_field, "header": "ID"},
         ]
         search_config = self.get_search_config_from_name(self.kwargs['search_config'])
         for field in search_config.search_form_fields.all():
@@ -297,7 +292,7 @@ class SearchView(_NdrCoreSearchView):
                 if result.total == 0:
                     messages.error(request, _('No results found.'))
                 else:
-                    context.update({'api_config': search_config.api_configuration})
+                    context.update({'search_config': search_config})
                     for r in result.results:
                         origin = r['data']['port_of_origin']['scheme']
                         destination = r['data']['port_of_destination']['scheme']

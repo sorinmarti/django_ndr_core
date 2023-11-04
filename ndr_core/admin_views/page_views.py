@@ -59,6 +59,34 @@ class ManagePageFooter(LoginRequiredMixin, View):
                       context=context)
 
 
+class ManageNotFoundPage(LoginRequiredMixin, View):
+    """Creates a form to edit the 404 page of the installation. """
+
+    def get(self, request, *args, **kwargs):
+        """GET request for this view. """
+
+        context = {'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
+                   'not_found_form': NotFoundForm()}
+
+        return render(self.request,
+                      template_name='ndr_core/admin_views/overview/configure_pages.html',
+                      context=context)
+
+    def post(self, request, *args, **kwargs):
+        """POST request for this view. Gets executed when setting values are saved."""
+
+        form = NotFoundForm(request.POST)
+        form.save_list()
+        context = {'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
+                   'footer_form': form}
+
+        messages.success(request, "Saved Changes")
+
+        return render(self.request,
+                      template_name='ndr_core/admin_views/overview/configure_pages.html',
+                      context=context)
+
+
 class PageDetailView(LoginRequiredMixin, DetailView):
     """The PageDetailView shows the details of a page. It is shown when selecting a page in the table.
     The list of pages is still shown on the right side."""

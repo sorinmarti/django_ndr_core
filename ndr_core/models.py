@@ -750,6 +750,7 @@ class NdrCoreValue(models.Model):
 
     class ValueType(models.TextChoices):
         STRING = "string", "String"
+        RICH_STRING = "rich_string", "Rich Text"
         INTEGER = "integer", "Integer"
         BOOLEAN = "boolean", "Boolean"
         LIST = "list", "List"
@@ -797,8 +798,8 @@ class NdrCoreValue(models.Model):
 
     def get_value(self):
         """Returns the valued which is always saved as string as the proper type. """
-        if self.value_type == NdrCoreValue.ValueType.STRING or self.value_type == NdrCoreValue.ValueType.LIST or \
-                self.value_type == NdrCoreValue.ValueType.URL:
+        if self.value_type == NdrCoreValue.ValueType.STRING or self.value_type == NdrCoreValue.ValueType.RICH_STRING or \
+                self.value_type == NdrCoreValue.ValueType.LIST or self.value_type == NdrCoreValue.ValueType.URL:
             return self.value_value
         if self.value_type == NdrCoreValue.ValueType.INTEGER:
             try:

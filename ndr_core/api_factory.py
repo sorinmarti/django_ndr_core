@@ -27,8 +27,8 @@ class ApiFactory:
 
     def get_query_class(self):
         """Returns the query class for the selected API implementation."""
-        if self.search_configuration.api_configuration.api_type.name in self.api_mapping:
-            return self.api_mapping[self.search_configuration.api_configuration.api_type.name]["query"]
+        if self.search_configuration.api_type.name in self.api_mapping:
+            return self.api_mapping[self.search_configuration.api_type.name]["query"]
         else:
             raise Exception("API IMPLEMENTATION NOT FOUND")
 
@@ -42,7 +42,7 @@ class ApiFactory:
 
     def get_result_class(self):
         """Returns the result class for the selected API implementation."""
-        if self.search_configuration.api_configuration.api_type.name in self.api_mapping:
-            return self.api_mapping[self.search_configuration.api_configuration.api_type.name]["result"]
+        if self.search_configuration.api_type.name in self.api_mapping:
+            return self.api_mapping[self.search_configuration.api_type.name]["result"]
         else:
             raise Exception("API IMPLEMENTATION NOT FOUND")
