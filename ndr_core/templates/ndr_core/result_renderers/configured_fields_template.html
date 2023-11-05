@@ -3,9 +3,8 @@
 {% load i18n %}
 
 {% block search_result_content %}
-    <small>
-        {{ result.data|pretty_json }}
-    </small>
+    {{ result.results }}
+   {{ card_content }}
 {% endblock %}
 
 {% block citation_info %}

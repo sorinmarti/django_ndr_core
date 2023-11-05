@@ -48,9 +48,7 @@
             {% endblocktranslate %}
         </div>
 
-        {% for result_line in result.results %}
-            {% render_result result_line search_config %}
-        {% endfor %}
+        {% render_result result search_config %}
 
         {% include 'ndr_core/pagination.html' %}
 

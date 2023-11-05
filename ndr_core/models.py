@@ -472,7 +472,7 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
 
     result_card_template = models.CharField(max_length=200,
                                             blank=False,
-                                            default='ndr_core/result_renderers/default_template.html',
+                                            default='default_template.html',
                                             help_text="The template to use for the result cards.")
 
     """The template to use for the result cards. """

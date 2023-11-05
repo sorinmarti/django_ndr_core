@@ -237,14 +237,15 @@ class SearchView(_NdrCoreSearchView):
             # If the form is valid: create a search query
             if form.is_valid():
                 # The search is either a simple or a custom/advanced search
-                if requested_search == 'simple':
-                    search_term = request.GET.get('search_term', '')
+                if requested_search.endswith('_simple'):
+                    requested_search_actual = requested_search[:-len('_simple')]
+                    search_term = request.GET.get(f'search_term_{requested_search_actual}', '')
                     if search_term == '':
                         messages.error(request, _('Please enter a search term.'))
                         context.update({'form': form, 'requested_search': requested_search})
                         return render(request, self.template_name, context)
 
-                    search_config = self.get_search_config_from_name(requested_search, ndr_page=self.ndr_page)
+                    search_config = self.get_search_config_from_name(requested_search_actual)
 
                     api_factory = ApiFactory(search_config)
                     query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
@@ -278,14 +279,14 @@ class SearchView(_NdrCoreSearchView):
                     messages.error(request, _('No results found.'))
                 else:
                     context.update({'search_config': search_config})
-                    for r in result.results:
+                    """for r in result.results:
                         origin = r['data']['port_of_origin']['scheme']
                         destination = r['data']['port_of_destination']['scheme']
                         amap = get_map([
                             [origin['identifier'], origin['name'], origin['lat'], origin['lng']],
                             [destination['identifier'], destination['name'], destination['lat'], destination['lng']]
                         ])
-                        r['map'] = amap
+                        r['map'] = amap"""
 
                     context.update({'result': result})
         else:

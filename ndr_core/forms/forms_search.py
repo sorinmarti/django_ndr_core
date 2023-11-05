@@ -134,7 +134,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                     self.fields[f'{search_config.conf_name}_{search_field.field_name}'] = form_field
 
     @staticmethod
-    def get_compact_view_field(self):
+    def get_compact_view_field():
         """Returns the compact view field for the given search configuration. """
         return forms.BooleanField(required=False,
                                   widget=BootstrapSwitchWidget(attrs={'label': 'Compact Result View'}),

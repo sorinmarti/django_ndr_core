@@ -102,26 +102,6 @@
   {
     "model": "ndr_core.NdrCoreValue",
     "fields": {
-      "value_name": "search_simple_field_label",
-      "value_label": "Simple Search Field label",
-      "value_help_text": "Label for the text field used to enter the simple search term.",
-      "value_value": "Search Term",
-      "is_translatable": true
-    }
-  },
-  {
-    "model": "ndr_core.NdrCoreValue",
-    "fields": {
-      "value_name": "search_simple_help_text",
-      "value_label": "Simple Search Field Help Text",
-      "value_help_text": "Help text for the text field used to enter the simple search term.",
-      "value_value": "Search for anything!",
-      "is_translatable": true
-    }
-  },
-  {
-    "model": "ndr_core.NdrCoreValue",
-    "fields": {
       "value_name": "search_simple_has_compact_result_view",
       "value_label": "Simple Search has compact result view",
       "value_help_text": "If true, the simple search form will feature a 'compact view' trigger.",

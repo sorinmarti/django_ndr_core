@@ -16,12 +16,10 @@
 
     <!--Body of the card. Contains the image and the content. -->
     <div class="card-body d-flex flex-column align-items-start">
-        <div class="row">
-            <div class="col-sm-12">
-                {% block search_result_content %}
-                    <!--  -->
-                {% endblock %}
-            </div>
+        <div class="container">
+            {% block search_result_content %}
+                {{ card_content }}
+            {% endblock %}
         </div>
     </div>
 
