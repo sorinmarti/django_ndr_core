@@ -68,7 +68,8 @@ class AdvancedSearchForm(_NdrCoreForm):
                                                   lowest_number=int(search_field.lower_value)
                                                   if search_field.lower_value is not None else 1,
                                                   highest_number=int(search_field.upper_value)
-                                                  if search_field.upper_value is not None else 999999)
+                                                  if search_field.upper_value is not None else 999999,
+                                                  initial=search_field.get_initial_value())
                 # Boolean field (checkbox)
                 if search_field.field_type == search_field.FieldType.BOOLEAN:
                     form_field = forms.BooleanField(label=mark_safe('&nbsp;'),
@@ -82,7 +83,8 @@ class AdvancedSearchForm(_NdrCoreForm):
                     # TODO initial value
                     form_field = forms.DateField(label=search_field.translated_field_label(),
                                                  required=search_field.field_required,
-                                                 help_text=help_text)
+                                                 help_text=help_text,
+                                                 initial=search_field.get_initial_value())
                 # Date range field
                 if search_field.field_type == search_field.FieldType.DATE_RANGE:
                     # search_field.lower_value is in the form YYYY-MM-DD. Convert it to DD.MM.YYYY
@@ -108,23 +110,24 @@ class AdvancedSearchForm(_NdrCoreForm):
                                                                        "years": 500
                                                                    },
                                                                    'showDropdowns': True}
-                                               ))
+                                               ),
+                                               initial=search_field.get_initial_value())
                 # List field (dropdown)
                 if search_field.field_type == search_field.FieldType.LIST:
-                    # TODO initial value
                     form_field = forms.ChoiceField(label=search_field.translated_field_label(),
                                                    choices=[('', _('Please Choose'))] + search_field.get_list_choices(),
                                                    required=search_field.field_required,
-                                                   help_text=help_text)
+                                                   help_text=help_text,
+                                                   initial=search_field.get_initial_value())
                 # Multi list field (multiple select with Select2)
                 if search_field.field_type == search_field.FieldType.MULTI_LIST:
-                    # TODO initial value
                     form_field = forms.MultipleChoiceField(label=search_field.translated_field_label(),
                                                            choices=search_field.get_list_choices(),
                                                            widget=FilteredListWidget(attrs={'data-minimum-input-length': 0}),
                                                            # widget=SwitchGroupWidget(),
                                                            required=search_field.field_required,
-                                                           help_text=help_text)
+                                                           help_text=help_text,
+                                                           initial=search_field.get_initial_value())
 
                 # Add the field to the form if it was created.
                 if form_field is not None:

@@ -90,20 +90,19 @@ class SearchConfigurationFormEditView(LoginRequiredMixin, FormView):
 
         return form
 
+    @staticmethod
+    def get_row_fields(row):
+        return [f'search_field_{row}', f'row_field_{row}', f'column_field_{row}', f'size_field_{row}']
+
     def form_valid(self, form):
-        """TODO """
+        """Creates or updates the form configuration for a search configuration. """
         response = super(SearchConfigurationFormEditView, self).form_valid(form)
         conf_object = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
 
         for row in range(20):
-            if f'search_field_{row}' in form.cleaned_data and \
-                    f'row_field_{row}' in form.cleaned_data and \
-                    f'column_field_{row}' in form.cleaned_data and \
-                    f'size_field_{row}' in form.cleaned_data and \
-                    form.cleaned_data[f'search_field_{row}'] is not None and \
-                    form.cleaned_data[f'row_field_{row}'] is not None and \
-                    form.cleaned_data[f'column_field_{row}'] is not None and \
-                    form.cleaned_data[f'size_field_{row}'] is not None:
+            fields = self.get_row_fields(row)
+            if all(field in form.cleaned_data for field in fields) and \
+                    all(form.cleaned_data[x] is not None for x in fields):
 
                 # There is a valid row of configuration. Check if it already exists in the database.
                 try:

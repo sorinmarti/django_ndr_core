@@ -73,7 +73,6 @@ class NdrCoreFormSubmit(BaseInput):
 
 
 class FilteredListWidget(s2forms.Select2MultipleWidget):
-    # TODO: This is a copy of the original widget.
     """Widget to display a multi select2 dropdown for list configurations. """
 
     search_fields = [
