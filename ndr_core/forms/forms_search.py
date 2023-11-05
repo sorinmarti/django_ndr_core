@@ -1,15 +1,21 @@
-from crispy_forms.bootstrap import TabHolder
+from bootstrap_daterangepicker.fields import DateRangeField
+from bootstrap_daterangepicker.widgets import DateRangeWidget
+from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Div
+from crispy_forms.layout import Layout, Field, Div, HTML
 from django import forms
+from django.db.models import Max
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from ndr_core.forms import _NdrCoreForm
-from ndr_core.forms.widgets import BootstrapSwitchWidget, NdrCoreFormSubmit
-from ndr_core.models import NdrCoreSearchConfiguration
+
+from ndr_core.forms.fields import NumberRangeField
+from ndr_core.forms.forms_base import _NdrCoreForm
+from ndr_core.forms.widgets import BootstrapSwitchWidget, NdrCoreFormSubmit, FilteredListWidget
 
 
 class AdvancedSearchForm(_NdrCoreForm):
-    """Form class for the search. Needs a search config and then creates and configures the form from it. """
+    """Form class for the search.
+    Needs a search config and then creates and configures the form from it. """
 
     search_configs = None
 
@@ -27,15 +33,15 @@ class AdvancedSearchForm(_NdrCoreForm):
         # A search configuration may have a simple search tab as well.
         for search_config in self.search_configs:
 
+            # If the search configuration has a simple search tab, add the fields to the form.
             if search_config.has_simple_search:
                 self.init_simple_search_fields(search_config)
 
+            # If the search configuration has an advanced search tab, add the fields to the form.
             if search_config.search_has_compact_result:
-                self.fields[f'compact_view_{search_config.conf_name}'] = forms.BooleanField(required=False,
-                                                                                            widget=BootstrapSwitchWidget(
-                                                                                                attrs={'label': 'Compact Result View'}),
-                                                                                            label='')
+                self.fields[f'compact_view_{search_config.conf_name}'] = self.get_compact_view_field()
 
+            # Add the fields of the search configuration to the form.
             for field in search_config.search_form_fields.all():
                 search_field = field.search_field
                 form_field = None
@@ -88,21 +94,21 @@ class AdvancedSearchForm(_NdrCoreForm):
                     if upper_value is not None:
                         upper_value = f'{upper_value[8:10]}.{upper_value[5:7]}.{upper_value[0:4]}'
 
-                    form_field = fields.DateRangeField(label=search_field.translated_field_label(),
-                                                       required=search_field.field_required,
-                                                       help_text=help_text,
-                                                       input_formats=['%d.%m.%Y'],
-                                                       widget=widgets.DateRangeWidget(
-                                                           format='%d.%m.%Y',
-                                                           picker_options={'startDate': lower_value,
-                                                                           'endDate': "upper_value",
-                                                                           'minYear': int(lower_value[6:10]),
-                                                                           'maxYear': int(upper_value[6:10]),
-                                                                           "maxSpan": {
-                                                                               "years": 500
-                                                                           },
-                                                                           'showDropdowns': True}
-                                                       ))
+                    form_field = DateRangeField(label=search_field.translated_field_label(),
+                                                required=search_field.field_required,
+                                                help_text=help_text,
+                                                input_formats=['%d.%m.%Y'],
+                                                widget=DateRangeWidget(
+                                                   format='%d.%m.%Y',
+                                                   picker_options={'startDate': lower_value,
+                                                                   'endDate': "upper_value",
+                                                                   'minYear': int(lower_value[6:10]),
+                                                                   'maxYear': int(upper_value[6:10]),
+                                                                   "maxSpan": {
+                                                                       "years": 500
+                                                                   },
+                                                                   'showDropdowns': True}
+                                               ))
                 # List field (dropdown)
                 if search_field.field_type == search_field.FieldType.LIST:
                     # TODO initial value
@@ -124,56 +130,64 @@ class AdvancedSearchForm(_NdrCoreForm):
                 if form_field is not None:
                     self.fields[f'{search_config.conf_name}_{search_field.field_name}'] = form_field
 
+    @staticmethod
+    def get_compact_view_field(self):
+        """Returns the compact view field for the given search configuration. """
+        return forms.BooleanField(required=False,
+                                  widget=BootstrapSwitchWidget(attrs={'label': 'Compact Result View'}),
+                                  label='', )
+
     def init_simple_search_fields(self, search_config):
         """Create form fields for simple search. """
 
-        self.fields['search_term'] = forms.CharField(label=search_config.translated_simple_query_label(),
-                                                     required=False,
-                                                     max_length=100,
-                                                     help_text=search_config.translated_simple_query_help_text())
+        self.fields[f'search_term_{search_config.conf_name}'] = (
+            forms.CharField(label=search_config.translated_simple_query_label(),
+                            required=False,
+                            max_length=100,
+                            help_text=search_config.translated_simple_query_help_text()))
 
-        self.fields['and_or_field'] = forms.ChoiceField(label=_('And or Or Search'),
-                                                        choices=[('and', _('AND search')), ('or', _('OR search'))],
-                                                        required=False)
+        self.fields[f'and_or_field_{search_config.conf_name}'] = (
+            forms.ChoiceField(label=_('And or Or Search'),
+                              choices=[('and', _('AND search')), ('or', _('OR search'))],
+                              required=False))
 
         if search_config.search_has_compact_result:
-            self.fields['compact_view_simple'] = forms.BooleanField(required=False,
-                                                                    widget=BootstrapSwitchWidget(
-                                                                        attrs={'label': _('Compact Result View')}),
-                                                                    label='')
+            self.fields[f'compact_view_{search_config.conf_name}_simple'] = self.get_compact_view_field()
 
     @staticmethod
     def get_simple_search_layout_fields(search_config):
         """Create and return layout fields for the simple search fields. """
 
-        search_field = Field('search_term', wrapper_class='col-md-12')
-        type_field = Field('and_or_field', wrapper_class='col-md-4')
-
-        if search_config.search_has_compact_result:
-            compact_field = Field('compact_view_simple', wrapper_class='col-md-4')
-            return search_field, type_field, compact_field
+        search_field = Field(f'search_term_{search_config.conf_name}', wrapper_class='col-md-12')
+        type_field = Field(f'and_or_field_{search_config.conf_name}', wrapper_class='col-md-4')
 
         return search_field, type_field
 
     @staticmethod
-    def get_search_button(conf_name):
+    def get_search_button(search_config, simple=False):
         """Create and return right aligned search button. """
+        search_button_field_name = f'search_button_{search_config.conf_name}'
+        if simple:
+            search_button_field_name += '_simple'
+
         compact_field = None
-        search_has_compact_result = False  # TODO: Fix this
-        if search_has_compact_result:
-            compact_field = Field(f'compact_view_{conf_name}')
+        if search_config.search_has_compact_result:
+            field_name = f'compact_view_{search_config.conf_name}'
+            if simple:
+                field_name += '_simple'
+            compact_field = Field(field_name, wrapper_class='col-md-12')
 
         div = Div(
             Div(
                 css_class="col-md-5"
             ),
             Div(
-                compact_field,
+                Div(compact_field, css_class="text-right"),
                 css_class="col-md-4"
             ),
             Div(
                 Div(
-                    NdrCoreFormSubmit(f'search_button_{conf_name}', _('Search')),
+                    NdrCoreFormSubmit(search_button_field_name, _('Search')),
                     css_class="text-right"
                 ),
                 css_class="col-md-3"
@@ -192,26 +206,29 @@ class AdvancedSearchForm(_NdrCoreForm):
 
         # There can be multiple search configurations for one page. Each of them gets its own tab.
         tabs = TabHolder(css_id='id_tabs')
-        # A combined search has a simple search tab as well.
-        if self.ndr_page.page_type == NdrCorePage.PageType.COMBINED_SEARCH:
-            tab_simple = Tab(_('Simple Search'), css_id='simple')
-            fields = self.get_simple_search_layout_fields()
-            tab_simple.append(Div(fields[0], css_class='form-row'))
-            tab_simple.append(Div(fields[1], css_class='form-row'))
-            if len(fields) > 2:
-                tab_simple.append(Div(fields[2], css_class='form-row'))
-
-            tab_simple.append(self.get_search_button('simple'))
-            tabs.append(tab_simple)
 
         # For each search configuration, create a tab and add the form fields to it.
         for search_config in self.search_configs:
+            # Each search configuration can have a simple search tab.
+            tab_simple = None
+            if search_config.has_simple_search:
+                tab_simple = Tab(search_config.translated_simple_search_tab_title(),
+                                 css_id=f'{search_config.conf_name}_simple')
+                fields = self.get_simple_search_layout_fields(search_config)
+                tab_simple.append(Div(fields[0], css_class='form-row'))
+                tab_simple.append(Div(*fields[1:], css_class='form-row'))
+
+                tab_simple.append(self.get_search_button(search_config, simple=True))
+                if search_config.simple_search_first:
+                    tabs.append(tab_simple)
+
+            # This id the tab of the advanced search.
             tab = Tab(search_config.translated_conf_label(), css_id=search_config.conf_name)
 
             # The form fields are grouped by row and column. The row is the outer loop.
             max_row = search_config.search_form_fields.all().aggregate(Max('field_row'))
             for row in range(max_row['field_row__max']):
-                row += 1
+                row += 1  # The row starts with 1, not 0.
                 form_row = Div(css_class='form-row')
                 # The column is the inner loop.
                 for column in search_config.search_form_fields.filter(field_row=row).order_by('field_column'):
@@ -234,8 +251,13 @@ class AdvancedSearchForm(_NdrCoreForm):
 
                 tab.append(form_row)
 
-            tab.append(self.get_search_button(search_config.conf_name))
-            tabs.append(tab)
+            # Only add the tab if there are fields in it.
+            if search_config.search_form_fields.all().count() > 0:
+                tab.append(self.get_search_button(search_config))
+                tabs.append(tab)
+
+            if search_config.has_simple_search and not search_config.simple_search_first:
+                tabs.append(tab_simple)
 
         layout.append(tabs)
 

@@ -458,6 +458,9 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                                help_text="The main field to query for a simple search.")
     """The main field to query for a simple search. """
 
+    simple_search_tab_title = models.CharField(max_length=100, blank=False, default='Simple Search',
+                                               help_text="The title for the simple search tab.")
+
     simple_query_label = models.CharField(max_length=100, blank=False, default='Search',
                                           help_text="The label for the simple search field.")
     """The label for the simple search field. """
@@ -503,6 +506,11 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
         """Returns the translated conf label for a given language. If no translation exists, the default label is
         returned. """
         return self.translated_field(self.conf_label, 'conf_label', self.conf_name)
+
+    def translated_simple_search_tab_title(self):
+        """Returns the translated simple search tab title for a given language. If no translation exists, the default
+        label is returned. """
+        return self.translated_field(self.simple_search_tab_title, 'simple_search_tab_title', self.conf_name)
 
     def translated_simple_query_label(self):
         """Returns the translated simple query label for a given language. If no translation exists, the default label
