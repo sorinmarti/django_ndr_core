@@ -1,2 +1,0 @@
-
-- add 'ndr' to INSTALLED_APPS
