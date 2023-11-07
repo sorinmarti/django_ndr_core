@@ -58,6 +58,8 @@ class Command(BaseCommand):
                                             f'This is going to create files and directories. (y/n) ')
                     if confirm_command == 'n':
                         return
+        # (1.5) MIGRATE
+        call_command('migrate')
 
         # (2) CREATE APP
         # Initialize the app
@@ -94,28 +96,28 @@ class Command(BaseCommand):
 
         # (4) CREATE DIRECTORIES AND FILES
         # Create directories
-        self.stdout.write(self.style.SUCCESS('Creating directories...'))
+        self.stdout.write('Creating directories...')
         for directory in directories_to_create:
             if not os.path.isdir(directory):
                 os.makedirs(directory)
                 self.stdout.write(self.style.SUCCESS(f'>>> Created "{directory}"'))
 
         # Copy files
-        self.stdout.write(self.style.SUCCESS('Copying files...'))
+        self.stdout.write('Copying files...')
         for file in files_to_copy:
             source_file = finders.find(f'ndr_core/app_init/{file[0]}')
             shutil.copyfile(source_file, file[1])
             self.stdout.write(self.style.SUCCESS(f'>>> Created {file[1]}'))
 
         # Create media directories
-        self.stdout.write(self.style.SUCCESS('Creating media directories...'))
+        self.stdout.write('Creating media directories...')
         for directory in media_directories_to_create:
             if not os.path.exists(f'media/{directory}/'):
                 os.makedirs(f'media/{directory}/')
                 self.stdout.write(self.style.SUCCESS(f'>>> Created "media/{directory}/"'))
 
         # Create geoip directory
-        self.stdout.write(self.style.SUCCESS('Creating geoip directory...'))
+        self.stdout.write('Creating geoip directory...')
         if not os.path.exists(f'geoip/'):
             os.makedirs(f'geoip/')
             source_file = finders.find(f'ndr_core/app_init/GeoLite2-Country.mmdb')
@@ -123,7 +125,7 @@ class Command(BaseCommand):
 
         # (5) INITIALIZE VALUES
         # Load fixtures
-        self.stdout.write(self.style.SUCCESS('Loading initial values...'))
+        self.stdout.write('Loading initial values...')
         for fixture in fixtures_to_load:
             call_command('loaddata', fixture, app_label='ndr_core', verbosity=0)
             self.stdout.write(self.style.SUCCESS(f'>>> Loaded initial values: {fixture}'))
@@ -192,8 +194,27 @@ class Command(BaseCommand):
             for key, value in settings_values.items():
                 boiler_plate = boiler_plate.replace("{{" + key + "}}", value)
 
-        with open(settings_file, "w") as f:
-            f.write(boiler_plate)
+        overwrite_settings = input(f'Overwrite settings file "{settings_file}"? (Y/n) ')
+        if overwrite_settings == '' or overwrite_settings.lower() == 'y':
+            with open(settings_file, "w") as f:
+                f.write(boiler_plate)
+            self.stdout.write(self.style.SUCCESS(f'>>> Updated settings file "{settings_file}"'))
+        else:
+            self.stdout.write(self.style.WARN(f'>>> Skipped updating settings file "{settings_file}"'))
 
-        # (10) FINISH
+        # (10) UPDATE PROJECT URLS FILE
+        urls_boiler_plate_file = finders.find(f'ndr_core/app_init/project_urls_boilerplate.txt')
+        urls_file = os.path.join(os.getcwd(), settings_split[0], "urls.py")
+        with open(urls_boiler_plate_file) as f:
+            urls_boiler_plate = f.read()
+            urls_boiler_plate = urls_boiler_plate.replace("{{PROJECT_NAME}}", settings_split[0])
+
+        overwrite_urls = input(f'Overwrite urls.py file? (Y/n) ')
+        if overwrite_urls == '' or overwrite_settings.lower() == 'y':
+            with open(urls_file, "w") as f:
+                f.write(urls_boiler_plate)
+            self.stdout.write(self.style.SUCCESS(f'>>> Updated urls.py file'))
+        else:
+            self.stdout.write(self.style.WARN(f'>>> Skipped updating urls.py file'))
+        # (11) FINISH
         self.stdout.write(self.style.SUCCESS('Finished.'))
