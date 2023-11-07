@@ -12,11 +12,11 @@ from django.views.generic.edit import CreateView
 from django.utils.translation import gettext_lazy as _
 from django.utils import translation
 
-from django_ndr_core import settings
+from django.conf import settings
 from ndr_core.forms.forms_contact import ContactForm
 from ndr_core.forms.forms_manifest import ManifestSelectionForm
 from ndr_core.forms.forms_search import AdvancedSearchForm
-from ndr_core.map_test import get_map
+
 from ndr_core.models import (
     NdrCorePage,
     NdrCoreUserMessage,
