@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
 from django.contrib.staticfiles import finders
+from django.core.management.utils import get_random_secret_key
 
 from ndr_core.models import NdrCorePage, NdrCoreValue
 from ndr_core.ndr_settings import NdrSettings
@@ -131,7 +132,8 @@ class Command(BaseCommand):
         if options['noinput'] is False:
             values_to_override = [
                 'project_title',
-                'header_default_title'
+                'header_default_title',
+                'ndr_language'
             ]
             for value in values_to_override:
                 try:
@@ -146,7 +148,7 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.ERROR(f'ERROR: Value "{value}" does not exist.'))
 
         # (7) CREATE ADMIN USER
-        self.stdout.write(self.style.SUCCESS('Creating admin user...'))
+        self.stdout.write('Creating admin user...')
         if force_delete_admin_user:
             User.objects.filter(username='ndr_core_admin').delete()
             self.stdout.write(self.style.WARN(f'>>> Deleted user "ndr_core_admin"'))
@@ -159,8 +161,6 @@ class Command(BaseCommand):
         else:
             self.stdout.write(f'>>> Skipped creating new user "ndr_core_admin". Already exists.')
 
-
-
         # (8) CREATE PAGES
         # Home Page
         NdrCorePage.objects.create(page_type=NdrCorePage.PageType.TEMPLATE,
@@ -171,5 +171,29 @@ class Command(BaseCommand):
                                    index=0)
         self.stdout.write(self.style.SUCCESS(f'>>> Created new page "Home Page"'))
 
-        # (9) FINISH
+        # (9) UPDATE SETTINGS FILE
+        # Copy settings file to create a backup
+        self.stdout.write('Updating settings file...')
+        host = "*"
+        host = input(f'Please enter the hostname your installation will be running on. '
+                     f'<default: {host}>": ')
+        settings_split = os.environ.get("DJANGO_SETTINGS_MODULE").split(".")
+        settings_file = os.path.join(os.getcwd(), settings_split[0], f"{settings_split[1]}.py")
+        shutil.copyfile(settings_file, f"{settings_file}.bak")
+
+        # Overwrite settings file
+        boiler_plate_file = finders.find(f'ndr_core/app_init/settings_boilerplate.txt')
+        settings_values = {"PROJECT_NAME": settings_split[0],
+                           "SECRET_KEY": get_random_secret_key(),
+                           "ALLOWED_HOST": "*",
+                           "INITIAL_LANGUAGE_CODE":NdrCoreValue.objects.get(value_name="ndr_language").get_value()}
+        with open(boiler_plate_file) as f:
+            boiler_plate = f.read()
+            for key, value in settings_values.items():
+                boiler_plate = boiler_plate.replace("{{" + key + "}}", value)
+
+        with open(settings_file, "w") as f:
+            f.write(boiler_plate)
+
+        # (10) FINISH
         self.stdout.write(self.style.SUCCESS('Finished.'))

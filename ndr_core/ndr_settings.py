@@ -2,9 +2,8 @@
 import os.path
 from pathlib import Path
 from django.conf import settings
-from django.urls import path, include, re_path, reverse_lazy
+from django.urls import path, include, re_path
 from django.views.static import serve
-from django.contrib import messages
 
 
 class NdrSettings:
@@ -102,45 +101,3 @@ class NdrSettings:
     def get_css_path():
         """Returns the ndr-app's css path. Convenience method. """
         return f"{NdrSettings.get_static_path()}/css"
-
-
-""" 
-Needed settings for the used third party modules. These must be imported by settings.py 
-"""
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-"""Django crispy forms - used to render forms."""
-
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
-"""Django tables2 - used to render tables."""
-
-LOGIN_URL = reverse_lazy('ndr_core:login')
-LOGOUT_URL = reverse_lazy('ndr_core:logout')
-LOGIN_REDIRECT_URL = reverse_lazy('ndr_core:dashboard')
-"""Overwrites the default urls for the django authentication system."""
-
-FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
-"""This renderer gives you complete control of how form and widget templates are sourced."""
-
-MESSAGE_TAGS = {
-        messages.DEBUG: 'alert-secondary',
-        messages.INFO: 'alert-info',
-        messages.SUCCESS: 'alert-success',
-        messages.WARNING: 'alert-warning',
-        messages.ERROR: 'alert-danger',
-}
-"""Bootstrap css classes to use to display django's built in message tags."""
-
-RECAPTCHA_PUBLIC_KEY = '6LdIoTwekAAAAAMoxg2s9vvLklOy0QY92q9cdionT'
-RECAPTCHA_PRIVATE_KEY = '6LdIoTwekAAAAAAyfC5D4cpvqjCRUDxKoz5BtWyM0'
-"""Recaptcha key to use for the captcha functionality for the contact form.. """
-
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-"""Needed for the ck-editor"""
-
-GEOIP_PATH = os.path.join('geoip/')
-"""Needed for the geoip functionality."""
-
-LANGUAGE_CODE = 'en'
-LANGUAGE_COOKIE_NAME = 'django_ndr_language'
-"""Default language code and cookie name."""
