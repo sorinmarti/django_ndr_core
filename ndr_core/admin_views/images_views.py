@@ -41,14 +41,15 @@ class ConfigureImages(LoginRequiredMixin, View):
 
         context = {'logo_path': f'{NdrSettings.APP_NAME}/images/logo.png',
                    'groups': image_groups}
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_images.html',
+        return render(self.request,
+                      template_name='ndr_core/admin_views/overview/configure_images.html',
                       context=context)
 
 
 class ImagesGroupView(LoginRequiredMixin, View):
     """Shows a group of images. """
 
-    template_name = 'ndr_core/admin_views/configure_images.html'
+    template_name = 'ndr_core/admin_views/overview/configure_images.html'
 
     def get_context_data(self):
         context = {'groups': image_groups}

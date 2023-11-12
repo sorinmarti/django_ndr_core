@@ -56,20 +56,18 @@
                             {% endif %}
 
                             <div class="col-3 border">
-                                {% if image.title %}
-                                    {{ image.title }}<br/>
-                                {% else %}
-                                    <i>No Title</i><br/>
+                                {% if image.image_group == 'page_logos' %}
+                                    Language: {{ image.language }}
+                                {% elif image.image_group == 'page_logos' %}
+                                {% elif image.image_group == 'backgrounds' %}
+                                {% elif image.image_group == 'elements' %}
+                                {% elif image.image_group == 'figures' %}
+                                    {{ image.title }}
+                                {% elif image.image_group == 'logos' %}
+                                {% elif image.image_group == 'people' %}
                                 {% endif %}
                                 <img src="{{ image.image.url }}" class="img-thumbnail" /><br/>
-                                {% if image.caption %}
-                                    <small>{{ image.caption }}</small><br/>
-                                {% else %}
-                                    <small><i>No caption</i></small><br/>
-                                {% endif %}
-                                {% if image.image_group == "figures" %}
-                                    <small>To display this image, use this code in your page text: <code>[[figure|{{ image.pk }}]]</code></small><br/>
-                                {% endif %}
+
                                 <p class="p-0 m-0">
                                     <div style="white-space: nowrap;">
                                         {% if not forloop.first %}
