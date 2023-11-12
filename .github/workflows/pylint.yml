@@ -22,4 +22,14 @@ jobs:
     - name: Analysing the code with pylint
       run: |
         pylint --load-plugins pylint_django --django-settings-module=django_ndr_core.settings --max-line-length=120 --exit-zero --output-format=text:output.txt $(git ls-files '*.py')
-        python extract_pylint_score.py
+    - name: Update README
+      run: python extract_pylint_score.py
+    - name: Set up Git Config
+      run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+    - name: Commit and Push Changes
+      run: |
+          git add README.md
+          git diff-index --quiet HEAD || git commit -m "Update Pylint Score Badge"
+          git push
