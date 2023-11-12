@@ -20,4 +20,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint --load-plugins pylint_django --django-settings-module=django_ndr_core.settings --max-line-length=120 $(git ls-files '*.py')
