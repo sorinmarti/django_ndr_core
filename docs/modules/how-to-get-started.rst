@@ -34,7 +34,8 @@ Then, you can run the following command to start the Docker image
 This will start the Docker image and expose port 8000. You can then access the NDR Core
 frontend by going to http://localhost:8000.
 
-Using the image in production is not recommended.
+Using the image in production is not recommended. Instead you should install NDR Core on
+a server (see next chapter).
 
 Server Installation
 -------------------

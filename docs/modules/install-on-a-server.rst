@@ -2,20 +2,26 @@
 Installation guide
 ##################
 
+This installation guide will first guide you through the installation of NDR Core. If your data and source imagery
+is stored in different places, you're all set. If you want to store your data and source imagery in the same place,
+you need to install a data service and a IIIF server. This guide will also guide you through the installation of
+MongoDB and Cantaloupe IIIF Image Server. The latter is meant for ongoing projects. You should at least be able to get
+your source imagery from a long term repository like InvenioRDM.
+
+Install NDR Core for production
+===============================
+
 This guide will help you install NDR Core on a Ubuntu server. The setup is as follows:
 
 * Ubuntu 22.04 LTS server
 * Nginx webserver
 * Gunicorn
-* MongoDB
 * Django and NDR Core application
-* SQLite database for NDR Core
-* Cantaloupe IIIF Image Server
 
-This will allow you to create a presentation website where you store your data and your
-source imagery on the same server. This is not recommended for production use. For production
-use you should use a separate server for your source imagery. Ideally it should be stored in a
-long term repository like InvenioRDM or Zenodo.
+Optional:
+
+* MongoDB
+* Cantaloupe IIIF Image Server
 
 This guide is tested for a Ubuntu 22.04 LTS server installation. It should work for other versions of
 Ubuntu as well but the mongodb installation may differ.
@@ -30,15 +36,12 @@ this guide to install one: https://www.digitalocean.com/community/tutorials/init
 
 Basic Setup
 ===========
-First you need to install the basic packages. You need to install Python, pip, virtualenv, git, nginx, curl,
-postgresql and the IIIF Image Server (cantaloupe).
+First you need to install the basic packages. You need to install Python, pip, virtualenv, git, nginx and postgresql.
 
 Django is a Python web framework. You need to install Python and pip. Django and NDR Core are installed
-within a virtual python environment. Nginx is a webserver that will serve our application. Curl is used to
-download the IIIF Image Server.
+within a virtual python environment. Nginx is a webserver that will serve our application.
 
-Django can run with different database backends. We will use SQLite for this tutorial. You can use any other
-database backend you like. For production use you can use PostgreSQL or MySQL. The django-database stores the
+Django can run with different database backends (This is not your data, but your website configuration). We will use SQLite for this tutorial. You can use any other database backend you like. For production use you can use PostgreSQL or MySQL. The django-database stores the
 page contents, your search and api configuration, user messages and configuration values, so it is not particularly
 large or heavily used and SQLite is fine most of the time. For more information on other databases see
 https://docs.djangoproject.com/en/3.2/ref/databases/. The following command also installs PostgreSQL if you want to
@@ -47,7 +50,7 @@ use it.
 .. code-block:: bash
 
     sudo apt update
-    sudo apt install python3-venv python3-dev libpq-dev postgresql postgresql-contrib nginx curl
+    sudo apt install python3-venv python3-dev libpq-dev postgresql postgresql-contrib nginx
 
 
 Create Your Project
@@ -58,7 +61,7 @@ Create a directory for your project, change its ownership and change into it.
 
     sudo mkdir /var/www/<project_root>
     sudo chown <username> /var/www/<project_root>
-    cd /var/www/<projectname>
+    cd /var/www/<project_root>
 
 
 Now create a virtual environment and activate it.
@@ -75,14 +78,14 @@ if you don't use PostgreSQL.
 
 .. code-block:: bash
 
-    pip install django gunicorn psycopg2-binary django-ndr-core
+    pip install gunicorn psycopg2-binary django-ndr-core
 
 
 Create a Django Project
 -----------------------
 Now you can create a django project. Replace <projectname> with the name of your project.
-This can be the same name as the parent directory with your virtual environment, but it hasn't
-to be.
+This can be the same name as the project_root with your virtual environment, but it hasn't
+to be. Choose a short name without spaces or special characters.
 
 .. code-block:: bash
 
@@ -101,51 +104,29 @@ following changes:
 
 Add the following lines to the top of the file with the other imports:
 
-.. code-block:: python
-
-    import os
-    from ndr_core.ndr_settings import *
-
-Add the following line after the INSTALLED_APPS list:
+Add the following line int the INSTALLED_APPS list:
 
 .. code-block:: python
+    INSTALLED_APPS = [
+        ...
+        'ndr_core',
+    ]
 
-    INSTALLED_APPS += NdrSettings.get_installed_apps()
+Save the file and exit your editor.
 
-To the bottom of the file add the following lines:
-
-.. code-block:: python
-
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-    MEDIA_URL = '/media/'
-
-Now open the file ``urls.py`` and add the following line to the top of the file with the other imports:
-
-.. code-block:: python
-
-    from ndr_core.ndr_settings import NdrSettings
-
-Add the following line below the urlpatterns list:
-
-.. code-block:: python
-
-    urlpatterns += NdrSettings.get_urls()
-
-
-Now change back to your django project directory and create the configuration database. This
-database has nothing to do with your searchable data. It stores the configuration of your
-search and api, user messages and configuration values. It is not particularly large or heavily used
-and SQLite is fine most of the time.
+Now change back to your <projectname> directory (``cd ..``) and initialize your NDR Core installation.
 
 .. code-block:: bash
 
-    cd ..
-    python manage.py migrate
+    python manage.py init_ndr_core
 
+This will initialize your NDR_CORE system. You will be asked to enter some values, but don't worry, you can change them later. The script does the following:
 
-This will create a file called ``db.sqlite3`` in your project directory. This is the default database for django.
-If you want to use PostgreSQL or MySQL you'll have to change the ``DATABASES`` setting in the ``settings.py`` file.
+* Initializes the database. Creates the tables and adds some initial values.
+* Creates an app called "ndr". This is your website.
+* Creates an admin user. You can use this user to log in to the admin interface.
+
+The default database backend is SQLite. If you want to use PostgreSQL or MySQL you'll have to change the ``DATABASES`` setting in the ``settings.py`` file.
 See https://docs.djangoproject.com/en/3.2/ref/databases/ for more information.
 
 Now we need to collect all the static files for our project. This will create a directory called ``static``
@@ -155,21 +136,13 @@ in your project directory.
 
     python manage.py collectstatic
 
-To initialize the NDR Core system, run the following command:
-
-.. code-block:: bash
-
-    python manage.py init_ndr_core
-
-You will be asked to enter some values, but don't worry, you can change them later.
-
 Your django installation is now ready to run and all necessary settings have been made.
 For production use, you'll have to change more settings: Set the ``ALLOWED_HOSTS`` setting
 to include the host name of your server and set the ``DEBUG`` flag to False. Also, you might
 wan to configure your captcha api key or other settings. See the django documentation for more
 information: https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-To test your installation, run the following command and then visit
+If you are doing a local installation, run the following command and then visit
 http://localhost:8000 in your browser. This most likely won't work if you are running your
 server in a virtual machine.
 
@@ -284,7 +257,7 @@ With the following command, you can access the gunicorn logs:
     sudo journalctl -u gunicorn.socket
 
 Until now, we have only started the gunicorn socket. The gunicorn service is not running yet
-because it is only started when a connection is made to the socket. Lets proceed to configure
+because it is only started when a connection is made to the socket. Let's proceed to configure
 Nginx to Proxy Pass to the gunicorn socket.
 
 .. code-block:: bash
@@ -406,6 +379,9 @@ you when your certificate is about to expire.
     If you want to store your data and source imagery in the same place, you need to
     install a data service and a IIIF server. See the next sections for instructions.
 
+    This is only recommended for ongoing projects. Finished projects should store their
+    data and source imagery in a long term repository.
+
 
 Install MongoDB
 ===============
@@ -475,7 +451,7 @@ Change into the /usr/local/ directory and download the latest version of Cantalo
     cd /usr/local
     sudo mkdir cantaloupe
     cd cantaloupe
-    wget https://github.com/cantaloupe-project/cantaloupe/releases/download/v5.0.5/cantaloupe-5.0.5.zip
+    sudo wget https://github.com/cantaloupe-project/cantaloupe/releases/download/v5.0.5/cantaloupe-5.0.5.zip
 
 Unzip the file, cd into the directory and copy the cantaloupe.properties.sample file:
 
@@ -582,7 +558,7 @@ Allow the cantaloupe port in the firewall:
 
     sudo ufw allow 8182/tcp
 
-Add images to your image directory and test if Cantaloupe is working. Sy you have an
+Add images to your image directory and test if Cantaloupe is working. Say you have an
 image called test.jpg in your image directory. You can now access it with the following
 URL: http://<your_domain>:8182/iiif/3/test.jpg/full/full/0/default.jpg
 
