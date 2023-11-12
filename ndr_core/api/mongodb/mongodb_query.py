@@ -1,8 +1,10 @@
+"""Implementation of the mongo DB API. """
 from ndr_core.models import NdrCoreSearchField
 from ndr_core.api.base_query import BaseQuery
 
 
 class MongoDBQuery(BaseQuery):
+    """Implementation of the mongo DB API. """
 
     def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
         """ Not Implemented """

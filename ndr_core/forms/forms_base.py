@@ -1,3 +1,4 @@
+"""Base module for all NDR Core forms.  """
 from crispy_forms.layout import Div
 from django import forms
 

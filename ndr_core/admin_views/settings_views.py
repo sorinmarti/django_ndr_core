@@ -1,3 +1,4 @@
+"""Views for the Settings section of the admin panel."""
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
@@ -106,6 +107,7 @@ class SettingsDetailView(LoginRequiredMixin, View):
     settings_group = None
 
     def get_context_data(self):
+        """Returns the context data for this view."""
         settings_group = settings_group_list[self.kwargs['group']]
         # Users can create their own settings, which are identified by is_user_value=True
         if settings_group['name'] == "custom":
@@ -122,6 +124,7 @@ class SettingsDetailView(LoginRequiredMixin, View):
         return context
 
     def get(self, request, *args, **kwargs):
+        """GET request for this view. """
         return render(self.request,
                       template_name='ndr_core/admin_views/overview/configure_settings.html',
                       context=self.get_context_data())
@@ -171,9 +174,6 @@ class SettingDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('ndr_core:view_settings', kwargs={'group': 'custom'})
     template_name = 'ndr_core/admin_views/delete/setting_confirm_delete.html'
 
-    def form_valid(self, form):
-        return super(SettingDeleteView, self).form_valid(form)
-
 
 class SettingsImportView(LoginRequiredMixin, FormView):
     """View to import a exported color palette. """
@@ -183,6 +183,7 @@ class SettingsImportView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('ndr_core:configure_settings')
 
     def form_valid(self, form):
+        """When the form is valid, the settings are imported."""
         f = form.files['settings_file']
 
         try:
@@ -199,39 +200,46 @@ class SettingsImportView(LoginRequiredMixin, FormView):
 
 
 class SetPageReadOnlyView(LoginRequiredMixin, FormView):
+    """View to set the page read-only."""
 
     template_name = "ndr_core/admin_views/page_state/settings_set_readonly.html"
     form_class = SettingsSetReadonlyForm
     success_url = reverse_lazy("ndr_core:configure_settings")
 
     def form_valid(self, form):
+        """When the page is set to read-only, the page is set to read-only."""
         NdrCoreValue.objects.filter(value_name='page_is_editable').update(value_value='false')
         return super().form_valid(form)
 
 
 class SetPageEditableView(LoginRequiredMixin, FormView):
+    """View to set the page editable. """
 
     template_name = "ndr_core/admin_views/page_state/settings_set_readonly.html"
     form_class = SettingsSetEditableForm
     success_url = reverse_lazy("ndr_core:configure_settings")
 
     def form_valid(self, form):
+        """When the page is set to editable, the page is set to read-only."""
         NdrCoreValue.objects.filter(value_name='page_is_editable').update(value_value='true')
         return super().form_valid(form)
 
 
 class SetPageUnderConstructionView(LoginRequiredMixin, FormView):
+    """View to set the page under construction. """
 
     template_name = "ndr_core/admin_views/page_state/settings_set_under_construction.html"
     form_class = SettingsSetUnderConstructionForm
     success_url = reverse_lazy("ndr_core:configure_settings")
 
     def form_valid(self, form):
+        """When the page is set to under construction, the page is set to read-only."""
         NdrCoreValue.objects.filter(value_name='under_construction').update(value_value='true')
         return super().form_valid(form)
 
 
 class SetPageLiveView(LoginRequiredMixin, FormView):
+    """View to set the page live. """
 
     template_name = "ndr_core/admin_views/page_state/settings_set_live.html"
     form_class = SettingsSetLiveForm

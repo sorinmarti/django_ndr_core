@@ -1,3 +1,4 @@
+"""Views for the correction feature. """
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
@@ -17,6 +18,7 @@ class ConfigureCorrections(LoginRequiredMixin, View):
 
 
 def set_correction_option(request, option):
+    """Sets the correction option to the given value. """
     value = NdrCoreValue.objects.get(value_name='correction_feature')
     value.value_value = option
     value.save()

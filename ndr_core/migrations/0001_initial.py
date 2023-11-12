@@ -1309,7 +1309,8 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         blank=True,
                         default=None,
-                        help_text="If you want this page to be a sub-page of another one, you canchoose the parent page here",
+                        help_text="If you want this page to be a sub-page of another one, "
+                                  "you can choose the parent page here",
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         to="ndr_core.ndrcorepage",

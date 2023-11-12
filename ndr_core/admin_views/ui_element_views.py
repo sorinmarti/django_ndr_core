@@ -1,13 +1,24 @@
+"""Views for the UI Element admin pages. """
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
-from ndr_core.admin_forms.ui_element_forms import UIElementCardCreateForm, UIElementCardEditForm, \
-    UIElementSlideshowCreateForm, UIElementSlideshowEditForm, UIElementCarouselEditForm, UIElementCarouselCreateForm, \
-    UIElementJumbotronEditForm, UIElementJumbotronCreateForm, UIElementIframeEditForm, UIElementIframeCreateForm, \
-    UIElementBannerEditForm, UIElementBannerCreateForm
+from ndr_core.admin_forms.ui_element_forms import (
+    UIElementCardCreateForm,
+    UIElementCardEditForm,
+    UIElementSlideshowCreateForm,
+    UIElementSlideshowEditForm,
+    UIElementCarouselEditForm,
+    UIElementCarouselCreateForm,
+    UIElementJumbotronEditForm,
+    UIElementJumbotronCreateForm,
+    UIElementIframeEditForm,
+    UIElementIframeCreateForm,
+    UIElementBannerEditForm,
+    UIElementBannerCreateForm
+)
 from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem
 
 
@@ -30,7 +41,7 @@ class UIElementDetailView(LoginRequiredMixin, DetailView):
     template_name = 'ndr_core/admin_views/overview/configure_ui_elements.html'
 
     def get_context_data(self, **kwargs):
-        context = super(UIElementDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['ui_elements'] = NdrCoreUIElement.objects.all()
         return context
 
@@ -45,20 +56,20 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
     def get_form_class(self):
         if self.kwargs['type'] == "card":
             return UIElementCardCreateForm
-        elif self.kwargs['type'] == "carousel":
+        if self.kwargs['type'] == "carousel":
             return UIElementCarouselCreateForm
-        elif self.kwargs['type'] == "slideshow":
+        if self.kwargs['type'] == "slideshow":
             return UIElementSlideshowCreateForm
-        elif self.kwargs['type'] == "jumbotron":
+        if self.kwargs['type'] == "jumbotron":
             return UIElementJumbotronCreateForm
-        elif self.kwargs['type'] == "iframe":
+        if self.kwargs['type'] == "iframe":
             return UIElementIframeCreateForm
-        elif self.kwargs['type'] == "banner":
+        if self.kwargs['type'] == "banner":
             return UIElementBannerCreateForm
         return None
 
     def get_context_data(self, **kwargs):
-        context = super(UIElementCreateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if self.kwargs['type'] == "card":
             context['view_title'] = "Create New Card"
         elif self.kwargs['type'] == "carousel":
@@ -75,7 +86,7 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         # Creates object and returns HttpResponse
-        response = super(UIElementCreateView, self).form_valid(form)
+        response = super().form_valid(form)
 
         if self.kwargs['type'] == "card":
             # A Card has 1 item.
@@ -141,30 +152,18 @@ class UIElementEditView(LoginRequiredMixin, UpdateView):
     def get_form_class(self):
         if self.object.type == NdrCoreUIElement.UIElementType.CARD:
             return UIElementCardEditForm
-        elif self.object.type == NdrCoreUIElement.UIElementType.CAROUSEL:
+        if self.object.type == NdrCoreUIElement.UIElementType.CAROUSEL:
             return UIElementCarouselEditForm
-        elif self.object.type == NdrCoreUIElement.UIElementType.SLIDESHOW:
+        if self.object.type == NdrCoreUIElement.UIElementType.SLIDESHOW:
             return UIElementSlideshowEditForm
-        elif self.object.type == NdrCoreUIElement.UIElementType.JUMBOTRON:
+        if self.object.type == NdrCoreUIElement.UIElementType.JUMBOTRON:
             return UIElementJumbotronEditForm
-        elif self.object.type == NdrCoreUIElement.UIElementType.IFRAME:
+        if self.object.type == NdrCoreUIElement.UIElementType.IFRAME:
             return UIElementIframeEditForm
-        elif self.object.type == NdrCoreUIElement.UIElementType.BANNER:
+        if self.object.type == NdrCoreUIElement.UIElementType.BANNER:
             return UIElementBannerEditForm
         print("TYPE", self.object.type)
         return UIElementCardEditForm
-
-    """def get_context_data(self, **kwargs):
-        return super(UIElementEditView, self).get_context_data(**kwargs)
-        if self.object.type == NdrCoreUIElement.UIElementType.CARD:
-            context['view_title'] = "Edit Card"
-        elif self.object.type == NdrCoreUIElement.UIElementType.CAROUSEL:
-            context['view_title'] = "Edit Carousel"
-        elif self.object.type == NdrCoreUIElement.UIElementType.SLIDESHOW:
-            context['view_title'] = "Edit Slideshow"
-        elif self.object.type == NdrCoreUIElement.UIElementType.JUMBOTRON:
-            context['view_title'] = "Edit Jumbotron"
-        return context"""
 
 
 class UIElementDeleteView(LoginRequiredMixin, DeleteView):
@@ -173,4 +172,3 @@ class UIElementDeleteView(LoginRequiredMixin, DeleteView):
     model = NdrCoreUIElement
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
     template_name = 'ndr_core/admin_views/delete/ui_element_confirm_delete.html'
-

@@ -1,3 +1,4 @@
+""" Views for the result fields and result card configuration. """
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
@@ -6,7 +7,11 @@ from django.views.generic import CreateView, UpdateView, DeleteView, FormView
 from ndr_core.admin_forms.result_card_forms import SearchConfigurationResultEditForm
 from ndr_core.form_preview import get_search_form_image_from_raw_data
 from ndr_core.admin_forms.result_field_forms import ResultFieldCreateForm, ResultFieldEditForm
-from ndr_core.models import NdrCoreResultField, NdrCoreSearchConfiguration, NdrCoreResultFieldCardConfiguration
+from ndr_core.models import (
+    NdrCoreResultField,
+    NdrCoreSearchConfiguration,
+    NdrCoreResultFieldCardConfiguration
+)
 
 
 class ResultFieldCreateView(LoginRequiredMixin, CreateView):
@@ -16,10 +21,6 @@ class ResultFieldCreateView(LoginRequiredMixin, CreateView):
     form_class = ResultFieldCreateForm
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/create/result_field_create.html'
-
-    def form_valid(self, form):
-        response = super(ResultFieldCreateView, self).form_valid(form)
-        return response
 
 
 class ResultFieldEditView(LoginRequiredMixin, UpdateView):
@@ -38,9 +39,6 @@ class ResultFieldDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/delete/result_field_confirm_delete.html'
 
-    def form_valid(self, form):
-        return super(ResultFieldDeleteView, self).form_valid(form)
-
 
 class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
 
@@ -50,10 +48,12 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
 
     @staticmethod
     def get_row_fields(row):
+        """Returns the field names for a given row. """
         return [f'result_field_{row}', f'row_field_{row}', f'column_field_{row}', f'size_field_{row}']
 
     def get_form(self, form_class=None):
-        form = super(SearchConfigurationResultEditView, self).get_form(form_class=form_class)
+        """Returns the form for this view. """
+        form = super().get_form(form_class=form_class)
         fields = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).result_card_fields.all()
 
         form_row = 0
@@ -68,7 +68,7 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         """Creates or updates the result card configuration for a search configuration. """
-        response = super(SearchConfigurationResultEditView, self).form_valid(form)
+        response = super().form_valid(form)
         conf_object = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
 
         for row in range(20):

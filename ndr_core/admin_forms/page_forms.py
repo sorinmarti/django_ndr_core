@@ -9,8 +9,12 @@ from django_select2 import forms as s2forms
 
 from ndr_core.admin_forms.settings_forms import SettingsListForm
 from ndr_core.admin_forms.admin_forms import get_form_buttons, get_info_box
-from ndr_core.models import NdrCoreSearchConfiguration, NdrCorePage, NdrCoreValue, \
+from ndr_core.models import (
+    NdrCoreSearchConfiguration,
+    NdrCorePage,
+    NdrCoreValue,
     NdrCoreRichTextTranslation
+)
 
 
 class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
@@ -23,8 +27,9 @@ class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
 
 
 class PageForm(forms.ModelForm):
-    """Base form to create or edit an NDRCore page. The form contains fields for search configurations etc. which are only needed
-    for certain page types. Unused fields are hidden via JS in the template the form is used."""
+    """Base form to create or edit an NDRCore page. The form contains fields for search
+    configurations etc. which are only needed for certain page types. Unused fields are
+    hidden via JS in the template the form is used."""
 
     search_configs = forms.ModelMultipleChoiceField(
         queryset=NdrCoreSearchConfiguration.objects.filter().order_by('conf_name'),
@@ -33,8 +38,9 @@ class PageForm(forms.ModelForm):
             attrs={'data-minimum-input-length': 0}))
 
     parent_page = forms.ModelChoiceField(queryset=NdrCorePage.objects.filter(parent_page=None),
-                                         required=False, help_text="If you want this page to be a sub-page of another "
-                                                                   "one, you can choose the parent page here")
+                                         required=False,
+                                         help_text="If you want this page to be a sub-page of another "
+                                                   "one, you can choose the parent page here")
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
@@ -44,13 +50,14 @@ class PageForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         """Init class and create form helper."""
-        super(PageForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.main_language = NdrCoreValue.objects.get(value_name='ndr_language').get_value()
         self.additional_languages = NdrCoreValue.objects.get(value_name='available_languages').get_value()
 
         for lang in self.additional_languages:
-            self.fields[f'template_text_{lang}'] = forms.CharField(label=f"Template Text ({lang})", required=False,
+            self.fields[f'template_text_{lang}'] = forms.CharField(label=f"Template Text ({lang})",
+                                                                   required=False,
                                                                    widget=CKEditorUploadingWidget)
             try:
                 translation = NdrCoreRichTextTranslation.objects.get(language=lang,
@@ -178,7 +185,7 @@ class PageCreateForm(PageForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(PageCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create New Page'))
         return helper
 
@@ -187,7 +194,7 @@ class PageEditForm(PageForm):
     """Form to edit a page. Extends the base form class and adds an 'edit' button."""
 
     def __init__(self, **kwargs):
-        super(PageEditForm, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if self.initial["view_name"] == "index":
             self.fields['view_name'].disabled = True
             self.fields['view_name'].help_text = "This is your landing page you can\'t change its view name."
@@ -195,7 +202,7 @@ class PageEditForm(PageForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(PageEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Page'))
         return helper
 
@@ -206,11 +213,11 @@ class FooterForm(SettingsListForm):
     def __init__(self, *args, **kwargs):
         kwargs['settings'] = ["footer_show_partners", "footer_show_main_navigation", "footer_show_socials",
                               "footer_copyright_text"]
-        super(FooterForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
-        helper = super(FooterForm, self).helper
+        helper = super().helper
         layout = helper.layout = Layout()
 
         form_row = Row(
@@ -248,39 +255,12 @@ class NotFoundForm(forms.Form):
     """Form to edit the 404 page."""
 
     def __init__(self, *args, **kwargs):
-        super(NotFoundForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
-        helper = super(NotFoundForm, self).helper
+        """Creates and returns the form helper property."""
+        helper = super().helper
         layout = helper.layout = Layout()
-
-        form_row = Row(
-            Column('save_footer_show_partners', css_class='form-group col-md-10 mb-0'),
-            Column(HTML(f'<a href="{reverse("ndr_core:view_images", kwargs={"group": "logos"})}" class="btn btn-sm btn-secondary">Manage Partner Logos</a>'),
-                   css_class='form-group col-md-2 mb-0 text-right'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('save_footer_show_main_navigation', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('save_footer_show_socials', css_class='form-group col-md-10 mb-0'),
-            Column(HTML(f'<a href="{reverse("ndr_core:view_settings", kwargs={"group": "socials"})}" class="btn btn-sm btn-secondary">Manage Social Links</a>'),
-                   css_class='form-group col-md-2 mb-0 text-right'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('save_footer_copyright_text', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
         layout.append(get_form_buttons('Save Settings'))
         return helper

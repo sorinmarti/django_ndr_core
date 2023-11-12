@@ -1,3 +1,4 @@
+"""Implementation of the MongoDBResult class. """
 import json
 
 import pymongo
@@ -68,7 +69,6 @@ class MongoDBResult(BaseResult):
     def save_raw_result(self, text):
         """ Normally this would save the raw result to a json object.
         In this case, the MongoClient is already returning a JSON object."""
-        pass
 
     def fill_search_result_meta_data(self):
         """Fills the search result metadata. In the download_result method, the raw result is created and the
@@ -92,4 +92,3 @@ class MongoDBResult(BaseResult):
     def get_id_value(self, result):
         """ Overwrite the default get_id_value method to get the id from the result. """
         return get_nested_value(result, self.search_configuration.search_id_field)
-

@@ -193,7 +193,11 @@ class NdrListDownloadView(_NdrCoreSearchView):
 
 
 class NdrCSVListDownloadView(NdrListDownloadView):
+    """Returns a CSV record list from a search result. """
+
     def get(self, request, *args, **kwargs):
+        """Returns a CSV record list from a search result. """
+
         search_config = self.get_search_config_from_name(self.kwargs['search_config'])
 
         result = self.create_result_for_response()
@@ -210,7 +214,10 @@ class NdrCSVListDownloadView(NdrListDownloadView):
 
 
 class NdrMarkForCorrectionView(View):
+    """Marks a record for correction. """
+
     def get(self, request, *args, **kwargs):
+        """Marks a record for correction. """
         search_config = NdrCoreSearchConfiguration.objects.get(conf_name=self.kwargs['search_config'])
         NdrCoreCorrection.objects.create(corrected_dataset=search_config,
                                          corrected_record_id=url_deparse(self.kwargs['record_id']))
@@ -221,6 +228,7 @@ class SearchView(_NdrCoreSearchView):
     """A view to search for records in the configured API. """
 
     def get(self, request, *args, **kwargs):
+        """A view to search for records in the configured API. """
         requested_search = None
         context = self.get_ndr_context_data()
         form = self.form_class(ndr_page=self.ndr_page)
@@ -279,15 +287,6 @@ class SearchView(_NdrCoreSearchView):
                     messages.error(request, _('No results found.'))
                 else:
                     context.update({'search_config': search_config})
-                    """for r in result.results:
-                        origin = r['data']['port_of_origin']['scheme']
-                        destination = r['data']['port_of_destination']['scheme']
-                        amap = get_map([
-                            [origin['identifier'], origin['name'], origin['lat'], origin['lng']],
-                            [destination['identifier'], destination['name'], destination['lat'], destination['lng']]
-                        ])
-                        r['map'] = amap"""
-
                     context.update({'result': result})
         else:
             if "refine" in request.GET.keys():

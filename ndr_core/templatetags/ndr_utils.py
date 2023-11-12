@@ -1,3 +1,4 @@
+"""Template tags for the ndr_core app."""
 import json
 import re
 
@@ -14,16 +15,20 @@ register = template.Library()
 
 @register.tag(name='render_result')
 def render_result_tag(parser, token):
+    """Renders a result object."""
     token_list = token.split_contents()
     return RenderResultNode(token_list[1], token_list[2])
 
 
 class RenderResultNode(template.Node):
+    """Renders a result object."""
+
     def __init__(self, result, search_config):
         self.result = template.Variable(result)
         self.search_config = template.Variable(search_config)
 
     def create_card(self, context, result):
+        """Creates a result card."""
         card_context = {"result": result,
                         "card_content": self.create_grid(context, result['data'])}
         card_template = 'ndr_core/result_renderers/configured_fields_template.html'
@@ -32,6 +37,7 @@ class RenderResultNode(template.Node):
         return mark_safe(card_template_str)
 
     def create_grid(self, context, data):
+        """Creates a grid of result fields."""
         row_template = 'ndr_core/result_renderers/elements/result_row.html'
 
         result_card_fields = self.search_config.resolve(context).result_card_fields.all()
@@ -52,6 +58,7 @@ class RenderResultNode(template.Node):
 
     @staticmethod
     def safe_format_string(string, data):
+        """Formats a string and returns it as safe."""
         try:
             return mark_safe(string.format(**data))
         except KeyError:
@@ -66,10 +73,12 @@ class RenderResultNode(template.Node):
             return 'IndexError'
 
     def create_image_field(self, string, data):
+        """Creates an image field."""
         src = self.safe_format_string(string, data)
         return mark_safe(f'<img src="{src}" class="img-fluid" alt="Image">')
 
     def create_field(self, field, data):
+        """Creates a result field."""
         field_template = 'ndr_core/result_renderers/elements/result_field.html'
         r_field = field.result_field
 
@@ -94,6 +103,7 @@ class RenderResultNode(template.Node):
         return mark_safe(field_template_str)
 
     def render(self, context):
+        """Renders a result object."""
         result_object = self.result.resolve(context)
         num_result_fields = self.search_config.resolve(context).result_card_fields.all().count()
 
@@ -110,8 +120,10 @@ class RenderResultNode(template.Node):
 
         return mark_safe(html_string)
 
+
 @register.filter
 def pretty_json(value):
+    """Pretty prints a json string."""
     pretty_json_str = json.dumps(value, indent=4)
     pretty_json_str = pretty_json_str.replace('\n', '<br>').replace(' ', '&nbsp;')
     pretty_json_str = re.sub(
@@ -184,11 +196,13 @@ def reduce_iiif_size(image_url, target_percent_of_size):
 
 @register.filter
 def translate_dict_value(key_to_translate, dict_name):
+    """Translates 'value' value in a dictionary."""
     return translate_dict_foo(key_to_translate, dict_name, 'value')
 
 
 @register.filter
 def translate_dict_info(key_to_translate, dict_name):
+    """Translates 'info' value in a dictionary."""
     return translate_dict_foo(key_to_translate, dict_name, 'info')
 
 

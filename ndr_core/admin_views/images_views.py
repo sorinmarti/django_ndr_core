@@ -1,3 +1,4 @@
+"""Views for the images section in the admin panel. """
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -52,6 +53,7 @@ class ImagesGroupView(LoginRequiredMixin, View):
     template_name = 'ndr_core/admin_views/overview/configure_images.html'
 
     def get_context_data(self):
+        """Returns the context data for this view."""
         context = {'groups': image_groups}
         group = self.kwargs['group']
 
@@ -63,6 +65,7 @@ class ImagesGroupView(LoginRequiredMixin, View):
         return context
 
     def get(self, request, *args, **kwargs):
+        """GET request for this view. """
         return render(self.request,
                       template_name=self.template_name,
                       context=self.get_context_data())
@@ -77,7 +80,8 @@ class ImagesCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/create/image_create.html'
 
     def form_valid(self, form):
-        response = super(ImagesCreateView, self).form_valid(form)
+        """ When saving the image, set the index to the next free index in the group."""
+        response = super().form_valid(form)
         max_index = NdrCoreImage.objects.filter(image_group=self.object.image_group).aggregate(Max('index_in_group'))
         new_index = max_index["index_in_group__max"] + 1
         self.object.index_in_group = new_index
@@ -94,10 +98,6 @@ class ImagesEditView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('ndr_core:configure_images')
     template_name = 'ndr_core/admin_views/edit/image_edit.html'
 
-    def form_valid(self, form):
-        response = super(ImagesEditView, self).form_valid(form)
-        return response
-
 
 class ImagesDeleteView(LoginRequiredMixin, DeleteView):
     """ View to delete an image from the database. Asks to confirm."""
@@ -108,7 +108,7 @@ class ImagesDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         self.object.file.delete()
-        return super(ImagesDeleteView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 @login_required

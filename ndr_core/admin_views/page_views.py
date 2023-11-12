@@ -12,7 +12,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 
-from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm
+from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm, NotFoundForm
 from ndr_core.models import NdrCorePage
 from ndr_core.ndr_settings import NdrSettings
 
@@ -76,7 +76,6 @@ class ManageNotFoundPage(LoginRequiredMixin, View):
         """POST request for this view. Gets executed when setting values are saved."""
 
         form = NotFoundForm(request.POST)
-        form.save_list()
         context = {'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
                    'footer_form': form}
 
@@ -95,7 +94,7 @@ class PageDetailView(LoginRequiredMixin, DetailView):
     template_name = 'ndr_core/admin_views/overview/configure_pages.html'
 
     def get_context_data(self, **kwargs):
-        context = super(PageDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['pages'] = NdrCorePage.objects.filter(parent_page=None).order_by('index')
         return context
 
@@ -112,7 +111,7 @@ class PageCreateView(LoginRequiredMixin, CreateView):
         """Overwrites form_valid function of CreateView. Sets the index of the newly created page object and creates
          a template to save in the ndr apps template folder."""
 
-        response = super(PageCreateView, self).form_valid(form)
+        response = super().form_valid(form)
 
         # set the index of the new page (for ordering)
         max_index = NdrCorePage.objects.aggregate(Max('index'))
@@ -161,7 +160,7 @@ class PageEditView(LoginRequiredMixin, UpdateView):
 
         form.save_translations()
 
-        response = super(PageEditView, self).form_valid(form)
+        response = super().form_valid(form)
         return response
 
 
@@ -182,7 +181,7 @@ class PageDeleteView(LoginRequiredMixin, DeleteView):
         else:
             messages.warning(self.request, "HTML template to delete was not found.")
 
-        return super(PageDeleteView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 @login_required

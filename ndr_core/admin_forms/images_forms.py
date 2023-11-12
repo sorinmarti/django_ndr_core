@@ -57,7 +57,7 @@ class ImageCreateForm(ImageForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(ImageCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Upload Image'))
         return helper
 
@@ -68,7 +68,7 @@ class ImageEditForm(ImageForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(ImageEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Image'))
         return helper
 

@@ -184,6 +184,7 @@
             <div class="card-footer text-center">
                 {% if object.pk == palette.pk %}
                     <a href="{% url 'ndr_core:choose_palette' object.pk %}" role="button" class="btn btn-secondary disabled">This Palette is your Page Palette</a>
+                    <a href="{% url 'ndr_core:choose_palette' object.pk %}" role="button" class="btn btn-warning">Regenerate</a>
                 {% else %}
                     <a href="{% url 'ndr_core:choose_palette' object.pk %}" role="button" class="btn btn-warning">Set this Palette as your Page Palette</a>
                 {% endif %}

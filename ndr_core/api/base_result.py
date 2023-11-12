@@ -1,3 +1,5 @@
+""" This file contains the base result class. The base result class is used to
+retrieve a result from a server, load it and transform it, so ndr-core can render it."""
 from abc import ABC, abstractmethod
 
 import requests
@@ -39,7 +41,7 @@ class BaseResult(ABC):
         self.num_pages = 0
         self.page_links = {}
         self.form_links = {}
-        self.results = list()
+        self.results = []
 
     def load_result(self, transform_result=True):
         """Convenience function to undertake all the necessary steps to have a sanitized search result.
@@ -99,7 +101,6 @@ class BaseResult(ABC):
     @abstractmethod
     def save_raw_result(self, text):
         """Save the raw text result in the desired form for post procession"""
-        pass
 
     @abstractmethod
     def fill_search_result_meta_data(self):
@@ -108,14 +109,12 @@ class BaseResult(ABC):
         self.page: The current page
         self.num_pages: The total number of pages
         """
-        pass
 
     @abstractmethod
     def fill_results(self):
         """Fill the results list with dict objects. Each dict object represents a result.
         The dict object must contain the following keys:
         """
-        pass
 
     def get_id_value(self, result):
         """ This function returns the id of a result. """
@@ -215,7 +214,7 @@ class BaseResult(ABC):
         """
         hit_number = self.page * self.page_size - self.page_size + 1
 
-        transformed_results = list()
+        transformed_results = []
         for result in self.results:
             transformed_result = {
                 "id": self.get_id_value(result),
@@ -250,7 +249,7 @@ class BaseResult(ABC):
 
     def get_transformed_hits(self):
         # TODO
-        results = list()
+        results = []
         hit_number = self.page * self.page_size - self.page_size + 1
         for hit in self.raw_result['hits']:
             transformed_data = {
@@ -395,7 +394,7 @@ class BaseResult(ABC):
                         page_range = [str(x) for x in [*range(self.page - 2, self.page + 3)]]
                         page_list = ['1', '...'] + page_range + ['...', str(self.num_pages)]
 
-        enriched_page_list = list()
+        enriched_page_list = []
         url = self.request.path + "?"
 
         for get_param in self.request.GET:

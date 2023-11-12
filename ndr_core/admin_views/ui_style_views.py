@@ -1,3 +1,4 @@
+"""View to configure the UI style of the project. """
 import os
 import re
 
@@ -33,7 +34,7 @@ class UIStyleDetailView(LoginRequiredMixin, DetailView):
     template_name = 'ndr_core/admin_views/overview/configure_ui.html'
 
     def get_context_data(self, **kwargs):
-        context = super(UIStyleDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['ui_styles'] = NdrCoreUiStyle.objects.all().order_by('name')
         value = NdrCoreValue.objects.get(value_name='ui_style')
         context['ui_style'] = NdrCoreUiStyle.objects.get(name=value.value_value)
@@ -49,7 +50,7 @@ def choose_ui_style(request, pk):
         error_message = None
         base_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/base.html'
         if os.path.isfile(base_filename):
-            with open(base_filename, 'r') as base_file:
+            with open(base_filename, 'r', encoding='utf8') as base_file:
                 file_str = base_file.read()
                 match = re.match(r'^\{\% extends [\"\']ndr_core/base/styles/base\_(.*)[\"\'] \%\}', file_str)
                 if match is not None and len(match.groups()) > 0:
@@ -58,7 +59,7 @@ def choose_ui_style(request, pk):
                     error_message = "Pattern to replace not found"
 
             if new_file_str is not None:
-                with open(base_filename, 'w') as new_base_file:
+                with open(base_filename, 'w', encoding='utf8') as new_base_file:
                     new_base_file.write(new_file_str)
                     value.value_value = ui_style.name
                     value.save()
@@ -70,7 +71,7 @@ def choose_ui_style(request, pk):
 
     except NdrCoreValue.DoesNotExist:
         messages.error(request, 'UI Style is Not in Database!')
-    except NdrCoreColorScheme.DoesNotExist as e:
+    except NdrCoreColorScheme.DoesNotExist:
         messages.error(request, 'UI Style to set not found!')
 
     return redirect('ndr_core:view_ui_style', pk=pk)

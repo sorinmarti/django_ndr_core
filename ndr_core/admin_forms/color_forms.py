@@ -13,7 +13,7 @@ class ColorPaletteForm(forms.ModelForm):
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreColorScheme
-        exclude = []
+        fields = '__all__'
 
     @property
     def helper(self):
@@ -97,7 +97,7 @@ class ColorPaletteCreateForm(ColorPaletteForm):
 
     @property
     def helper(self):
-        helper = super(ColorPaletteCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create Color Palette'))
         return helper
 
@@ -107,7 +107,7 @@ class ColorPaletteEditForm(ColorPaletteForm):
 
     @property
     def helper(self):
-        helper = super(ColorPaletteEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Color Palette'))
         return helper
 

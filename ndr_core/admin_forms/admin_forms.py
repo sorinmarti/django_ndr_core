@@ -5,28 +5,31 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 
 
 class NdrCoreLoginForm(AuthenticationForm):
-    """Takes Django's login form and adds a button to it, so it can be rendered with crispy forms """
+    """Takes Django's login form and adds a button to it,
+    so it can be rendered with crispy forms """
 
     def __init__(self, *args, **kwargs):
-        super(NdrCoreLoginForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "POST"
         self.helper.add_input(Submit('login', 'Login'))
 
 
 class NdrCoreChangePasswordForm(PasswordChangeForm):
-    """Takes Django's change password form and adds an input to it, so it can be rendered with crispy forms """
+    """Takes Django's change password form and adds an input to it,
+    so it can be rendered with crispy forms """
 
     def __init__(self, *args, **kwargs):
-        super(NdrCoreChangePasswordForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = "POST"
         self.helper.add_input(Submit('login', 'Change Password'))
 
 
 def get_form_buttons(submit_text):
-    """Returns a button holder with a submit button with the given text. This is a convenience function for all
-    forms that are used in the NDRCore admin interface. """
+    """Returns a button holder with a submit button with the given text.
+    This is a convenience function for all forms that are used in the
+    NDRCore admin interface. """
     bh = ButtonHolder(
             Submit('submit', submit_text, css_class='btn-default'),
             css_class="modal-footer"
@@ -35,6 +38,9 @@ def get_form_buttons(submit_text):
 
 
 def get_info_box(text, item_id="id_info_box", box_id="info_box"):
+    """Returns an info box with the given text.
+    This is a convenience function for all forms that are used in the
+    NDRCore admin interface. """
     alert_html = f'<div class="alert alert-info small m-3" role="alert" id="{box_id}">' \
                  f'  <i class="fa-regular fa-circle-info"></i>' \
                  f'  <span id="{item_id}">' \

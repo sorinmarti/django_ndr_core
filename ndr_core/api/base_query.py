@@ -1,10 +1,13 @@
-"""The base query class provides basic functionality to compose an API query based on an API Configuration.
-It is an abstract base class which has abstract methods which need to be overwritten for an actual implementation."""
+"""The base query class provides basic functionality to compose an
+API query based on an API Configuration. It is an abstract base class
+which has abstract methods which need to be overwritten for an actual
+implementation."""
 from abc import ABC, abstractmethod
 
 
 class BaseQuery(ABC):
-    """TODO """
+    """The base query class provides basic functionality to compose an
+    API query based on an API Configuration. """
 
     Q_SIMPLE = 'SIMPLE'
     Q_ADVANCED = 'ADVANCED'
@@ -22,25 +25,25 @@ class BaseQuery(ABC):
 
     @abstractmethod
     def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
-        pass
+        """Returns a query to retrieve a list of records."""
 
     @abstractmethod
     def get_advanced_query(self, *kwargs):
-        pass
+        """Returns a query to retrieve a list of records."""
 
     @abstractmethod
     def get_list_query(self, list_name, add_page_and_size=True, search_term=None, tags=None):
-        pass
+        """Returns a query to retrieve a list of records."""
 
     @abstractmethod
     def get_record_query(self, record_id):
-        pass
+        """Returns a query to retrieve a single record."""
 
     @abstractmethod
     def get_explain_query(self, search_type):
-        pass
+        """Returns a query to explain the search."""
 
-    def get_base_string(self, show_port=True):
+    def get_base_string(self):
         """ Composes the base string for the API. Example https://api-host.com:80/query/ """
         return self.search_config.api_connection_url
 

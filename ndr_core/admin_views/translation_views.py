@@ -1,3 +1,4 @@
+"""Views for the translation functions in the admin panel."""
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
@@ -14,6 +15,7 @@ from ndr_core.models import NdrCoreTranslation, NdrCoreValue
 
 
 def get_available_languages():
+    """Returns a list of available languages."""
     languages = NdrCoreValue.objects.get(value_name='available_languages').get_value()
     available_languages = []
     for lang in languages:
@@ -34,6 +36,7 @@ class ConfigureTranslations(LoginRequiredMixin, View):
 
 
 class SelectPageTranslationView(View):
+    """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
@@ -44,6 +47,7 @@ class SelectPageTranslationView(View):
 
 
 class SelectFieldTranslationView(View):
+    """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
@@ -54,6 +58,7 @@ class SelectFieldTranslationView(View):
 
 
 class SelectSettingsTranslationView(View):
+    """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
@@ -64,6 +69,7 @@ class SelectSettingsTranslationView(View):
 
 
 class SelectFormTranslationView(View):
+    """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
@@ -74,16 +80,20 @@ class SelectFormTranslationView(View):
 
 
 class TranslateView(View):
+    """View to add/edit/delete Translations."""
 
     def get_context_data(self):
+        """Returns the context data for the view."""
         context = {'available_languages': get_available_languages(),
                    'selected_language': self.kwargs.get('lang', 'en')}
         return context
 
 
 class TranslatePageValuesView(TranslateView):
+    """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
+        """GET request for this view."""
         form = TranslatePageForm(lang=self.kwargs.get('lang', 'en'))
         context = self.get_context_data()
         context['form'] = form
@@ -106,8 +116,10 @@ class TranslatePageValuesView(TranslateView):
 
 
 class TranslateFieldValuesView(TranslateView):
+    """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
+        """GET request for this view."""
         form = TranslateFieldForm(lang=self.kwargs.get('lang', 'en'))
         context = self.get_context_data()
         context['form'] = form
@@ -128,12 +140,15 @@ class TranslateFieldValuesView(TranslateView):
 
 
 class TranslateSettingsValuesView(TranslateView):
+    """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
+        """GET request for this view."""
         form = TranslateSettingsForm(lang=self.kwargs.get('lang', 'en'))
         context = self.get_context_data()
         context['form'] = form
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
+        return render(self.request,
+                      template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
     def post(self, request, *args, **kwargs):
@@ -150,8 +165,10 @@ class TranslateSettingsValuesView(TranslateView):
 
 
 class TranslateFormValuesView(TranslateView):
+    """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
+        """GET request for this view."""
         form = TranslateFormForm(lang=self.kwargs.get('lang', 'en'))
         context = self.get_context_data()
         context['form'] = form

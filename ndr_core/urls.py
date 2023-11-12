@@ -2,10 +2,19 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
-from ndr_core.admin_views.result_views import ResultFieldCreateView, ResultFieldEditView, preview_result_card_image, \
-    ResultFieldDeleteView, SearchConfigurationResultEditView
-from ndr_core.admin_views.search_field_views import SearchFieldCreateView, SearchFieldEditView, \
-    preview_search_form_image, SearchFieldDeleteView
+from ndr_core.admin_views.result_views import (
+    ResultFieldCreateView,
+    ResultFieldEditView,
+    preview_result_card_image,
+    ResultFieldDeleteView,
+    SearchConfigurationResultEditView
+)
+from ndr_core.admin_views.search_field_views import (
+    SearchFieldCreateView,
+    SearchFieldEditView,
+    preview_search_form_image,
+    SearchFieldDeleteView
+)
 from ndr_core.admin_views.translation_views import (
     ConfigureTranslations,
     SelectPageTranslationView,
@@ -27,9 +36,17 @@ from ndr_core.admin_views.uploads_views import (
     ManifestUploadDeleteView,
     ManifestGroupCreateView,
 )
-from ndr_core.admin_views.export_views import export_color_palette, export_settings, export_messages
-from ndr_core.admin_views.admin_views import NdrCoreDashboard, HelpView, StatisticsView, \
+from ndr_core.admin_views.export_views import (
+    export_color_palette,
+    export_settings,
+    export_messages
+)
+from ndr_core.admin_views.admin_views import (
+    NdrCoreDashboard,
+    HelpView,
+    StatisticsView,
     set_statistics_option
+)
 from ndr_core.admin_views.page_views import (
     ManagePages,
     PageCreateView,
@@ -40,14 +57,35 @@ from ndr_core.admin_views.page_views import (
     ManagePageFooter,
 )
 
-from ndr_core.admin_views.search_views import ConfigureSearch, SearchConfigurationCreateView, \
-    SearchConfigurationEditView, SearchConfigurationDeleteView, SearchConfigurationFormEditView, \
+from ndr_core.admin_views.search_views import (
+    ConfigureSearch,
+    SearchConfigurationCreateView,
+    SearchConfigurationEditView,
+    SearchConfigurationDeleteView,
+    SearchConfigurationFormEditView,
     SearchConfigurationCopyView
-from ndr_core.admin_views.color_views import ConfigureColorPalettes, ColorPaletteCreateView, ColorPaletteEditView, \
-    ColorPaletteDeleteView, ColorPaletteImportView, ColorPaletteDetailView, choose_color_palette
-from ndr_core.admin_views.corrections_views import ConfigureCorrections, set_correction_option
-from ndr_core.admin_views.images_views import ConfigureImages, ImagesGroupView, ImagesCreateView, \
-    ImagesEditView, ImagesDeleteView, move_image_up
+)
+from ndr_core.admin_views.color_views import (
+    ConfigureColorPalettes,
+    ColorPaletteCreateView,
+    ColorPaletteEditView,
+    ColorPaletteDeleteView,
+    ColorPaletteImportView,
+    ColorPaletteDetailView,
+    choose_color_palette
+)
+from ndr_core.admin_views.corrections_views import (
+    ConfigureCorrections,
+    set_correction_option
+)
+from ndr_core.admin_views.images_views import (
+    ConfigureImages,
+    ImagesGroupView,
+    ImagesCreateView,
+    ImagesEditView,
+    ImagesDeleteView,
+    move_image_up
+)
 from ndr_core.admin_views.settings_views import (
     ConfigureSettingsView,
     SettingCreateView,
@@ -60,15 +98,37 @@ from ndr_core.admin_views.settings_views import (
     SetPageUnderConstructionView,
     SetPageLiveView,
 )
-from ndr_core.admin_views.ui_style_views import ConfigureUI, choose_ui_style, UIStyleDetailView
-from ndr_core.admin_views.ui_element_views import ConfigureUIElements, UIElementDetailView, UIElementCreateView, \
-    UIElementEditView, UIElementDeleteView
-from ndr_core.admin_views.messages_views import ConfigureMessages, MessagesView, MessagesDeleteView, \
-    delete_all_messages, archive_message, ArchivedMessages
-
-from ndr_core.admin_forms.admin_forms import NdrCoreLoginForm, NdrCoreChangePasswordForm
-from ndr_core.views import NdrDownloadView, NdrMarkForCorrectionView, NdrListDownloadView, \
-    NdrCSVListDownloadView, set_language_view
+from ndr_core.admin_views.ui_style_views import (
+    ConfigureUI,
+    choose_ui_style,
+    UIStyleDetailView
+)
+from ndr_core.admin_views.ui_element_views import (
+    ConfigureUIElements,
+    UIElementDetailView,
+    UIElementCreateView,
+    UIElementEditView,
+    UIElementDeleteView
+)
+from ndr_core.admin_views.messages_views import (
+    ConfigureMessages,
+    MessagesView,
+    MessagesDeleteView,
+    delete_all_messages,
+    archive_message,
+    ArchivedMessages
+)
+from ndr_core.admin_forms.admin_forms import (
+    NdrCoreLoginForm,
+    NdrCoreChangePasswordForm
+)
+from ndr_core.views import (
+    NdrDownloadView,
+    NdrMarkForCorrectionView,
+    NdrListDownloadView,
+    NdrCSVListDownloadView,
+    set_language_view
+)
 
 app_name = 'ndr_core'
 urlpatterns = [

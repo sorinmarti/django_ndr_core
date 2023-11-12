@@ -1,24 +1,29 @@
+"""Widgets for crispy forms. """
 from crispy_forms.layout import BaseInput
 from django import forms
 from django.utils.safestring import mark_safe
-from ndr_core.ndr_helpers import get_search_field_config
 from django_select2 import forms as s2forms
+from ndr_core.ndr_helpers import get_search_field_config
 
 
 class BootstrapSwitchWidget(forms.Widget):
+    """Creates a switch for crispy forms. """
 
     def render(self, name, value, attrs=None, renderer=None):
         selected = ""
         if value:
             selected = "checked"
-        html = '<div class="custom-control custom-switch">' \
-               f'  <input type="checkbox" {selected} name="{name}" class="custom-control-input" id="{attrs["id"]}">' \
-               f'  <label class="custom-control-label small" for="{attrs["id"]}">{ self.attrs.get("label", "") }</label>' \
-               '</div>'
+        html = f"""
+        <div class="custom-control custom-switch">
+            <input type="checkbox" {selected} name="{name}" class="custom-control-input" id="{attrs["id"]}">
+            <label class="custom-control-label small" for="{attrs["id"]}">{ self.attrs.get("label", "") }</label>
+        </div>
+        """
         return mark_safe(html)
 
 
 class SwitchGroupWidget(forms.Widget):
+    """Creates a group of 3 switches for crispy forms. """
 
     def render(self, name, value, attrs=None, renderer=None):
         html = '<div class="form-group">'
@@ -32,6 +37,7 @@ class SwitchGroupWidget(forms.Widget):
 
 
 class CustomRange(forms.TextInput):
+    """Creates a range slider for crispy forms. """
 
     def render(self, name, value, attrs=None, renderer=None):
         config = get_search_field_config(name)

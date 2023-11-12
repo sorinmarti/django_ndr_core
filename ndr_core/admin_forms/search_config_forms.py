@@ -9,6 +9,8 @@ from ndr_core.models import NdrCoreSearchConfiguration
 
 
 class SearchConfigurationForm(forms.ModelForm):
+    """Form to create or edit a search configuration search form. """
+
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreSearchConfiguration
@@ -21,7 +23,7 @@ class SearchConfigurationForm(forms.ModelForm):
                   'simple_query_label', 'simple_query_help_text',]
 
     def __init__(self, *args, **kwargs):
-        super(SearchConfigurationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
@@ -110,7 +112,8 @@ class SearchConfigurationForm(forms.ModelForm):
                                     <br/>
                                     <b>4.) Simple Search</b>
                                     &nbsp;&nbsp; 
-                                    <small>(Check the box if you want a single field search with your search form.)</small>
+                                    <small>(Check the box if you want a single 
+                                    field search with your search form.)</small>
                                     <hr/>
                                     ''')), css_class='col-12'),
             css_class='form-row'
@@ -147,7 +150,8 @@ class SearchConfigurationCreateForm(SearchConfigurationForm):
 
     @property
     def helper(self):
-        helper = super(SearchConfigurationCreateForm, self).helper
+        """Creates and returns the form helper property."""
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create Search Configuration'))
         return helper
 
@@ -157,7 +161,7 @@ class SearchConfigurationEditForm(SearchConfigurationForm):
 
     @property
     def helper(self):
-        helper = super(SearchConfigurationEditForm, self).helper
+        """Creates and returns the form helper property."""
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Search Configuration'))
         return helper
-

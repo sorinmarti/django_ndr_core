@@ -1,3 +1,4 @@
+"""Utility to count lines, words, and characters in a directory of files."""
 import os
 from collections import defaultdict
 
@@ -41,15 +42,17 @@ def print_stats(stats):
         for file, lines, words, chars in data['files']:
             print(f"{file}: Lines = {lines}, Words = {words}, Characters = {chars}")"""
         print(
-            f"Total for '{extension}': Lines = {data['total_lines']}, Words = {data['total_words']}, Characters = {data['total_chars']}\n")
+            f"Total for '{extension}': Lines = {data['total_lines']}, "
+            f"Words = {data['total_words']}, Characters = {data['total_chars']}\n")
         grand_total_lines += data['total_lines']
         grand_total_words += data['total_words']
         grand_total_chars += data['total_chars']
 
-    print(f"Grand Total: Lines = {grand_total_lines}, Words = {grand_total_words}, Characters = {grand_total_chars}")
+    print(f"Grand Total: Lines = {grand_total_lines}, Words = {grand_total_words}, "
+          f"Characters = {grand_total_chars}")
 
 
-# Replace 'your_directory_path' with the path to the directory you want to process
+# Main code
 directory_to_process = '.'
-stats = process_directory(directory_to_process)
-print_stats(stats)
+my_stats = process_directory(directory_to_process)
+print_stats(my_stats)

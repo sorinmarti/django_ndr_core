@@ -14,13 +14,15 @@ from ndr_core.models import (
 
 
 class TranslateForm(forms.Form):
+    """Base form to translate values. """
+
     lang = 'en'
 
     def __init__(self, *args, **kwargs):
         if 'lang' in kwargs:
             self.lang = kwargs.pop('lang')
 
-        super(TranslateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class TranslatePageForm(TranslateForm):
@@ -29,7 +31,7 @@ class TranslatePageForm(TranslateForm):
     pages = None
 
     def __init__(self, *args, **kwargs):
-        super(TranslatePageForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.pages = NdrCorePage.objects.all()
 
         initial_values = {}
@@ -106,7 +108,7 @@ class TranslateFieldForm(TranslateForm):
     ndr_form_fields = None
 
     def __init__(self, *args, **kwargs):
-        super(TranslateFieldForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.ndr_form_fields = NdrCoreSearchField.objects.all()
 
         initial_values = {}
@@ -186,7 +188,7 @@ class TranslateSettingsForm(TranslateForm):
     ndr_settings_fields = None
 
     def __init__(self, *args, **kwargs):
-        super(TranslateSettingsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.ndr_settings_fields = NdrCoreValue.objects.filter(value_type__in=[NdrCoreValue.ValueType.STRING,
                                                                                NdrCoreValue.ValueType.URL],
                                                                is_translatable=True)
@@ -246,7 +248,7 @@ class TranslateFormForm(TranslateForm):
     ndr_search_conf = None
 
     def __init__(self, *args, **kwargs):
-        super(TranslateFormForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.ndr_search_conf = NdrCoreSearchConfiguration.objects.all()
 
         initial_values = {}

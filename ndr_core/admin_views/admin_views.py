@@ -26,8 +26,10 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
 
 
 class HelpView(LoginRequiredMixin, View):
-    """TODO """
+    """The HelpView shows the help page. """
+
     def get(self, request, *args, **kwargs):
+        """GET request for this view. """
         chapter = None
         if "chapter" in kwargs:
             chapter = kwargs["chapter"]
@@ -37,12 +39,16 @@ class HelpView(LoginRequiredMixin, View):
 
 
 class StatisticsFilter(FilterSet):
+    """Filter for the search statistics. """
+
     class Meta:
         model = NdrCoreSearchStatisticEntry
         fields = {"search_query": ["contains"]}
 
+
 class StatisticsView(LoginRequiredMixin, SingleTableMixin, FilterView):
-    """TODO """
+    """View to show the search statistics. """
+
     table_class = StatisticsTable
     model = NdrCoreSearchStatisticEntry
     template_name = 'ndr_core/admin_views/overview/view_statistics.html'
@@ -51,7 +57,7 @@ class StatisticsView(LoginRequiredMixin, SingleTableMixin, FilterView):
     filterset_class = StatisticsFilter
 
     def get_context_data(self, **kwargs):
-        context = super(StatisticsView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         today = datetime.today().astimezone().replace(hour=0, minute=0, second=0, microsecond=0)
         first_of_week = today - timedelta(days=today.weekday())
         first_of_month = today.replace(day=1)
@@ -72,6 +78,7 @@ class StatisticsView(LoginRequiredMixin, SingleTableMixin, FilterView):
 
 
 def set_statistics_option(request, option):
+    """Sets the statistics option to the given value. """
     value = NdrCoreValue.objects.get(value_name='statistics_feature')
     value.value_value = option
     value.save()

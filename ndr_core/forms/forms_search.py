@@ -1,3 +1,4 @@
+"""Form classes for the search."""
 from bootstrap_daterangepicker.fields import DateRangeField
 from bootstrap_daterangepicker.widgets import DateRangeWidget
 from crispy_forms.bootstrap import TabHolder, Tab
@@ -20,7 +21,8 @@ class AdvancedSearchForm(_NdrCoreForm):
     search_configs = None
 
     def __init__(self, *args, **kwargs):
-        """Initializes all needed form fields for the configured search based on the page's search configuration. """
+        """Initializes all needed form fields for the configured search based on
+        the page's search configuration. """
 
         super().__init__(*args, **kwargs)
         self.search_configs = self.ndr_page.search_configs.all()
@@ -80,7 +82,6 @@ class AdvancedSearchForm(_NdrCoreForm):
                                                     initial=search_field.get_initial_value())
                 # Date field
                 if search_field.field_type == search_field.FieldType.DATE:
-                    # TODO initial value
                     form_field = forms.DateField(label=search_field.translated_field_label(),
                                                  required=search_field.field_required,
                                                  help_text=help_text,
@@ -123,7 +124,8 @@ class AdvancedSearchForm(_NdrCoreForm):
                 if search_field.field_type == search_field.FieldType.MULTI_LIST:
                     form_field = forms.MultipleChoiceField(label=search_field.translated_field_label(),
                                                            choices=search_field.get_list_choices(),
-                                                           widget=FilteredListWidget(attrs={'data-minimum-input-length': 0}),
+                                                           widget=FilteredListWidget(
+                                                               attrs={'data-minimum-input-length': 0}),
                                                            # widget=SwitchGroupWidget(),
                                                            required=search_field.field_required,
                                                            help_text=help_text,

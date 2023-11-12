@@ -1,14 +1,16 @@
+""" Simple implementation of the ninja-api API. """
 from ndr_core.api.base_query import BaseQuery
 
 
 class ApiNinjasQuery(BaseQuery):
+    """Simple implementation of the ninja-api API. """
 
     def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
         """ Not Implemented """
         return None
 
     def get_advanced_query(self, *kwargs):
-        query = self.get_base_string(show_port=False) + "?"
+        query = self.get_base_string() + "?"
         for field_value in self.values:
             query += f"{field_value}={self.values[field_value]}"
         return query
@@ -24,4 +26,3 @@ class ApiNinjasQuery(BaseQuery):
     def get_explain_query(self, search_type):
         """ Not Implemented """
         return None
-

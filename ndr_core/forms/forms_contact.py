@@ -1,3 +1,4 @@
+"""Forms for the contact form."""
 from captcha.fields import ReCaptchaField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Row, Column, Layout
@@ -13,10 +14,10 @@ class ContactForm(ModelForm, _NdrCoreForm):
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreUserMessage
-        exclude = []
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
-        super(ContactForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # print(NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').translated_value())
         self.fields['message_subject'].initial = NdrCoreValue.get_or_initialize(
@@ -30,6 +31,7 @@ class ContactForm(ModelForm, _NdrCoreForm):
 
     @property
     def helper(self):
+        """Creates and returns the form layout."""
         helper = FormHelper()
         helper.form_method = "POST"
         layout = helper.layout = Layout()

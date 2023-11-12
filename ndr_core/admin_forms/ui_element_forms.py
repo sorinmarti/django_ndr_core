@@ -31,10 +31,11 @@ class UIElementBaseForm(forms.ModelForm):
         fields = ['show_text', ]
 
     def __init__(self, *args, **kwargs):
-        super(UIElementBaseForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['text'] = forms.CharField(widget=forms.Textarea, required=False)
 
     def initialize_field(self, field_name):
+        """Initializes a field with a custom widget."""
         if field_name == "card_item_image":
             self.fields[field_name] = ImageChoiceField(
                 queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
@@ -42,6 +43,7 @@ class UIElementBaseForm(forms.ModelForm):
 
 
 class UIElementCardForm(forms.ModelForm):
+    """Form to create or edit a Card."""
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
@@ -49,18 +51,21 @@ class UIElementCardForm(forms.ModelForm):
         fields = ['show_title', 'show_text', 'show_image', 'link_element', 'use_image_conf']
 
     def __init__(self, *args, **kwargs):
-        super(UIElementCardForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
-        self.fields['card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
+        self.fields['card_item_image'] = ImageChoiceField(
+            queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
         self.fields['card_item_image'].widget.option_template_name = "ndr_core/test.html"
         self.fields['card_item_title'] = forms.CharField(required=False)
         self.fields['card_item_text'] = forms.CharField(widget=forms.Textarea, required=False)
         self.fields['card_item_url'] = forms.URLField(required=False)
 
         self.fields['show_image'].label = 'Does this card feature an image?'
-        self.fields['show_image'].help_text = 'Note: Images must be uploaded first, before they can be used in UI elements.'
+        self.fields['show_image'].help_text = ('Note: Images must be uploaded first, '
+                                               'before they can be used in UI elements.')
 
-        self.fields['use_image_conf'].label = 'Should this card display the image\'s title, text and URL?'
+        self.fields['use_image_conf'].label = ('Should this card display the '
+                                               'image\'s title, text and URL?')
 
     @property
     def helper(self):
@@ -118,6 +123,7 @@ class UIElementCardForm(forms.ModelForm):
 
 
 class UIElementSlideshowForm(forms.ModelForm):
+    """Form to create or edit a Slideshow."""
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
@@ -125,7 +131,7 @@ class UIElementSlideshowForm(forms.ModelForm):
         fields = ['title', 'show_title', 'show_text', 'link_element', 'autoplay', 'show_indicators']
 
     def __init__(self, *args, **kwargs):
-        super(UIElementSlideshowForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['slideshow_images'] = ImageMultipleChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS))
         self.fields['slideshow_images'].widget.option_template_name = "ndr_core/test.html"
 
@@ -168,6 +174,7 @@ class UIElementSlideshowForm(forms.ModelForm):
 
 
 class UIElementCarouselForm(forms.ModelForm):
+    """Form to create or edit a Carousel."""
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
@@ -175,7 +182,7 @@ class UIElementCarouselForm(forms.ModelForm):
         fields = ['title', 'show_title', 'show_text', 'link_element', 'autoplay', 'show_indicators']
 
     def __init__(self, *args, **kwargs):
-        super(UIElementCarouselForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         for x in range(6):
             self.fields[f'card_item_active_{x}'] = forms.BooleanField()
@@ -261,6 +268,7 @@ class UIElementCarouselForm(forms.ModelForm):
 
 
 class UIElementJumbotronForm(forms.ModelForm):
+    """Form to create or edit a Jumbotron."""
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
@@ -268,17 +276,19 @@ class UIElementJumbotronForm(forms.ModelForm):
         fields = ['show_title', 'show_text', 'show_image', 'link_element', 'use_image_conf']
 
     def __init__(self, *args, **kwargs):
-        super(UIElementJumbotronForm, self).__init__(*args, **kwargs)
-        self.fields[f'card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
+        super().__init__(*args, **kwargs)
+        self.fields['card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
         self.fields['card_item_image'].widget.option_template_name = "ndr_core/test.html"
-        self.fields[f'card_item_title'] = forms.CharField()
-        self.fields[f'card_item_text'] = forms.CharField(widget=forms.Textarea)
-        self.fields[f'card_item_url'] = forms.URLField()
+        self.fields['card_item_title'] = forms.CharField()
+        self.fields['card_item_text'] = forms.CharField(widget=forms.Textarea)
+        self.fields['card_item_url'] = forms.URLField()
 
         self.fields['show_image'].label = 'Does this card feature an image?'
-        self.fields['show_image'].help_text = 'Note: Images must be uploaded first, before they can be used in UI elements.'
+        self.fields['show_image'].help_text = ('Note: Images must be uploaded first, '
+                                               'before they can be used in UI elements.')
 
-        self.fields['use_image_conf'].label = 'Should this card display the image\'s title, text and URL?'
+        self.fields['use_image_conf'].label = ('Should this card display the '
+                                               'image\'s title, text and URL?')
 
     @property
     def helper(self):
@@ -336,10 +346,12 @@ class UIElementJumbotronForm(forms.ModelForm):
 
 
 class UIElementIframeForm(forms.ModelForm):
+    """Form to create or edit an Iframe."""
 
     iframe_text = forms.CharField(widget=forms.Textarea, label="Embed code",
-                                  help_text="Paste the embed code here. This should be the code provided by the third "
-                                            "party site, not the URL of the page you want to embed.")
+                                  help_text="Paste the embed code here. This should be the "
+                                            "code provided by the third party site, not the "
+                                            "URL of the page you want to embed.")
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
@@ -347,8 +359,7 @@ class UIElementIframeForm(forms.ModelForm):
         fields = []
 
     def __init__(self, *args, **kwargs):
-        super(UIElementIframeForm, self).__init__(*args, **kwargs)
-
+        super().__init__(*args, **kwargs)
 
     @property
     def helper(self):
@@ -367,6 +378,7 @@ class UIElementIframeForm(forms.ModelForm):
 
 
 class UIElementBannerForm(forms.ModelForm):
+    """Base form to create or edit a Banner."""
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
@@ -374,8 +386,9 @@ class UIElementBannerForm(forms.ModelForm):
         fields = ['title']
 
     def __init__(self, *args, **kwargs):
-        super(UIElementBannerForm, self).__init__(*args, **kwargs)
-        self.fields['card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
+        super().__init__(*args, **kwargs)
+        self.fields['card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(
+            image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
         self.fields['card_item_image'].widget.option_template_name = "ndr_core/test.html"
 
     @property
@@ -407,7 +420,7 @@ class UIElementCardCreateForm(UIElementCardForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementCardCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create New Card'))
         return helper
 
@@ -418,7 +431,7 @@ class UIElementCardEditForm(UIElementCardForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementCardEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Card'))
         return helper
 
@@ -429,7 +442,7 @@ class UIElementSlideshowCreateForm(UIElementSlideshowForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementSlideshowCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create New Slideshow'))
         return helper
 
@@ -440,7 +453,7 @@ class UIElementSlideshowEditForm(UIElementSlideshowForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementSlideshowEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Slideshow'))
         return helper
 
@@ -451,7 +464,7 @@ class UIElementCarouselCreateForm(UIElementCarouselForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementCarouselCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create New Carousel'))
         return helper
 
@@ -462,7 +475,7 @@ class UIElementCarouselEditForm(UIElementCarouselForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementCarouselEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Carousel'))
         return helper
 
@@ -473,7 +486,7 @@ class UIElementJumbotronCreateForm(UIElementJumbotronForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementJumbotronCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create New Jumbotron'))
         return helper
 
@@ -484,7 +497,7 @@ class UIElementJumbotronEditForm(UIElementJumbotronForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementJumbotronEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Jumbotron'))
         return helper
 
@@ -495,7 +508,7 @@ class UIElementIframeCreateForm(UIElementIframeForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementIframeCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create New Iframe'))
         return helper
 
@@ -506,7 +519,7 @@ class UIElementIframeEditForm(UIElementIframeForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementIframeEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Iframe'))
         return helper
 
@@ -517,7 +530,7 @@ class UIElementBannerCreateForm(UIElementBannerForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementBannerCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create New Banner'))
         return helper
 
@@ -528,6 +541,6 @@ class UIElementBannerEditForm(UIElementBannerForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UIElementBannerEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Banner'))
         return helper

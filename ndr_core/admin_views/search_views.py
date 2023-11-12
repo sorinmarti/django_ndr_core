@@ -1,13 +1,21 @@
+"""Views for the search configuration pages. """
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, FormView
 
-from ndr_core.admin_forms.search_config_forms import SearchConfigurationCreateForm, SearchConfigurationEditForm
+from ndr_core.admin_forms.search_config_forms import (
+    SearchConfigurationCreateForm,
+    SearchConfigurationEditForm
+)
 from ndr_core.admin_forms.search_form_forms import SearchConfigurationFormEditForm
-from ndr_core.models import NdrCoreSearchField, NdrCoreSearchConfiguration, \
-    NdrCoreSearchFieldFormConfiguration, NdrCoreResultField
+from ndr_core.models import (
+    NdrCoreSearchField,
+    NdrCoreSearchConfiguration,
+    NdrCoreSearchFieldFormConfiguration,
+    NdrCoreResultField
+)
 
 
 class ConfigureSearch(LoginRequiredMixin, View):
@@ -52,9 +60,6 @@ class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/delete/search_config_confirm_delete.html'
 
-    def form_valid(self, form):
-        return super(SearchConfigurationDeleteView, self).form_valid(form)
-
 
 class SearchConfigurationCopyView(LoginRequiredMixin, View):
     """ View to copy a Search configuration. """
@@ -71,13 +76,15 @@ class SearchConfigurationCopyView(LoginRequiredMixin, View):
 
 
 class SearchConfigurationFormEditView(LoginRequiredMixin, FormView):
+    """ View to edit the form configuration for a search configuration. """
 
     form_class = SearchConfigurationFormEditForm
     template_name = 'ndr_core/admin_views/edit/search_form_edit.html'
     success_url = reverse_lazy('ndr_core:configure_search')
 
     def get_form(self, form_class=None):
-        form = super(SearchConfigurationFormEditView, self).get_form(form_class=form_class)
+        """Returns the form for this view. """
+        form = super().get_form(form_class=form_class)
         fields = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).search_form_fields.all()
 
         form_row = 0
@@ -92,11 +99,12 @@ class SearchConfigurationFormEditView(LoginRequiredMixin, FormView):
 
     @staticmethod
     def get_row_fields(row):
+        """Returns the field names for a given row. """
         return [f'search_field_{row}', f'row_field_{row}', f'column_field_{row}', f'size_field_{row}']
 
     def form_valid(self, form):
         """Creates or updates the form configuration for a search configuration. """
-        response = super(SearchConfigurationFormEditView, self).form_valid(form)
+        response = super().form_valid(form)
         conf_object = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
 
         for row in range(20):

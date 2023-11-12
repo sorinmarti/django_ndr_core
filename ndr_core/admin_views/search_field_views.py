@@ -1,3 +1,4 @@
+"""Views for the search field configuration pages. """
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
@@ -17,10 +18,6 @@ class SearchFieldCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/create/search_field_create.html'
 
-    def form_valid(self, form):
-        response = super(SearchFieldCreateView, self).form_valid(form)
-        return response
-
 
 class SearchFieldEditView(LoginRequiredMixin, UpdateView):
     """ View to edit an existing Search field """
@@ -37,9 +34,6 @@ class SearchFieldDeleteView(LoginRequiredMixin, DeleteView):
     model = NdrCoreSearchField
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/delete/search_field_confirm_delete.html'
-
-    def form_valid(self, form):
-        return super(SearchFieldDeleteView, self).form_valid(form)
 
 
 def preview_search_form_image(request, img_config):

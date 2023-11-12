@@ -10,7 +10,7 @@ from ndr_core.models import NdrCoreValue
 class SettingsListForm(forms.Form):
     """Shows a defined list of settings to change. """
 
-    settings_list = list()
+    settings_list = []
     is_custom_form = False
 
     def __init__(self, *args, **kwargs):
@@ -19,7 +19,7 @@ class SettingsListForm(forms.Form):
         if 'is_custom_form' in kwargs:
             self.is_custom_form = kwargs.pop('is_custom_form')
 
-        super(SettingsListForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         initial_values = {}
         for setting in self.settings_list:
@@ -61,6 +61,7 @@ class SettingsListForm(forms.Form):
         self.initial = initial_values
 
     def save_list(self):
+        """Saves the settings from the form data to the database."""
         for setting in self.settings_list:
             if f"save_{setting}" in self.data:
                 obj = NdrCoreValue.objects.get(value_name=setting)
@@ -155,7 +156,7 @@ class SettingCreateForm(SettingForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(SettingCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create New User Setting'))
         return helper
 
@@ -166,7 +167,7 @@ class SettingEditForm(SettingForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(SettingEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save User Setting'))
         return helper
 
@@ -179,6 +180,7 @@ class SettingsImportForm(forms.Form):
 
     @property
     def helper(self):
+        """Creates and returns the form helper property."""
         helper = FormHelper()
         helper.form_method = "POST"
         helper.layout = Layout()
@@ -194,9 +196,11 @@ class SettingsImportForm(forms.Form):
 
 
 class SettingsSetReadonlyForm(forms.Form):
+    """Form to set the page read only."""
 
     @property
     def helper(self):
+        """Creates and returns the form helper property."""
         helper = FormHelper()
         helper.form_method = "POST"
         helper.layout = Layout()
@@ -209,13 +213,14 @@ class SettingsSetReadonlyForm(forms.Form):
 
 
 class SettingsSetEditableForm(forms.Form):
+    """Form to set the page editable."""
 
     @property
     def helper(self):
+        """Creates and returns the form helper property."""
         helper = FormHelper()
         helper.form_method = "POST"
         helper.layout = Layout()
-    
         bh = ButtonHolder(
             Submit("submit", "Set Page Editable", css_class="btn-default"),
             css_class="modal-footer",
@@ -225,8 +230,11 @@ class SettingsSetEditableForm(forms.Form):
 
 
 class SettingsSetUnderConstructionForm(forms.Form):
+    """Form to set the page under construction."""
+
     @property
     def helper(self):
+        """Creates and returns the form helper property."""
         helper = FormHelper()
         helper.form_method = "POST"
         helper.layout = Layout()
@@ -240,8 +248,11 @@ class SettingsSetUnderConstructionForm(forms.Form):
 
 
 class SettingsSetLiveForm(forms.Form):
+    """Form to set the page live."""
+
     @property
     def helper(self):
+        """Creates and returns the form helper property."""
         helper = FormHelper()
         helper.form_method = "POST"
         helper.layout = Layout()

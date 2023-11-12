@@ -1,3 +1,4 @@
+"""Views for the Uploads section of the admin panel. """
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -36,10 +37,6 @@ class UploadCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('ndr_core:configure_uploads')
     template_name = 'ndr_core/admin_views/create/upload_create.html'
 
-    def form_valid(self, form):
-        response = super(UploadCreateView, self).form_valid(form)
-        return response
-
 
 class UploadEditView(LoginRequiredMixin, UpdateView):
     """ View to edit an existing image """
@@ -48,10 +45,6 @@ class UploadEditView(LoginRequiredMixin, UpdateView):
     form_class = UploadEditForm
     success_url = reverse_lazy('ndr_core:configure_uploads')
     template_name = 'ndr_core/admin_views/edit/upload_edit.html'
-
-    def form_valid(self, form):
-        response = super(UploadEditView, self).form_valid(form)
-        return response
 
 
 class UploadDeleteView(LoginRequiredMixin, DeleteView):
@@ -63,7 +56,7 @@ class UploadDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         self.object.file.delete()
-        return super(UploadDeleteView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class ManifestUploadCreateView(LoginRequiredMixin, CreateView):
@@ -74,10 +67,6 @@ class ManifestUploadCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy('ndr_core:configure_uploads')
     template_name = 'ndr_core/admin_views/create/manifest_upload_create.html'
 
-    def form_valid(self, form):
-        response = super(ManifestUploadCreateView, self).form_valid(form)
-        return response
-
 
 class ManifestUploadEditView(LoginRequiredMixin, UpdateView):
     """ View to edit an existing manifest """
@@ -86,10 +75,6 @@ class ManifestUploadEditView(LoginRequiredMixin, UpdateView):
     form_class = ManifestUploadEditForm
     success_url = reverse_lazy('ndr_core:configure_uploads')
     template_name = 'ndr_core/admin_views/edit/manifest_upload_edit.html'
-
-    def form_valid(self, form):
-        response = super(ManifestUploadEditView, self).form_valid(form)
-        return response
 
 
 class ManifestUploadDeleteView(LoginRequiredMixin, DeleteView):
@@ -101,7 +86,7 @@ class ManifestUploadDeleteView(LoginRequiredMixin, DeleteView):
 
     def form_valid(self, form):
         self.object.file.delete()
-        return super(ManifestUploadDeleteView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class ManifestGroupCreateView(LoginRequiredMixin, CreateView):
@@ -111,10 +96,6 @@ class ManifestGroupCreateView(LoginRequiredMixin, CreateView):
     form_class = ManifestGroupCreateForm
     success_url = reverse_lazy('ndr_core:configure_uploads')
     template_name = 'ndr_core/admin_views/create/manifest_group_create.html'
-
-    def form_valid(self, form):
-        response = super(ManifestGroupCreateView, self).form_valid(form)
-        return response
 
 
 class ManifestGroupEditView(LoginRequiredMixin, UpdateView):
@@ -126,7 +107,8 @@ class ManifestGroupEditView(LoginRequiredMixin, UpdateView):
     template_name = 'ndr_core/admin_views/edit/manifest_group_edit.html'
 
     def form_valid(self, form):
-        response = super(ManifestGroupEditView, self).form_valid(form)
+        """Edit the manifest group and all its manifests."""
+        response = super().form_valid(form)
         return response
 
 
@@ -136,6 +118,3 @@ class ManifestGroupDeleteView(LoginRequiredMixin, DeleteView):
     model = NdrCoreManifestGroup
     success_url = reverse_lazy('ndr_core:configure_uploads')
     template_name = 'ndr_core/admin_views/delete/manifest_group_confirm_delete.html'
-
-    def form_valid(self, form):
-        return super(ManifestGroupDeleteView, self).form_valid(form)

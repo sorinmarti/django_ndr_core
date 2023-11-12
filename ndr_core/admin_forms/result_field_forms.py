@@ -18,6 +18,7 @@ class ResultFieldForm(forms.ModelForm):
 
     @property
     def helper(self):
+        """Creates and returns the form helper property."""
         helper = FormHelper()
         layout = helper.layout = Layout()
         helper.form_method = "POST"
@@ -81,7 +82,8 @@ class ResultFieldCreateForm(ResultFieldForm):
 
     @property
     def helper(self):
-        helper = super(ResultFieldCreateForm, self).helper
+        """Creates and returns the form helper property."""
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create Search Field'))
         return helper
 
@@ -91,6 +93,7 @@ class ResultFieldEditForm(ResultFieldForm):
 
     @property
     def helper(self):
-        helper = super(ResultFieldEditForm, self).helper
+        """Creates and returns the form helper property."""
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Search Field'))
         return helper

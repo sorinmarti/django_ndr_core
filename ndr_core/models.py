@@ -53,13 +53,15 @@ class TranslatableMixin:
 
 
 class NdrCoreResultField(models.Model):
-    """An NdrCoreResultField is part of the display of a search result. Multiple result fields can be combined to
-    a result card. Each result field has a type (see FieldType) which determines how the field is displayed.
-    The expression (or rich_expression) is formed by mixing static text with data from the result.
+    """An NdrCoreResultField is part of the display of a search result. Multiple result fields
+    can be combined to a result card. Each result field has a type (see FieldType) which determines
+    how the field is displayed. The expression (or rich_expression) is formed by mixing static text
+    with data from the result.
     Example:
-        The data provides a field 'person'. Its value is an object containing the fields 'first_name' and 'last_name'.
-        The expression is 'Hello {person.first_name} {person.last_name}!'. The result field will display the text
-        'Hello John Doe!' if the data contains the fields 'person.first_name' and 'person.last_name'."""
+        The data provides a field 'person'. Its value is an object containing the fields 'first_name'
+        and 'last_name'. The expression is 'Hello {person.first_name} {person.last_name}!'. The result
+        field will display the text 'Hello John Doe!' if the data contains the fields 'person.first_name'
+        and 'person.last_name'."""
 
     class FieldType(models.IntegerChoices):
         STRING = 1, "String"
@@ -221,29 +223,28 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
     data_field_type = models.CharField(max_length=100,
                                        blank=True,
                                        default='',
-                                       help_text="Type of the field in the data source. This may change the way data "
-                                                 "is queried.")
+                                       help_text="Type of the field in the data source. This may change "
+                                                 "the way data is queried.")
 
     input_transformation_regex = models.CharField(max_length=100,
                                                   blank=True,
                                                   default='',
-                                                  help_text="Regex to transform the input value before sending it "
-                                                            "to the API.")
+                                                  help_text="Regex to transform the input value before "
+                                                            "sending it to the API.")
 
     def translated_field_label(self):
-        """Returns the translated field label for a given language. If no translation exists, the default label is
-        returned. """
+        """Returns the translated field label for a given language. If no translation exists,
+        the default label is returned. """
         return self.translated_field(self.field_label, 'field_label', self.field_name)
 
     def translated_help_text(self):
-        """Returns the translated help text for a given language. If no translation exists, the default help text is
-        returned. """
+        """Returns the translated help text for a given language. If no translation exists,
+        the default help text is returned. """
         return self.translated_field(self.help_text, 'help_text', self.field_name)
 
-
     def get_list_choices_as_dict(self):
-        """Returns the list choices as a dictionary. This is used to render the dropdowns in the search form and
-        result template lists."""
+        """Returns the list choices as a dictionary. This is used to render the dropdowns
+        in the search form and result template lists."""
         if not self.field_type == self.FieldType.LIST and not self.field_type == self.FieldType.MULTI_LIST:
             return {}
 
@@ -264,6 +265,8 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         return result_list
 
     def get_list_choices(self):
+        """Returns the list choices as a list of tuples. This is used to render the dropdowns
+        in the search form and result template lists."""
         if not self.field_type == self.FieldType.LIST and not self.field_type == self.FieldType.MULTI_LIST:
             return {}
 
@@ -616,8 +619,7 @@ class NdrCorePage(TranslatableMixin, models.Model):
                                                                  object_id=str(self.id))
             if translation.translation != '':
                 return translation.translation
-            else:
-                return self.template_text
+            return self.template_text
         except NdrCoreRichTextTranslation.DoesNotExist:
             return self.template_text
 
@@ -1010,6 +1012,7 @@ class NdrCoreImage(models.Model):
     """Language of the image. """
 
     def get_absolute_url(self):
+        """Returns the absolute url of the image. """
         return reverse('ndr_core:view_images', kwargs={'group': self.image_group})
 
     def __str__(self):
@@ -1017,6 +1020,8 @@ class NdrCoreImage(models.Model):
 
 
 class NdrCoreUpload(models.Model):
+    """ Directory of all uploads. """
+
     title = models.CharField(max_length=200, blank=True, default='',
                              help_text='Title of the upload.')
     """Title of the upload"""
@@ -1026,6 +1031,7 @@ class NdrCoreUpload(models.Model):
 
 
 class NdrCoreManifestGroup(models.Model):
+    """ Directory of all manifest groups. """
 
     title = models.CharField(max_length=200,
                              help_text='Title of the manifest group.')
@@ -1045,6 +1051,8 @@ class NdrCoreManifestGroup(models.Model):
 
 
 class NdrCoreManifest(models.Model):
+    """ Directory of all manifests. """
+
     title = models.CharField(max_length=200, blank=True, default='',
                              help_text='Title of the manifest. Is shown in the dropdown of the page.')
     """Title of the upload"""

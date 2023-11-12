@@ -38,7 +38,7 @@ class UploadCreateForm(UploadForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UploadCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Upload File'))
         return helper
 
@@ -49,7 +49,7 @@ class UploadEditForm(UploadForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(UploadEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save File'))
         return helper
 
@@ -91,7 +91,7 @@ class ManifestUploadCreateForm(ManifestUploadForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(ManifestUploadCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Upload Manifest File'))
         return helper
 
@@ -102,7 +102,7 @@ class ManifestUploadEditForm(ManifestUploadForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(ManifestUploadEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Manifest File'))
         return helper
 
@@ -145,7 +145,7 @@ class ManifestGroupCreateForm(ManifestGroupForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(ManifestGroupCreateForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Create Manifest Group'))
         return helper
 
@@ -156,6 +156,6 @@ class ManifestGroupEditForm(ManifestGroupForm):
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-        helper = super(ManifestGroupEditForm, self).helper
+        helper = super().helper
         helper.layout.append(get_form_buttons('Save Manifest Group'))
         return helper

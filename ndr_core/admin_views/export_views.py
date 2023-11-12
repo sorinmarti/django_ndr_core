@@ -1,5 +1,5 @@
+""" Views to export the settings of the NDR Core App """
 import json
-
 from django.contrib import messages
 from django.core import serializers
 from django.http import JsonResponse
@@ -9,7 +9,7 @@ from ndr_core.models import NdrCoreColorScheme, NdrCoreValue, NdrCoreUserMessage
 
 
 def export_color_palette(request, pk):
-    """TODO """
+    """Exports a color palette as JSON. """
 
     try:
         ndr_object = NdrCoreColorScheme.objects.get(pk=pk)
@@ -22,7 +22,8 @@ def export_color_palette(request, pk):
 
 
 def export_settings(request):
-    """TODO """
+    """Exports the settings as JSON. """
+
     ndr_object = NdrCoreValue.objects.all()
     data = serializers.serialize("json", ndr_object)
     data_json = json.loads(data)
@@ -30,7 +31,7 @@ def export_settings(request):
 
 
 def export_messages(request):
-    """TODO """
+    """Exports the messages as JSON. """
     ndr_object = NdrCoreUserMessage.objects.all()
     data = serializers.serialize("json", ndr_object)
     data_json = json.loads(data)

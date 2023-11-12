@@ -1,3 +1,4 @@
+"""Views for the color palette management. """
 import os
 
 from django.contrib import messages
@@ -7,9 +8,18 @@ from django.core.serializers.base import DeserializationError
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, UpdateView, DeleteView, DetailView, FormView
-
-from ndr_core.admin_forms.color_forms import ColorPaletteCreateForm, ColorPaletteEditForm, ColorPaletteImportForm
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    DeleteView,
+    DetailView,
+    FormView
+)
+from ndr_core.admin_forms.color_forms import (
+    ColorPaletteCreateForm,
+    ColorPaletteEditForm,
+    ColorPaletteImportForm
+)
 from ndr_core.models import NdrCoreColorScheme, NdrCoreValue
 from ndr_core.ndr_settings import NdrSettings
 
@@ -34,7 +44,7 @@ class ColorPaletteDetailView(LoginRequiredMixin, DetailView):
     template_name = 'ndr_core/admin_views/overview/configure_colors.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ColorPaletteDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['palettes'] = NdrCoreColorScheme.objects.all().order_by('scheme_label')
         value = NdrCoreValue.objects.get(value_name='ui_color_scheme')
         context['palette'] = NdrCoreColorScheme.objects.get(scheme_name=value.value_value)
@@ -42,7 +52,7 @@ class ColorPaletteDetailView(LoginRequiredMixin, DetailView):
 
 
 class ColorPaletteCreateView(LoginRequiredMixin, CreateView):
-    """ View to create a new Search Field """
+    """ View to create a new Color Palette """
 
     model = NdrCoreColorScheme
     form_class = ColorPaletteCreateForm
@@ -50,12 +60,12 @@ class ColorPaletteCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/create/palette_create.html'
 
     def form_valid(self, form):
-        response = super(ColorPaletteCreateView, self).form_valid(form)
+        response = super().form_valid(form)
         return response
 
 
 class ColorPaletteEditView(LoginRequiredMixin, UpdateView):
-    """ View to edit an existing Search field """
+    """ View to edit an existing Color Palette """
 
     model = NdrCoreColorScheme
     form_class = ColorPaletteEditForm
@@ -64,14 +74,11 @@ class ColorPaletteEditView(LoginRequiredMixin, UpdateView):
 
 
 class ColorPaletteDeleteView(LoginRequiredMixin, DeleteView):
-    """ View to delete a Search Field from the database. Asks to confirm."""
+    """ View to delete a Color Palette from the database. Asks to confirm."""
 
     model = NdrCoreColorScheme
     success_url = reverse_lazy('ndr_core:configure_colors')
     template_name = 'ndr_core/admin_views/delete/palette_confirm_delete.html'
-
-    def form_valid(self, form):
-        return super(ColorPaletteDeleteView, self).form_valid(form)
 
 
 class ColorPaletteImportView(LoginRequiredMixin, FormView):
@@ -109,7 +116,7 @@ def choose_color_palette(request, pk):
 
         color_template_path = "static/ndr_core/app_init/color_template.css"
         if os.path.isfile(color_template_path):
-            with open(color_template_path, "r+") as color_in_file:
+            with open(color_template_path, "r+", encoding='utf8') as color_in_file:
                 text = color_in_file.read()
                 for color_name in NdrCoreColorScheme.color_list():
                     text = text.replace(f"[[{color_name}]]", getattr(palette, color_name))
@@ -117,7 +124,7 @@ def choose_color_palette(request, pk):
                 color_output_path = f"{NdrSettings.get_css_path()}/colors.css"
                 if os.path.isfile(color_output_path):
                     os.remove(color_output_path)
-                with open(color_output_path, "w") as color_out_file:
+                with open(color_output_path, "w", encoding='utf8') as color_out_file:
                     color_out_file.write(text)
 
     except NdrCoreColorScheme.DoesNotExist:

@@ -1,3 +1,4 @@
+"""Admin tables for ndr_core. Only the search statistics table is used."""
 import django_tables2 as tables
 from ndr_core.models import NdrCoreSearchStatisticEntry
 
@@ -12,6 +13,7 @@ class StatisticsTable(tables.Table):
     """Shows a list of searches made by guests."""
 
     class Meta:
+        """Metaclass for StatisticsTable."""
         template_name = "ndr_core/admin_views/bootstrap4-responsive.html"
         attrs = default_table_attrs
         model = NdrCoreSearchStatisticEntry

@@ -1,8 +1,10 @@
+"""Module for all the custom form fields. """
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
 
 class NumberRangeField(forms.CharField):
+    """Field to validate a range of numbers. """
 
     lowest_number = 1
     highest_number = 999999
@@ -35,12 +37,14 @@ class NumberRangeField(forms.CharField):
         super().validate(value)
         if len(value) == 0:
             return
-        elif len(value) == 1:
+        if len(value) == 1:
             if value[0] < self.lowest_number or value[0] > self.highest_number:
-                raise forms.ValidationError(_('Value is out of range. ({}-{})'.format(self.lowest_number, self.highest_number)))
+                raise forms.ValidationError(
+                    _('Value is out of range. ({}-{})'.format(self.lowest_number, self.highest_number)))
         if len(value) > 1:
             if value[0] < self.lowest_number or value[-1] > self.highest_number:
-                raise forms.ValidationError(_('Value is out of range. ({}-{})'.format(self.lowest_number, self.highest_number)))
+                raise forms.ValidationError(
+                    _('Value is out of range. ({}-{})'.format(self.lowest_number, self.highest_number)))
 
         if value is None:
             raise forms.ValidationError(_('Invalid value'))
