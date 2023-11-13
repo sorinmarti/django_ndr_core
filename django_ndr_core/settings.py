@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "#qj!r4e^*^tc6d^&2=zxms4^6g55&lcp8+)bee$4#4#w4eca85"
+SECRET_KEY = "*@qv*5d9^q(mc^x2euj^zqla&kp@tndnyfmz3qqq@q2ubl*q7a"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -48,7 +48,7 @@ INSTALLED_APPS += NdrSettings.get_installed_apps()
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.locale.LocaleMiddleware',                # Added
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -119,7 +119,6 @@ LANGUAGE_COOKIE_NAME = 'django_ndr_language'
 TIME_ZONE = "UTC"
 
 USE_I18N = True
-
 USE_TZ = True
 
 

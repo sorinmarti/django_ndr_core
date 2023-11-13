@@ -45,7 +45,7 @@ class Command(BaseCommand):
 
     def print_warn(self, message):
         """Prints a warning message to the console."""
-        self.stdout.write(self.style.WARN(message))
+        self.stdout.write(message)
 
     def print_error(self, message):
         """Prints an error message to the console."""
@@ -208,8 +208,9 @@ class Command(BaseCommand):
         # Copy settings file to create a backup
         self.print_output('>>> Creating backup of settings file...')
         host = "*"
-        host = input(f'Please enter the hostname your installation will be running on. '
-                     f'<default: {host}>": ')
+        if user_input:
+            host = input(f'Please enter the hostname your installation will be running on. '
+                         f'<default: {host}>": ')
         settings_split = os.environ.get("DJANGO_SETTINGS_MODULE").split(".")
         settings_file = os.path.join(os.getcwd(), settings_split[0], f"{settings_split[1]}.py")
         shutil.copyfile(settings_file, f"{settings_file}.bak")
@@ -226,7 +227,10 @@ class Command(BaseCommand):
             for key, value in settings_values.items():
                 boiler_plate = boiler_plate.replace("{{" + key + "}}", value)
 
-        overwrite_settings = input(f'Overwrite settings file "{settings_file}"? (Y/n) ')
+        if user_input:
+            overwrite_settings = input(f'Overwrite settings file "{settings_file}"? (Y/n) ')
+        else:
+            overwrite_settings = 'y'
         if overwrite_settings == '' or overwrite_settings.lower() == 'y':
             with open(settings_file, "w") as f:
                 f.write(boiler_plate)
@@ -241,7 +245,10 @@ class Command(BaseCommand):
             urls_boiler_plate = f.read()
             urls_boiler_plate = urls_boiler_plate.replace("{{PROJECT_NAME}}", settings_split[0])
 
-        overwrite_urls = input(f'Overwrite urls.py file? (Y/n) ')
+        if user_input:
+            overwrite_urls = input(f'Overwrite urls.py file? (Y/n) ')
+        else:
+            overwrite_urls = 'y'
         if overwrite_urls == '' or overwrite_settings.lower() == 'y':
             with open(urls_file, "w") as f:
                 f.write(urls_boiler_plate)
