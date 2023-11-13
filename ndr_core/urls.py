@@ -225,7 +225,7 @@ urlpatterns = [
     # UI ELEMENTS
     path('configure/ui_elements/', ConfigureUIElements.as_view(), name='configure_ui_elements'),
     path('configure/ui_elements/view/<str:pk>/', UIElementDetailView.as_view(), name='view_ui_element'),
-    path('configure/ui_elements/create/new/<str:type>/', UIElementCreateView.as_view(), name='create_ui_element'),
+    path('configure/ui_elements/create/new/', UIElementCreateView.as_view(), name='create_ui_element'),
     path('configure/ui_elements/edit/<str:pk>/', UIElementEditView.as_view(), name='edit_ui_element'),
     path('configure/ui_elements/delete/<str:pk>/', UIElementDeleteView.as_view(), name='delete_ui_element'),
 

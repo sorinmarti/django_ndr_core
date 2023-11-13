@@ -6,18 +6,8 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
 from ndr_core.admin_forms.ui_element_forms import (
-    UIElementCardCreateForm,
-    UIElementCardEditForm,
-    UIElementSlideshowCreateForm,
-    UIElementSlideshowEditForm,
-    UIElementCarouselEditForm,
-    UIElementCarouselCreateForm,
-    UIElementJumbotronEditForm,
-    UIElementJumbotronCreateForm,
-    UIElementIframeEditForm,
-    UIElementIframeCreateForm,
-    UIElementBannerEditForm,
-    UIElementBannerCreateForm
+    UIElementCreateForm,
+    UIElementEditForm
 )
 from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem
 
@@ -52,37 +42,7 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
     model = NdrCoreUIElement
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
     template_name = 'ndr_core/admin_views/create/ui_element_create.html'
-
-    def get_form_class(self):
-        if self.kwargs['type'] == "card":
-            return UIElementCardCreateForm
-        if self.kwargs['type'] == "carousel":
-            return UIElementCarouselCreateForm
-        if self.kwargs['type'] == "slideshow":
-            return UIElementSlideshowCreateForm
-        if self.kwargs['type'] == "jumbotron":
-            return UIElementJumbotronCreateForm
-        if self.kwargs['type'] == "iframe":
-            return UIElementIframeCreateForm
-        if self.kwargs['type'] == "banner":
-            return UIElementBannerCreateForm
-        return None
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.kwargs['type'] == "card":
-            context['view_title'] = "Create New Card"
-        elif self.kwargs['type'] == "carousel":
-            context['view_title'] = "Create New Carousel"
-        elif self.kwargs['type'] == "slideshow":
-            context['view_title'] = "Create New Slideshow"
-        elif self.kwargs['type'] == "jumbotron":
-            context['view_title'] = "Create New Jumbotron"
-        elif self.kwargs['type'] == "iframe":
-            context['view_title'] = "Create New Iframe"
-        elif self.kwargs['type'] == "banner":
-            context['view_title'] = "Create New Banner"
-        return context
+    form_class = UIElementCreateForm
 
     def form_valid(self, form):
         # Creates object and returns HttpResponse
@@ -148,20 +108,7 @@ class UIElementEditView(LoginRequiredMixin, UpdateView):
     model = NdrCoreUIElement
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
     template_name = 'ndr_core/admin_views/edit/ui_element_edit.html'
-
-    def get_form_class(self):
-        """Returns the correct form class for the UI Element type."""
-        translator = {
-            NdrCoreUIElement.UIElementType.CARD: UIElementCardEditForm,
-            NdrCoreUIElement.UIElementType.CAROUSEL: UIElementCarouselEditForm,
-            NdrCoreUIElement.UIElementType.SLIDESHOW: UIElementSlideshowEditForm,
-            NdrCoreUIElement.UIElementType.JUMBOTRON: UIElementJumbotronEditForm,
-            NdrCoreUIElement.UIElementType.IFRAME: UIElementIframeEditForm,
-            NdrCoreUIElement.UIElementType.BANNER: UIElementBannerEditForm
-        }
-        if self.object.type in translator:
-            return translator[self.object.type]
-        return None
+    form_class = UIElementEditForm
 
 
 class UIElementDeleteView(LoginRequiredMixin, DeleteView):

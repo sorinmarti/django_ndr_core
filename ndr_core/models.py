@@ -1096,43 +1096,44 @@ class NdrCoreUIElement(models.Model):
             pass
 
     type = models.CharField(max_length=100,
-                            choices=UIElementType.choices)
+                            choices=UIElementType.choices,
+                            help_text='Type of the element. Decides how it is rendered. ')
     """Type of the element. Decides how it is rendered. """
 
     title = models.CharField(max_length=100,
                              help_text='Title of the element for your reference.')
-    """TODO """
+    """Title of the element. """
 
     use_image_conf = models.BooleanField(default=True,
                                          help_text='Use the image\'s title, caption and URL?')
-    """TODO """
+    """Use the image's title, caption and URL? """
 
     show_indicators = models.BooleanField(default=True,
                                           help_text='Show the indicators for slideshows and carousels?')
-    """TODO """
+    """Show the indicators for slideshows and carousels? """
 
     show_title = models.BooleanField(default=True,
                                      help_text='Show the title?')
-    """TODO """
+    """Show the title? """
 
     show_text = models.BooleanField(default=True,
                                     help_text='Show the element\'s text?')
-    """TODO """
+    """Show the element's text? """
 
     show_image = models.BooleanField(default=True,
                                      help_text='Show the images?')
-    """TODO """
+    """Show the images? """
 
     link_element = models.BooleanField(default=True,
                                        help_text='Link the elements to the supplied url?')
-    """TODO """
+    """Link the elements to the supplied url? """
 
     autoplay = models.BooleanField(default=False,
                                    help_text='Autoplay carousels and slideshows?')
-    """TODO """
+    """Autoplay carousels and slideshows? """
 
     def items(self):
-        """TODO """
+        """Returns the items of the UI element, ordered. """
         return self.ndrcoreuielementitem_set.all().order_by('order_idx')
 
     def get_absolute_url(self):
@@ -1141,44 +1142,61 @@ class NdrCoreUIElement(models.Model):
 
 
 class NdrCoreUiElementItem(models.Model):
-    """TODO """
+    """UI Element Item. Is part of a UI Element. """
 
     belongs_to = models.ForeignKey(NdrCoreUIElement, on_delete=models.CASCADE)
-    """TODO """
+    """The UI Element this item belongs to. """
 
     order_idx = models.IntegerField()
-    """TODO """
+    """The order index of the item. """
 
     ndr_image = models.ForeignKey(NdrCoreImage, on_delete=models.CASCADE, null=True)
-    """TODO """
+    """The image of the item. """
 
     title = models.CharField(max_length=100, blank=True)
-    """TODO """
+    """The title of the item. """
 
     text = models.TextField(blank=True)
-    """TODO """
+    """The text of the item. """
 
     url = models.URLField(blank=True)
-    """TODO """
+    """The url of the item. """
 
 
 class NdrCoreTranslation(models.Model):
-    """TODO"""
+    """NdrCoreTranslation is used to translate CharField fields."""
 
     language = models.CharField(max_length=10)
+    """Language of the translation. """
+
     table_name = models.CharField(max_length=100, choices=TRANSLATABLE_TABLES)
+    """Name of the table the field belongs to. """
+
     object_id = models.CharField(max_length=100)
+    """ID of the object the field belongs to. """
+
     field_name = models.CharField(max_length=100)
+    """Name of the field to translate. """
+
     translation = models.CharField(max_length=255)
+    """Translation of the field. """
 
 
 class NdrCoreRichTextTranslation(models.Model):
     """NdrCoreRichTextTranslation is used to translate RichTextUploadingField fields."""
 
     language = models.CharField(max_length=10)
+    """Language of the translation. """
+
     table_name = models.CharField(max_length=100, choices=TRANSLATABLE_TABLES)
+    """Name of the table the field belongs to. """
+
     object_id = models.CharField(max_length=100)
+    """ID of the object the field belongs to. """
+
     field_name = models.CharField(max_length=100)
+    """Name of the field to translate. """
+
     translation = RichTextUploadingField(null=True, blank=True,
                                          help_text='Text for your template page')
     """Template Pages can be filled with RichText content (instead of 'manual' HTML). """

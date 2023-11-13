@@ -8,35 +8,9 @@
             <div class="card-body">
                 <h5 class="card-title">Options</h5>
                 <div class="list-group">
-                    <a href="{% url 'ndr_core:create_ui_element' 'card' %}" class="list-group-item list-group-item-action py-2">
+                    <a href="{% url 'ndr_core:create_ui_element' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-plus-circle"></i>
-                        Create New Card<br/>
-                        <small>A single image with a title and text.</small>
-                    </a>
-                    <a href="{% url 'ndr_core:create_ui_element' 'carousel' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-plus-circle"></i>
-                        Create new Carousel<br/>
-                        <small>Multiple Cards in a carousel.</small>
-                    </a>
-                    <a href="{% url 'ndr_core:create_ui_element' 'slideshow' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-plus-circle"></i>
-                        Create New Slideshow<br/>
-                        <small>Images with title/caption overlay.</small>
-                    </a>
-                    <a href="{% url 'ndr_core:create_ui_element' 'jumbotron' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-plus-circle"></i>
-                        Create New Jumbotron<br/>
-                        <small>Title with a background image.</small>
-                    </a>
-                    <a href="{% url 'ndr_core:create_ui_element' 'iframe' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-plus-circle"></i>
-                        Create New Iframe<br/>
-                        <small>Content from another location.</small>
-                    </a>
-                    <a href="{% url 'ndr_core:create_ui_element' 'banner' %}" class="list-group-item list-group-item-action py-2">
-                        <i class="fa-regular fa-plus-circle"></i>
-                        Create New Banner<br/>
-                        <small>Banner.</small>
+                        Create New UI Element
                     </a>
                     <a href="{% url 'ndr_core:help_chapter' 'ui_elements' %}" class="list-group-item list-group-item-action py-2">
                         <i class="fa-regular fa-circle-info"></i>
