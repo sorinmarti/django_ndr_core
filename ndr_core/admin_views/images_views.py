@@ -107,7 +107,7 @@ class ImagesDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'ndr_core/admin_views/delete/image_confirm_delete.html'
 
     def form_valid(self, form):
-        self.object.file.delete()
+        self.object.image.delete()
         return super().form_valid(form)
 
 
