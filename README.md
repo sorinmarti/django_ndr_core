@@ -98,44 +98,10 @@ Open ```<project_name>/settings.py``` and add the ndr_core module and its depend
 (Leave the existing settings in place).
 
 ```python
-import os
-from ndr_core.ndr_settings import *
-
-[...]
-
 INSTALLED_APPS = [
-    [...]
+    [...],
+    'ndr_core'
 ]
-INSTALLED_APPS += NdrSettings.get_installed_apps()
-```
-
-At the bottom of the file, add the following lines:
-```python
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = '/media/'
-```
-
-#### urls.py
-Open ```<project_name>/urls.py``` and add the ndr_core module and its dependencies to ```INSTALLED_APPS```:
-(Leave the existing settings in place).
-```python
-from ndr_core.ndr_settings import NdrSettings
-
-[...]
-
-urlpatterns = [
-   [...]
-]
-urlpatterns += NdrSettings.get_urls()
-```
-
-#### Migrate the database
-After you have added the django-ndr-core module and its dependencies to your settungs and urls, you can migrate your installation again to create the necessary database tables for your ndr-core installation.
-
-```shell
-python manage.py migrate
-python manage.py collectstatic
 ```
 
 #### Initialize your NDR Core app
