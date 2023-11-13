@@ -12,7 +12,11 @@ class ConfigureCorrections(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
 
-        context = {'correction_enabled': True if NdrCoreValue.objects.get(value_name='correction_feature').value_value == "true" else False}
+        correction_enabled = False
+        if NdrCoreValue.objects.get(value_name='correction_feature').value_value == "true":
+            correction_enabled = True
+
+        context = {'correction_enabled': correction_enabled}
         return render(self.request, template_name='ndr_core/admin_views/overview/configure_corrections.html',
                       context=context)
 

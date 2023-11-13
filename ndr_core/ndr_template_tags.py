@@ -1,9 +1,13 @@
+"""NDR Core template tags."""
 import re
 from django.template.loader import render_to_string
+
+from ndr_core.exceptions import PreRenderError
 from ndr_core.models import NdrCoreUIElement, NdrCoreImage, NdrCoreUpload, NdrCorePage
 
 
 class TextPreRenderer:
+    """Class to pre-render text before it is displayed on the website."""
 
     MAX_ITERATIONS = 50
     ui_element_regex = r'\[\[(card|slideshow|carousel|jumbotron|figure|banner|iframe)\|([0-9]*)\]\]'
@@ -19,6 +23,7 @@ class TextPreRenderer:
         self.request = request
 
     def check_tags_integrity(self):
+        """Checks if all tags are well-formed. """
         matches = re.finditer(self.container_regex, self.text)
         items = {}
         for match in matches:
@@ -30,21 +35,22 @@ class TextPreRenderer:
             if match.groups(0)[0] == "end":
                 items[block_type]['end'] += 1
 
-        for item in items:
-            if items[item]["start"] != items[item]["end"]:
+        for key, value in items.items():
+            if items[key]['start'] != items[key]['end']:
                 return False
         return True
 
     def create_containers(self):
+        """Creates container elements."""
         if self.check_tags_integrity():
             rendered_text = self.text
             match = re.search(self.container_regex, rendered_text)
             security_breaker = 0
             while match:
-                rendered_text = rendered_text.replace(f'[[start_block]]',
+                rendered_text = rendered_text.replace('[[start_block]]',
                                                       '<div class="card mb-2 box-shadow">'
                                                       '<div class="card-body d-flex flex-column">')
-                rendered_text = rendered_text.replace(f'[[end_block]]', '</div></div>')
+                rendered_text = rendered_text.replace('[[end_block]]', '</div></div>')
                 match = re.search(self.container_regex, rendered_text)
 
                 security_breaker += 1
@@ -55,6 +61,7 @@ class TextPreRenderer:
         return rendered_text
 
     def create_ui_elements(self):
+        """Creates UI elements."""
         rendered_text = self.text
         match = re.search(self.ui_element_regex, rendered_text)
         security_breaker = 0
@@ -70,6 +77,7 @@ class TextPreRenderer:
         return rendered_text
 
     def create_links(self):
+        """Creates links."""
         rendered_text = self.text
         match = re.search(self.link_element_regex, rendered_text)
         security_breaker = 0
@@ -86,6 +94,7 @@ class TextPreRenderer:
         return rendered_text
 
     def render_element(self, template, element_id,  text):
+        """Renders an element."""
         element = self.get_element(template, element_id)
         element_html_string = render_to_string(f'ndr_core/ui_elements/{template}.html',
                                                request=self.request, context={'data': element})
@@ -93,6 +102,7 @@ class TextPreRenderer:
         return text
 
     def get_element(self, template, element_id):
+        """Returns an element."""
         if template in self.link_element_classes:
             element_class = self.link_element_classes[template]
         else:
@@ -111,6 +121,7 @@ class TextPreRenderer:
             return None
 
     def get_pre_rendered_text(self):
+        """Returns the pre-rendered text."""
         if self.text is None:
             raise PreRenderError("Text must not be None")
         if self.text == '':
@@ -123,7 +134,3 @@ class TextPreRenderer:
         except PreRenderError:
             print("Error")
         return self.text
-
-
-class PreRenderError(Exception):
-    pass

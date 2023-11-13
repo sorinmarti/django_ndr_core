@@ -41,6 +41,7 @@ class ResultFieldDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
+    """ View to edit the result card configuration of a search configuration."""
 
     form_class = SearchConfigurationResultEditForm
     template_name = 'ndr_core/admin_views/edit/result_card_edit.html'
@@ -78,7 +79,8 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
 
                 # There is a valid row of configuration. Check if it already exists in the database.
                 try:
-                    updatable_obj = conf_object.result_card_fields.get(result_field=form.cleaned_data[f'result_field_{row}'])
+                    updatable_obj = (
+                        conf_object.result_card_fields.get(result_field=form.cleaned_data[f'result_field_{row}']))
                     updatable_obj.field_row = form.cleaned_data[f'row_field_{row}']
                     updatable_obj.field_column = form.cleaned_data[f'column_field_{row}']
                     updatable_obj.field_size = form.cleaned_data[f'size_field_{row}']

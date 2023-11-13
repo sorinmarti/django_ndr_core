@@ -150,20 +150,18 @@ class UIElementEditView(LoginRequiredMixin, UpdateView):
     template_name = 'ndr_core/admin_views/edit/ui_element_edit.html'
 
     def get_form_class(self):
-        if self.object.type == NdrCoreUIElement.UIElementType.CARD:
-            return UIElementCardEditForm
-        if self.object.type == NdrCoreUIElement.UIElementType.CAROUSEL:
-            return UIElementCarouselEditForm
-        if self.object.type == NdrCoreUIElement.UIElementType.SLIDESHOW:
-            return UIElementSlideshowEditForm
-        if self.object.type == NdrCoreUIElement.UIElementType.JUMBOTRON:
-            return UIElementJumbotronEditForm
-        if self.object.type == NdrCoreUIElement.UIElementType.IFRAME:
-            return UIElementIframeEditForm
-        if self.object.type == NdrCoreUIElement.UIElementType.BANNER:
-            return UIElementBannerEditForm
-        print("TYPE", self.object.type)
-        return UIElementCardEditForm
+        """Returns the correct form class for the UI Element type."""
+        translator = {
+            NdrCoreUIElement.UIElementType.CARD: UIElementCardEditForm,
+            NdrCoreUIElement.UIElementType.CAROUSEL: UIElementCarouselEditForm,
+            NdrCoreUIElement.UIElementType.SLIDESHOW: UIElementSlideshowEditForm,
+            NdrCoreUIElement.UIElementType.JUMBOTRON: UIElementJumbotronEditForm,
+            NdrCoreUIElement.UIElementType.IFRAME: UIElementIframeEditForm,
+            NdrCoreUIElement.UIElementType.BANNER: UIElementBannerEditForm
+        }
+        if self.object.type in translator:
+            return translator[self.object.type]
+        return None
 
 
 class UIElementDeleteView(LoginRequiredMixin, DeleteView):

@@ -1,3 +1,4 @@
+"""Utility functions for the ndr_core app."""
 import csv
 from io import StringIO
 
@@ -48,10 +49,11 @@ def create_csv_export_string(list_of_results, mapping):
 
 
 def create_sitemap():
+    """Create a sitemap.xml file."""
     pages = NdrCorePage.objects.all()
     rendered = render_to_string('ndr_core/utils/sitemap.xml', {'pages': pages})
-    pass
 
 
 def create_robots_txt():
-    pass
+    """Create a robots.txt file."""
+    # Not implemented yet

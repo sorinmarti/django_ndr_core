@@ -1,6 +1,4 @@
-"""
-models.py contains ndr_core's database models.
-"""
+"""models.py contains ndr_core's database models."""
 import csv
 import os.path
 from io import StringIO
@@ -34,6 +32,7 @@ TRANSLATABLE_FIELDS = {
 
 
 class TranslatableMixin:
+    """Mixin which provides methods to translate translatable fields. """
 
     translatable_fields = []
     """Fields which are translatable. """
@@ -64,6 +63,8 @@ class NdrCoreResultField(models.Model):
         and 'person.last_name'."""
 
     class FieldType(models.IntegerChoices):
+        """The FieldType of a resultField is used to render the HTML result """
+
         STRING = 1, "String"
         """This type produces a bootstrap div with the expression as content. The content
         can be rendered as raw HTML or as markdown."""
@@ -525,6 +526,7 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
         help text is returned. """
         return self.translated_field(self.simple_query_help_text, 'simple_query_help_text', self.conf_name)
 
+
 class NdrCorePage(TranslatableMixin, models.Model):
     """ An NdrCorePage is a web page on the ndr_core website instance. Each page has a type (see PageType) and upon
      creation, an HTML template is created and saved in the projects template folder. This allows users to create
@@ -806,8 +808,10 @@ class NdrCoreValue(models.Model):
 
     def get_value(self):
         """Returns the valued which is always saved as string as the proper type. """
-        if self.value_type == NdrCoreValue.ValueType.STRING or self.value_type == NdrCoreValue.ValueType.RICH_STRING or \
-                self.value_type == NdrCoreValue.ValueType.LIST or self.value_type == NdrCoreValue.ValueType.URL:
+        if (self.value_type == NdrCoreValue.ValueType.STRING or
+                self.value_type == NdrCoreValue.ValueType.RICH_STRING or
+                self.value_type == NdrCoreValue.ValueType.LIST or
+                self.value_type == NdrCoreValue.ValueType.URL):
             return self.value_value
         if self.value_type == NdrCoreValue.ValueType.INTEGER:
             try:
@@ -828,7 +832,7 @@ class NdrCoreValue(models.Model):
     def get_options(self):
         """For lists there are options, saved as string in the form: (key1,value1);(key2,value2)"""
         if self.value_type == NdrCoreValue.ValueType.LIST or self.value_type == NdrCoreValue.ValueType.MULTI_LIST:
-            options = list()
+            options = []
             option_tuples = self.value_options.split(";")
             for ot in option_tuples:
                 ot = ot[1:-1]   # remove brackets
@@ -1080,6 +1084,7 @@ class NdrCoreUIElement(models.Model):
     """ UI Element """
 
     class UIElementType(models.TextChoices):
+        """NDR Core UI Element types."""
         CARD = "card", "Card"
         SLIDESHOW = "slides", "Slideshow"
         CAROUSEL = "carousel", "Carousel"
@@ -1131,6 +1136,7 @@ class NdrCoreUIElement(models.Model):
         return self.ndrcoreuielementitem_set.all().order_by('order_idx')
 
     def get_absolute_url(self):
+        """Returns the absolute url of the image."""
         return reverse('ndr_core:view_ui_element', kwargs={'pk': self.pk})
 
 
@@ -1167,6 +1173,7 @@ class NdrCoreTranslation(models.Model):
 
 
 class NdrCoreRichTextTranslation(models.Model):
+    """NdrCoreRichTextTranslation is used to translate RichTextUploadingField fields."""
 
     language = models.CharField(max_length=10)
     table_name = models.CharField(max_length=100, choices=TRANSLATABLE_TABLES)

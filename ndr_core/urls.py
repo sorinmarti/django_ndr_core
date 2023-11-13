@@ -1,3 +1,4 @@
+"""URLs for the ndr_core app."""
 from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
@@ -153,7 +154,8 @@ urlpatterns = [
     path('configure/settings/delete/<str:pk>/', SettingDeleteView.as_view(), name='delete_setting'),
     path('configure/settings/set/readonly/', SetPageReadOnlyView.as_view(), name='set_page_read_only'),
     path('configure/settings/set/editable/', SetPageEditableView.as_view(), name='set_page_editable'),
-    path('configure/settings/set/under_construction/', SetPageUnderConstructionView.as_view(), name='set_page_under_construction'),
+    path('configure/settings/set/under_construction/', SetPageUnderConstructionView.as_view(),
+         name='set_page_under_construction'),
     path('configure/settings/set/live/', SetPageLiveView.as_view(), name='set_page_live'),
 
 
@@ -177,19 +179,25 @@ urlpatterns = [
     path('configure/uploads/delete/<int:pk>/', UploadDeleteView.as_view(), name='delete_upload'),
     path('configure/manifest/uploads/create/new/', ManifestUploadCreateView.as_view(), name='create_manifest_upload'),
     path('configure/manifest/uploads/edit/<int:pk>/', ManifestUploadEditView.as_view(), name='edit_manifest_upload'),
-    path('configure/manifest/uploads/delete/<int:pk>/', ManifestUploadDeleteView.as_view(), name='delete_manifest_upload'),
+    path('configure/manifest/uploads/delete/<int:pk>/', ManifestUploadDeleteView.as_view(),
+         name='delete_manifest_upload'),
     path('configure/manifest/groups/create/', ManifestGroupCreateView.as_view(), name='create_manifest_group'),
 
     # TRANSLATIONS
     path('configure/translations/', ConfigureTranslations.as_view(), name='configure_translations'),
     path('configure/translations/edit/pages/', SelectPageTranslationView.as_view(), name='select_page_translations'),
-    path('configure/translations/edit/pages/<str:lang>/', TranslatePageValuesView.as_view(), name='edit_page_translations'),
+    path('configure/translations/edit/pages/<str:lang>/', TranslatePageValuesView.as_view(),
+         name='edit_page_translations'),
     path('configure/translations/edit/fields/', SelectFieldTranslationView.as_view(), name='select_field_translations'),
-    path('configure/translations/edit/fields/<str:lang>/', TranslateFieldValuesView.as_view(), name='edit_field_translations'),
-    path('configure/translations/edit/settings/', SelectSettingsTranslationView.as_view(), name='select_settings_translations'),
-    path('configure/translations/edit/settings/<str:lang>/', TranslateSettingsValuesView.as_view(), name='edit_settings_translations'),
+    path('configure/translations/edit/fields/<str:lang>/', TranslateFieldValuesView.as_view(),
+         name='edit_field_translations'),
+    path('configure/translations/edit/settings/', SelectSettingsTranslationView.as_view(),
+         name='select_settings_translations'),
+    path('configure/translations/edit/settings/<str:lang>/', TranslateSettingsValuesView.as_view(),
+         name='edit_settings_translations'),
     path('configure/translations/edit/form/', SelectFormTranslationView.as_view(), name='select_form_translations'),
-    path('configure/translations/edit/form/<str:lang>/', TranslateFormValuesView.as_view(), name='edit_form_translations'),
+    path('configure/translations/edit/form/<str:lang>/', TranslateFormValuesView.as_view(),
+         name='edit_form_translations'),
 
     # USER MESSAGES
     path('configure/messages/', ConfigureMessages.as_view(), name='configure_messages'),
@@ -224,23 +232,34 @@ urlpatterns = [
     # SEARCH CONFIGURATIONS
     path('configure/search/', ConfigureSearch.as_view(), name='configure_search'),
 
-    path('configure/search/create/new/config/', SearchConfigurationCreateView.as_view(), name='create_search_config'),
-    path('configure/search/create/new/search_field/', SearchFieldCreateView.as_view(), name='create_search_field'),
-    path('configure/search/create/new/result_field/', ResultFieldCreateView.as_view(), name='create_result_field'),
+    path('configure/search/create/new/config/', SearchConfigurationCreateView.as_view(),
+         name='create_search_config'),
+    path('configure/search/create/new/search_field/', SearchFieldCreateView.as_view(),
+         name='create_search_field'),
+    path('configure/search/create/new/result_field/', ResultFieldCreateView.as_view(),
+         name='create_result_field'),
 
-    path('configure/search/edit/config/<str:pk>/', SearchConfigurationEditView.as_view(), name='edit_search_config'),
-    path('configure/search/edit/form/<str:pk>/', SearchConfigurationFormEditView.as_view(), name='edit_search_form'),
-    path('configure/search/edit/card/<str:pk>/', SearchConfigurationResultEditView.as_view(), name='edit_result_card'),
-    path('configure/search/edit/search_field/<str:pk>/', SearchFieldEditView.as_view(), name='edit_search_field'),
-    path('configure/search/edit/result_field/<str:pk>/', ResultFieldEditView.as_view(), name='edit_result_field'),
+    path('configure/search/edit/config/<str:pk>/', SearchConfigurationEditView.as_view(),
+         name='edit_search_config'),
+    path('configure/search/edit/form/<str:pk>/', SearchConfigurationFormEditView.as_view(),
+         name='edit_search_form'),
+    path('configure/search/edit/card/<str:pk>/', SearchConfigurationResultEditView.as_view(),
+         name='edit_result_card'),
+    path('configure/search/edit/search_field/<str:pk>/', SearchFieldEditView.as_view(),
+         name='edit_search_field'),
+    path('configure/search/edit/result_field/<str:pk>/', ResultFieldEditView.as_view(),
+         name='edit_result_field'),
 
-    path('configure/search/delete/config/<str:pk>/', SearchConfigurationDeleteView.as_view(), name='delete_search_config'),
+    path('configure/search/delete/config/<str:pk>/', SearchConfigurationDeleteView.as_view(),
+         name='delete_search_config'),
     path('configure/search/delete/search_field/<str:pk>/', SearchFieldDeleteView.as_view(), name='delete_search_field'),
     path('configure/search/delete/result_field/<str:pk>/', ResultFieldDeleteView.as_view(), name='delete_result_field'),
 
     path('configure/search/copy/config/<str:pk>/', SearchConfigurationCopyView.as_view(), name='copy_search_config'),
-    path('configure/search/form/preview/<str:img_config>/', preview_search_form_image, name='preview_search_form_image'),
-    path('configure/search/result/preview/<str:img_config>/', preview_result_card_image, name='preview_result_card_image'),
+    path('configure/search/form/preview/<str:img_config>/', preview_search_form_image,
+         name='preview_search_form_image'),
+    path('configure/search/result/preview/<str:img_config>/', preview_result_card_image,
+         name='preview_result_card_image'),
 
     # SEARCH STATS
     path('search/statistics/', StatisticsView.as_view(), name='search_statistics'),
@@ -249,13 +268,16 @@ urlpatterns = [
     # Login / Logout
     path('login/', auth_views.LoginView.as_view(template_name='ndr_core/admin_views/user_management/login.html',
                                                 form_class=NdrCoreLoginForm), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='ndr_core/admin_views/user_management/logout.html'), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='ndr_core/admin_views/user_management/logout.html'),
+         name='logout'),
     path('change_password/',
-         auth_views.PasswordChangeView.as_view(template_name='ndr_core/admin_views/user_management/change_password.html',
-                                               form_class=NdrCoreChangePasswordForm,
-                                               success_url=reverse_lazy('ndr_core:password_change_done')),
+         auth_views.PasswordChangeView.as_view(
+             template_name='ndr_core/admin_views/user_management/change_password.html',
+             form_class=NdrCoreChangePasswordForm,
+             success_url=reverse_lazy('ndr_core:password_change_done')),
          name='change_password'),
-    path('password_changed/', TemplateView.as_view(template_name='ndr_core/admin_views/user_management/password_changed.html'), name='password_change_done'),
+    path('password_changed/', TemplateView.as_view(
+        template_name='ndr_core/admin_views/user_management/password_changed.html'), name='password_change_done'),
 
     # Help
     path('help/', HelpView.as_view(), name='help'),
@@ -267,7 +289,8 @@ urlpatterns = [
     path('bulk-download/csv/<str:search_config>/', NdrCSVListDownloadView.as_view(), name='download_csv'),
 
     # Mark an entry for correction
-    path('mark/to/correct/<str:search_config>/<str:record_id>/', NdrMarkForCorrectionView.as_view(), name='mark_record'),
+    path('mark/to/correct/<str:search_config>/<str:record_id>/', NdrMarkForCorrectionView.as_view(),
+         name='mark_record'),
 
     # Language
     path('language/<str:new_language>/', set_language_view, name='set_language'),

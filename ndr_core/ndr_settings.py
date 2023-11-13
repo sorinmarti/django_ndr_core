@@ -34,7 +34,8 @@ class NdrSettings:
 
     @staticmethod
     def get_version():
-        with open(os.path.join(Path(__file__).resolve().parent, 'VERSION')) as version_file:
+        """Returns the version of the NDR Core app. """
+        with open(os.path.join(Path(__file__).resolve().parent, 'VERSION'), encoding='utf8') as version_file:
             return version_file.read().strip()
 
     @staticmethod

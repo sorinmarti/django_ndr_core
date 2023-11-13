@@ -132,7 +132,8 @@ class UIElementSlideshowForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['slideshow_images'] = ImageMultipleChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS))
+        self.fields['slideshow_images'] = ImageMultipleChoiceField(
+            queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS))
         self.fields['slideshow_images'].widget.option_template_name = "ndr_core/test.html"
 
     @property
@@ -277,7 +278,9 @@ class UIElementJumbotronForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['card_item_image'] = ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS), empty_label=None)
+        self.fields['card_item_image'] = (
+            ImageChoiceField(queryset=NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.BGS),
+                             empty_label=None))
         self.fields['card_item_image'].widget.option_template_name = "ndr_core/test.html"
         self.fields['card_item_title'] = forms.CharField()
         self.fields['card_item_text'] = forms.CharField(widget=forms.Textarea)

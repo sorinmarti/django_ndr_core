@@ -15,3 +15,7 @@ class NdrCoreConfigurationError(Exception):
 
     def __str__(self):
         return f"NdrCoreConfigurationError: {self.message}"
+
+
+class PreRenderError(Exception):
+    """Exception raised for errors in the pre-rendering process."""

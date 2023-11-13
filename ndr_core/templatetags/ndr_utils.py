@@ -213,7 +213,6 @@ def translate_dict_foo(key_to_translate, dict_name, target_key):
 
     try:
         field = NdrCoreSearchField.objects.get(field_name=dict_name)
-
         choices = field.get_list_choices_as_dict()
 
         default_language = NdrCoreValue.objects.get(value_name='ndr_language').get_value()
@@ -227,7 +226,7 @@ def translate_dict_foo(key_to_translate, dict_name, target_key):
                 if target_key in value_object:
                     return value_object[target_key]
                 return f'{key_to_translate} (DNF)'
-            elif selected_language in additional_languages:
+            if selected_language in additional_languages:
                 key = f'{target_key}_{selected_language}'
                 if key in value_object:
                     return value_object[key]

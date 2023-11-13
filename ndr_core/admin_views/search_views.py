@@ -114,7 +114,8 @@ class SearchConfigurationFormEditView(LoginRequiredMixin, FormView):
 
                 # There is a valid row of configuration. Check if it already exists in the database.
                 try:
-                    updatable_obj = conf_object.search_form_fields.get(search_field=form.cleaned_data[f'search_field_{row}'])
+                    updatable_obj = (
+                        conf_object.search_form_fields.get(search_field=form.cleaned_data[f'search_field_{row}']))
                     updatable_obj.field_row = form.cleaned_data[f'row_field_{row}']
                     updatable_obj.field_column = form.cleaned_data[f'column_field_{row}']
                     updatable_obj.field_size = form.cleaned_data[f'size_field_{row}']

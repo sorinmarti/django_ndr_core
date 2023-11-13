@@ -1,6 +1,6 @@
 """Forms for the result card configuration. """
-from crispy_forms.bootstrap import TabHolder, Tab
 from django_select2 import forms as s2forms
+from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, HTML, Field, Row, Column, Submit, Button
 from django import forms

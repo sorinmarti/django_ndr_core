@@ -28,10 +28,13 @@ class SwitchGroupWidget(forms.Widget):
     def render(self, name, value, attrs=None, renderer=None):
         html = '<div class="form-group">'
         for x in range(3):
-            html += '<div class="custom-control custom-switch">' \
-                   f'  <input type="checkbox" name="{name}" class="custom-control-input" id="{attrs["id"]}{x}">' \
-                   f'  <label class="custom-control-label small" for="{attrs["id"]}{x}">{ self.attrs.get("label", "") }</label>' \
-                   '</div>'
+            html += ('<div class="custom-control custom-switch">'
+                     f'  <input type="checkbox" name="{name}" '
+                     f'         class="custom-control-input" id="{attrs["id"]}{x}">'
+                     f'  <label class="custom-control-label '
+                     f'         small" for="{attrs["id"]}{x}">{ self.attrs.get("label", "") }'
+                     f'  </label>'
+                     '</div>')
         html += '</div>'
         return mark_safe(html)
 

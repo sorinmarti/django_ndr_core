@@ -201,7 +201,8 @@ def move_page_up(request, pk):
         return redirect('ndr_core:configure_pages')
 
     # Get the list in which we want to move: the same as the page is in
-    values = list(NdrCorePage.objects.filter(parent_page=this_page.parent_page).order_by('index').values_list('index', flat=True))
+    values = list(NdrCorePage.objects.filter(parent_page=this_page.parent_page)
+                  .order_by('index').values_list('index', flat=True))
     this_pages_index = values.index(this_page.index)
 
     if this_pages_index == 0:

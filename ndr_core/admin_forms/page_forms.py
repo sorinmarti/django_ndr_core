@@ -17,7 +17,7 @@ from ndr_core.models import (
 )
 
 
-class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):
+class SearchConfigurationWidget(s2forms.ModelSelect2MultipleWidget):     # pylint: disable=too-many-ancestors
     """Widget to display a multi select2 dropdown for search configurations. """
 
     model = NdrCoreSearchConfiguration
@@ -222,7 +222,8 @@ class FooterForm(SettingsListForm):
 
         form_row = Row(
             Column('save_footer_show_partners', css_class='form-group col-md-10 mb-0'),
-            Column(HTML(f'<a href="{reverse("ndr_core:view_images", kwargs={"group": "logos"})}" class="btn btn-sm btn-secondary">Manage Partner Logos</a>'),
+            Column(HTML(f'<a href="{reverse("ndr_core:view_images", kwargs={"group": "logos"})}" '
+                        f'class="btn btn-sm btn-secondary">Manage Partner Logos</a>'),
                    css_class='form-group col-md-2 mb-0 text-right'),
             css_class='form-row'
         )
@@ -234,9 +235,13 @@ class FooterForm(SettingsListForm):
         )
         layout.append(form_row)
 
+        html = f'''
+        <a href="{reverse("ndr_core:view_settings", kwargs={"group": "socials"})}" 
+        class="btn btn-sm btn-secondary">Manage Social Links</a>
+        '''
         form_row = Row(
             Column('save_footer_show_socials', css_class='form-group col-md-10 mb-0'),
-            Column(HTML(f'<a href="{reverse("ndr_core:view_settings", kwargs={"group": "socials"})}" class="btn btn-sm btn-secondary">Manage Social Links</a>'),
+            Column(HTML(html),
                    css_class='form-group col-md-2 mb-0 text-right'),
             css_class='form-row'
         )

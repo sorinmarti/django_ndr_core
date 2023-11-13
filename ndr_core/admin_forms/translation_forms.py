@@ -113,14 +113,16 @@ class TranslateFieldForm(TranslateForm):
 
         initial_values = {}
         for field in self.ndr_form_fields:
-            self.fields[f"field_label_{field.field_name}"] = forms.CharField(label=f"Translate: '{field.field_label}'",
-                                                                             required=False,
-                                                                             max_length=100,
-                                                                             help_text="The search field's Label")
-            self.fields[f"field_help_text_{field.field_name}"] = forms.CharField(label=f"Translate: '{field.help_text}'",
-                                                                                 required=False,
-                                                                                 max_length=100,
-                                                                                 help_text="The search field's Help Text")
+            self.fields[f"field_label_{field.field_name}"] = (
+                forms.CharField(label=f"Translate: '{field.field_label}'",
+                                required=False,
+                                max_length=100,
+                                help_text="The search field's Label"))
+            self.fields[f"field_help_text_{field.field_name}"] = (
+                forms.CharField(label=f"Translate: '{field.help_text}'",
+                                required=False,
+                                max_length=100,
+                                help_text="The search field's Help Text"))
             try:
                 field_label = NdrCoreTranslation.objects.get(language=self.lang,
                                                              table_name='NdrCoreSearchField',
@@ -195,10 +197,12 @@ class TranslateSettingsForm(TranslateForm):
 
         initial_values = {}
         for field in self.ndr_settings_fields:
-            self.fields[f"setting_{field.value_name}"] = forms.CharField(label=f"Translate: '{field.value_value}'",
-                                                                         required=False,
-                                                                         max_length=100,
-                                                                         help_text=f"Value of the setting <b>{field.value_label}</b> (Help text: <i>{field.value_help_text}</i>)")
+            self.fields[f"setting_{field.value_name}"] = (
+                forms.CharField(label=f"Translate: '{field.value_value}'",
+                                required=False,
+                                max_length=100,
+                                help_text=(f"Value of the setting <b>{field.value_label}</b> "
+                                           f"(Help text: <i>{field.value_help_text}</i>)")))
             try:
                 field_label = NdrCoreTranslation.objects.get(language=self.lang,
                                                              table_name='NdrCoreValue',

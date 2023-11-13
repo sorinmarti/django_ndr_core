@@ -40,11 +40,15 @@ class NumberRangeField(forms.CharField):
         if len(value) == 1:
             if value[0] < self.lowest_number or value[0] > self.highest_number:
                 raise forms.ValidationError(
-                    _('Value is out of range. ({}-{})'.format(self.lowest_number, self.highest_number)))
+                    _('Value is out of range. ({}-{})'  # pylint: disable=consider-using-f-string
+                      .format(self.lowest_number,
+                              self.highest_number)))
         if len(value) > 1:
             if value[0] < self.lowest_number or value[-1] > self.highest_number:
                 raise forms.ValidationError(
-                    _('Value is out of range. ({}-{})'.format(self.lowest_number, self.highest_number)))
+                    _('Value is out of range. ({}-{})'  # pylint: disable=consider-using-f-string
+                      .format(self.lowest_number,
+                              self.highest_number)))
 
         if value is None:
             raise forms.ValidationError(_('Invalid value'))

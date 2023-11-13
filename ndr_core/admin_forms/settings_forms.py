@@ -96,15 +96,18 @@ class SettingsListForm(forms.Form):
             form_row.append(Column(f"save_{setting}", css_class=f'form-group col-md-{cols} mb-0'))
 
             if self.is_custom_form:
+                html = f'''
+                <p>
+                    <a href="{{% url \'ndr_core:edit_setting\' \'{setting}\' %}}" class="btn btn-sm btn-secondary">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </a>
+                    <a href="{{% url \'ndr_core:delete_setting\' \'{setting}\'%}}" class="btn btn-sm btn-danger">
+                        <i class="fa-regular fa-delete-left"></i>
+                    </a>
+                </p>
+                '''
                 col = Column(Div(
-                    HTML('<p>'
-                         '  <a href="{% url \'ndr_core:edit_setting\' \''+setting+'\' %}" class="btn btn-sm btn-secondary">'
-                         '    <i class="fa-regular fa-pen-to-square"></i>'
-                         '  </a> '
-                         '<a href="{% url \'ndr_core:delete_setting\' \''+setting+'\'%}" class="btn btn-sm btn-danger">'
-                         '    <i class="fa-regular fa-delete-left"></i>'
-                         '  </a>'
-                         '</p>'),
+                    HTML(html),
                     css_class="form-group"
                 ), css_class='form-group col-md-1 mb-0')
                 form_row.append(col)

@@ -81,11 +81,11 @@ class BaseResult(ABC):
         try:
             # Timeouts: 2s until connection, 5s until result
             result = requests.get(self.query, timeout=(2, 5), headers=self.api_request_headers)
-        except requests.exceptions.ConnectTimeout as e:
+        except requests.exceptions.ConnectTimeout:
             self.error = _("The connection timed out")
             self.error_code = BaseResult.TIMEOUT
             return
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             self.error = _("Query could not be requested")
             self.error_code = BaseResult.REQUEST
             return
@@ -242,105 +242,6 @@ class BaseResult(ABC):
                                                        search_no_results=self.total,
                                                        search_location=location)
 
-    def organize_raw_result_old(self):
-        # Actual results of this page
-        # TODO: Add Ndr core data: has_page_image,page_image, has_fragment, fragment, result_number, total_results
-        self.results = self.get_transformed_hits()
-
-    def get_transformed_hits(self):
-        # TODO
-        results = []
-        hit_number = self.page * self.page_size - self.page_size + 1
-        for hit in self.raw_result['hits']:
-            transformed_data = {
-                "options": [],
-                "values": []
-            }
-            transformer = [
-                {
-                    "target_field_name": "transcription",
-                    "source_field_name": "transcription.corrected",
-                    "dne_field_name": "transcription.original",
-                    "none_value": "<no data>",
-                    "field_label": "Transcription"
-                },
-                {
-                    "target_field_name": "date",
-                    "source_field_name": "date.ref",
-                    "none_value": "<no data>"
-                },
-                {
-                    "target_field_name": "status",
-                    "source_field_name": "status",
-                    "none_value": "<no data>"
-                },
-                {
-                    "target_field_name": "status",
-                    "source_field_name": "status",
-                    "none_value": "<no data>"
-                },
-                {
-                    "target_field_name": "Locations",
-                    "source_field_name": "location",
-                    "field_type": "list",
-                    "list_key": "transcription"
-                },
-                {
-                    "target_field_name": "page_image",
-                    "source_field_name": "source.selector.canvas",
-                    "field_type": "page_image"
-                },
-                {
-                    "target_field_name": "fragment_image",
-                    "source_field_name": "source.selector.fragment",
-                    "field_type": "fragment_image"
-                }
-            ]
-
-            for transform_action in transformer:
-                key_parts = transform_action["source_field_name"].split(".")
-                desired_value = BaseResult.safe_get(hit, key_parts)
-                if desired_value is None and "dne_field_name" in transform_action:
-                    key_parts = transform_action["dne_field_name"].split(".")
-                    desired_value = BaseResult.safe_get(hit, key_parts)
-                if desired_value is None and "none_value" in transform_action:
-                    desired_value = transform_action["none_value"]
-
-                if "field_type" not in transform_action or transform_action["field_type"] == "default":
-                    field_label = transform_action["target_field_name"]
-                    if "field_label" in transform_action:
-                        field_label = transform_action["field_label"]
-                    transformed_data["values"].append({"value": desired_value, "label": field_label})
-                else:
-                    transformed_data[transform_action["target_field_name"]] = desired_value
-
-                    if desired_value is not None:
-                        if transform_action["field_type"] == "list":
-                            transformed_data[transform_action["target_field_name"]] = ", ".join([x["transcription"] for x in desired_value])
-                            transformed_data["values"].append({"value": ", ".join([x["transcription"] for x in desired_value]), "label": "Loc"})
-                        if transform_action["field_type"] == "page_image":
-                            transformed_data["has_page_image"] = True
-                        if transform_action["field_type"] == "fragment_image":
-                            transformed_data["has_fragment_image"] = True
-
-
-            # TODO Options
-            transformed_data["options"] = [
-                {
-                    "url": reverse('ndr_core:download_record', kwargs={'search_config': self.search_configuration.conf_name, 'record_id': hit['id']}),
-                    "target": "_blank", "label": "View Repository"
-                },
-                {
-                    "url": "http:",
-                    "target": "_blank", "label": "label"
-                }
-            ]
-
-            hit["ndr"] = transformed_data
-            results.append(hit)
-            hit_number += 1
-        return results
-
     def get_form_links(self):
         """Returns a dict with links to refine the search or start a new one."""
         form_links = {}
@@ -348,21 +249,26 @@ class BaseResult(ABC):
         # Refine URL
         updated_url = self.request.GET.copy()
         try:
-            del (updated_url[f'search_button_{self.search_configuration.conf_name}'])
+            del updated_url[f'search_button_{self.search_configuration.conf_name}']
             if 'tab' in updated_url:
-                del (updated_url['tab'])
+                del updated_url['tab']
         except KeyError:
             pass
-        form_links['refine'] = self.request.path + "?" + updated_url.urlencode() + "&refine=1&tab=" + self.search_configuration.conf_name
+        form_links['refine'] = (self.request.path + "?" + updated_url.urlencode() +
+                                "&refine=1&tab=" + self.search_configuration.conf_name)
 
         # New Search URL
         form_links['new'] = self.request.path + "?tab=" + self.search_configuration.conf_name
 
-        form_links['bulk_download_json'] = reverse('ndr_core:download_list',
-                                                   kwargs={'search_config': self.search_configuration.conf_name}) + "?" + updated_url.urlencode()
+        form_links['bulk_download_json'] = (
+                reverse('ndr_core:download_list',
+                        kwargs={'search_config': self.search_configuration.conf_name}) +
+                "?" + updated_url.urlencode())
 
-        form_links['bulk_download_csv'] = reverse('ndr_core:download_csv',
-                                                  kwargs={'search_config': self.search_configuration.conf_name}) + "?" + updated_url.urlencode()
+        form_links['bulk_download_csv'] = (
+                reverse('ndr_core:download_csv',
+                        kwargs={'search_config': self.search_configuration.conf_name}) +
+                "?" + updated_url.urlencode())
         return form_links
 
     def get_pagination_links(self):

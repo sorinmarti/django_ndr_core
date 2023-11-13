@@ -8,7 +8,7 @@ from ndr_core.forms.forms_base import _NdrCoreForm
 from ndr_core.models import NdrCoreValue, NdrCoreUserMessage
 
 
-class ContactForm(ModelForm, _NdrCoreForm):
+class ContactForm(ModelForm, _NdrCoreForm): # pylint: disable=too-many-ancestors
     """Provides a form to send a message to the site admin. """
 
     class Meta:

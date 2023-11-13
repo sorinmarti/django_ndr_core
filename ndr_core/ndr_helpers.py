@@ -1,7 +1,9 @@
+"""NDR Core helpers."""
 from django.conf import settings
 
 
 def get_api_config():
+    """Get NDR Core API configuration."""
     try:
         saved_api_config = getattr(settings, "NDR_CORE_API_CONFIG")
     except AttributeError:
@@ -38,6 +40,7 @@ def get_api_config():
 
 
 def get_search_field_config(field_name):
+    """Get search field configuration."""
     config = get_api_config()
     if field_name in config["search_fields"]:
         return config["search_fields"][field_name]
@@ -45,5 +48,6 @@ def get_search_field_config(field_name):
 
 
 def set_default_config_value(ndr_core_settings, name, value):
+    """Set default value for NDR Core settings."""
     if name not in ndr_core_settings:
         ndr_core_settings[name] = value

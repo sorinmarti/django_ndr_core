@@ -59,19 +59,19 @@ def dispatch(request, ndr_page=None):
         if page.page_type == page.PageType.TEMPLATE:
             return NdrTemplateView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                            ndr_page=page)(request)
-        elif page.page_type == page.PageType.SEARCH:
+        if page.page_type == page.PageType.SEARCH:
             return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                       ndr_page=page)(request)
-        elif page.page_type == page.PageType.CONTACT:
+        if page.page_type == page.PageType.CONTACT:
             return ContactView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                        ndr_page=page)(request)
-        elif page.page_type == page.PageType.FLIP_BOOK:
+        if page.page_type == page.PageType.FLIP_BOOK:
             return FlipBookView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                         ndr_page=page)(request)
-        elif page.page_type == page.PageType.ABOUT_PAGE:
+        if page.page_type == page.PageType.ABOUT_PAGE:
             return AboutUsView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                        ndr_page=page)(request)
-        elif page.page_type == page.PageType.VIEWER_PAGE:
+        if page.page_type == page.PageType.VIEWER_PAGE:
             return ViewerView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                       ndr_page=page)(request)
         else:
@@ -85,9 +85,6 @@ class _NdrCoreView(View):
 
     ndr_page = None
     template_name = None
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         """ Default get method for all ndr core pages. """
@@ -116,7 +113,6 @@ class _NdrCoreView(View):
 
 class NdrTemplateView(_NdrCoreView):
     """Basic template view. """
-    pass
 
 
 class _NdrCoreSearchView(_NdrCoreView):
@@ -124,9 +120,6 @@ class _NdrCoreSearchView(_NdrCoreView):
      retrieve or display results. It is also the base view for all result download views."""
 
     form_class = AdvancedSearchForm
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
     def get_search_config_from_name(self, name):
         """ Convenience method to get search config. """
@@ -327,6 +320,7 @@ class AboutUsView(_NdrCoreView):
     """A view to show an about us page. """
 
     def get_context_data(self, **kwargs):
+        """Returns the context data for this view. """
         context = {}
         context.update(self.get_ndr_context_data())
         return context
@@ -344,6 +338,7 @@ class FlipBookView(_NdrCoreView):
     """A view to show a set of pages with 'back' and 'forward' buttons. """
 
     def get_context_data(self, **kwargs):
+        """Returns the context data for this view."""
         context = {}
         context.update(self.get_ndr_context_data())
         return context
@@ -352,11 +347,13 @@ class FlipBookView(_NdrCoreView):
 class ViewerView(_NdrCoreView):
     """A view to show a IIIF viewer. """
     def get_context_data(self, **kwargs):
+        """Returns the context data for this view. """
         context = {}
         context.update(self.get_ndr_context_data())
         return context
 
     def get(self, request, *args, **kwargs):
+        """GET request for this view. """
         context = self.get_context_data()
 
         manifests = NdrCoreManifest.objects.all()
