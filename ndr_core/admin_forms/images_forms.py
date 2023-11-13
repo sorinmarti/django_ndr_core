@@ -1,9 +1,9 @@
 """Contains forms used in the NDRCore admin interface for the creation or edit of image objects."""
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Row, Column
+from crispy_forms.layout import Layout, Row, Column, HTML
 from django import forms
 
-from ndr_core.admin_forms.admin_forms import get_form_buttons
+from ndr_core.admin_forms.admin_forms import get_form_buttons, get_info_box
 from ndr_core.models import NdrCoreImage
 
 
@@ -23,28 +23,34 @@ class ImageForm(forms.ModelForm):
         layout = helper.layout = Layout()
 
         form_row = Row(
-            Column('image_group', css_class='form-group col-md-6 mb-0'),
-            Column('image', css_class='form-group col-md-6 mb-0'),
+            Column(get_info_box("Select an Image Group"), css_class='form-group col-12'),
             css_class='form-row'
         )
         layout.append(form_row)
 
         form_row = Row(
-            Column('title', css_class='form-group col-md-6 mb-0'),
-            Column('caption', css_class='form-group col-md-6 mb-0'),
+            Column('image_group', css_class='form-group col-6'),
+            Column('image', css_class='form-group col-6'),
             css_class='form-row'
         )
         layout.append(form_row)
 
         form_row = Row(
-            Column('citation', css_class='form-group col-md-6 mb-0'),
-            Column('url', css_class='form-group col-md-6 mb-0'),
+            Column('title', css_class='form-group col-6'),
+            Column('caption', css_class='form-group col-6'),
             css_class='form-row'
         )
         layout.append(form_row)
 
         form_row = Row(
-            Column("language", css_class="form-group col-md-6 mb-0"),
+            Column('citation', css_class='form-group col-6'),
+            Column('url', css_class='form-group col-6'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column("language", css_class="form-group col-6"),
             css_class="form-row",
         )
         layout.append(form_row)
