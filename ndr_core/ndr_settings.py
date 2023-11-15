@@ -89,11 +89,6 @@ class NdrSettings:
         return dir_name
 
     @staticmethod
-    def get_sample_data_path():
-        """Returns the ndr-app's sample_data path. Convenience method. """
-        return f"{NdrSettings.get_static_path()}/sample_data"
-
-    @staticmethod
     def get_images_path():
         """Returns the ndr-app's image path. Convenience method. """
         return f"{NdrSettings.get_static_path()}/images"

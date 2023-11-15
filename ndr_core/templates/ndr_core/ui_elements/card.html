@@ -1,22 +1,20 @@
 <!-- This template expects a NdrCoreUIElement as data -->
-{% with card_image=data.items.0.ndr_image %}
+{% with card_item=data.items.0 %}
     <div class="card" style="width: 18rem;">
-        {% if data.show_image %}
-            <img class="card-img-top" src="{{ card_image.image.url }}" alt="Card image cap">
+        {% if card_item.ndr_image %}
+            <img class="card-img-top" src="{{ card_item.ndr_image.image.url }}" alt="Card image cap">
         {% endif %}
       <div class="card-body">
-          {% if data.link_element %}
+          {% if card_item.ndr_image.url %}
               <a href="#" class="stretched-link"></a>
           {% endif %}
-          {% if data.use_image_conf %}
-              <h5 class="card-title">{{ card_image.title }}</h5>
+
+          {% if card_item.title %}
+            <h5 class="card-title">{{ card_item.title }}</h5>
+          {% endif %}
+          {% if card_item.text %}
               <p class="card-text">
-                  {{ card_image.caption }}
-              </p>
-          {% else %}
-              <h5 class="card-title">{{ data.title }}</h5>
-              <p class="card-text">
-                  {{ data.text }}
+                  {{ card_item.text }}
               </p>
           {% endif %}
       </div>

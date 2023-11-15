@@ -1092,41 +1092,19 @@ class NdrCoreUIElement(models.Model):
         IFRAME = "iframe", "IFrame"
         BANNER = "banner", "Banner"
 
-        def get_(self):
-            pass
-
     type = models.CharField(max_length=100,
                             choices=UIElementType.choices,
                             help_text='Type of the element. Decides how it is rendered. ')
     """Type of the element. Decides how it is rendered. """
 
-    title = models.CharField(max_length=100,
-                             help_text='Title of the element for your reference.')
-    """Title of the element. """
+    name = models.CharField(primary_key=True,
+                            max_length=100,
+                            help_text='Name of the element for your reference.')
+    """Name and primary key of the element. """
 
-    use_image_conf = models.BooleanField(default=True,
-                                         help_text='Use the image\'s title, caption and URL?')
-    """Use the image's title, caption and URL? """
-
-    show_indicators = models.BooleanField(default=True,
+    show_indicators = models.BooleanField(default=False,
                                           help_text='Show the indicators for slideshows and carousels?')
-    """Show the indicators for slideshows and carousels? """
-
-    show_title = models.BooleanField(default=True,
-                                     help_text='Show the title?')
-    """Show the title? """
-
-    show_text = models.BooleanField(default=True,
-                                    help_text='Show the element\'s text?')
-    """Show the element's text? """
-
-    show_image = models.BooleanField(default=True,
-                                     help_text='Show the images?')
-    """Show the images? """
-
-    link_element = models.BooleanField(default=True,
-                                       help_text='Link the elements to the supplied url?')
-    """Link the elements to the supplied url? """
+    """Show the indicators for slideshows and carousels? (Applies to: Slideshow, Carousel)"""
 
     autoplay = models.BooleanField(default=False,
                                    help_text='Autoplay carousels and slideshows?')

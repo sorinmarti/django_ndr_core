@@ -27,7 +27,7 @@
                     {% for element in ui_elements %}
                         <li class="list-group-item list-group-item-action d-flex py-2">
                             <p class="p-0 m-0 flex-grow-1">
-                                <i class="fa-regular fa-window-restore"></i> <a href="{% url 'ndr_core:view_ui_element' element.pk %}">{{ element.title }}</a>
+                                <i class="fa-regular fa-window-restore"></i> <a href="{% url 'ndr_core:view_ui_element' element.pk %}">{{ element.name }}</a>
                                 <span class="badge badge-secondary">{{ element.type }}</span>
                             </p>
 
@@ -49,19 +49,33 @@
     {% if object %}
         <div class="card bg-light mb-3">
             <div class="card-body">
-                <h5 class="card-title">Preview: {{ object.title }}</h5>
-                <p>To include this element, copy this into your page text: <code><em>[[{{ object.type }}|{{ object.id }}]]</em></code></p>
+                <h5 class="card-title">Preview: {{ object.name }}</h5>
                 {% if object.type == "card" %}
                     {% include 'ndr_core/ui_elements/card.html' with data=object %}
                 {% elif object.type == "slides" %}
                     {% include 'ndr_core/ui_elements/slideshow.html' with data=object %}
+                {% elif object.type == "carousel" %}
+                    {% include 'ndr_core/ui_elements/carousel.html' with data=object %}
                 {% elif object.type == "banner" %}
                     {% include 'ndr_core/ui_elements/banner.html' with data=object %}
+                {% elif object.type == "jumbotron" %}
+                    {% include 'ndr_core/ui_elements/jumbotron.html' with data=object %}
+                {% elif object.type == "iframe" %}
+                    {% include 'ndr_core/ui_elements/iframe.html' with data=object %}
                 {% endif %}
 
             </div>
             <div class="card-footer text-center">
-
+                <div class="container">
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <span>To include this element, copy this into your page text:</span>
+                            <span>
+                                <input type="text" value="[[{{ object.type }}|{{ object.name }}]]" class="ml-2 form-control"> <!-- ml-2 for margin-left -->
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

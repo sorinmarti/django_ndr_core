@@ -1,6 +1,12 @@
 <!-- This template expects a NdrCoreUIElement as data -->
-{% load static %}
-<figure class="figure">
-    <img src="{{ data.items.0.ndr_image.image.url }}" class="figure-img img-fluid rounded" alt="{{ data.items.0.ndr_image.caption }}">
-    <figcaption class="figure-caption text-right">{{ data.items.0.ndr_image.caption }}</figcaption>
-</figure>
+{% with item=data.items.0 %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div style="max-height: 350px; overflow:hidden;">
+                    <img src="{{ item.ndr_image.image.url }}" class="img-fluid rounded w-100">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endwith %}

@@ -1,4 +1,5 @@
 {% extends 'ndr_core/admin_views/edit/_edit.html' %}
+{% load static %}
 
 {% block back_url %}
     {% url 'ndr_core:configure_ui_elements' %}
@@ -8,3 +9,6 @@
     Update UI Element
 {% endblock %}
 
+{% block page_js %}
+    <script src="{% static 'ndr_core/js/admin/ui_element_create_edit.js' %}"></script>
+{% endblock %}

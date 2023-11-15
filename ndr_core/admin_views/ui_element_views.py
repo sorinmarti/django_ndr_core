@@ -1,5 +1,6 @@
 """Views for the UI Element admin pages. """
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -9,7 +10,7 @@ from ndr_core.admin_forms.ui_element_forms import (
     UIElementCreateForm,
     UIElementEditForm
 )
-from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem
+from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem, NdrCoreImage
 
 
 class ConfigureUIElements(LoginRequiredMixin, View):
@@ -48,56 +49,52 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
         # Creates object and returns HttpResponse
         response = super().form_valid(form)
 
-        if self.kwargs['type'] == "card":
-            # A Card has 1 item.
+        ui_element_type = form.cleaned_data['type']
+
+        if ui_element_type == "card":
+            # These are the types that have ONE item.
             card_item = NdrCoreUiElementItem.objects.create(belongs_to=self.object,
+                                                            ndr_image=form.cleaned_data['item_0_ndr_card_image'],
+                                                            title=form.cleaned_data['item_0_title'],
+                                                            text=form.cleaned_data['item_0_text'],
+                                                            url=form.cleaned_data['item_0_url'],
                                                             order_idx=0)
-            if self.object.show_image:
-                card_item.ndr_image = form.cleaned_data['card_item_image']
-            if not self.object.use_image_conf:
-                card_item.title = form.cleaned_data['card_item_title']
-                card_item.text = form.cleaned_data['card_item_text']
-                card_item.url = form.cleaned_data['card_item_url']
-                self.object.title = card_item.title
-            else:
-                self.object.title = card_item.ndr_image.title
             card_item.save()
+        elif ui_element_type == "banner":
+            # These are the types that have ONE item.
+            banner_item = NdrCoreUiElementItem.objects.create(belongs_to=self.object,
+                                                              ndr_image=form.cleaned_data['item_0_ndr_banner_image'],
+                                                              order_idx=0)
+            banner_item.save()
+        elif ui_element_type == "iframe":
+            # These are the types that have ONE item.
+            iframe_item = NdrCoreUiElementItem.objects.create(belongs_to=self.object,
+                                                              text=form.cleaned_data['item_0_text'],
+                                                              order_idx=0)
+            iframe_item.save()
+        elif ui_element_type == "jumbotron":
+            # These are the types that have ONE item.
+            jumbotron_item = NdrCoreUiElementItem.objects.create(belongs_to=self.object,
+                                                                 ndr_image=form.cleaned_data['item_0_ndr_banner_image'],
+                                                                 title=form.cleaned_data['item_0_title'],
+                                                                 text=form.cleaned_data['item_0_text'],
+                                                                 url=form.cleaned_data['item_0_url'],
+                                                                 order_idx=0)
+            jumbotron_item.save()
 
-            self.object.type = NdrCoreUIElement.UIElementType.CARD
-            self.object.save()
-
-        elif self.kwargs['type'] == "carousel":
-            self.object.type = NdrCoreUIElement.UIElementType.CAROUSEL
-            self.object.save()
-        elif self.kwargs['type'] == "slideshow":
-            # A Slideshow has an item for each image.
-            index = 0
-            for image in form.cleaned_data['slideshow_images']:
-                NdrCoreUiElementItem.objects.create(belongs_to=self.object,
-                                                    order_idx=index,
-                                                    ndr_image=image)
-                index += 1
-            self.object.type = NdrCoreUIElement.UIElementType.SLIDESHOW
-            self.object.save()
-        elif self.kwargs['type'] == "jumbotron":
-            self.object.type = NdrCoreUIElement.UIElementType.JUMBOTRON
-            self.object.save()
-
-        elif self.kwargs['type'] == "iframe":
-            # An Iframe has 1 item.
-            NdrCoreUiElementItem.objects.create(belongs_to=self.object,
-                                                text=form.cleaned_data['iframe_text'],
-                                                order_idx=0)
-            self.object.type = NdrCoreUIElement.UIElementType.IFRAME
-            self.object.save()
-
-        elif self.kwargs['type'] == "banner":
-            card_item = NdrCoreUiElementItem.objects.create(belongs_to=self.object,
-                                                            order_idx=0)
-            card_item.ndr_image = form.cleaned_data['card_item_image']
-            card_item.save()
-            self.object.type = NdrCoreUIElement.UIElementType.BANNER
-            self.object.save()
+        elif ui_element_type in ["slides", "carousel"]:
+            # These are the types that have MULTIPLE items.
+            for x in range(0, 10):
+                if form.cleaned_data[f'item_{x}_ndr_slide_image'] is not None:
+                    slide_item = NdrCoreUiElementItem.objects.create(belongs_to=self.object,
+                                                                     ndr_image=form.cleaned_data[f'item_{x}_ndr_slide_image'],
+                                                                     title=form.cleaned_data[f'item_{x}_title'],
+                                                                     text=form.cleaned_data[f'item_{x}_text'],
+                                                                     url=form.cleaned_data[f'item_{x}_url'],
+                                                                     order_idx=x)
+                    slide_item.save()
+                else:
+                    pass
 
         return response
 
@@ -117,3 +114,13 @@ class UIElementDeleteView(LoginRequiredMixin, DeleteView):
     model = NdrCoreUIElement
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
     template_name = 'ndr_core/admin_views/delete/ui_element_confirm_delete.html'
+
+
+def get_ndr_image_path(request, pk):
+    """Returns the path to an image. """
+
+    try:
+        ndr_image = NdrCoreImage.objects.get(pk=pk)
+        return HttpResponse(ndr_image.image.url)
+    except NdrCoreImage.DoesNotExist:
+        return None

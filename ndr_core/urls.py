@@ -109,7 +109,7 @@ from ndr_core.admin_views.ui_element_views import (
     UIElementDetailView,
     UIElementCreateView,
     UIElementEditView,
-    UIElementDeleteView
+    UIElementDeleteView, get_ndr_image_path
 )
 from ndr_core.admin_views.messages_views import (
     ConfigureMessages,
@@ -294,6 +294,9 @@ urlpatterns = [
 
     # Language
     path('language/<str:new_language>/', set_language_view, name='set_language'),
+
+    # Get preview image path
+    path('preview/image/<int:pk>/', get_ndr_image_path, name='get_ndr_image_path'),
 
     path('test/', TemplateView.as_view(template_name='ndr_core/test.html'), name='test'),
     path('niy/', TemplateView.as_view(template_name='ndr_core/test.html'), name='not_implemented')

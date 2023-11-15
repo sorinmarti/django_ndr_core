@@ -96,7 +96,6 @@ class Command(BaseCommand):
         directories_to_create = [
             NdrSettings.get_templates_path(),
             NdrSettings.get_static_path(),
-            NdrSettings.get_sample_data_path(),
             NdrSettings.get_images_path(),
             NdrSettings.get_css_path(),
         ]
