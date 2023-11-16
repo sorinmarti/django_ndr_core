@@ -24,6 +24,14 @@
                         <i class="fa-regular fa-language"></i>
                         Translate Form Fields
                     </a>
+                    <a href="{% url 'ndr_core:select_images_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_images_translations' or request.resolver_match.url_name == 'edit_images_translations' %}bg-selected{% endif %}">
+                        <i class="fa-regular fa-language"></i>
+                        Translate Image Texts
+                    </a>
+                    <a href="{% url 'ndr_core:select_ui_elements_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_ui_elements_translations' or request.resolver_match.url_name == 'edit_ui_elements_translations' %}bg-selected{% endif %}">
+                        <i class="fa-regular fa-language"></i>
+                        Translate UI Elements
+                    </a>
                     <a href="{% url 'ndr_core:select_settings_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_settings_translations' or request.resolver_match.url_name == 'edit_settings_translations' %}bg-selected{% endif %}">
                         <i class="fa-regular fa-language"></i>
                         Translate Settings
@@ -51,25 +59,37 @@
                                             {{ alang.1 }}<br/>
                                         {% else %}
                                             <a href="{% url 'ndr_core:edit_page_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
-                                        {%  endif %}
+                                        {% endif %}
                                     {% elif request.resolver_match.url_name == 'select_field_translations' or request.resolver_match.url_name == 'edit_field_translations' %}
                                         {% if selected_language == alang.0 %}
                                             {{ alang.1 }}<br/>
                                         {% else %}
                                             <a href="{% url 'ndr_core:edit_field_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
-                                        {%  endif %}
+                                        {% endif %}
                                     {% elif request.resolver_match.url_name == 'select_settings_translations' or request.resolver_match.url_name == 'edit_settings_translations' %}
                                         {% if selected_language == alang.0 %}
                                             {{ alang.1 }}<br/>
                                         {% else %}
                                             <a href="{% url 'ndr_core:edit_settings_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
-                                        {%  endif %}
+                                        {% endif %}
                                     {% elif request.resolver_match.url_name == 'select_form_translations' or request.resolver_match.url_name == 'edit_form_translations' %}
                                         {% if selected_language == alang.0 %}
                                             {{ alang.1 }}<br/>
                                         {% else %}
                                             <a href="{% url 'ndr_core:edit_form_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
-                                        {%  endif %}
+                                        {% endif %}
+                                    {% elif request.resolver_match.url_name == 'select_ui_elements_translations' or request.resolver_match.url_name == 'edit_ui_elements_translations' %}
+                                        {% if selected_language == alang.0 %}
+                                            {{ alang.1 }}<br/>
+                                        {% else %}
+                                            <a href="{% url 'ndr_core:edit_ui_elements_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
+                                        {% endif %}
+                                    {% elif request.resolver_match.url_name == 'select_images_translations' or request.resolver_match.url_name == 'edit_images_translations' %}
+                                        {% if selected_language == alang.0 %}
+                                            {{ alang.1 }}<br/>
+                                        {% else %}
+                                            <a href="{% url 'ndr_core:edit_images_translations' alang.0 %}" class="stretched-link">{{ alang.1 }}</a><br/>
+                                        {% endif %}
                                     {% else %}
                                         Not implemented: {{ request.resolver_match.url_name }}
                                     {% endif %}

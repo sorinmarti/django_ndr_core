@@ -18,6 +18,8 @@ TRANSLATABLE_TABLES = (
     ('NdrCorePage', 'Page Table'),
     ('NdrCoreValue', 'Settings Table'),
     ('NdrCoreSearchConfiguration', 'Search Configuration Table'),
+    ('NdrCoreImage', 'Image Table'),
+    ('NdrCoreUiElementItem', 'UI Element Table'),
 )
 """Tables which contain translatable fields."""
 
@@ -27,6 +29,8 @@ TRANSLATABLE_FIELDS = {
     'NdrCorePage': ('name', 'label'),
     'NdrCoreValue': ('value_value', ),
     'NdrCoreSearchConfiguration': ('conf_label', ),
+    'NdrCoreImage': ('title', 'caption', 'citation'),
+    'NdrCoreUiElementItem': ('title', 'text'),
 }
 """Fields which are translatable. """
 
@@ -962,7 +966,7 @@ class NdrCoreSearchStatisticEntry(models.Model):
     """Language of the search. """
 
 
-class NdrCoreImage(models.Model):
+class NdrCoreImage(models.Model, TranslatableMixin):
     """ Directory of all images used outside the ckeditor and the logo. """
 
     class ImageGroup(models.TextChoices):
@@ -1015,6 +1019,21 @@ class NdrCoreImage(models.Model):
                                 help_text='Language of the image.')
     """Language of the image. """
 
+    def translated_title(self):
+        """Returns the translated title for a given language. If no translation exists,
+        the default title is returned. """
+        return self.translated_field(self.title, 'title', self.pk)
+
+    def translated_caption(self):
+        """Returns the translated caption for a given language. If no translation exists,
+        the default caption is returned. """
+        return self.translated_field(self.caption, 'caption', self.pk)
+
+    def translated_citation(self):
+        """Returns the translated citation for a given language. If no translation exists,
+        the default citation is returned. """
+        return self.translated_field(self.citation, 'citation', self.pk)
+
     def get_absolute_url(self):
         """Returns the absolute url of the image. """
         return reverse('ndr_core:view_images', kwargs={'group': self.image_group})
@@ -1034,7 +1053,7 @@ class NdrCoreUpload(models.Model):
     """Actual file"""
 
 
-class NdrCoreManifestGroup(models.Model):
+class NdrCoreManifestGroup(models.Model, TranslatableMixin):
     """ Directory of all manifest groups. """
 
     title = models.CharField(max_length=200,
@@ -1052,6 +1071,11 @@ class NdrCoreManifestGroup(models.Model):
     order_value_3_title = models.CharField(max_length=200, blank=True, null=True, default=None,
                                            help_text='Order value 3 title')
     """Order value 3 title"""
+
+    def translated_title(self):
+        """Returns the translated title for a given language. If no translation exists,
+        the default title is returned. """
+        return self.translated_field(self.title, 'title', self.pk)
 
 
 class NdrCoreManifest(models.Model):
@@ -1119,7 +1143,7 @@ class NdrCoreUIElement(models.Model):
         return reverse('ndr_core:view_ui_element', kwargs={'pk': self.pk})
 
 
-class NdrCoreUiElementItem(models.Model):
+class NdrCoreUiElementItem(models.Model, TranslatableMixin):
     """UI Element Item. Is part of a UI Element. """
 
     belongs_to = models.ForeignKey(NdrCoreUIElement, on_delete=models.CASCADE)
@@ -1139,6 +1163,16 @@ class NdrCoreUiElementItem(models.Model):
 
     url = models.URLField(blank=True)
     """The url of the item. """
+
+    def translated_title(self):
+        """Returns the translated title for a given language. If no translation exists,
+        the default title is returned. """
+        return self.translated_field(self.title, 'title', self.pk)
+
+    def translated_text(self):
+        """Returns the translated text for a given language. If no translation exists,
+        the default text is returned. """
+        return self.translated_field(self.text, 'text', self.pk)
 
 
 class NdrCoreTranslation(models.Model):

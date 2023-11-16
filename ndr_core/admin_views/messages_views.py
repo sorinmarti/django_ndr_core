@@ -1,5 +1,6 @@
 """Views for the messages section in the admin panel. """
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -52,6 +53,7 @@ class MessagesDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'ndr_core/admin_views/delete/message_confirm_delete.html'
 
 
+@login_required
 def archive_message(request,pk):
     """TODO """
     try:
@@ -65,6 +67,7 @@ def archive_message(request,pk):
     return redirect('ndr_core:configure_messages')
 
 
+@login_required
 def delete_all_messages(request):
     """TODO Doc and CONFIRM"""
     NdrCoreUserMessage.objects.all().delete()

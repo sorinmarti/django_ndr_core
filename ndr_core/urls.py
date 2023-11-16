@@ -18,14 +18,11 @@ from ndr_core.admin_views.search_field_views import (
 )
 from ndr_core.admin_views.translation_views import (
     ConfigureTranslations,
-    SelectPageTranslationView,
-    SelectFieldTranslationView,
+    SelectTranslationView,
     TranslatePageValuesView,
     TranslateFieldValuesView,
-    SelectSettingsTranslationView,
     TranslateSettingsValuesView,
-    TranslateFormValuesView,
-    SelectFormTranslationView,
+    TranslateFormValuesView, TranslateUIElementsValuesView, TranslateImagesValuesView,
 )
 from ndr_core.admin_views.uploads_views import (
     ConfigureUploads,
@@ -185,19 +182,27 @@ urlpatterns = [
 
     # TRANSLATIONS
     path('configure/translations/', ConfigureTranslations.as_view(), name='configure_translations'),
-    path('configure/translations/edit/pages/', SelectPageTranslationView.as_view(), name='select_page_translations'),
+    path('configure/translations/edit/pages/', SelectTranslationView.as_view(), name='select_page_translations'),
     path('configure/translations/edit/pages/<str:lang>/', TranslatePageValuesView.as_view(),
          name='edit_page_translations'),
-    path('configure/translations/edit/fields/', SelectFieldTranslationView.as_view(), name='select_field_translations'),
+    path('configure/translations/edit/fields/', SelectTranslationView.as_view(), name='select_field_translations'),
     path('configure/translations/edit/fields/<str:lang>/', TranslateFieldValuesView.as_view(),
          name='edit_field_translations'),
-    path('configure/translations/edit/settings/', SelectSettingsTranslationView.as_view(),
+    path('configure/translations/edit/settings/', SelectTranslationView.as_view(),
          name='select_settings_translations'),
     path('configure/translations/edit/settings/<str:lang>/', TranslateSettingsValuesView.as_view(),
          name='edit_settings_translations'),
-    path('configure/translations/edit/form/', SelectFormTranslationView.as_view(), name='select_form_translations'),
+    path('configure/translations/edit/form/', SelectTranslationView.as_view(), name='select_form_translations'),
     path('configure/translations/edit/form/<str:lang>/', TranslateFormValuesView.as_view(),
          name='edit_form_translations'),
+    path('configure/translations/edit/ui-elements/', SelectTranslationView.as_view(),
+         name='select_ui_elements_translations'),
+    path('configure/translations/edit/ui-elements/<str:lang>/', TranslateUIElementsValuesView.as_view(),
+         name='edit_ui_elements_translations'),
+    path('configure/translations/edit/images/', SelectTranslationView.as_view(),
+         name='select_images_translations'),
+    path('configure/translations/edit/images/<str:lang>/', TranslateImagesValuesView.as_view(),
+         name='edit_images_translations'),
 
     # USER MESSAGES
     path('configure/messages/', ConfigureMessages.as_view(), name='configure_messages'),

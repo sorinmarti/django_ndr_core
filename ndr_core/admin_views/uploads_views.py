@@ -30,7 +30,7 @@ class ConfigureUploads(LoginRequiredMixin, View):
 
 
 class UploadCreateView(LoginRequiredMixin, CreateView):
-    """ View to create a image """
+    """ View to create an image """
 
     model = NdrCoreUpload
     form_class = UploadCreateForm

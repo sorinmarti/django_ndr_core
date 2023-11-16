@@ -1,6 +1,7 @@
 """Contains basic views used in the NDRCore admin interface."""
 from datetime import datetime, timedelta
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
@@ -77,6 +78,7 @@ class StatisticsView(LoginRequiredMixin, SingleTableMixin, FilterView):
         return NdrCoreSearchStatisticEntry.objects.all().order_by('-search_time')
 
 
+@login_required
 def set_statistics_option(request, option):
     """Sets the statistics option to the given value. """
     value = NdrCoreValue.objects.get(value_name='statistics_feature')

@@ -9,7 +9,7 @@ from ndr_core.models import (
     NdrCoreTranslation,
     NdrCoreSearchField,
     NdrCoreValue,
-    NdrCoreSearchConfiguration
+    NdrCoreSearchConfiguration, NdrCoreUIElement
 )
 
 
@@ -17,6 +17,8 @@ class TranslateForm(forms.Form):
     """Base form to translate values. """
 
     lang = 'en'
+    table_name = None
+    items = None
 
     def __init__(self, *args, **kwargs):
         if 'lang' in kwargs:
@@ -24,41 +26,51 @@ class TranslateForm(forms.Form):
 
         super().__init__(*args, **kwargs)
 
+    @staticmethod
+    def get_field(str_to_translate, help_text):
+        field = forms.CharField(label=f"Translate: '{str_to_translate}'",
+                                required=False,
+                                max_length=100,
+                                help_text=help_text)
+        return field
+
+    def get_initial_value(self, field_name, object_id):
+        try:
+            translation_obj = NdrCoreTranslation.objects.get(language=self.lang,
+                                                             table_name=self.table_name,
+                                                             field_name=field_name,
+                                                             object_id=object_id)
+            return translation_obj.translation
+        except NdrCoreTranslation.DoesNotExist:
+            return ''
+
+    def save_translation(self, object_id, field_name, translation):
+        i18n_object = NdrCoreTranslation.objects.get_or_create(language=self.lang,
+                                                               table_name=self.table_name,
+                                                               field_name=field_name,
+                                                               object_id=object_id)
+        i18n_object[0].translation = translation
+        i18n_object[0].save()
+
 
 class TranslatePageForm(TranslateForm):
     """Form to translate page values """
 
-    pages = None
+    items = NdrCorePage.objects.all()
+    table_name = 'NdrCorePage'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.pages = NdrCorePage.objects.all()
 
         initial_values = {}
-        for page in self.pages:
-            self.fields[f"page_title_{page.id}"] = forms.CharField(label=f"Translate: '{page.name}'", required=False,
-                                                                   max_length=100,
-                                                                   help_text="The page's Title")
-            self.fields[f"nav_label_{page.id}"] = forms.CharField(label=f"Translate: '{page.label}'", required=False,
-                                                                  max_length=100,
-                                                                  help_text="The page's Navigation Label")
-            try:
-                name = NdrCoreTranslation.objects.get(language=self.lang,
-                                                      table_name='NdrCorePage',
-                                                      field_name='name',
-                                                      object_id=str(page.id))
-                initial_values[f"page_title_{page.id}"] = name.translation
-            except NdrCoreTranslation.DoesNotExist:
-                pass
+        for page in self.items:
+            self.fields[f"page_title_{page.id}"] = self.get_field(page.name,
+                                                                  "The page's Title")
+            self.fields[f"nav_label_{page.id}"] = self.get_field(page.label,
+                                                                 "The page's Navigation Label")
 
-            try:
-                label = NdrCoreTranslation.objects.get(language=self.lang,
-                                                       table_name='NdrCorePage',
-                                                       field_name='label',
-                                                       object_id=str(page.id))
-                initial_values[f"nav_label_{page.id}"] = label.translation
-            except NdrCoreTranslation.DoesNotExist:
-                pass
+            initial_values[f"page_title_{page.id}"] = self.get_initial_value('name', str(page.id))
+            initial_values[f"nav_label_{page.id}"] = self.get_initial_value('label', str(page.id))
 
         self.initial = initial_values
 
@@ -70,10 +82,10 @@ class TranslatePageForm(TranslateForm):
         helper.form_method = "POST"
         layout = helper.layout = Layout()
 
-        for page in self.pages:
+        for page in self.items:
             form_row = Row(
-                Column(f"page_title_{page.id}", css_class='form-group col-md-6 mb-0'),
-                Column(f"nav_label_{page.id}", css_class='form-group col-md-6 mb-0'),
+                Column(f"page_title_{page.id}", css_class='form-group col-6'),
+                Column(f"nav_label_{page.id}", css_class='form-group col-6'),
                 css_class='form-row'
             )
             layout.append(form_row)
@@ -86,61 +98,31 @@ class TranslatePageForm(TranslateForm):
         """Saves the translations to the database. """
         self.is_valid()
 
-        for page in self.pages:
-            i18n_object_page_title = NdrCoreTranslation.objects.get_or_create(language=self.lang,
-                                                                              table_name='NdrCorePage',
-                                                                              field_name='name',
-                                                                              object_id=str(page.id))
-            i18n_object_page_title[0].translation = self.cleaned_data[f"page_title_{page.id}"]
-            i18n_object_page_title[0].save()
-
-            i18n_object_nav_label = NdrCoreTranslation.objects.get_or_create(language=self.lang,
-                                                                             table_name='NdrCorePage',
-                                                                             field_name='label',
-                                                                             object_id=str(page.id))
-            i18n_object_nav_label[0].translation = self.cleaned_data[f"nav_label_{page.id}"]
-            i18n_object_nav_label[0].save()
+        for page in self.items:
+            self.save_translation(str(page.id), 'name', self.cleaned_data[f"page_title_{page.id}"])
+            self.save_translation(str(page.id), 'label', self.cleaned_data[f"nav_label_{page.id}"])
 
 
 class TranslateFieldForm(TranslateForm):
     """Form to translate form field values """
 
-    ndr_form_fields = None
+    items = NdrCoreSearchField.objects.all()
+    table_name = 'NdrCoreSearchField'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ndr_form_fields = NdrCoreSearchField.objects.all()
 
         initial_values = {}
-        for field in self.ndr_form_fields:
-            self.fields[f"field_label_{field.field_name}"] = (
-                forms.CharField(label=f"Translate: '{field.field_label}'",
-                                required=False,
-                                max_length=100,
-                                help_text="The search field's Label"))
-            self.fields[f"field_help_text_{field.field_name}"] = (
-                forms.CharField(label=f"Translate: '{field.help_text}'",
-                                required=False,
-                                max_length=100,
-                                help_text="The search field's Help Text"))
-            try:
-                field_label = NdrCoreTranslation.objects.get(language=self.lang,
-                                                             table_name='NdrCoreSearchField',
-                                                             field_name='field_label',
-                                                             object_id=field.field_name)
-                initial_values[f"field_label_{field.field_name}"] = field_label.translation
-                # print(field_label.translation)
-            except NdrCoreTranslation.DoesNotExist:
-                pass
+        for field in self.items:
+            self.fields[f"field_label_{field.field_name}"] = self.get_field(field.field_label,
+                                                                            "The search field's Label")
+            self.fields[f"field_help_text_{field.field_name}"] = self.get_field(field.help_text,
+                                                                                "The search field's Help Text")
 
-            try:
-                label = NdrCoreTranslation.objects.get(language=self.lang,
-                                                       table_name='NdrCoreSearchField',
-                                                       field_name='help_text',
-                                                       object_id=field.field_name)
-                initial_values[f"field_help_text_{field.field_name}"] = label.translation
-            except NdrCoreTranslation.DoesNotExist:
-                pass
+            initial_values[f"field_label_{field.field_name}"] = self.get_initial_value('field_label',
+                                                                                       field.field_name)
+            initial_values[f"field_help_text_{field.field_name}"] = self.get_initial_value('help_text',
+                                                                                           field.field_name)
 
         self.initial = initial_values
 
@@ -152,10 +134,10 @@ class TranslateFieldForm(TranslateForm):
         helper.form_method = "POST"
         layout = helper.layout = Layout()
 
-        for field in self.ndr_form_fields:
+        for field in self.items:
             form_row = Row(
-                Column(f"field_label_{field.field_name}", css_class='form-group col-md-4 mb-0'),
-                Column(f"field_help_text_{field.field_name}", css_class='form-group col-md-8 mb-0'),
+                Column(f"field_label_{field.field_name}", css_class='form-group col-4'),
+                Column(f"field_help_text_{field.field_name}", css_class='form-group col-8'),
                 css_class='form-row'
             )
             layout.append(form_row)
@@ -168,49 +150,31 @@ class TranslateFieldForm(TranslateForm):
         """Saves the translations to the database. """
         self.is_valid()
 
-        for field in self.ndr_form_fields:
-            i18n_object_field_label = NdrCoreTranslation.objects.get_or_create(language=self.lang,
-                                                                               table_name='NdrCoreSearchField',
-                                                                               field_name='field_label',
-                                                                               object_id=field.field_name)
-            i18n_object_field_label[0].translation = self.cleaned_data[f"field_label_{field.field_name}"]
-            i18n_object_field_label[0].save()
-
-            i18n_object_help_text = NdrCoreTranslation.objects.get_or_create(language=self.lang,
-                                                                             table_name='NdrCoreSearchField',
-                                                                             field_name='help_text',
-                                                                             object_id=field.field_name)
-            i18n_object_help_text[0].translation = self.cleaned_data[f"field_help_text_{field.field_name}"]
-            i18n_object_help_text[0].save()
+        for field in self.items:
+            self.save_translation(field.field_name, 'field_label', self.cleaned_data[f"field_label_{field.field_name}"])
+            self.save_translation(field.field_name, 'help_text', self.cleaned_data[f"field_help_text_{field.field_name}"])
 
 
 class TranslateSettingsForm(TranslateForm):
     """Form to translate settings values. """
 
-    ndr_settings_fields = None
+    items = NdrCoreValue.objects.filter(value_type__in=[NdrCoreValue.ValueType.STRING,
+                                                        NdrCoreValue.ValueType.URL],
+                                        is_translatable=True)
+    table_name = 'NdrCoreValue'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ndr_settings_fields = NdrCoreValue.objects.filter(value_type__in=[NdrCoreValue.ValueType.STRING,
-                                                                               NdrCoreValue.ValueType.URL],
-                                                               is_translatable=True)
 
         initial_values = {}
-        for field in self.ndr_settings_fields:
+        for field in self.items:
             self.fields[f"setting_{field.value_name}"] = (
-                forms.CharField(label=f"Translate: '{field.value_value}'",
-                                required=False,
-                                max_length=100,
-                                help_text=(f"Value of the setting <b>{field.value_label}</b> "
-                                           f"(Help text: <i>{field.value_help_text}</i>)")))
-            try:
-                field_label = NdrCoreTranslation.objects.get(language=self.lang,
-                                                             table_name='NdrCoreValue',
-                                                             field_name='value_value',
-                                                             object_id=field.value_name)
-                initial_values[f"setting_{field.value_name}"] = field_label.translation
-            except NdrCoreTranslation.DoesNotExist:
-                pass
+                self.get_field(field.value_value,
+                               f"Value of the setting <b>{field.value_label}</b> "
+                               f"(Help text: <i>{field.value_help_text}</i>)"))
+
+            initial_values[f"setting_{field.value_name}"] = self.get_initial_value('value_value',
+                                                                                   field.value_name)
 
         self.initial = initial_values
 
@@ -222,9 +186,9 @@ class TranslateSettingsForm(TranslateForm):
         helper.form_method = "POST"
         layout = helper.layout = Layout()
 
-        for field in self.ndr_settings_fields:
+        for field in self.items:
             form_row = Row(
-                Column(f"setting_{field.value_name}", css_class='form-group col-md-12 mb-0'),
+                Column(f"setting_{field.value_name}", css_class='form-group col-12'),
                 css_class='form-row'
             )
             layout.append(form_row)
@@ -237,39 +201,27 @@ class TranslateSettingsForm(TranslateForm):
         """Saves the translations to the database. """
         self.is_valid()
 
-        for field in self.ndr_settings_fields:
-            i18n_object_settings = NdrCoreTranslation.objects.get_or_create(language=self.lang,
-                                                                            table_name='NdrCoreValue',
-                                                                            field_name='value_value',
-                                                                            object_id=field.value_name)
-            i18n_object_settings[0].translation = self.cleaned_data[f"setting_{field.value_name}"]
-            i18n_object_settings[0].save()
+        for field in self.items:
+            self.save_translation(field.value_name, 'value_value',
+                                  self.cleaned_data[f"setting_{field.value_name}"])
 
 
 class TranslateFormForm(TranslateForm):
     """Form to translate settings values. """
 
-    ndr_search_conf = None
+    items = NdrCoreSearchConfiguration.objects.all()
+    table_name = 'NdrCoreSearchConfiguration'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ndr_search_conf = NdrCoreSearchConfiguration.objects.all()
 
         initial_values = {}
-        for field in self.ndr_search_conf:
-            self.fields[f"setting_{field.conf_name}"] = forms.CharField(
-                label=f"Translate: '{field.conf_label}'",
-                required=False,
-                max_length=100,
-                help_text=f"Value of the configuration <b>{field.conf_name}</b></i>)")
-            try:
-                conf_label = NdrCoreTranslation.objects.get(language=self.lang,
-                                                            table_name='NdrCoreSearchConfiguration',
-                                                            field_name='conf_label',
-                                                            object_id=field.conf_name)
-                initial_values[f"setting_{field.conf_name}"] = conf_label.translation
-            except NdrCoreTranslation.DoesNotExist:
-                pass
+        for field in self.items:
+            self.fields[f"setting_{field.conf_name}"] = (
+                self.get_field(field.conf_label, f"Value of the configuration <b>{field.conf_name}</b></i>)"))
+
+            initial_values[f"setting_{field.conf_name}"] = self.get_initial_value('conf_label',
+                                                                                  field.conf_name)
 
         self.initial = initial_values
 
@@ -281,9 +233,9 @@ class TranslateFormForm(TranslateForm):
         helper.form_method = "POST"
         layout = helper.layout = Layout()
 
-        for field in self.ndr_search_conf:
+        for field in self.items:
             form_row = Row(
-                Column(f"setting_{field.conf_name}", css_class='form-group col-md-12 mb-0'),
+                Column(f"setting_{field.conf_name}", css_class='form-group col-12'),
                 css_class='form-row'
             )
             layout.append(form_row)
@@ -296,10 +248,99 @@ class TranslateFormForm(TranslateForm):
         """Saves the translations to the database. """
         self.is_valid()
 
-        for field in self.ndr_search_conf:
-            i18n_object_settings = NdrCoreTranslation.objects.get_or_create(language=self.lang,
+        for field in self.items:
+            self.save_translation(field.conf_name, 'conf_label', self.cleaned_data[f"setting_{field.conf_name}"])
+
+
+class TranslateUIElementsForm(TranslateForm):
+    """Form to translate settings values. """
+
+    items = NdrCoreUIElement.objects.all()
+    table_name = 'NdrCoreUIElement'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        initial_values = {}
+        for field in self.items:
+            if field.type == NdrCoreUIElement.UIElementType.CARD:
+                pass
+        self.initial = initial_values
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+
+        helper = FormHelper()
+        helper.form_method = "POST"
+        layout = helper.layout = Layout()
+
+        for field in self.items:
+            """form_row = Row(
+                Column(f"setting_{field.conf_name}", css_class='form-group col-12'),
+                css_class='form-row'
+            )
+            layout.append(form_row)"""
+
+        layout.append(get_form_buttons('Save UI Elements Translations'))
+
+        return helper
+
+    def save_translations(self):
+        """Saves the translations to the database. """
+        self.is_valid()
+
+        for field in self.items:
+            """i18n_object_settings = NdrCoreTranslation.objects.get_or_create(language=self.lang,
                                                                             table_name='NdrCoreSearchConfiguration',
                                                                             field_name='conf_label',
                                                                             object_id=field.conf_name)
             i18n_object_settings[0].translation = self.cleaned_data[f"setting_{field.conf_name}"]
-            i18n_object_settings[0].save()
+            i18n_object_settings[0].save()"""
+
+
+class TranslateImagesForm(TranslateForm):
+    """Form to translate settings values. """
+
+    ndr_image = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ndr_image = NdrCoreUIElement.objects.all()
+
+        initial_values = {}
+        for field in self.ndr_image:
+           pass
+
+        self.initial = initial_values
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+
+        helper = FormHelper()
+        helper.form_method = "POST"
+        layout = helper.layout = Layout()
+
+        for field in self.ndr_image:
+            """form_row = Row(
+                Column(f"setting_{field.conf_name}", css_class='form-group col-12'),
+                css_class='form-row'
+            )
+            layout.append(form_row)"""
+
+        layout.append(get_form_buttons('Save Images Translations'))
+
+        return helper
+
+    def save_translations(self):
+        """Saves the translations to the database. """
+        self.is_valid()
+
+        for field in self.ndr_image:
+            """i18n_object_settings = NdrCoreTranslation.objects.get_or_create(language=self.lang,
+                                                                            table_name='NdrCoreSearchConfiguration',
+                                                                            field_name='conf_label',
+                                                                            object_id=field.conf_name)
+            i18n_object_settings[0].translation = self.cleaned_data[f"setting_{field.conf_name}"]
+            i18n_object_settings[0].save()"""

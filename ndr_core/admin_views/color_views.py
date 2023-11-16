@@ -2,6 +2,7 @@
 import os
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
 from django.core.serializers.base import DeserializationError
@@ -104,6 +105,7 @@ class ColorPaletteImportView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
+@login_required
 def choose_color_palette(request, pk):
     """ Function to select the project's used color palette. """
 

@@ -3,6 +3,7 @@ import os
 import re
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
@@ -41,6 +42,7 @@ class UIStyleDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+@login_required
 def choose_ui_style(request, pk):
     """ Function to select the project's used UI style. """
 
