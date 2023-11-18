@@ -5,17 +5,10 @@ from crispy_forms.layout import Layout, Row, Column, HTML, Div, Field
 from django import forms
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons
-from ndr_core.models import NdrCoreUIElement, NdrCoreImage
+from ndr_core.models import NdrCoreUIElement, NdrCoreImage, NdrCoreManifestGroup
 
 
 class ImageChoiceField(forms.ModelChoiceField):
-    """Used to display images in a select field."""
-
-    def label_from_instance(self, obj):
-        return f'{obj.image.url}'
-
-
-class ImageMultipleChoiceField(forms.ModelMultipleChoiceField):
     """Used to display images in a select field."""
 
     def label_from_instance(self, obj):
@@ -55,7 +48,10 @@ class UIElementForm(forms.ModelForm):
                                                             label='Text')
             self.fields[f'item_{x}_url'] = forms.URLField(required=False,
                                                           label='URL')
-
+            self.fields[f'item_{x}_manifest_group'] = (
+                forms.ModelChoiceField(label='Manifest Group',
+                                       queryset=NdrCoreManifestGroup.objects.all(),
+                                       required=False))
 
     @property
     def helper(self):
@@ -113,6 +109,7 @@ class UIElementForm(forms.ModelForm):
                     f'item_{x}_title',
                     f'item_{x}_text',
                     f'item_{x}_url',
+                    f'item_{x}_manifest_group',
                     css_class='col-8'
                 ),
                 Column(

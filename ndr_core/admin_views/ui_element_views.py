@@ -81,7 +81,13 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
                                                                  url=form.cleaned_data['item_0_url'],
                                                                  order_idx=0)
             jumbotron_item.save()
-
+        elif ui_element_type == "manifest_viewer":
+            # These are the types that have ONE item.
+            manifest_item = NdrCoreUiElementItem.objects.create(
+                belongs_to=self.object,
+                manifest_group=form.cleaned_data['item_0_manifest_group'],
+                order_idx=0)
+            manifest_item.save()
         elif ui_element_type in ["slides", "carousel"]:
             # These are the types that have MULTIPLE items.
             for x in range(0, 10):

@@ -1085,6 +1085,9 @@ class NdrCoreManifestGroup(models.Model, TranslatableMixin):
         the default title is returned. """
         return self.translated_field(self.title, 'title', self.pk)
 
+    def __str__(self):
+        return self.title
+
 
 class NdrCoreManifest(models.Model):
     """ Directory of all manifests. """
@@ -1123,6 +1126,7 @@ class NdrCoreUIElement(models.Model):
         JUMBOTRON = "jumbotron", "Jumbotron"
         IFRAME = "iframe", "IFrame"
         BANNER = "banner", "Banner"
+        MANIFEST_VIEWER = "manifest_viewer", "Manifest Viewer"
 
     type = models.CharField(max_length=100,
                             choices=UIElementType.choices,
@@ -1171,6 +1175,9 @@ class NdrCoreUiElementItem(models.Model, TranslatableMixin):
 
     url = models.URLField(blank=True)
     """The url of the item. """
+
+    manifest_group = models.ForeignKey(NdrCoreManifestGroup, on_delete=models.CASCADE, null=True)
+    """The manifest group of the item. """
 
     def translated_title(self):
         """Returns the translated title for a given language. If no translation exists,

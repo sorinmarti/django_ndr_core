@@ -1,0 +1,5 @@
+<div class="container text-center">
+    {% with card_item=data.items.0 %}
+        {{ card_item.text|safe }}
+    {% endwith %}
+</div>

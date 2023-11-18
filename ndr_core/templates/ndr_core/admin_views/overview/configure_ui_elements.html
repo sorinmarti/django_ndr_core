@@ -1,5 +1,4 @@
 {% extends 'ndr_core/admin_views/base.html' %}
-{% load django_tables2 %}
 
 {% block content %}
     <h2>UI Elements</h2>
@@ -62,6 +61,8 @@
                     {% include 'ndr_core/ui_elements/jumbotron.html' with data=object %}
                 {% elif object.type == "iframe" %}
                     {% include 'ndr_core/ui_elements/iframe.html' with data=object %}
+                {% elif object.type == "manifest_viewer" %}
+                    {% include 'ndr_core/ui_elements/manifest_viewer.html' with data=object %}
                 {% endif %}
 
             </div>
