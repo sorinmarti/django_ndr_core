@@ -126,7 +126,7 @@ from ndr_core.views import (
     NdrMarkForCorrectionView,
     NdrListDownloadView,
     NdrCSVListDownloadView,
-    set_language_view
+    set_language_view, manifest_url_view
 )
 
 app_name = 'ndr_core'
@@ -314,6 +314,9 @@ urlpatterns = [
 
     # Get preview image path
     path('preview/image/<int:pk>/', get_ndr_image_path, name='get_ndr_image_path'),
+
+    # Manifest id
+    path('manifest/id/<str:manifest_id>/', manifest_url_view, name='get_manifest_url'),
 
     path('test/', TemplateView.as_view(template_name='ndr_core/test.html'), name='test'),
     path('niy/', TemplateView.as_view(template_name='ndr_core/test.html'), name='not_implemented')

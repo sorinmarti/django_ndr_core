@@ -1,5 +1,5 @@
-"""TODO This file holds the init_dr_core management command class.
-ATTENTION: This is for testing purposes only and does not yet work for production."""
+""" This file holds the ndr_import_manifests management command class.
+TODO ATTENTION: This is for testing purposes only and does not yet work for production."""
 import json
 import os
 
@@ -8,7 +8,7 @@ from ndr_core.models import NdrCoreManifest
 
 
 class Command(BaseCommand):
-    help = 'This command initializes your ndr_core app.'
+    help = 'This command imports manifests.'
 
     def add_arguments(self, parser):
         parser.add_argument("directory", type=str, help="Directory where the manifests lie.")

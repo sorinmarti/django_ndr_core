@@ -1,8 +1,10 @@
 """NDR Core template tags."""
 import re
 from django.template.loader import render_to_string
+from django.utils.translation import gettext_lazy as _
 
 from ndr_core.exceptions import PreRenderError
+from ndr_core.forms.forms_manifest import ManifestSelectionForm
 from ndr_core.models import NdrCoreUIElement, NdrCoreImage, NdrCoreUpload, NdrCorePage
 
 
@@ -10,7 +12,7 @@ class TextPreRenderer:
     """Class to pre-render text before it is displayed on the website."""
 
     MAX_ITERATIONS = 50
-    ui_element_regex = r'\[\[(card|slideshow|carousel|jumbotron|figure|banner|iframe)\|(.*)\]\]'
+    ui_element_regex = r'\[\[(card|slideshow|carousel|jumbotron|figure|banner|iframe|manifest_viewer)\|(.*)\]\]'
     link_element_regex = r'\[\[(file|page)\|([0-9a-zA-Z_ ]*)\]\]'
     container_regex = r'\[\[(start|end)_(block)\]\]'
     link_element_classes = {'figure': NdrCoreImage, 'file': NdrCoreUpload, 'page': NdrCorePage}
@@ -97,9 +99,15 @@ class TextPreRenderer:
     def render_element(self, template, element_id,  text):
         """Renders an element."""
         element = self.get_element(template, element_id)
+        context = {'data': element}
+
+        if element.type == NdrCoreUIElement.UIElementType.MANIFEST_VIEWER:
+            context['manifest_selection_form'] = ManifestSelectionForm(self.request.GET or None)
+
         element_html_string = render_to_string(f'ndr_core/ui_elements/{template}.html',
-                                               request=self.request, context={'data': element})
+                                               request=self.request, context=context)
         text = text.replace(f'[[{template}|{element_id}]]', element_html_string)
+
         return text
 
     def get_element(self, template, element_id):
@@ -136,5 +144,9 @@ class TextPreRenderer:
             self.text = self.create_ui_elements()
             self.text = self.create_links()
         except PreRenderError:
-            print("Error")
+            raise PreRenderError(_("There was an error while pre-rendering the text."))
         return self.text
+
+    def get_additional_context(self):
+        """Returns additional context."""
+        return self.additional_context
