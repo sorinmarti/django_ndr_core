@@ -42,6 +42,8 @@ class TranslatableMixin:
     """Fields which are translatable. """
 
     def translated_field(self, orig_value, field_name, object_id):
+        """Returns the translated field for a given language. If no translation exists,
+        the default value is returned. """
         try:
             translation = NdrCoreTranslation.objects.get(language=get_language(),
                                                          table_name=self._meta.model_name,
@@ -49,8 +51,7 @@ class TranslatableMixin:
                                                          object_id=object_id)
             if translation.translation != '':
                 return translation.translation
-            else:
-                return orig_value
+            return orig_value
         except NdrCoreTranslation.DoesNotExist:
             return orig_value
 
@@ -300,8 +301,7 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         if self.field_type == self.FieldType.BOOLEAN:
             if self.initial_value == 'true':
                 return True
-            else:
-                return False
+            return False
 
         return self.initial_value
 
@@ -310,6 +310,8 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
 
 
 class NdrCoreResultFieldCardConfiguration(models.Model):
+    """Result fields can be used in cards. In order to place them, they can be configured to fit in a grid with
+     a NdrCoreResultFieldCardConfiguration."""
 
     result_field = models.ForeignKey(NdrCoreResultField,
                                      on_delete=models.CASCADE,
@@ -554,8 +556,6 @@ class NdrCorePage(TranslatableMixin, models.Model):
         ABOUT_PAGE = 8, "About Us Page"
         """TODO """
 
-        VIEWER_PAGE = 9, "Viewer Page"
-
     view_name = models.CharField(max_length=200,
                                  help_text='The url part of your page (e.g. https://yourdomain.org/p/view_name)',
                                  unique=True)
@@ -605,6 +605,9 @@ class NdrCorePage(TranslatableMixin, models.Model):
                                               "choose the parent page here")
     """Any NDR Core page might have children. Currently used for flip book. In the future to be used as navigation 
     hierarchy."""
+
+    last_modified = models.DateTimeField(auto_now=True)
+    """The last time the page was modified. """
 
     def translated_name(self):
         """Returns the translated name for a given language. If no translation exists, the default name is returned. """
@@ -744,6 +747,7 @@ class NdrCoreColorScheme(models.Model):
 
     @staticmethod
     def color_list():
+        """Returns a list of all color fields. This is used to generate the colors.css file."""
         return ['background_color', 'container_bg_color', 'footer_bg', 'text_color', 'title_color',
                 'button_color', 'button_text_color', 'button_hover_color', 'button_border_color',
                 'second_button_color', 'second_button_text_color', 'second_button_hover_color',
@@ -763,6 +767,8 @@ class NdrCoreValue(models.Model):
      executed. Users can only manipulate the 'value_value' of each object."""
 
     class ValueType(models.TextChoices):
+        """NdrCoreValues can be of different types. The type determines how the value is displayed and how it can be
+        manipulated. """
         STRING = "string", "String"
         RICH_STRING = "rich", "Rich Text"
         INTEGER = "integer", "Integer"
@@ -804,6 +810,7 @@ class NdrCoreValue(models.Model):
     """Indicates if a value can be translated"""
 
     def set_value(self, value):
+        """Sets the value which is always saved as string as the proper type. """
         if self.value_type == NdrCoreValue.ValueType.BOOLEAN:
             if value:
                 self.value_value = 'true'
@@ -812,10 +819,10 @@ class NdrCoreValue(models.Model):
 
     def get_value(self):
         """Returns the valued which is always saved as string as the proper type. """
-        if (self.value_type == NdrCoreValue.ValueType.STRING or
-                self.value_type == NdrCoreValue.ValueType.RICH_STRING or
-                self.value_type == NdrCoreValue.ValueType.LIST or
-                self.value_type == NdrCoreValue.ValueType.URL):
+        if self.value_type in [NdrCoreValue.ValueType.STRING,
+                               NdrCoreValue.ValueType.RICH_STRING,
+                               NdrCoreValue.ValueType.LIST,
+                               NdrCoreValue.ValueType.URL]:
             return self.value_value
         if self.value_type == NdrCoreValue.ValueType.INTEGER:
             try:
@@ -825,8 +832,7 @@ class NdrCoreValue(models.Model):
         if self.value_type == NdrCoreValue.ValueType.BOOLEAN:
             if self.value_value.lower() == 'true' or self.value_value.lower() == 'on' or self.value_value == 'on':
                 return True
-            else:
-                return False
+            return False
         if self.value_type == NdrCoreValue.ValueType.MULTI_LIST:
             val = self.value_value.split(',')
             if val == ['']:
@@ -856,8 +862,8 @@ class NdrCoreValue(models.Model):
                                                          object_id=self.value_name)
             if translation.translation != '':
                 return translation.translation
-            else:
-                return self.value_value
+
+            return self.value_value
         except NdrCoreTranslation.DoesNotExist:
             return self.value_value
 
@@ -970,6 +976,7 @@ class NdrCoreImage(models.Model, TranslatableMixin):
     """ Directory of all images used outside the ckeditor and the logo. """
 
     class ImageGroup(models.TextChoices):
+        """Images are grouped into different groups."""
         PAGE_LOGOS = "page_logos", "Page Logos"
         BGS = "backgrounds", "Background Images"
         ELEMENTS = "elements", "Slideshow Images"
@@ -979,6 +986,7 @@ class NdrCoreImage(models.Model, TranslatableMixin):
 
         @staticmethod
         def get_label_by_value(group_value, choices):
+            """Returns the label for a given value. """
             for choice in choices:
                 if choice[0] == group_value:
                     return choice[1]

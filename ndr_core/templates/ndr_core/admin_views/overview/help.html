@@ -76,8 +76,11 @@
                     <a href="{% url 'ndr_core:help_chapter' 'corrections' %}" class="list-group-item small list-group-item-action py-2{% if "/help/corrections/" in request.path %} active{% endif %}">
                         Corrections
                     </a>
-                    <a href="{% url 'ndr_core:help_chapter' 'statistics' %}" class="list-group-item small list-group-item-action py-2{% if "/help/none/" in request.path %} active{% endif %}">
+                    <a href="{% url 'ndr_core:help_chapter' 'statistics' %}" class="list-group-item small list-group-item-action py-2{% if "/help/statistics/" in request.path %} active{% endif %}">
                         Search Statistics
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'seo' %}" class="list-group-item small list-group-item-action py-2{% if "/help/seo/" in request.path %} active{% endif %}">
+                        Search Engine Optimization
                     </a>
                 </div>
             </div>

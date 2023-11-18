@@ -146,6 +146,7 @@ class SettingsDetailView(LoginRequiredMixin, View):
 class SettingCreateView(LoginRequiredMixin, CreateView):
     """ View to create a new Custom Setting """
 
+    object = None
     model = NdrCoreValue
     form_class = SettingCreateForm
     success_url = reverse_lazy('ndr_core:view_settings', kwargs={'group': 'custom'})

@@ -32,6 +32,19 @@ class SearchConfigurationResultEditForm(forms.Form):
             self.fields[f'column_field_{result_field_conf_row}'] = column_field
             self.fields[f'size_field_{result_field_conf_row}'] = size_field
 
+            cpct_result_field = forms.ModelChoiceField(queryset=NdrCoreResultField.objects.all(),
+                                                       required=required, help_text="")
+            cpct_row_field = forms.IntegerField(required=required,
+                                                help_text="")
+            cpct_column_field = forms.IntegerField(required=required,
+                                                   help_text="")
+            cpct_size_field = forms.IntegerField(required=required, help_text="")
+
+            self.fields[f'cpct_result_field_{result_field_conf_row}'] = cpct_result_field
+            self.fields[f'cpct_row_field_{result_field_conf_row}'] = cpct_row_field
+            self.fields[f'cpct_column_field_{result_field_conf_row}'] = cpct_column_field
+            self.fields[f'cpct_size_field_{result_field_conf_row}'] = cpct_size_field
+
     @property
     def helper(self):
         """Creates and returns the form helper property."""
@@ -39,47 +52,104 @@ class SearchConfigurationResultEditForm(forms.Form):
         helper.form_method = "POST"
         layout = helper.layout = Layout()
 
+        tab_holder = TabHolder(css_id='result_card_tabs')
+        tab = Tab('Result Card')
+        cpct_tab = Tab('Compact Result Card')
+
         form_row = Div(css_class='form-row', css_id='result_field_config_title_row')
         form_row.append(Div(HTML('Result Field'), css_class='col-md-6'))
         form_row.append(Div(HTML('Row (1-?)'), css_class='col-md-2'))
         form_row.append(Div(HTML('Column (1-12)'), css_class='col-md-2'))
         form_row.append(Div(HTML('Size (1-12)'), css_class='col-md-2'))
-        layout.append(form_row)
+        tab.append(form_row)
+
+        form_row = Div(css_class='form-row', css_id='cpct_result_field_config_title_row')
+        form_row.append(Div(HTML('Compact Result Field'), css_class='col-md-6'))
+        form_row.append(Div(HTML('Row (1-?)'), css_class='col-md-2'))
+        form_row.append(Div(HTML('Column (1-12)'), css_class='col-md-2'))
+        form_row.append(Div(HTML('Size (1-12)'), css_class='col-md-2'))
+        cpct_tab.append(form_row)
 
         for row in range(20):
             form_row = Div(css_class='form-row',
                            css_id=f'result_field_config_row_{row}')
+            cpct_form_row = Div(css_class='form-row',
+                                css_id=f'cpct_result_field_config_row_{row}')
+
             form_field_result_field = Field(f'result_field_{row}',
                                             placeholder=f"Search Field {row+1}",
                                             wrapper_class='col-md-6')
+            cpct_form_field_result_field = Field(f'cpct_result_field_{row}',
+                                                 placeholder=f"Search Field {row+1}",
+                                                 wrapper_class='col-md-6')
+
             form_field_row_field = Field(f'row_field_{row}',
                                          placeholder="Row",
                                          wrapper_class='col-md-2')
+            cpct_form_field_row_field = Field(f'cpct_row_field_{row}',
+                                              placeholder="Row",
+                                              wrapper_class='col-md-2')
+
             form_field_column_field = Field(f'column_field_{row}',
                                             placeholder="Column",
                                             wrapper_class='col-md-2')
+            cpct_form_field_column_field = Field(f'cpct_column_field_{row}',
+                                                 placeholder="Column",
+                                                 wrapper_class='col-md-2')
+
             form_field_size_field = Field(f'size_field_{row}',
                                           placeholder="Size",
                                           wrapper_class='col-md-2')
+            cpct_form_field_size_field = Field(f'cpct_size_field_{row}',
+                                               placeholder="Size",
+                                               wrapper_class='col-md-2')
 
             form_row.append(form_field_result_field)
             form_row.append(form_field_row_field)
             form_row.append(form_field_column_field)
             form_row.append(form_field_size_field)
 
-            layout.append(form_row)
+            cpct_form_row.append(cpct_form_field_result_field)
+            cpct_form_row.append(cpct_form_field_row_field)
+            cpct_form_row.append(cpct_form_field_column_field)
+            cpct_form_row.append(cpct_form_field_size_field)
 
-        helper.form_show_labels = False
+            tab.append(form_row)
+            cpct_tab.append(cpct_form_row)
 
         form_row = Row(
-            Column(HTML('<img id="preview_result_card_image" />'), css_class='col-md-12'),
+            Column(HTML('<img id="preview_result_card_image" />'), css_class='col-md-9'),
+            Column(
+                Div(Button('add_row', 'Add Row',
+                           css_class='btn btn-sm btn-secondary float-right ml-3'),
+                    Button('remove_row', 'Remove Row',
+                           css_class='btn btn-sm btn-secondary float-right ml-3'),
+                    css_class='display-flex'),
+                css_class='col-md-3'),
             css_class='form-row'
         )
-        layout.append(form_row)
+        tab.append(form_row)
+
+        cpct_form_row = Row(
+            Column(HTML('<img id="cpct_preview_result_card_image" />'), css_class='col-md-9'),
+            Column(
+                Div(Button('cpct_add_row', 'Add Row',
+                           css_class='btn btn-sm btn-secondary float-right ml-3'),
+                    Button('cpct_remove_row', 'Remove Row',
+                           css_class='btn btn-sm btn-secondary float-right ml-3'),
+                    css_class='display-flex'),
+                css_class='col-md-3'),
+            css_class='form-row'
+        )
+        cpct_tab.append(cpct_form_row)
+
+        tab_holder.append(tab)
+        tab_holder.append(cpct_tab)
+
+        layout.append(tab_holder)
+        helper.form_show_labels = False
 
         helper.add_input(Submit('submit', 'Update Result Configuration'))
-        helper.add_input(Button('add_row', 'Add Row', css_class='btn btn-secondary'))
-        helper.add_input(Button('remove_row', 'Remove Row', css_class='btn btn-secondary'))
 
         return helper
 

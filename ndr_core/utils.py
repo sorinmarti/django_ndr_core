@@ -10,7 +10,7 @@ def get_nested_value(obj, path):
     """Get a nested value from an object."""
     try:
         for key in path.split("."):
-            if type(obj) == list and len(obj) > 0:
+            if isinstance(obj, list) and len(obj) > 0:
                 sublist = []
                 for item in obj:
                     sublist.append(item[key])
@@ -47,13 +47,3 @@ def create_csv_export_string(list_of_results, mapping):
     string_output = output.getvalue().encode('utf-8')
     return string_output
 
-
-def create_sitemap():
-    """Create a sitemap.xml file."""
-    pages = NdrCorePage.objects.all()
-    rendered = render_to_string('ndr_core/utils/sitemap.xml', {'pages': pages})
-
-
-def create_robots_txt():
-    """Create a robots.txt file."""
-    # Not implemented yet

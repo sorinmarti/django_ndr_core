@@ -8,14 +8,15 @@
  * @param baseUrl - The base url for the preview image. It must contain the string "image_string"
  * @returns {*} - The masked url for the preview image.
  */
-function getMaskedUrl(baseUrl, dropdown_field_id, field_count=20){
+function getMaskedUrl(baseUrl, dropdown_field_id, field_count=20,
+                      row_field_id, column_field_id, size_field_id) {
     let data_array = [];
     for (let i = 0; i < field_count; i++) {
-        let row_field =  $('#id_row_field_'+i);
-        let column_field =  $('#id_column_field_'+i);
-        let size_field = $('#id_size_field_'+i);
+        let row_field =  $(row_field_id + '_' +i);
+        let column_field =  $(column_field_id + '_' +i);
+        let size_field = $(size_field_id + '_'+i);
         let dropdown_field = $(dropdown_field_id+'_'+i);
-        console.log(dropdown_field, dropdown_field_id+'_'+i, dropdown_field.val());
+        //console.log(dropdown_field, dropdown_field_id+'_'+i, dropdown_field.val());
         data_array[i]=row_field.val()+"~"+column_field.val()+"~"+size_field.val()+"~"+dropdown_field.val();
     }
     return baseUrl.replace("image_string", data_array);
@@ -54,7 +55,8 @@ function configureDropdown(selectElement, totalElements, updateFunc, dropdown_fi
  * @param number - The number of rows to configure
  * @param imageBaseUrl - The base url for the preview image. It must contain the string "image_string"
  */
-function configureRows(number, imageBaseUrl, dropdown_field_id, image_field_id) {
+function configureRows(number, imageBaseUrl, dropdown_field_id, image_field_id,
+                       row_field_id, column_field_id, size_field_id) {
     /**
      * This function is used to update the preview image. It gets the masked url and updates the src attribute of the
      * preview image.
@@ -69,9 +71,9 @@ function configureRows(number, imageBaseUrl, dropdown_field_id, image_field_id) 
         let selectElement = $(dropdown_field_id+'_'+i);
         configureDropdown(selectElement, number, updateFunc, dropdown_field_id);
 
-        $('#id_row_field_'+i).on('change', updateFunc);
-        $('#id_column_field_'+i).on('change', updateFunc);
-        $('#id_size_field_'+i).on('change', updateFunc);
+        $(row_field_id+'_'+i).on('change', updateFunc);
+        $(column_field_id+'_'+i).on('change', updateFunc);
+        $(size_field_id+'_'+i).on('change', updateFunc);
     }
 }
 
@@ -79,9 +81,11 @@ function configureRows(number, imageBaseUrl, dropdown_field_id, image_field_id) 
  *
  * @param visible_buttons
  */
-function initializeAddAndRemoveButtons(row_id, dropdown_id, visible_buttons=1) {
-    let addButton = $('#button-id-add_row');
-    let removeButton = $('#button-id-remove_row');
+function initializeAddAndRemoveButtons(row_id, dropdown_id, visible_buttons=1,
+                                       add_button_id, remove_button_id,
+                                       row_field_id, column_field_id, size_field_id) {
+    let addButton = $(add_button_id);
+    let removeButton = $(remove_button_id);
 
     addButton.on('click', function () {
         removeButton.show();
@@ -101,9 +105,9 @@ function initializeAddAndRemoveButtons(row_id, dropdown_id, visible_buttons=1) {
             let sField = $(dropdown_id + '_'+visible_buttons);
             sField.val(null);
             sField.change();
-            $('#id_row_field_'+visible_buttons).val("");
-            $('#id_column_field_'+visible_buttons).val("");
-            $('#id_size_field_'+visible_buttons).val("");
+            $(row_field_id + '_'+visible_buttons).val("");
+            $(column_field_id + '_'+visible_buttons).val("");
+            $(size_field_id + '_'+visible_buttons).val("");
             $(row_id + '_'+visible_buttons).hide();
 
             if (visible_buttons === 1) {
@@ -115,4 +119,29 @@ function initializeAddAndRemoveButtons(row_id, dropdown_id, visible_buttons=1) {
             visible_buttons -= 1;
         }
     });
+}
+
+function init_preview(imageBaseUrl, dropdown_field_id, image_field_id, result_field_config_row_stub,
+                      row_field_id, column_field_id, size_field_id,
+                      add_button_id, remove_button_id) {
+    configureRows(20, imageBaseUrl, dropdown_field_id, image_field_id,
+                  row_field_id, column_field_id, size_field_id);
+
+    let visible_buttons = 1;
+    for(let i = 1; i < 20; i++){
+        if($(dropdown_field_id + '_' + i).val() === '') {
+            $(result_field_config_row_stub + '_' + i).hide();
+        }
+        else {
+            visible_buttons++;
+        }
+    }
+
+    initializeAddAndRemoveButtons(result_field_config_row_stub, dropdown_field_id, visible_buttons,
+                                  add_button_id, remove_button_id,
+                                  row_field_id, column_field_id, size_field_id);
+
+    let maskedUrl = getMaskedUrl(imageBaseUrl, dropdown_field_id, row_field_id, column_field_id, size_field_id);
+    let previewImage = $(image_field_id);
+    previewImage.attr('src', maskedUrl);
 }

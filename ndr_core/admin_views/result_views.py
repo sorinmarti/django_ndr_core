@@ -9,8 +9,7 @@ from ndr_core.form_preview import get_search_form_image_from_raw_data
 from ndr_core.admin_forms.result_field_forms import ResultFieldCreateForm, ResultFieldEditForm
 from ndr_core.models import (
     NdrCoreResultField,
-    NdrCoreSearchConfiguration,
-    NdrCoreResultFieldCardConfiguration
+    NdrCoreSearchConfiguration
 )
 
 
@@ -50,19 +49,44 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
     @staticmethod
     def get_row_fields(row):
         """Returns the field names for a given row. """
-        return [f'result_field_{row}', f'row_field_{row}', f'column_field_{row}', f'size_field_{row}']
+        return [(f'result_field_{row}', 'result_field'),
+                (f'row_field_{row}', 'field_row'),
+                (f'column_field_{row}', 'field_column'),
+                (f'size_field_{row}', 'field_size')]
+
+    @staticmethod
+    def get_compact_row_fields(row):
+        """Returns the field names for a given row. """
+        return [(f'cpct_result_field_{row}', 'result_field'),
+                (f'cpct_row_field_{row}', 'field_row'),
+                (f'cpct_column_field_{row}', 'field_column'),
+                (f'cpct_size_field_{row}', 'field_size')]
+
+    def get_context_data(self, **kwargs):
+        """Adds the search configuration to the context. """
+        context = super().get_context_data(**kwargs)
+        context['search_configuration'] = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
+        return context
 
     def get_form(self, form_class=None):
         """Returns the form for this view. """
         form = super().get_form(form_class=form_class)
-        fields = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).result_card_fields.all()
+        all_fields = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).result_card_fields.all()
+        normal_fields = all_fields.filter(result_card_group='normal')
+        compact_fields = all_fields.filter(result_card_group='compact')
 
         form_row = 0
-        for field in fields:
-            form.fields[f'result_field_{form_row}'].initial = field.result_field
-            form.fields[f'row_field_{form_row}'].initial = field.field_row
-            form.fields[f'column_field_{form_row}'].initial = field.field_column
-            form.fields[f'size_field_{form_row}'].initial = field.field_size
+        for field in normal_fields:
+            row_fields = self.get_row_fields(form_row)
+            for field_name, model_field in row_fields:
+                form.fields[field_name].initial = getattr(field, model_field)
+            form_row += 1
+
+        form_row = 0
+        for field in compact_fields:
+            row_fields = self.get_compact_row_fields(form_row)
+            for field_name, model_field in row_fields:
+                form.fields[field_name].initial = getattr(field, model_field)
             form_row += 1
 
         return form
@@ -74,24 +98,46 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
 
         for row in range(20):
             fields = self.get_row_fields(row)
-            if all(field in form.cleaned_data for field in fields) and \
-                    all(form.cleaned_data[x] is not None for x in fields):
+            field_names = [x[0] for x in fields]
+
+            if all(field in form.cleaned_data for field in field_names) and \
+                    all(form.cleaned_data[x] is not None for x in field_names):
 
                 # There is a valid row of configuration. Check if it already exists in the database.
-                try:
-                    updatable_obj = (
-                        conf_object.result_card_fields.get(result_field=form.cleaned_data[f'result_field_{row}']))
-                    updatable_obj.field_row = form.cleaned_data[f'row_field_{row}']
-                    updatable_obj.field_column = form.cleaned_data[f'column_field_{row}']
-                    updatable_obj.field_size = form.cleaned_data[f'size_field_{row}']
-                    updatable_obj.save()
-                except NdrCoreResultFieldCardConfiguration.DoesNotExist:
-                    new_field = NdrCoreResultFieldCardConfiguration.objects.create(
-                        result_field=form.cleaned_data[f'result_field_{row}'],
-                        field_row=form.cleaned_data[f'row_field_{row}'],
-                        field_column=form.cleaned_data[f'column_field_{row}'],
-                        field_size=form.cleaned_data[f'size_field_{row}'])
-                    conf_object.result_card_fields.add(new_field)
+                conf_line, created = conf_object.result_card_fields.get_or_create(
+                    result_card_group='normal',
+                    result_field=form.cleaned_data[f'result_field_{row}'],
+                    commit=False)
+
+                conf_line.field_row = form.cleaned_data[f'row_field_{row}']
+                conf_line.field_column = form.cleaned_data[f'column_field_{row}']
+                conf_line.field_size = form.cleaned_data[f'size_field_{row}']
+                conf_line.result_card_group = 'normal'
+                conf_line.save()
+
+                if created:
+                    conf_object.result_card_fields.add(conf_line)
+
+            compact_fields = self.get_compact_row_fields(row)
+            compact_field_names = [x[0] for x in compact_fields]
+
+            if all(field in form.cleaned_data for field in compact_field_names) and \
+                    all(form.cleaned_data[x] is not None for x in compact_field_names):
+
+                # There is a valid row of configuration. Check if it already exists in the database.
+                conf_line, created = conf_object.result_card_fields.get_or_create(
+                    result_card_group='compact',
+                    result_field=form.cleaned_data[f'cpct_result_field_{row}'],
+                    commit=False)
+
+                conf_line.field_row = form.cleaned_data[f'cpct_row_field_{row}']
+                conf_line.field_column = form.cleaned_data[f'cpct_column_field_{row}']
+                conf_line.field_size = form.cleaned_data[f'cpct_size_field_{row}']
+                conf_line.result_card_group = 'compact'
+                conf_line.save()
+
+                if created:
+                    conf_object.result_card_fields.add(conf_line)
         return response
 
 

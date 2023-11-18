@@ -16,6 +16,7 @@ from ndr_core.admin_views.search_field_views import (
     preview_search_form_image,
     SearchFieldDeleteView
 )
+from ndr_core.admin_views.seo_views import RobotsFileView, SitemapFileView, ConnectWithNdrCoreOrgView
 from ndr_core.admin_views.translation_views import (
     ConfigureTranslations,
     SelectTranslationView,
@@ -257,18 +258,21 @@ urlpatterns = [
 
     path('configure/search/delete/config/<str:pk>/', SearchConfigurationDeleteView.as_view(),
          name='delete_search_config'),
-    path('configure/search/delete/search_field/<str:pk>/', SearchFieldDeleteView.as_view(), name='delete_search_field'),
-    path('configure/search/delete/result_field/<str:pk>/', ResultFieldDeleteView.as_view(), name='delete_result_field'),
+    path('configure/search/delete/search_field/<str:pk>/', SearchFieldDeleteView.as_view(),
+         name='delete_search_field'),
+    path('configure/search/delete/result_field/<str:pk>/', ResultFieldDeleteView.as_view(),
+         name='delete_result_field'),
 
-    path('configure/search/copy/config/<str:pk>/', SearchConfigurationCopyView.as_view(), name='copy_search_config'),
+    path('configure/search/copy/config/<str:pk>/', SearchConfigurationCopyView.as_view(),
+         name='copy_search_config'),
     path('configure/search/form/preview/<str:img_config>/', preview_search_form_image,
          name='preview_search_form_image'),
     path('configure/search/result/preview/<str:img_config>/', preview_result_card_image,
          name='preview_result_card_image'),
 
     # SEARCH STATS
-    path('search/statistics/', StatisticsView.as_view(), name='search_statistics'),
-    path('search/statistics/enable/<str:option>/', set_statistics_option, name='set_statistics_option'),
+    path('configure/statistics/', StatisticsView.as_view(), name='search_statistics'),
+    path('configure/statistics/enable/<str:option>/', set_statistics_option, name='set_statistics_option'),
 
     # Login / Logout
     path('login/', auth_views.LoginView.as_view(template_name='ndr_core/admin_views/user_management/login.html',
@@ -296,6 +300,14 @@ urlpatterns = [
     # Mark an entry for correction
     path('mark/to/correct/<str:search_config>/<str:record_id>/', NdrMarkForCorrectionView.as_view(),
          name='mark_record'),
+
+    # Search Engine Optimization
+    path('configure/seo/',
+         TemplateView.as_view(template_name='ndr_core/admin_views/overview/configure_seo.html'),
+         name='seo'),
+    path('configure/seo/robots/', RobotsFileView.as_view(), name='seo_robots'),
+    path('configure/seo/sitemap/', SitemapFileView.as_view(), name='seo_sitemap'),
+    path('configure/seo/ndrcore-org/', ConnectWithNdrCoreOrgView.as_view(), name='seo_ndrcore_org'),
 
     # Language
     path('language/<str:new_language>/', set_language_view, name='set_language'),

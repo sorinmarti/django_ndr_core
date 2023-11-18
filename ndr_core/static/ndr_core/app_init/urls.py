@@ -8,4 +8,7 @@ app_name = NdrSettings.APP_NAME
 urlpatterns = [
     path('', dispatch, name='index'),
     path('p/<str:ndr_page>/', dispatch, name='ndr_view'),
+
+    path('robots.txt', dispatch, name='robots'),
+    path('sitemap.xml', dispatch, name='sitemap'),
 ]

@@ -1,8 +1,9 @@
 """This file contains the main NDR Core views. All Page views are defined here.
 For the views for the administration interface, see admin_views/* """
 from django.contrib import messages
-from django.http import HttpResponseNotFound, JsonResponse, HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.urls import reverse
 
@@ -13,6 +14,8 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import translation
 
 from django.conf import settings
+
+from ndr_core.exceptions import NdrCorePageNotFound
 from ndr_core.forms.forms_contact import ContactForm
 from ndr_core.forms.forms_manifest import ManifestSelectionForm
 from ndr_core.forms.forms_search import AdvancedSearchForm
@@ -33,6 +36,22 @@ from ndr_core.ndr_template_tags import TextPreRenderer
 from ndr_core.utils import create_csv_export_string
 
 
+def get_page_type_view_class(page_type):
+    """Returns the view class for a given page type. """
+    translator = {
+        NdrCorePage.PageType.TEMPLATE: NdrTemplateView,
+        NdrCorePage.PageType.SEARCH: SearchView,
+        NdrCorePage.PageType.CONTACT: ContactView,
+        NdrCorePage.PageType.FLIP_BOOK: FlipBookView,
+        NdrCorePage.PageType.ABOUT_PAGE: AboutUsView,
+    }
+
+    if page_type not in translator.keys():
+        raise NdrCorePageNotFound(f"Page type {page_type} not found.")
+
+    return translator[page_type]
+
+
 def dispatch(request, ndr_page=None):
     """All requests for ndr_core pages are routed through this function which decides the
     type of page which should be returned based on the configuration. If the ndr_page is None,
@@ -42,6 +61,11 @@ def dispatch(request, ndr_page=None):
     :param ndr_page: The NdrCorePage's database id
     :return: A configured view or 404 if not found
     """
+
+    if request.path == reverse_lazy(f'{NdrSettings.APP_NAME}:robots'):
+        return create_robots_txt_view(request)
+    if request.path == reverse_lazy(f'{NdrSettings.APP_NAME}:sitemap'):
+        return create_sitemap_view(request)
 
     page_is_under_construction = NdrCoreValue.get_or_initialize("under_construction",
                                                                 init_type=NdrCoreValue.ValueType.BOOLEAN,
@@ -55,27 +79,10 @@ def dispatch(request, ndr_page=None):
 
     try:
         page = NdrCorePage.objects.get(view_name=ndr_page)
+        view_class = get_page_type_view_class(page.page_type)
 
-        if page.page_type == page.PageType.TEMPLATE:
-            return NdrTemplateView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                           ndr_page=page)(request)
-        if page.page_type == page.PageType.SEARCH:
-            return SearchView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                      ndr_page=page)(request)
-        if page.page_type == page.PageType.CONTACT:
-            return ContactView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                       ndr_page=page)(request)
-        if page.page_type == page.PageType.FLIP_BOOK:
-            return FlipBookView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                        ndr_page=page)(request)
-        if page.page_type == page.PageType.ABOUT_PAGE:
-            return AboutUsView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                       ndr_page=page)(request)
-        if page.page_type == page.PageType.VIEWER_PAGE:
-            return ViewerView.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
-                                      ndr_page=page)(request)
-        else:
-            return HttpResponseNotFound("Page Type Not Found")
+        return view_class.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
+                                  ndr_page=page)(request)
     except NdrCorePage.DoesNotExist:
         return TemplateView.as_view(template_name='ndr_core/not_found.html')(request)
 
@@ -393,3 +400,44 @@ def set_language_view(request, new_language):
     response.set_cookie(settings.LANGUAGE_COOKIE_NAME, new_language)
 
     return response
+
+
+def create_sitemap_view(request, as_string=False):
+    """Create a sitemap.xml file. """
+    pages = NdrCorePage.objects.all()
+    context_pages = []
+    for page in pages:
+        page_obj = {
+            'url': request.build_absolute_uri(page.url()),
+            'lastmod': page.last_modified.isoformat(),
+            'changefreq': 'monthly',
+            'priority': 0.5,
+        }
+        if page.view_name == 'index':
+            page_obj['priority'] = 1.0
+        if page.page_type == NdrCorePage.PageType.SEARCH:
+            page_obj['priority'] = 0.8
+        elif page.page_type == NdrCorePage.PageType.CONTACT:
+            page_obj['priority'] = 0.3
+        elif page.page_type == NdrCorePage.PageType.ABOUT_PAGE:
+            page_obj['priority'] = 0.3
+
+        context_pages.append(page_obj)
+    rendered = render_to_string('ndr_core/utils/sitemap.xml', {'pages': context_pages})
+    if as_string:
+        return rendered
+    return HttpResponse(rendered, content_type='text/xml')
+
+
+def create_robots_txt_view(request, as_string=False):
+    """Create a robots.txt file."""
+    sitemap_url = request.build_absolute_uri(reverse_lazy(f'{NdrSettings.APP_NAME}:sitemap'))
+    text = f"""User-agent: *
+Allow: /
+    
+Sitemap: { sitemap_url }"""
+
+    if as_string:
+        return text
+
+    return HttpResponse(text, content_type='text/plain')

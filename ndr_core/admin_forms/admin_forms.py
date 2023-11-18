@@ -2,6 +2,7 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, ButtonHolder, HTML
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.forms import forms
 
 
 class NdrCoreLoginForm(AuthenticationForm):
@@ -24,6 +25,17 @@ class NdrCoreChangePasswordForm(PasswordChangeForm):
         self.helper = FormHelper()
         self.helper.form_method = "POST"
         self.helper.add_input(Submit('login', 'Change Password'))
+
+
+class ConnectWithNdrCoreForm(forms.Form):
+    """A Form to activate or deactivate the connection with the NDRCore.org website. """
+
+    def __init__(self, *args, **kwargs):
+        """Initialises all needed form fields."""
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "POST"
+        self.helper.add_input(Submit('submit', 'Connect with NDRCore.org'))
 
 
 def get_form_buttons(submit_text):

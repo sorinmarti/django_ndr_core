@@ -47,6 +47,7 @@ class ConfigureTranslations(LoginRequiredMixin, View):
         return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
+
 class TranslateView(LoginRequiredMixin, View):
     """View to add/edit/delete Translations."""
 
@@ -57,7 +58,7 @@ class TranslateView(LoginRequiredMixin, View):
         return context
 
 
-class TranslatePageValuesView(LoginRequiredMixin, TranslateView):
+class TranslatePageValuesView(TranslateView):
     """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
@@ -83,7 +84,7 @@ class TranslatePageValuesView(LoginRequiredMixin, TranslateView):
                       context=context)
 
 
-class TranslateFieldValuesView(LoginRequiredMixin, TranslateView):
+class TranslateFieldValuesView(TranslateView):
     """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
@@ -107,7 +108,7 @@ class TranslateFieldValuesView(LoginRequiredMixin, TranslateView):
                       context=context)
 
 
-class TranslateSettingsValuesView(LoginRequiredMixin, TranslateView):
+class TranslateSettingsValuesView(TranslateView):
     """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
@@ -132,7 +133,7 @@ class TranslateSettingsValuesView(LoginRequiredMixin, TranslateView):
                       context=context)
 
 
-class TranslateFormValuesView(LoginRequiredMixin, TranslateView):
+class TranslateFormValuesView(TranslateView):
     """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
@@ -156,7 +157,7 @@ class TranslateFormValuesView(LoginRequiredMixin, TranslateView):
                       context=context)
 
 
-class TranslateUIElementsValuesView(LoginRequiredMixin, TranslateView):
+class TranslateUIElementsValuesView(TranslateView):
     """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
@@ -180,7 +181,7 @@ class TranslateUIElementsValuesView(LoginRequiredMixin, TranslateView):
                       context=context)
 
 
-class TranslateImagesValuesView(LoginRequiredMixin, TranslateView):
+class TranslateImagesValuesView(TranslateView):
     """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):

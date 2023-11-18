@@ -71,13 +71,18 @@ class SearchConfigurationFormEditForm(forms.Form):
         helper.form_show_labels = False
 
         form_row = Row(
-            Column(HTML('<img id="preview_search_form_image" />'), css_class='col-md-12'),
+            Column(HTML('<img id="preview_search_form_image" />'), css_class='col-md-9'),
+            Column(
+                Div(Button('add_row', 'Add Row',
+                           css_class='btn btn-sm btn-secondary float-right ml-3'),
+                    Button('remove_row', 'Remove Row',
+                           css_class='btn btn-sm btn-secondary float-right ml-3'),
+                    css_class='display-flex'),
+                css_class='col-md-3'),
             css_class='form-row'
         )
         layout.append(form_row)
 
         helper.add_input(Submit('submit', 'Update Search Form Configuration'))
-        helper.add_input(Button('add_row', 'Add Row', css_class='btn btn-secondary'))
-        helper.add_input(Button('remove_row', 'Remove Row', css_class='btn btn-secondary'))
 
         return helper

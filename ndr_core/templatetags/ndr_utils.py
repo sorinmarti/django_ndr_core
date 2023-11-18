@@ -149,7 +149,7 @@ def key_value(data_dict, key):
 @register.filter
 def is_list(value):
     """Provides key-value lookup functionality in templates."""
-    return type(value) is list
+    return isinstance(value, list)
 
 
 @register.filter
@@ -182,7 +182,7 @@ def reduce_iiif_size(image_url, target_percent_of_size):
     """Reduces the size of an IIIF image URL."""
     if image_url is None:
         return ''
-    if type(image_url) is not str:
+    if isinstance(image_url, str):
         return ''
     if target_percent_of_size is None:
         return image_url

@@ -28,6 +28,7 @@ class TranslateForm(forms.Form):
 
     @staticmethod
     def get_field(str_to_translate, help_text):
+        """Returns a CharField with the given string as label. """
         field = forms.CharField(label=f"Translate: '{str_to_translate}'",
                                 required=False,
                                 max_length=100,
@@ -35,6 +36,7 @@ class TranslateForm(forms.Form):
         return field
 
     def get_initial_value(self, field_name, object_id):
+        """Returns the initial value of the field. """
         try:
             translation_obj = NdrCoreTranslation.objects.get(language=self.lang,
                                                              table_name=self.table_name,
@@ -45,6 +47,7 @@ class TranslateForm(forms.Form):
             return ''
 
     def save_translation(self, object_id, field_name, translation):
+        """Saves the translation to the database. """
         i18n_object = NdrCoreTranslation.objects.get_or_create(language=self.lang,
                                                                table_name=self.table_name,
                                                                field_name=field_name,
@@ -151,8 +154,12 @@ class TranslateFieldForm(TranslateForm):
         self.is_valid()
 
         for field in self.items:
-            self.save_translation(field.field_name, 'field_label', self.cleaned_data[f"field_label_{field.field_name}"])
-            self.save_translation(field.field_name, 'help_text', self.cleaned_data[f"field_help_text_{field.field_name}"])
+            self.save_translation(field.field_name,
+                                  'field_label',
+                                  self.cleaned_data[f"field_label_{field.field_name}"])
+            self.save_translation(field.field_name,
+                                  'help_text',
+                                  self.cleaned_data[f"field_help_text_{field.field_name}"])
 
 
 class TranslateSettingsForm(TranslateForm):
@@ -310,7 +317,7 @@ class TranslateImagesForm(TranslateForm):
 
         initial_values = {}
         for field in self.ndr_image:
-           pass
+            pass
 
         self.initial = initial_values
 

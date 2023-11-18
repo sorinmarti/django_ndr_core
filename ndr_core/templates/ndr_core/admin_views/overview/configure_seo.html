@@ -1,0 +1,91 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load static %}
+{% load ndr_utils %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h2><i class="fa-brands fa-google"></i> Search Engine Optimization</h2>
+    <div class="card-deck">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Options</h5>
+                <div class="list-group">
+                    <a href="{% url 'ndr_core:seo_ndrcore_org' %}" class="list-group-item list-group-item-action py-2{% if "/configure/seo/ndrcore-org" in request.path %} active{% endif %}">
+                        <i class="fa-regular fa-n"></i>
+                        Connect with ndrcore.org
+                    </a>
+                    <a href="{% url 'ndr_core:seo_robots' %}" class="list-group-item list-group-item-action py-2{% if "/configure/seo/robots" in request.path %} active{% endif %}">
+                        <i class="fa-regular fa-r"></i>
+                        Robots File
+                    </a>
+                    <a href="{% url 'ndr_core:seo_sitemap' %}" class="list-group-item list-group-item-action py-2{% if "/configure/seo/sitemap" in request.path %} active{% endif %}">
+                        <i class="fa-regular fa-map"></i>
+                        Site Map
+                    </a>
+                    <a href="{% url 'ndr_core:help_chapter' 'seo' %}" class="list-group-item list-group-item-action py-2">
+                        <i class="fa-regular fa-circle-info"></i>
+                        Help
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bg-light mb-3" style="max-height: 50vh;">
+            <div class="overflow-auto">
+                <div class="card-body">
+                    {% if "/configure/seo/ndrcore-org" in request.path %}
+                        <h5 class="card-title">Connect with ndrcore.org</h5>
+                        <p>
+                        You can connect your site with ndrcore.org to help us keep track of your site and to help us
+                        keep your site up to date with the latest security patches. Also, if you are a member of the
+                        ndrcore.org network, you will be found by other members of the network and people looking for
+                        data you have published.
+                        </p>
+                    {% elif "/configure/seo/robots" in request.path %}
+                        <h5 class="card-title">Your robots.txt File</h5>
+                        <p>
+                        The robots.txt file is used by search engines to determine what pages they should index and
+                        what pages they should ignore. You can use this file to prevent search engines from indexing
+                        pages that you do not want to be indexed.
+                        </p>
+                    {% elif "/configure/seo/sitemap" in request.path %}
+                        <h5 class="card-title">Your sitemap.xml File</h5>
+                        <p>
+                        The sitemap.xml file is used by search engines to determine what pages they should index and
+                        what pages they should ignore. You can use this file to prevent search engines from indexing
+                        pages that you do not want to be indexed.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-light mb-3">
+        <div class="card-body">
+            {% if "/configure/seo/ndrcore-org" in request.path %}
+                <h5 class="card-title">Connect with ndrcore.org</h5>
+                {% crispy form %}
+            {% elif "/configure/seo/robots" in request.path %}
+                <h5 class="card-title">Your robots.txt File</h5>
+                <div class="border p-3 bg-dark">
+                    <code>
+                    {{ robots_txt|safe }}
+                    </code>
+                </div>
+            {% elif "/configure/seo/sitemap" in request.path %}
+                <h5 class="card-title">Your sitemap.xml File</h5>
+                <div class="border p-3 bg-dark">
+                    <code>
+                    {{ sitemap_xml|safe }}
+                    </code>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="alert alert-info small" role="alert">
+        <i class="fa-regular fa-circle-info"></i>
+    </div>
+
+{% endblock %}

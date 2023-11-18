@@ -96,7 +96,7 @@
 
                                         {% if page_is_editable %}
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                                <a class="nav-link dropdown-toggle {% if "configure/messages/" in request.path or "configure/corrections/" in request.path or "configure/statistics/" in request.path or "configure/seo/" in request.path %} active{% endif %}" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
                                                     <i class="fa-regular fa-pen"></i>
                                                     Maintenance
                                                 </a>
@@ -112,6 +112,10 @@
                                                     <a class="dropdown-item" href="{% url 'ndr_core:search_statistics' %}">
                                                         <i class="fa-regular fa-chart-simple"></i>
                                                         View Search Statistics
+                                                    </a>
+                                                    <a class="dropdown-item" href="{% url 'ndr_core:seo' %}">
+                                                        <i class="fa-brands fa-google"></i>
+                                                        Search Engine Optimization
                                                     </a>
                                                 </div>
                                             </li>

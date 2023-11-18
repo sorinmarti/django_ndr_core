@@ -1,19 +1,26 @@
-function init_preview(imageBaseUrl) {
-    configureRows(20, imageBaseUrl, '#id_result_field', '#preview_result_card_image' );
-
-    let visible_buttons = 1;
-    for(let i = 1; i < 20; i++){
-        if($('#id_result_field_' + i).val() === '') {
-            $('#result_field_config_row_' + i).hide();
-        }
-        else {
-            visible_buttons++;
-        }
-    }
-
-    initializeAddAndRemoveButtons('#result_field_config_row', '#id_result_field', visible_buttons);
-
-    let maskedUrl = getMaskedUrl(imageBaseUrl, '#id_result_field');
-    let previewImage = $('#preview_result_card_image');
-    previewImage.attr('src', maskedUrl);
+function init_result_preview(imageBaseUrl) {
+    init_preview(
+        imageBaseUrl,
+        '#id_result_field',
+        '#preview_result_card_image',
+        '#result_field_config_row',
+        '#id_row_field',
+        '#id_column_field',
+        '#id_size_field',
+        '#button-id-add_row',
+        '#button-id-remove_row');
 }
+
+function init_cpct_result_preview(imageBaseUrl) {
+    init_preview(
+        imageBaseUrl,
+        '#id_cpct_result_field',
+        '#cpct_preview_result_card_image',
+        '#cpct_result_field_config_row',
+        '#id_cpct_row_field',
+        '#id_cpct_column_field',
+        '#id_cpct_size_field',
+        '#button-id-cpct_add_row',
+        '#button-id-cpct_remove_row');
+}
+

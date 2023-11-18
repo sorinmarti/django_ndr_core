@@ -19,3 +19,7 @@ class NdrCoreConfigurationError(Exception):
 
 class PreRenderError(Exception):
     """Exception raised for errors in the pre-rendering process."""
+
+
+class NdrCorePageNotFound(Exception):
+    """Exception raised when a page or a page type is not found."""
