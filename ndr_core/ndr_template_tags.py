@@ -101,7 +101,7 @@ class TextPreRenderer:
         element = self.get_element(template, element_id)
         context = {'data': element}
 
-        if element.type == NdrCoreUIElement.UIElementType.MANIFEST_VIEWER:
+        if isinstance(element, NdrCoreUIElement) and element.type == NdrCoreUIElement.UIElementType.MANIFEST_VIEWER:
             context['manifest_selection_form'] = ManifestSelectionForm(self.request.GET or None)
 
         element_html_string = render_to_string(f'ndr_core/ui_elements/{template}.html',

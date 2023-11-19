@@ -147,7 +147,7 @@ class _NdrCoreSearchView(_NdrCoreView):
         """ Translates the GET parameters provided by the search form to key-value pairs
         and saves them in the Query-object. """
         search_config = self.get_search_config_from_name(requested_search)
-        form = self.form_class(self.request.GET, search_config=search_config)
+        form = self.form_class(self.request.GET, ndr_page=self.ndr_page)
         form.is_valid()
 
         for field in form.fields:
@@ -265,6 +265,7 @@ class SearchView(_NdrCoreSearchView):
                     query_string = query_obj.get_simple_query(request.GET.get('search_term', ''),
                                                               request.GET.get("page", 1),
                                                               and_or=request.GET.get('and_or_field', 'and'))
+                # An advanced search is called
                 else:
                     has_values = False
                     for field in form.fields:
@@ -293,6 +294,10 @@ class SearchView(_NdrCoreSearchView):
                 else:
                     context.update({'search_config': search_config})
                     context.update({'result': result})
+                    is_compact = request.GET.get(f'compact_view_{requested_search}', 'normal')
+                    if is_compact == "on":
+                        is_compact = 'compact'
+                    context.update({'result_card_group': is_compact})
         else:
             if "refine" in request.GET.keys():
                 form = self.form_class(request.GET, ndr_page=self.ndr_page)
@@ -354,42 +359,6 @@ class FlipBookView(_NdrCoreView):
         context = {}
         context.update(self.get_ndr_context_data())
         return context
-
-
-class ViewerView(_NdrCoreView):
-    """A view to show a IIIF viewer. """
-    def get_context_data(self, **kwargs):
-        """Returns the context data for this view. """
-        context = {}
-        context.update(self.get_ndr_context_data())
-        return context
-
-    def get(self, request, *args, **kwargs):
-        """GET request for this view. """
-        context = self.get_context_data()
-
-        manifests = NdrCoreManifest.objects.all()
-
-        form = None
-        manifest_url = None
-
-        if manifests.count() == 0:
-            messages.error(request, _("No manifests found."))
-        elif manifests.count() == 1:
-            manifest_url = manifests[0].file.url
-        else:
-            form = ManifestSelectionForm(request.GET)
-            if form.is_valid():
-                manifest_url = form.cleaned_data['manifest'].file.url
-            else:
-                form = ManifestSelectionForm(initial={'manifest': manifests[0].id})
-                manifest_url = manifests[0].file.url
-
-        context['form'] = form
-        context['manifest_url'] = manifest_url
-        context['page_to_display'] = request.GET.get('page', 1)
-
-        return render(request, self.template_name, context)
 
 
 def set_language_view(request, new_language):

@@ -319,13 +319,16 @@ class NdrCoreResultFieldCardConfiguration(models.Model):
     """The result field to place in a card"""
 
     field_row = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)],
-                                    help_text="The row in the card. Starts with 1.")
+                                    help_text="The row in the card. Starts with 1.",
+                                    null=True)
 
     field_column = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)],
-                                       help_text="The column in the card. Is a value between 1 and 12.")
+                                       help_text="The column in the card. Is a value between 1 and 12.",
+                                       null=True)
 
     field_size = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)],
-                                     help_text="The size of the field. Is a value between 1 and 12.")
+                                     help_text="The size of the field. Is a value between 1 and 12.",
+                                     null=True)
 
     result_card_group = models.CharField(max_length=100,
                                          choices=(('normal', 'Normal'), ('compact', 'Compact')),

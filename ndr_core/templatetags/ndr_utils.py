@@ -17,15 +17,16 @@ register = template.Library()
 def render_result_tag(parser, token):
     """Renders a result object."""
     token_list = token.split_contents()
-    return RenderResultNode(token_list[1], token_list[2])
+    return RenderResultNode(token_list[1], token_list[2], token_list[3])
 
 
 class RenderResultNode(template.Node):
     """Renders a result object."""
 
-    def __init__(self, result, search_config):
+    def __init__(self, result, search_config, result_card_group='normal'):
         self.result = template.Variable(result)
         self.search_config = template.Variable(search_config)
+        self.result_card_group = template.Variable(result_card_group)
 
     def create_card(self, context, result):
         """Creates a result card."""
@@ -39,8 +40,7 @@ class RenderResultNode(template.Node):
     def create_grid(self, context, data):
         """Creates a grid of result fields."""
         row_template = 'ndr_core/result_renderers/elements/result_row.html'
-
-        result_card_fields = self.search_config.resolve(context).result_card_fields.all()
+        result_card_fields = self.search_config.resolve(context).result_card_fields.filter(result_card_group=self.result_card_group.resolve(context))
         max_row = result_card_fields.aggregate(Max('field_row'))
 
         card_grid_str = ''

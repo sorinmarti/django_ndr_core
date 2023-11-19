@@ -106,8 +106,7 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
                 # There is a valid row of configuration. Check if it already exists in the database.
                 conf_line, created = conf_object.result_card_fields.get_or_create(
                     result_card_group='normal',
-                    result_field=form.cleaned_data[f'result_field_{row}'],
-                    commit=False)
+                    result_field=form.cleaned_data[f'result_field_{row}'])
 
                 conf_line.field_row = form.cleaned_data[f'row_field_{row}']
                 conf_line.field_column = form.cleaned_data[f'column_field_{row}']
@@ -127,8 +126,7 @@ class SearchConfigurationResultEditView(LoginRequiredMixin, FormView):
                 # There is a valid row of configuration. Check if it already exists in the database.
                 conf_line, created = conf_object.result_card_fields.get_or_create(
                     result_card_group='compact',
-                    result_field=form.cleaned_data[f'cpct_result_field_{row}'],
-                    commit=False)
+                    result_field=form.cleaned_data[f'cpct_result_field_{row}'])
 
                 conf_line.field_row = form.cleaned_data[f'cpct_row_field_{row}']
                 conf_line.field_column = form.cleaned_data[f'cpct_column_field_{row}']
