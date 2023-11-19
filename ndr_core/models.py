@@ -63,7 +63,7 @@ class NdrCoreResultField(models.Model):
     with data from the result.
     Example:
         The data provides a field 'person'. Its value is an object containing the fields 'first_name'
-        and 'last_name'. The expression is 'Hello {person.first_name} {person.last_name}!'. The result
+        and 'last_name'. The expression is 'Hello {person[first_name]} {person[last_name]}!'. The result
         field will display the text 'Hello John Doe!' if the data contains the fields 'person.first_name'
         and 'person.last_name'."""
 
@@ -90,6 +90,9 @@ class NdrCoreResultField(models.Model):
         MAP = 6, "Map"
         """This type produces a map. The expression must be a list of dictionaries with the keys 'lat' and 'lng'."""
 
+        LIST = 7, "List"
+        """This type produces a list. The expression must be a list."""
+
     expression = models.TextField(default='', blank=True)
     """The expression to display. This can be a static text or a template string which is filled with data from the
     result. """
@@ -110,6 +113,9 @@ class NdrCoreResultField(models.Model):
     display_border = models.BooleanField(default=False,
                                          help_text="Should the display have a border?")
     """Should the display have a border?"""
+
+    field_classes = models.CharField(max_length=100, blank=True, default='',
+                                            help_text="Bootstrap classes to apply to the display.")
 
     html_display = models.BooleanField(default=False,
                                        help_text="Is the expression HTML code?")

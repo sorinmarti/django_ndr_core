@@ -9,13 +9,15 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 
 from ndr_core.models import NdrCoreSearchField, NdrCoreValue, NdrCoreResultField
+from ndr_core.ndr_tag_replacer import NdrTagReplacer
 
 register = template.Library()
 
 
 @register.tag(name='render_result')
 def render_result_tag(parser, token):
-    """Renders a result object."""
+    """Renders a result object. The token is expected to be in the following format:
+    {% render_result result search_config result_card_group %}"""
     token_list = token.split_contents()
     return RenderResultNode(token_list[1], token_list[2], token_list[3])
 
@@ -40,7 +42,8 @@ class RenderResultNode(template.Node):
     def create_grid(self, context, data):
         """Creates a grid of result fields."""
         row_template = 'ndr_core/result_renderers/elements/result_row.html'
-        result_card_fields = self.search_config.resolve(context).result_card_fields.filter(result_card_group=self.result_card_group.resolve(context))
+        result_card_fields = (self.search_config.resolve(context).
+                              result_card_fields.filter(result_card_group=self.result_card_group.resolve(context)))
         max_row = result_card_fields.aggregate(Max('field_row'))
 
         card_grid_str = ''
@@ -48,7 +51,7 @@ class RenderResultNode(template.Node):
             row += 1
             fields = []
             for column in result_card_fields.filter(field_row=row).order_by('field_column'):
-                field_html = self.create_field(column, data)
+                field_html = self.create_field(context, column, data)
                 fields.append(field_html)
             row_context = {"fields": fields}
             row_template_str = get_template(row_template).render(row_context)
@@ -60,7 +63,7 @@ class RenderResultNode(template.Node):
     def safe_format_string(string, data):
         """Formats a string and returns it as safe."""
         try:
-            return mark_safe(string.format(**data))
+            return string.format(**data)
         except KeyError:
             return 'KeyError: The key does not exist in the data.'
         except AttributeError:
@@ -72,32 +75,51 @@ class RenderResultNode(template.Node):
         except IndexError:
             return 'IndexError'
 
-    def create_image_field(self, string, data):
+    def create_image_field(self, src):
         """Creates an image field."""
-        src = self.safe_format_string(string, data)
         return mark_safe(f'<img src="{src}" class="img-fluid" alt="Image">')
 
-    def create_field(self, field, data):
+    def create_field(self, context, field, data):
         """Creates a result field."""
         field_template = 'ndr_core/result_renderers/elements/result_field.html'
+        replacer = NdrTagReplacer()
+
         r_field = field.result_field
 
         field_content = ''
-        if r_field.field_type == NdrCoreResultField.FieldType.STRING:
+        if r_field.field_type in [NdrCoreResultField.FieldType.STRING]:
+            # String fields are rendered as-is
             field_content = self.safe_format_string(r_field.expression, data)
-        elif r_field.field_type == NdrCoreResultField.FieldType.RICH_STRING:
+        elif r_field.field_type in [NdrCoreResultField.FieldType.RICH_STRING]:
+            # Rich string fields are rendered as-is
             field_content = self.safe_format_string(r_field.rich_expression, data)
-        elif r_field.field_type == NdrCoreResultField.FieldType.IMAGE:
-            field_content = self.create_image_field(r_field.expression, data)
-        elif r_field.field_type == NdrCoreResultField.FieldType.IIIF_IMAGE:
-            field_content = self.create_image_field(r_field.expression, data)
-        elif r_field.field_type == NdrCoreResultField.FieldType.TABLE:
+        elif r_field.field_type in [NdrCoreResultField.FieldType.IMAGE, NdrCoreResultField.FieldType.IIIF_IMAGE]:
+            # Image fields are rendered as images
+            field_content = self.safe_format_string(r_field.expression, data)
+            if r_field.field_filter.startswith('reduce_iiif_image:'):
+                field_content = replacer.reduce_iiif_size(field_content, int(r_field.field_filter.split(':')[1]))
+            field_content = self.create_image_field(field_content)
+        elif r_field.field_type == NdrCoreResultField.FieldType.LIST:
+            # List fields are rendered as lists. They are retrieved from the data as string and
+            # need to be converted to a list of strings.
+            field_content = self.safe_format_string(r_field.expression, data)
+            if not field_content.strip().startswith('['):
+                field_content = f'["{field_content}"]'
+            mylist_str = '{ "list": ' + field_content.replace("'", '"') + ' }'
+            mylist = json.loads(mylist_str)
+            new_field_content = []
+            for item in mylist['list']:
+                new_field_content .append(replacer.replace_tags(r_field.field_filter.replace('_value_', item)))
+            field_content = "&nbsp;".join(new_field_content)
+        elif r_field.field_type in [NdrCoreResultField.FieldType.TABLE, NdrCoreResultField.FieldType.MAP]:
+            # Not implemented yet
             field_content = "Not implemented yet."
-        elif r_field.field_type == NdrCoreResultField.FieldType.MAP:
-            field_content = "Not implemented yet."
+
+        field_content = replacer.replace_tags(field_content)
 
         field_context = {"size": field.field_size,
                          "border": "border" if r_field.display_border else "",
+                         "classes": r_field.field_classes,
                          "field_content": field_content}
         field_template_str = get_template(field_template).render(field_context)
         return mark_safe(field_template_str)
@@ -175,23 +197,6 @@ def url_deparse(value):
 
     # return urllib.parse.unquote(value)
     return value.replace('_sl_', '/')
-
-
-@register.filter
-def reduce_iiif_size(image_url, target_percent_of_size):
-    """Reduces the size of an IIIF image URL."""
-    if image_url is None:
-        return ''
-    if isinstance(image_url, str):
-        return ''
-    if target_percent_of_size is None:
-        return image_url
-
-    if '/full/full/' in image_url:
-        return image_url.replace('/full/full/', f'/full/pct:{target_percent_of_size}/')
-    match = re.match(r'^.*/(\d*,\d*,\d*,\d*)/(full)/.*$', image_url)
-    if match:
-        return image_url.replace(match.group(2), f'pct:{target_percent_of_size}')
 
 
 @register.filter

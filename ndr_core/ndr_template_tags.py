@@ -146,7 +146,3 @@ class TextPreRenderer:
         except PreRenderError:
             raise PreRenderError(_("There was an error while pre-rendering the text."))
         return self.text
-
-    def get_additional_context(self):
-        """Returns additional context."""
-        return self.additional_context
