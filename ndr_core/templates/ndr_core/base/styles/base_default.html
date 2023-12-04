@@ -47,15 +47,15 @@
                                         {% if nav_item.ndrcorepage_set.all %}
                                             <li class="nav-item dropdown">
                                                 <a class="nav-link dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.ndrcorepage_set.all %} active{% endif %}" href="#" data-toggle="dropdown" aria-expanded="false">
-                                                    {{ nav_item.translated_label }}
+                                                    {{ nav_item.label }}
                                                 </a>
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="{{ nav_item.url }}">
-                                                        {{ nav_item.translated_label }}
+                                                        {{ nav_item.label }}
                                                     </a>
                                                     {% for sub_page in nav_item.ndrcorepage_set.all|dictsort:"index" %}
                                                         <a class="dropdown-item" href="{{ sub_page.url }}">
-                                                            {{ sub_page.translated_label }}
+                                                            {{ sub_page.label }}
                                                         </a>
                                                     {% endfor %}
                                                 </div>
@@ -63,7 +63,7 @@
                                         {% else %}
                                             <li class="nav-item">
                                                 <a class="nav-link{% if nav_item.view_name == page.view_name %} active{% endif %}" href="{{ nav_item.url }}">
-                                                    {{ nav_item.translated_label }}
+                                                    {{ nav_item.label }}
                                                 </a>
                                             </li>
                                         {% endif %}
@@ -96,7 +96,7 @@
                                 <ul class="navbar-nav mr-auto navbar-ul-items">
                                     {% for nav_item in navigation %}
                                          <li class="nav-item border">
-                                             <a class="nav-link p-3 text-center{% if nav_item.view_name == page.view_name %} active{% endif %}" style="display: block;" href="{{ nav_item.url }}">{{ nav_item.translated_label }}</a>
+                                             <a class="nav-link p-3 text-center{% if nav_item.view_name == page.view_name %} active{% endif %}" style="display: block;" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
                                          </li>
                                     {% endfor %}
                                 </ul>
@@ -113,7 +113,7 @@
         <div class="container">
             {% block page_title %}
                 {% if page.show_page_title == True %}
-                    <h1>{{ page.translated_name }}</h1>
+                    <h1>{{ page.name }}</h1>
                 {% endif %}
             {% endblock %}
 

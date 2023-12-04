@@ -9,7 +9,7 @@ from ndr_core.models import (
     NdrCoreTranslation,
     NdrCoreSearchField,
     NdrCoreValue,
-    NdrCoreSearchConfiguration, NdrCoreUIElement
+    NdrCoreSearchConfiguration, NdrCoreUIElement, NdrCoreImage
 )
 
 
@@ -18,7 +18,8 @@ class TranslateForm(forms.Form):
 
     lang = 'en'
     table_name = None
-    items = None
+    translatable_fields = []
+    items = []
 
     def __init__(self, *args, **kwargs):
         if 'lang' in kwargs:
@@ -26,17 +27,46 @@ class TranslateForm(forms.Form):
 
         super().__init__(*args, **kwargs)
 
-    @staticmethod
-    def get_field(str_to_translate, help_text):
-        """Returns a CharField with the given string as label. """
-        field = forms.CharField(label=f"Translate: '{str_to_translate}'",
-                                required=False,
-                                max_length=100,
-                                help_text=help_text)
-        return field
+    def init_form(self):
+        """Initializes the form. """
+        initial_values = {}
+        for item in self.items:
+            for field in self.translatable_fields:
+                self.fields[f"{field}_{item.pk}"] = forms.CharField(label=f"Translate: '{field}'",
+                                                                    required=False,
+                                                                    max_length=100,
+                                                                    help_text='')
+
+                initial_values[f"{field}_{item.pk}"] = self.get_initial_value(field, str(item.pk))
+
+        self.initial = initial_values
+
+    def do_helper(self):
+        """Creates and returns the form helper property."""
+
+        helper = FormHelper()
+        helper.form_method = "POST"
+        layout = helper.layout = Layout()
+
+        for item in self.items:
+
+            cols = []
+            for field in self.translatable_fields:
+                cols.append(Column(f"{field}_{item.pk}", css_class=f'form-group col-{int(12/len(self.translatable_fields))}'),)
+
+            form_row = Row(
+                *cols,
+                css_class='form-row'
+            )
+            layout.append(form_row)
+
+        layout.append(get_form_buttons('Save Translations'))
+
+        return helper
 
     def get_initial_value(self, field_name, object_id):
         """Returns the initial value of the field. """
+        print(f"get_initial_value: {field_name} {object_id}, {self.lang}, {self.table_name}")
         try:
             translation_obj = NdrCoreTranslation.objects.get(language=self.lang,
                                                              table_name=self.table_name,
@@ -45,6 +75,14 @@ class TranslateForm(forms.Form):
             return translation_obj.translation
         except NdrCoreTranslation.DoesNotExist:
             return ''
+
+    def save_translations(self):
+        """Saves the translations to the database. """
+        self.is_valid()
+
+        for item in self.items:
+            for field in self.translatable_fields:
+                self.save_translation(str(item.pk), field, self.cleaned_data[f"{field}_{item.pk}"])
 
     def save_translation(self, object_id, field_name, translation):
         """Saves the translation to the database. """
@@ -60,106 +98,34 @@ class TranslatePageForm(TranslateForm):
     """Form to translate page values """
 
     items = NdrCorePage.objects.all()
+    translatable_fields = ['name', 'label']
     table_name = 'NdrCorePage'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        initial_values = {}
-        for page in self.items:
-            self.fields[f"page_title_{page.id}"] = self.get_field(page.name,
-                                                                  "The page's Title")
-            self.fields[f"nav_label_{page.id}"] = self.get_field(page.label,
-                                                                 "The page's Navigation Label")
-
-            initial_values[f"page_title_{page.id}"] = self.get_initial_value('name', str(page.id))
-            initial_values[f"nav_label_{page.id}"] = self.get_initial_value('label', str(page.id))
-
-        self.initial = initial_values
+        self.init_form()
 
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-
-        helper = FormHelper()
-        helper.form_method = "POST"
-        layout = helper.layout = Layout()
-
-        for page in self.items:
-            form_row = Row(
-                Column(f"page_title_{page.id}", css_class='form-group col-6'),
-                Column(f"nav_label_{page.id}", css_class='form-group col-6'),
-                css_class='form-row'
-            )
-            layout.append(form_row)
-
-        layout.append(get_form_buttons('Save Translations'))
-
-        return helper
-
-    def save_translations(self):
-        """Saves the translations to the database. """
-        self.is_valid()
-
-        for page in self.items:
-            self.save_translation(str(page.id), 'name', self.cleaned_data[f"page_title_{page.id}"])
-            self.save_translation(str(page.id), 'label', self.cleaned_data[f"nav_label_{page.id}"])
+        return self.do_helper()
 
 
 class TranslateFieldForm(TranslateForm):
     """Form to translate form field values """
 
     items = NdrCoreSearchField.objects.all()
+    translatable_fields = ['field_label', 'help_text']
     table_name = 'NdrCoreSearchField'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        initial_values = {}
-        for field in self.items:
-            self.fields[f"field_label_{field.field_name}"] = self.get_field(field.field_label,
-                                                                            "The search field's Label")
-            self.fields[f"field_help_text_{field.field_name}"] = self.get_field(field.help_text,
-                                                                                "The search field's Help Text")
-
-            initial_values[f"field_label_{field.field_name}"] = self.get_initial_value('field_label',
-                                                                                       field.field_name)
-            initial_values[f"field_help_text_{field.field_name}"] = self.get_initial_value('help_text',
-                                                                                           field.field_name)
-
-        self.initial = initial_values
+        self.init_form()
 
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-
-        helper = FormHelper()
-        helper.form_method = "POST"
-        layout = helper.layout = Layout()
-
-        for field in self.items:
-            form_row = Row(
-                Column(f"field_label_{field.field_name}", css_class='form-group col-4'),
-                Column(f"field_help_text_{field.field_name}", css_class='form-group col-8'),
-                css_class='form-row'
-            )
-            layout.append(form_row)
-
-        layout.append(get_form_buttons('Save Search Field Translations'))
-
-        return helper
-
-    def save_translations(self):
-        """Saves the translations to the database. """
-        self.is_valid()
-
-        for field in self.items:
-            self.save_translation(field.field_name,
-                                  'field_label',
-                                  self.cleaned_data[f"field_label_{field.field_name}"])
-            self.save_translation(field.field_name,
-                                  'help_text',
-                                  self.cleaned_data[f"field_help_text_{field.field_name}"])
+        return self.do_helper()
 
 
 class TranslateSettingsForm(TranslateForm):
@@ -168,186 +134,66 @@ class TranslateSettingsForm(TranslateForm):
     items = NdrCoreValue.objects.filter(value_type__in=[NdrCoreValue.ValueType.STRING,
                                                         NdrCoreValue.ValueType.URL],
                                         is_translatable=True)
+    translatable_fields = ['value_value']
     table_name = 'NdrCoreValue'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        initial_values = {}
-        for field in self.items:
-            self.fields[f"setting_{field.value_name}"] = (
-                self.get_field(field.value_value,
-                               f"Value of the setting <b>{field.value_label}</b> "
-                               f"(Help text: <i>{field.value_help_text}</i>)"))
-
-            initial_values[f"setting_{field.value_name}"] = self.get_initial_value('value_value',
-                                                                                   field.value_name)
-
-        self.initial = initial_values
+        self.init_form()
 
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-
-        helper = FormHelper()
-        helper.form_method = "POST"
-        layout = helper.layout = Layout()
-
-        for field in self.items:
-            form_row = Row(
-                Column(f"setting_{field.value_name}", css_class='form-group col-12'),
-                css_class='form-row'
-            )
-            layout.append(form_row)
-
-        layout.append(get_form_buttons('Save Settings Translations'))
-
-        return helper
-
-    def save_translations(self):
-        """Saves the translations to the database. """
-        self.is_valid()
-
-        for field in self.items:
-            self.save_translation(field.value_name, 'value_value',
-                                  self.cleaned_data[f"setting_{field.value_name}"])
+        return self.do_helper()
 
 
 class TranslateFormForm(TranslateForm):
     """Form to translate settings values. """
 
     items = NdrCoreSearchConfiguration.objects.all()
+    translatable_fields = ['conf_label']
     table_name = 'NdrCoreSearchConfiguration'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        initial_values = {}
-        for field in self.items:
-            self.fields[f"setting_{field.conf_name}"] = (
-                self.get_field(field.conf_label, f"Value of the configuration <b>{field.conf_name}</b></i>)"))
-
-            initial_values[f"setting_{field.conf_name}"] = self.get_initial_value('conf_label',
-                                                                                  field.conf_name)
-
-        self.initial = initial_values
+        self.init_form()
 
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-
-        helper = FormHelper()
-        helper.form_method = "POST"
-        layout = helper.layout = Layout()
-
-        for field in self.items:
-            form_row = Row(
-                Column(f"setting_{field.conf_name}", css_class='form-group col-12'),
-                css_class='form-row'
-            )
-            layout.append(form_row)
-
-        layout.append(get_form_buttons('Save Form Configuration Translations'))
-
-        return helper
-
-    def save_translations(self):
-        """Saves the translations to the database. """
-        self.is_valid()
-
-        for field in self.items:
-            self.save_translation(field.conf_name, 'conf_label', self.cleaned_data[f"setting_{field.conf_name}"])
+        return self.do_helper()
 
 
 class TranslateUIElementsForm(TranslateForm):
     """Form to translate settings values. """
 
     items = NdrCoreUIElement.objects.all()
+    translatable_fields = ['conf_label']
     table_name = 'NdrCoreUIElement'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        initial_values = {}
-        for field in self.items:
-            if field.type == NdrCoreUIElement.UIElementType.CARD:
-                pass
-        self.initial = initial_values
+        self.init_form()
 
     @property
     def helper(self):
         """Creates and returns the form helper property."""
-
-        helper = FormHelper()
-        helper.form_method = "POST"
-        layout = helper.layout = Layout()
-
-        for field in self.items:
-            """form_row = Row(
-                Column(f"setting_{field.conf_name}", css_class='form-group col-12'),
-                css_class='form-row'
-            )
-            layout.append(form_row)"""
-
-        layout.append(get_form_buttons('Save UI Elements Translations'))
-
-        return helper
-
-    def save_translations(self):
-        """Saves the translations to the database. """
-        self.is_valid()
-
-        for field in self.items:
-            """i18n_object_settings = NdrCoreTranslation.objects.get_or_create(language=self.lang,
-                                                                            table_name='NdrCoreSearchConfiguration',
-                                                                            field_name='conf_label',
-                                                                            object_id=field.conf_name)
-            i18n_object_settings[0].translation = self.cleaned_data[f"setting_{field.conf_name}"]
-            i18n_object_settings[0].save()"""
+        return self.do_helper()
 
 
 class TranslateImagesForm(TranslateForm):
     """Form to translate settings values. """
 
-    ndr_image = None
+    items = NdrCoreImage.objects.all()
+    translatable_fields = ['conf_label']
+    table_name = 'NdrCoreImage'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ndr_image = NdrCoreUIElement.objects.all()
-
-        initial_values = {}
-        for field in self.ndr_image:
-            pass
-
-        self.initial = initial_values
+        self.init_form()
 
     @property
     def helper(self):
         """Creates and returns the form helper property."""
+        return self.do_helper()
 
-        helper = FormHelper()
-        helper.form_method = "POST"
-        layout = helper.layout = Layout()
-
-        for field in self.ndr_image:
-            """form_row = Row(
-                Column(f"setting_{field.conf_name}", css_class='form-group col-12'),
-                css_class='form-row'
-            )
-            layout.append(form_row)"""
-
-        layout.append(get_form_buttons('Save Images Translations'))
-
-        return helper
-
-    def save_translations(self):
-        """Saves the translations to the database. """
-        self.is_valid()
-
-        for field in self.ndr_image:
-            """i18n_object_settings = NdrCoreTranslation.objects.get_or_create(language=self.lang,
-                                                                            table_name='NdrCoreSearchConfiguration',
-                                                                            field_name='conf_label',
-                                                                            object_id=field.conf_name)
-            i18n_object_settings[0].translation = self.cleaned_data[f"setting_{field.conf_name}"]
-            i18n_object_settings[0].save()"""

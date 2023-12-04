@@ -1,8 +1,9 @@
+""" Views for the SEO section of the admin site. """
 from html import escape
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView
 

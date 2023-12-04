@@ -25,7 +25,10 @@ class AdvancedSearchForm(_NdrCoreForm):
         the page's search configuration. """
 
         super().__init__(*args, **kwargs)
-        self.search_configs = self.ndr_page.search_configs.all()
+        if self.ndr_page is not None:
+            self.search_configs = self.ndr_page.search_configs.all()
+        elif False:
+            self.search_configs = []
 
         self.query_dict = {}
         if len(args) > 0:
@@ -48,23 +51,23 @@ class AdvancedSearchForm(_NdrCoreForm):
                 search_field = field.search_field
                 form_field = None
                 help_text = mark_safe(f'<small id="{search_field.field_name}Help" class="form-text text-muted">'
-                                      f'{search_field.translated_help_text()}</small>')
+                                      f'{search_field.help_text}</small>')
 
                 # Text field
                 if search_field.field_type == search_field.FieldType.STRING:
-                    form_field = forms.CharField(label=search_field.translated_field_label(),
+                    form_field = forms.CharField(label=search_field.field_label,
                                                  required=search_field.field_required,
                                                  help_text=help_text,
                                                  initial=search_field.get_initial_value())
                 # Number field
                 if search_field.field_type == search_field.FieldType.NUMBER:
-                    form_field = forms.IntegerField(label=search_field.translated_field_label(),
+                    form_field = forms.IntegerField(label=search_field.field_label,
                                                     required=search_field.field_required,
                                                     help_text=help_text,
                                                     initial=search_field.get_initial_value())
                 # Number Range field
                 if search_field.field_type == search_field.FieldType.NUMBER_RANGE:
-                    form_field = NumberRangeField(label=search_field.translated_field_label(),
+                    form_field = NumberRangeField(label=search_field.field_label,
                                                   required=search_field.field_required,
                                                   help_text=help_text,
                                                   lowest_number=int(search_field.lower_value)
@@ -78,11 +81,11 @@ class AdvancedSearchForm(_NdrCoreForm):
                                                     required=search_field.field_required,
                                                     help_text=help_text,
                                                     widget=BootstrapSwitchWidget(
-                                                        attrs={'label': search_field.translated_field_label()}),
+                                                        attrs={'label': search_field.field_label}),
                                                     initial=search_field.get_initial_value())
                 # Date field
                 if search_field.field_type == search_field.FieldType.DATE:
-                    form_field = forms.DateField(label=search_field.translated_field_label(),
+                    form_field = forms.DateField(label=search_field.field_label,
                                                  required=search_field.field_required,
                                                  help_text=help_text,
                                                  initial=search_field.get_initial_value())
@@ -97,7 +100,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                     if upper_value is not None:
                         upper_value = f'{upper_value[8:10]}.{upper_value[5:7]}.{upper_value[0:4]}'
 
-                    form_field = DateRangeField(label=search_field.translated_field_label(),
+                    form_field = DateRangeField(label=search_field.field_label,
                                                 required=search_field.field_required,
                                                 help_text=help_text,
                                                 input_formats=['%d.%m.%Y'],
@@ -115,14 +118,14 @@ class AdvancedSearchForm(_NdrCoreForm):
                                                initial=search_field.get_initial_value())
                 # List field (dropdown)
                 if search_field.field_type == search_field.FieldType.LIST:
-                    form_field = forms.ChoiceField(label=search_field.translated_field_label(),
+                    form_field = forms.ChoiceField(label=search_field.field_label,
                                                    choices=[('', _('Please Choose'))] + search_field.get_list_choices(),
                                                    required=search_field.field_required,
                                                    help_text=help_text,
                                                    initial=search_field.get_initial_value())
                 # Multi list field (multiple select with Select2)
                 if search_field.field_type == search_field.FieldType.MULTI_LIST:
-                    form_field = forms.MultipleChoiceField(label=search_field.translated_field_label(),
+                    form_field = forms.MultipleChoiceField(label=search_field.field_label,
                                                            choices=search_field.get_list_choices(),
                                                            widget=FilteredListWidget(
                                                                attrs={'data-minimum-input-length': 0}),
@@ -242,7 +245,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                         form_field = Div(HTML(mark_safe(
                             f'<div class="alert alert-info small" role="alert">'
                             f'<i class="fa-regular fa-circle-info"></i>&nbsp;'
-                            f'<strong>{column.search_field.translated_field_label()}</strong><br/>'
+                            f'<strong>{column.search_field.field_label}</strong><br/>'
                             f"{column.search_field.list_choices}"
                             f'</div>'
                         )), css_class=f'col-md-{column.field_size}')

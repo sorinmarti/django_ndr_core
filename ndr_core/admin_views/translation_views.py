@@ -5,13 +5,6 @@ from django.shortcuts import render
 from django.utils.translation import get_language_info
 from django.views import View
 
-from ndr_core.admin_forms.translation_forms import (
-    TranslatePageForm,
-    TranslateFieldForm,
-    TranslateSettingsForm,
-    TranslateFormForm,
-    TranslateUIElementsForm, TranslateImagesForm
-)
 from ndr_core.models import NdrCoreTranslation, NdrCoreValue
 
 
@@ -51,152 +44,33 @@ class ConfigureTranslations(LoginRequiredMixin, View):
 class TranslateView(LoginRequiredMixin, View):
     """View to add/edit/delete Translations."""
 
+    form_class = None
+
+    def __init__(self, form_class=None):
+        super().__init__()
+        self.form_class = form_class
+
     def get_context_data(self):
         """Returns the context data for the view."""
         context = {'available_languages': get_available_languages(),
                    'selected_language': self.kwargs.get('lang', 'en')}
         return context
 
-
-class TranslatePageValuesView(TranslateView):
-    """View to add/edit/delete Translations."""
-
     def get(self, request, *args, **kwargs):
         """GET request for this view."""
-        form = TranslatePageForm(lang=self.kwargs.get('lang', 'en'))
+        form = self.form_class(lang=self.kwargs.get('lang', 'en'))
         context = self.get_context_data()
         context['form'] = form
 
-        messages.success(request, "Saved Changes")
         return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
                       context=context)
 
     def post(self, request, *args, **kwargs):
         """POST request for this view. Gets executed when values are saved."""
 
-        form = TranslatePageForm(request.POST, lang=self.kwargs.get('lang', 'en'))
+        form = self.form_class(request.POST, lang=self.kwargs.get('lang', 'en'))
         form.save_translations()
-
-        context = self.get_context_data()
-        context['form'] = form
-
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-
-class TranslateFieldValuesView(TranslateView):
-    """View to add/edit/delete Translations."""
-
-    def get(self, request, *args, **kwargs):
-        """GET request for this view."""
-        form = TranslateFieldForm(lang=self.kwargs.get('lang', 'en'))
-        context = self.get_context_data()
-        context['form'] = form
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-    def post(self, request, *args, **kwargs):
-        """POST request for this view. Gets executed when values are saved."""
-
-        form = TranslateFieldForm(request.POST, lang=self.kwargs.get('lang', 'en'))
-        form.save_translations()
-
-        context = self.get_context_data()
-        context['form'] = form
-
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-
-class TranslateSettingsValuesView(TranslateView):
-    """View to add/edit/delete Translations."""
-
-    def get(self, request, *args, **kwargs):
-        """GET request for this view."""
-        form = TranslateSettingsForm(lang=self.kwargs.get('lang', 'en'))
-        context = self.get_context_data()
-        context['form'] = form
-        return render(self.request,
-                      template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-    def post(self, request, *args, **kwargs):
-        """POST request for this view. Gets executed when values are saved."""
-
-        form = TranslateSettingsForm(request.POST, lang=self.kwargs.get('lang', 'en'))
-        form.save_translations()
-
-        context = self.get_context_data()
-        context['form'] = form
-
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-
-class TranslateFormValuesView(TranslateView):
-    """View to add/edit/delete Translations."""
-
-    def get(self, request, *args, **kwargs):
-        """GET request for this view."""
-        form = TranslateFormForm(lang=self.kwargs.get('lang', 'en'))
-        context = self.get_context_data()
-        context['form'] = form
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-    def post(self, request, *args, **kwargs):
-        """POST request for this view. Gets executed when values are saved."""
-
-        form = TranslateFormForm(request.POST, lang=self.kwargs.get('lang', 'en'))
-        form.save_translations()
-
-        context = self.get_context_data()
-        context['form'] = form
-
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-
-class TranslateUIElementsValuesView(TranslateView):
-    """View to add/edit/delete Translations."""
-
-    def get(self, request, *args, **kwargs):
-        """GET request for this view."""
-        form = TranslateUIElementsForm(lang=self.kwargs.get('lang', 'en'))
-        context = self.get_context_data()
-        context['form'] = form
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-    def post(self, request, *args, **kwargs):
-        """POST request for this view. Gets executed when values are saved."""
-
-        form = TranslateUIElementsForm(request.POST, lang=self.kwargs.get('lang', 'en'))
-        form.save_translations()
-
-        context = self.get_context_data()
-        context['form'] = form
-
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-
-class TranslateImagesValuesView(TranslateView):
-    """View to add/edit/delete Translations."""
-
-    def get(self, request, *args, **kwargs):
-        """GET request for this view."""
-        form = TranslateImagesForm(lang=self.kwargs.get('lang', 'en'))
-        context = self.get_context_data()
-        context['form'] = form
-        return render(self.request, template_name='ndr_core/admin_views/overview/configure_translations.html',
-                      context=context)
-
-    def post(self, request, *args, **kwargs):
-        """POST request for this view. Gets executed when values are saved."""
-
-        form = TranslateImagesForm(request.POST, lang=self.kwargs.get('lang', 'en'))
-        form.save_translations()
+        messages.success(request, 'Translations saved successfully.')
 
         context = self.get_context_data()
         context['form'] = form

@@ -5,7 +5,7 @@
 {% config_value 'footer_show_partners' as show_partners %}
 {% config_value 'footer_show_main_navigation' as show_navigation %}
 {% config_value 'footer_show_socials' as show_socials %}
-{% translated_config_value 'footer_copyright_text' as footer_copyright_text %}
+{% config_value 'footer_copyright_text' as footer_copyright_text %}
 
 <div style="width:100%; left:0; right: 0; position:absolute; padding-top: 50px;">
     <footer class="pt-3 pb-3 mt-3 footer-bg">
@@ -21,7 +21,7 @@
                         <ul class="navbar-nav mr-auto navbar-ul-items">
                             {% for nav_item in navigation %}
                                 <li class="nav-item">
-                                    <a href="{{ nav_item.url }}" target="_blank">{{ nav_item.translated_label }}</a>
+                                    <a href="{{ nav_item.url }}" target="_blank">{{ nav_item.label }}</a>
                                 </li>
                             {% endfor %}
                         </ul>

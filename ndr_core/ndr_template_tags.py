@@ -38,7 +38,7 @@ class TextPreRenderer:
                 items[block_type]['end'] += 1
 
         for key, value in items.items():
-            if items[key]['start'] != items[key]['end']:
+            if value['start'] != value['end']:
                 return False
         return True
 
@@ -143,6 +143,6 @@ class TextPreRenderer:
             self.text = self.create_containers()
             self.text = self.create_ui_elements()
             self.text = self.create_links()
-        except PreRenderError:
-            raise PreRenderError(_("There was an error while pre-rendering the text."))
+        except PreRenderError as e:
+            raise e
         return self.text

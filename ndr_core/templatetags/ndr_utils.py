@@ -6,10 +6,7 @@ from django import template
 from django.db.models import Max
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
-from django.utils.translation import get_language
-
-from ndr_core.models import NdrCoreSearchField, NdrCoreValue, NdrCoreResultField
-from ndr_core.ndr_tag_replacer import NdrTagReplacer
+from ndr_core.ndr_templatetags.template_string import TemplateString
 
 register = template.Library()
 
@@ -59,67 +56,16 @@ class RenderResultNode(template.Node):
 
         return mark_safe(card_grid_str)
 
-    @staticmethod
-    def safe_format_string(string, data):
-        """Formats a string and returns it as safe."""
-        try:
-            return string.format(**data)
-        except KeyError:
-            return 'KeyError: The key does not exist in the data.'
-        except AttributeError:
-            return 'AttributeError: The key is malformed'
-        except TypeError:
-            return 'TypeError'
-        except ValueError:
-            return 'ValueError'
-        except IndexError:
-            return 'IndexError'
-
-    def create_image_field(self, src):
-        """Creates an image field."""
-        return mark_safe(f'<img src="{src}" class="img-fluid" alt="Image">')
-
     def create_field(self, context, field, data):
         """Creates a result field."""
         field_template = 'ndr_core/result_renderers/elements/result_field.html'
-        replacer = NdrTagReplacer()
-
-        r_field = field.result_field
-
-        field_content = ''
-        if r_field.field_type in [NdrCoreResultField.FieldType.STRING]:
-            # String fields are rendered as-is
-            field_content = self.safe_format_string(r_field.expression, data)
-        elif r_field.field_type in [NdrCoreResultField.FieldType.RICH_STRING]:
-            # Rich string fields are rendered as-is
-            field_content = self.safe_format_string(r_field.rich_expression, data)
-        elif r_field.field_type in [NdrCoreResultField.FieldType.IMAGE, NdrCoreResultField.FieldType.IIIF_IMAGE]:
-            # Image fields are rendered as images
-            field_content = self.safe_format_string(r_field.expression, data)
-            if r_field.field_filter.startswith('reduce_iiif_image:'):
-                field_content = replacer.reduce_iiif_size(field_content, int(r_field.field_filter.split(':')[1]))
-            field_content = self.create_image_field(field_content)
-        elif r_field.field_type == NdrCoreResultField.FieldType.LIST:
-            # List fields are rendered as lists. They are retrieved from the data as string and
-            # need to be converted to a list of strings.
-            field_content = self.safe_format_string(r_field.expression, data)
-            if not field_content.strip().startswith('['):
-                field_content = f'["{field_content}"]'
-            mylist_str = '{ "list": ' + field_content.replace("'", '"') + ' }'
-            mylist = json.loads(mylist_str)
-            new_field_content = []
-            for item in mylist['list']:
-                new_field_content .append(replacer.replace_tags(r_field.field_filter.replace('_value_', item)))
-            field_content = "&nbsp;".join(new_field_content)
-        elif r_field.field_type in [NdrCoreResultField.FieldType.TABLE, NdrCoreResultField.FieldType.MAP]:
-            # Not implemented yet
-            field_content = "Not implemented yet."
-
-        field_content = replacer.replace_tags(field_content)
+        result_field = field.result_field
+        template_string = TemplateString(result_field.expression, data)
+        field_content = template_string.get_formatted_string()
 
         field_context = {"size": field.field_size,
-                         "border": "border" if r_field.display_border else "",
-                         "classes": r_field.field_classes,
+                         "border": "border" if result_field.display_border else "",
+                         "classes": result_field.field_classes,
                          "field_content": field_content}
         field_template_str = get_template(field_template).render(field_context)
         return mark_safe(field_template_str)
@@ -158,23 +104,6 @@ def pretty_json(value):
 
 
 @register.filter
-def key_value(data_dict, key):
-    """Provides key-value lookup functionality in templates."""
-    if data_dict is None:
-        return ''
-    try:
-        return data_dict[key]
-    except KeyError:
-        return ''
-
-
-@register.filter
-def is_list(value):
-    """Provides key-value lookup functionality in templates."""
-    return isinstance(value, list)
-
-
-@register.filter
 def modulo(num, val):
     """Provides modulo functionality in templates."""
     return num % val
@@ -182,7 +111,7 @@ def modulo(num, val):
 
 @register.filter
 def url_parse(value):
-    """Provides modulo functionality in templates."""
+    """Returns a url safe string."""
     if value is None:
         return ''
 
@@ -191,92 +120,10 @@ def url_parse(value):
 
 @register.filter
 def url_deparse(value):
-    """Provides modulo functionality in templates."""
+    """Deparse a url string."""
     if value is None:
         return ''
 
     # return urllib.parse.unquote(value)
     return value.replace('_sl_', '/')
 
-
-@register.filter
-def translate_dict_value(key_to_translate, dict_name):
-    """Translates 'value' value in a dictionary."""
-    return translate_dict_foo(key_to_translate, dict_name, 'value')
-
-
-@register.filter
-def translate_dict_info(key_to_translate, dict_name):
-    """Translates 'info' value in a dictionary."""
-    return translate_dict_foo(key_to_translate, dict_name, 'info')
-
-
-def translate_dict_foo(key_to_translate, dict_name, target_key):
-    """Translates a value in a dictionary."""
-    if key_to_translate is None:
-        return ''
-
-    try:
-        field = NdrCoreSearchField.objects.get(field_name=dict_name)
-        choices = field.get_list_choices_as_dict()
-
-        default_language = NdrCoreValue.objects.get(value_name='ndr_language').get_value()
-        additional_languages = NdrCoreValue.objects.get(value_name="available_languages").get_value()
-        selected_language = get_language()
-
-        if key_to_translate in choices:
-            value_object = choices[key_to_translate]
-
-            if selected_language == default_language:
-                if target_key in value_object:
-                    return value_object[target_key]
-                return f'{key_to_translate} (DNF)'
-            if selected_language in additional_languages:
-                key = f'{target_key}_{selected_language}'
-                if key in value_object:
-                    return value_object[key]
-
-            return f'{key_to_translate} (TNF)'
-
-        return f'{key_to_translate} (KNF)'
-    except NdrCoreSearchField.DoesNotExist:
-        return f'{key_to_translate} (VNF)'
-
-
-@register.filter
-def translate_to_color(value, lightness=50):
-    """Translates a value to a color."""
-    if value is None:
-        return ''
-
-    hash_value = 0
-    for char in value:
-        hash_value = ord(char) + ((hash_value << 5) - hash_value)
-        hash_value = hash_value & hash_value
-
-    return f'hsl({hash_value%360}, {100}%, {lightness}%)'
-
-
-@register.filter
-def format_date(date_string):
-    """Formats a date string."""
-    if date_string is None:
-        return ''
-
-    if re.match(r'^\d{4}-\d{2}-\d{2}$', date_string):
-        split_date = date_string.split('-')
-        return f'{split_date[2]}.{split_date[1]}.{split_date[0]}'
-    return date_string
-
-
-@register.filter
-def clean_list(list_object):
-    """Formats a list object."""
-    if list_object is None:
-        return []
-
-    type_of_list = type(list_object)
-    if type_of_list is list:
-        return list_object
-    if type_of_list is str:
-        return [list_object]

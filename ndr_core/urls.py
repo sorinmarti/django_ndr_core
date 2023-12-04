@@ -3,6 +3,8 @@ from django.urls import path, reverse_lazy
 from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
+from ndr_core.admin_forms.translation_forms import TranslatePageForm, TranslateFieldForm, TranslateSettingsForm, \
+    TranslateFormForm, TranslateUIElementsForm, TranslateImagesForm
 from ndr_core.admin_views.result_views import (
     ResultFieldCreateView,
     ResultFieldEditView,
@@ -20,10 +22,7 @@ from ndr_core.admin_views.seo_views import RobotsFileView, SitemapFileView, Conn
 from ndr_core.admin_views.translation_views import (
     ConfigureTranslations,
     SelectTranslationView,
-    TranslatePageValuesView,
-    TranslateFieldValuesView,
-    TranslateSettingsValuesView,
-    TranslateFormValuesView, TranslateUIElementsValuesView, TranslateImagesValuesView,
+    TranslateView
 )
 from ndr_core.admin_views.uploads_views import (
     ConfigureUploads,
@@ -184,25 +183,26 @@ urlpatterns = [
     # TRANSLATIONS
     path('configure/translations/', ConfigureTranslations.as_view(), name='configure_translations'),
     path('configure/translations/edit/pages/', SelectTranslationView.as_view(), name='select_page_translations'),
-    path('configure/translations/edit/pages/<str:lang>/', TranslatePageValuesView.as_view(),
+    path('configure/translations/edit/pages/<str:lang>/', TranslateView.as_view(form_class=TranslatePageForm),
          name='edit_page_translations'),
     path('configure/translations/edit/fields/', SelectTranslationView.as_view(), name='select_field_translations'),
-    path('configure/translations/edit/fields/<str:lang>/', TranslateFieldValuesView.as_view(),
+    path('configure/translations/edit/fields/<str:lang>/', TranslateView.as_view(form_class=TranslateFieldForm),
          name='edit_field_translations'),
     path('configure/translations/edit/settings/', SelectTranslationView.as_view(),
          name='select_settings_translations'),
-    path('configure/translations/edit/settings/<str:lang>/', TranslateSettingsValuesView.as_view(),
+    path('configure/translations/edit/settings/<str:lang>/', TranslateView.as_view(form_class=TranslateSettingsForm),
          name='edit_settings_translations'),
     path('configure/translations/edit/form/', SelectTranslationView.as_view(), name='select_form_translations'),
-    path('configure/translations/edit/form/<str:lang>/', TranslateFormValuesView.as_view(),
+    path('configure/translations/edit/form/<str:lang>/', TranslateView.as_view(form_class=TranslateFormForm),
          name='edit_form_translations'),
     path('configure/translations/edit/ui-elements/', SelectTranslationView.as_view(),
          name='select_ui_elements_translations'),
-    path('configure/translations/edit/ui-elements/<str:lang>/', TranslateUIElementsValuesView.as_view(),
+    path('configure/translations/edit/ui-elements/<str:lang>/',
+         TranslateView.as_view(form_class=TranslateUIElementsForm),
          name='edit_ui_elements_translations'),
     path('configure/translations/edit/images/', SelectTranslationView.as_view(),
          name='select_images_translations'),
-    path('configure/translations/edit/images/<str:lang>/', TranslateImagesValuesView.as_view(),
+    path('configure/translations/edit/images/<str:lang>/',TranslateView.as_view(form_class=TranslateImagesForm),
          name='edit_images_translations'),
 
     # USER MESSAGES

@@ -13,26 +13,15 @@ from django.utils.translation import get_language
 from ndr_core.ndr_settings import NdrSettings
 
 TRANSLATABLE_TABLES = (
-    ('NdrCoreSearchField', 'Search Field Table'),
-    ('NdrCoreResultField', 'Result Field Table'),
-    ('NdrCorePage', 'Page Table'),
-    ('NdrCoreValue', 'Settings Table'),
-    ('NdrCoreSearchConfiguration', 'Search Configuration Table'),
-    ('NdrCoreImage', 'Image Table'),
-    ('NdrCoreUiElementItem', 'UI Element Table'),
+    ('ndrcoresearchfield', 'Search Field Table'),
+    ('ndrcoreresultfield', 'Result Field Table'),
+    ('ndrcorepage', 'Page Table'),
+    ('ndrcorevalue', 'Settings Table'),
+    ('ndrcoresearchconfiguration', 'Search Configuration Table'),
+    ('ndrcoreimage', 'Image Table'),
+    ('ndrcoreuielementitem', 'UI Element Table'),
 )
 """Tables which contain translatable fields."""
-
-TRANSLATABLE_FIELDS = {
-    'NdrCoreSearchField': ('field_label', 'help_text'),
-    'NdrCoreResultField': ('expression', ),
-    'NdrCorePage': ('name', 'label'),
-    'NdrCoreValue': ('value_value', ),
-    'NdrCoreSearchConfiguration': ('conf_label', ),
-    'NdrCoreImage': ('title', 'caption', 'citation'),
-    'NdrCoreUiElementItem': ('title', 'text'),
-}
-"""Fields which are translatable. """
 
 
 class TranslatableMixin:
@@ -54,6 +43,23 @@ class TranslatableMixin:
             return orig_value
         except NdrCoreTranslation.DoesNotExist:
             return orig_value
+
+    def save_translation(self, field_name, object_id, language, translation):
+        """Saves a translation for a given field. """
+        try:
+            translation = NdrCoreTranslation.objects.get(language=language,
+                                                         table_name=self._meta.model_name,
+                                                         field_name=field_name,
+                                                         object_id=object_id)
+            translation.translation = translation
+            translation.save()
+        except NdrCoreTranslation.DoesNotExist:
+            translation = NdrCoreTranslation(language=language,
+                                             table_name=self._meta.model_name,
+                                             field_name=field_name,
+                                             object_id=self.id,
+                                             translation=translation)
+            translation.save()
 
 
 class NdrCoreResultField(models.Model):
@@ -115,7 +121,7 @@ class NdrCoreResultField(models.Model):
     """Should the display have a border?"""
 
     field_classes = models.CharField(max_length=100, blank=True, default='',
-                                            help_text="Bootstrap classes to apply to the display.")
+                                     help_text="Bootstrap classes to apply to the display.")
 
     html_display = models.BooleanField(default=False,
                                        help_text="Is the expression HTML code?")
@@ -244,15 +250,12 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                                                   help_text="Regex to transform the input value before "
                                                             "sending it to the API.")
 
-    def translated_field_label(self):
-        """Returns the translated field label for a given language. If no translation exists,
-        the default label is returned. """
-        return self.translated_field(self.field_label, 'field_label', self.field_name)
-
-    def translated_help_text(self):
-        """Returns the translated help text for a given language. If no translation exists,
-        the default help text is returned. """
-        return self.translated_field(self.help_text, 'help_text', self.field_name)
+    def __getattribute__(self, item):
+        """Returns the translated field for a given language. If no translation exists,
+        the default value is returned. """
+        if item in ['field_label', 'help_text']:
+            return self.translated_field(super().__getattribute__(item), item, self.field_name)
+        return super().__getattribute__(item)
 
     def get_list_choices_as_dict(self):
         """Returns the list choices as a dictionary. This is used to render the dropdowns
@@ -521,25 +524,12 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
     def __str__(self):
         return self.conf_name
 
-    def translated_conf_label(self):
-        """Returns the translated conf label for a given language. If no translation exists, the default label is
-        returned. """
-        return self.translated_field(self.conf_label, 'conf_label', self.conf_name)
-
-    def translated_simple_search_tab_title(self):
-        """Returns the translated simple search tab title for a given language. If no translation exists, the default
-        label is returned. """
-        return self.translated_field(self.simple_search_tab_title, 'simple_search_tab_title', self.conf_name)
-
-    def translated_simple_query_label(self):
-        """Returns the translated simple query label for a given language. If no translation exists, the default label
-        is returned. """
-        return self.translated_field(self.simple_query_label, 'simple_query_label', self.conf_name)
-
-    def translated_simple_query_help_text(self):
-        """Returns the translated simple query help text for a given language. If no translation exists, the default
-        help text is returned. """
-        return self.translated_field(self.simple_query_help_text, 'simple_query_help_text', self.conf_name)
+    def __getattribute__(self, item):
+        """Returns the translated field for a given language. If no translation exists,
+        the default value is returned. """
+        if item in ['conf_label', 'simple_search_tab_title', 'simple_query_label', 'simple_query_help_text']:
+            return self.translated_field(super().__getattribute__(item), item, self.conf_name)
+        return super().__getattribute__(item)
 
 
 class NdrCorePage(TranslatableMixin, models.Model):
@@ -618,14 +608,12 @@ class NdrCorePage(TranslatableMixin, models.Model):
     last_modified = models.DateTimeField(auto_now=True)
     """The last time the page was modified. """
 
-    def translated_name(self):
-        """Returns the translated name for a given language. If no translation exists, the default name is returned. """
-        return self.translated_field(self.name, 'name', str(self.id))
-
-    def translated_label(self):
-        """Returns the translated label for a given language.
-        If no translation exists, the default label is returned. """
-        return self.translated_field(self.label, 'label', str(self.id))
+    def __getattribute__(self, item):
+        """Returns the translated field for a given language. If no translation exists,
+        the default value is returned. """
+        if item in ['name', 'label']:
+            return self.translated_field(super().__getattribute__(item), item, str(self.id))
+        return super().__getattribute__(item)
 
     def translated_template_text(self):
         """Returns the translated template_text for a given language.
@@ -1036,20 +1024,12 @@ class NdrCoreImage(models.Model, TranslatableMixin):
                                 help_text='Language of the image.')
     """Language of the image. """
 
-    def translated_title(self):
-        """Returns the translated title for a given language. If no translation exists,
-        the default title is returned. """
-        return self.translated_field(self.title, 'title', self.pk)
-
-    def translated_caption(self):
-        """Returns the translated caption for a given language. If no translation exists,
-        the default caption is returned. """
-        return self.translated_field(self.caption, 'caption', self.pk)
-
-    def translated_citation(self):
-        """Returns the translated citation for a given language. If no translation exists,
-        the default citation is returned. """
-        return self.translated_field(self.citation, 'citation', self.pk)
+    def __getattribute__(self, item):
+        """Returns the translated field for a given language. If no translation exists,
+        the default value is returned. """
+        if item in ['title', 'caption', 'citation']:
+            return self.translated_field(super().__getattribute__(item), item, str(self.pk))
+        return super().__getattribute__(item)
 
     def get_absolute_url(self):
         """Returns the absolute url of the image. """
@@ -1070,7 +1050,7 @@ class NdrCoreUpload(models.Model):
     """Actual file"""
 
 
-class NdrCoreManifestGroup(models.Model, TranslatableMixin):
+class NdrCoreManifestGroup(TranslatableMixin, models.Model):
     """ Directory of all manifest groups. """
 
     title = models.CharField(max_length=200,
@@ -1089,16 +1069,18 @@ class NdrCoreManifestGroup(models.Model, TranslatableMixin):
                                            help_text='Order value 3 title')
     """Order value 3 title"""
 
-    def translated_title(self):
-        """Returns the translated title for a given language. If no translation exists,
-        the default title is returned. """
-        return self.translated_field(self.title, 'title', self.pk)
+    def __getattribute__(self, item):
+        """Returns the translated field for a given language. If no translation exists,
+        the default value is returned. """
+        if item in ['title']:
+            return self.translated_field(super().__getattribute__(item), item, str(self.pk))
+        return super().__getattribute__(item)
 
     def __str__(self):
         return self.title
 
 
-class NdrCoreManifest(models.Model):
+class NdrCoreManifest(TranslatableMixin, models.Model):
     """ Directory of all manifests. """
 
     title = models.CharField(max_length=200, blank=True, default='',
@@ -1119,6 +1101,13 @@ class NdrCoreManifest(models.Model):
 
     order_value_3 = models.CharField(max_length=200, blank=True, null=True, default=None)
     """Order value 3"""
+
+    def __getattribute__(self, item):
+        """Returns the translated field for a given language. If no translation exists,
+        the default value is returned. """
+        if item in ['title']:
+            return self.translated_field(super().__getattribute__(item), item, str(self.pk))
+        return super().__getattribute__(item)
 
     def __str__(self):
         return self.title
@@ -1188,15 +1177,12 @@ class NdrCoreUiElementItem(models.Model, TranslatableMixin):
     manifest_group = models.ForeignKey(NdrCoreManifestGroup, on_delete=models.CASCADE, null=True)
     """The manifest group of the item. """
 
-    def translated_title(self):
-        """Returns the translated title for a given language. If no translation exists,
-        the default title is returned. """
-        return self.translated_field(self.title, 'title', self.pk)
-
-    def translated_text(self):
-        """Returns the translated text for a given language. If no translation exists,
-        the default text is returned. """
-        return self.translated_field(self.text, 'text', self.pk)
+    def __getattribute__(self, item):
+        """Returns the translated field for a given language. If no translation exists,
+        the default value is returned. """
+        if item in ['title', 'text']:
+            return self.translated_field(super().__getattribute__(item), item, str(self.pk))
+        return super().__getattribute__(item)
 
 
 class NdrCoreTranslation(models.Model):

@@ -186,9 +186,7 @@ class NdrListDownloadView(_NdrCoreSearchView):
         self.fill_search_query_values(self.kwargs['search_config'], query_obj)
         query_string = query_obj.get_advanced_query()
         result = api_factory.get_result_instance(query_string, self.request)
-        result.page_size = NdrCoreValue.get_or_initialize("search_download_max_results",
-                                                          init_type=NdrCoreValue.ValueType.INTEGER,
-                                                          init_value="250").get_value()
+        result.page_size = search_config.page_size  # TODO compact page size
         result.load_result(transform_result=False)
         return result
 
