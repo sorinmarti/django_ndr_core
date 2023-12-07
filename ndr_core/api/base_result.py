@@ -160,6 +160,7 @@ class BaseResult(ABC):
                 "title": _("View The Data Repository")
             })
 
+        # Mark for Correction
         correction_feature = NdrCoreValue.get_or_initialize("correction_feature").get_value()
         if correction_feature:
             correction_url = reverse('ndr_core:mark_record',
@@ -194,6 +195,7 @@ class BaseResult(ABC):
         except NdrCoreManifest.DoesNotExist:
             pass
 
+        # Copy Citation
         result_options.append({
             "onclick": f"copyToClipboard('{record_id}')",
             "label": '<i class="fa-regular fa-copy"></i>',
@@ -269,6 +271,45 @@ class BaseResult(ABC):
                 reverse('ndr_core:download_csv',
                         kwargs={'search_config': self.search_configuration.conf_name}) +
                 "?" + updated_url.urlencode())
+
+        # Compact URL
+        updated_url = self.request.GET.copy()
+        possible_configs = [
+            f'compact_view_{self.search_configuration.conf_name}',
+            f'compact_view_{self.search_configuration.conf_name}_simple'
+        ]
+
+        for config in possible_configs:
+            pass
+
+        try:
+            if f'compact_view_{self.search_configuration.conf_name}' in updated_url and \
+                    f'search_button_{self.search_configuration.conf_name}' in updated_url:
+
+                form_links['compact_label'] = _("Show full results")
+                del updated_url[f'compact_view_{self.search_configuration.conf_name}']
+                form_links['compact'] = (self.request.path + "?" + updated_url.urlencode())
+
+            elif f'compact_view_{self.search_configuration.conf_name}_simple' in updated_url and \
+                    f'search_button_{self.search_configuration.conf_name}_simple' in updated_url:
+                form_links['compact_label'] = _("Show full results")
+                del updated_url[f'compact_view_{self.search_configuration.conf_name}_simple']
+                form_links['compact'] = (self.request.path + "?" + updated_url.urlencode())
+            else:
+                form_links['compact_label'] = _("Show compact results")
+                if f'search_button_{self.search_configuration.conf_name}' in updated_url:
+                    form_links['compact'] = (self.request.path + "?" + updated_url.urlencode() +
+                                         "&compact_view_" + self.search_configuration.conf_name + "=on")
+                elif f'search_button_{self.search_configuration.conf_name}_simple' in updated_url:
+                    form_links['compact'] = (self.request.path + "?" + updated_url.urlencode() +
+                                         "&compact_view_" + self.search_configuration.conf_name + "_simple=on")
+                else:
+                    form_links['compact'] = "ERROR"
+                    """form_links['compact'] = (self.request.path + "?" + updated_url.urlencode() +
+                                         "&compact_view_" + self.search_configuration.conf_name + "=on")"""
+        except KeyError:
+            pass
+
         return form_links
 
     def get_pagination_links(self):

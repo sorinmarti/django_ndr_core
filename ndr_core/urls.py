@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView
 
 from ndr_core.admin_forms.translation_forms import TranslatePageForm, TranslateFieldForm, TranslateSettingsForm, \
-    TranslateFormForm, TranslateUIElementsForm, TranslateImagesForm
+    TranslateFormForm, TranslateUIElementsForm, TranslateImagesForm, TranslateResultForm
 from ndr_core.admin_views.result_views import (
     ResultFieldCreateView,
     ResultFieldEditView,
@@ -195,6 +195,9 @@ urlpatterns = [
     path('configure/translations/edit/form/', SelectTranslationView.as_view(), name='select_form_translations'),
     path('configure/translations/edit/form/<str:lang>/', TranslateView.as_view(form_class=TranslateFormForm),
          name='edit_form_translations'),
+    path('configure/translations/edit/result/', SelectTranslationView.as_view(), name='select_result_translations'),
+    path('configure/translations/edit/result/<str:lang>/', TranslateView.as_view(form_class=TranslateResultForm),
+         name='edit_result_translations'),
     path('configure/translations/edit/ui-elements/', SelectTranslationView.as_view(),
          name='select_ui_elements_translations'),
     path('configure/translations/edit/ui-elements/<str:lang>/',

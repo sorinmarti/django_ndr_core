@@ -3,6 +3,8 @@ import json
 import re
 from string import Formatter
 
+from django.utils.safestring import mark_safe
+
 from ndr_core.ndr_templatetags.filters import get_get_filter_class
 
 
@@ -55,6 +57,9 @@ class TemplateStringVariable:
 
     def parse_variable(self, variable):
         """Parses the variable and extracts the variable name, the filters and the options."""
+        if variable is None:
+            raise ValueError("Variable is None.")
+
         if '|' in variable:
             parts = variable.split('|')
             self.variable = parts[0]
@@ -72,7 +77,7 @@ class TemplateStringVariable:
                             k, v = config.split('=')
                             self.filter_configurations[i][k] = v
                         else:
-                            self.filter_configurations[i][f"o{cn}"] = "config"
+                            self.filter_configurations[i][f"o{cn}"] = config
         else:
             self.variable = variable
 
@@ -83,20 +88,25 @@ class TemplateStringVariable:
 
         try:
             return data[self.variable]
-        except KeyError:
-            return 'KEY_ERROR'
+        except KeyError as e:
+            raise KeyError(f"Key not found in data: {e}")
 
     def get_value(self, data):
         """Returns the value of the variable with the filter applied."""
-        raw_value = self.get_raw_value(data)
-        if len(self.value_filters) > 0:
-            if isinstance(raw_value, list):
-                filtered_values = []
-                for value in raw_value:
-                    filtered_values.append(self.apply_filters(value))
-                return filtered_values
-            return self.apply_filters(self.get_raw_value(data))
-        return raw_value
+        try:
+            raw_value = self.get_raw_value(data)
+            if len(self.value_filters) > 0:
+                if isinstance(raw_value, list):
+                    filtered_values = []
+                    for value in raw_value:
+                        filtered_values.append(self.apply_filters(value))
+                    return filtered_values
+                return self.apply_filters(self.get_raw_value(data))
+            return raw_value
+        except KeyError as e:
+            raise e
+        except ValueError as e:
+            raise e
 
     def _get_nested_value(self, data):
         """Returns the value of the variable."""
@@ -105,8 +115,14 @@ class TemplateStringVariable:
         for key in keys:
             try:
                 value = value[key]
-            except KeyError:
-                return 'KEY_ERROR'
+            except TypeError as e:
+                if key.isdigit():
+                    try:
+                        value = value[int(key)]
+                    except IndexError:
+                        raise KeyError(f"Nested key not found {e}")
+            except KeyError as e:
+                raise KeyError(f"Nested key not found {e}")
         return value
 
     def apply_filters(self, value):
@@ -157,24 +173,25 @@ class TemplateString:
     language. It is derived from the python format-string functionality. A string can have variables, marked with
      curly brackets. """
 
-    errors = []
+    show_errors = False
     string = ""
     data = {}
     variables = []
 
-    def __init__(self, string, data):
+    def __init__(self, string, data, show_errors=False):
         self.string = string
         self.data = data
         self.variables = self.get_variables()
+        self.show_errors = show_errors
 
     def get_variables(self, flatten=False):
         """Returns all variables in a string."""
         try:
             variables = []
             for var in Formatter().parse(self.string):
-                if var[1] != '':
+                if var[1] is not None and var[1] != '':
                     raw_variable_string = var[1]
-                    if var[2] != '':
+                    if var[2] is not None and var[2] != '':
                         raw_variable_string += ':' + var[2]
                     variable = TemplateStringVariable(raw_variable_string)
                     variables.append(variable)
@@ -200,12 +217,17 @@ class TemplateString:
         Example: "I want to see the {key|upper}" -> "I want to see the CAT"""
         formatted_string = self.string
         for variable in self.variables:
-            data = variable.get_value(self.data)
-            if isinstance(data, list):
-                data = self.join_list(variable, data)
-            formatted_string = formatted_string.replace(f"{{{variable.raw_variable}}}", str(data))
+            try:
+                data = variable.get_value(self.data)
+                if isinstance(data, list):
+                    data = self.join_list(variable, data)
+                formatted_string = formatted_string.replace(f"{{{variable.raw_variable}}}", str(data))
+            except KeyError as e:
+                formatted_string = formatted_string.replace(f"{{{variable.raw_variable}}}", self.get_error(e))
+            except ValueError as e:
+                formatted_string = formatted_string.replace(f"{{{variable.raw_variable}}}", self.get_error(e))
 
-        return formatted_string
+        return mark_safe(formatted_string)
 
     @staticmethod
     def join_list(variable, data):
@@ -225,3 +247,25 @@ class TemplateString:
             return safe_data[0]
 
         return ''
+
+    def get_error(self, e):
+        if self.show_errors:
+            alert = f'''<div class="alert alert-danger" role="alert">
+                      {e}
+                    </div>'''
+            return mark_safe(alert)
+        return ''
+
+    def sanitize_html(self, field_content):
+        """Removes empty elements from the html."""
+        # return field_content
+        pattern = r"<(\w+)>(&nbsp;)?</\1>"
+        empty_element_match = re.findall(pattern, field_content)
+        i = 0
+        while empty_element_match:
+            i = i + 1
+            for match in empty_element_match:
+                field_content = field_content.replace(f"<{match[0]}>{match[1]}</{match[0]}>", '')
+            empty_element_match = re.findall(pattern, field_content)
+
+        return mark_safe(field_content)

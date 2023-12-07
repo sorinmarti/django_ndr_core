@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
+from django.utils.translation import activate
 from django.views import View
 from django_filters import FilterSet
 from django_filters.views import FilterView
@@ -14,7 +15,13 @@ from ndr_core.models import NdrCoreValue, \
 from ndr_core.admin_tables import StatisticsTable
 
 
-class NdrCoreDashboard(LoginRequiredMixin, View):
+class AdminViewMixin:
+
+    def __init__(self):
+        activate('en')
+
+
+class NdrCoreDashboard(AdminViewMixin, LoginRequiredMixin, View):
     """The NDR Core dashboard is the start page of the admin interface. It shows your pages and your options. """
 
     def get(self, request, *args, **kwargs):
@@ -26,7 +33,7 @@ class NdrCoreDashboard(LoginRequiredMixin, View):
                                'total_searches': NdrCoreSearchStatisticEntry.objects.all().count()})
 
 
-class HelpView(LoginRequiredMixin, View):
+class HelpView(AdminViewMixin, LoginRequiredMixin, View):
     """The HelpView shows the help page. """
 
     def get(self, request, *args, **kwargs):
@@ -47,7 +54,7 @@ class StatisticsFilter(FilterSet):
         fields = {"search_query": ["contains"]}
 
 
-class StatisticsView(LoginRequiredMixin, SingleTableMixin, FilterView):
+class StatisticsView(AdminViewMixin, LoginRequiredMixin, SingleTableMixin, FilterView):
     """View to show the search statistics. """
 
     table_class = StatisticsTable

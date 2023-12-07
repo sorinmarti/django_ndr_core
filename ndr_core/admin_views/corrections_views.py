@@ -4,10 +4,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCoreValue
 
 
-class ConfigureCorrections(LoginRequiredMixin, View):
+class ConfigureCorrections(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Corrections. """
 
     def get(self, request, *args, **kwargs):

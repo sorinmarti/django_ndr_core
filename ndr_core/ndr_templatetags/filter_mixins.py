@@ -6,7 +6,7 @@ class ColorOptionMixin:
     color = None
 
     @staticmethod
-    def get_color_from_value(value, lightness=50):
+    def get_color_from_value(value, lightness=80):
         """Translates a value to a color."""
         if value is None:
             return ''
@@ -18,19 +18,21 @@ class ColorOptionMixin:
 
         return f'hsl({hash_value % 360}, {100}%, {lightness}%)'
 
-    def get_color_string(self, color_option, data=None):
+    def get_color_string(self, color_option, data=None, color_string='color'):
         """Returns the color."""
         if color_option:
 
             if color_option in self.color_options:
-                return f'color: {color_option};'
+                return f'{color_string}: {color_option};'
             if color_option.startswith('#') or color_option.startswith('rgb') or color_option.startswith('hsl'):
-                return f'color: {color_option};'
+                return f'{color_string}: {color_option};'
             if color_option.startswith('val__'):
                 if data:
                     try:
-                        return f'color: {data[color_option[5:]]};'
+                        return f'{color_string}: {data[color_option[5:]]};'
                     except KeyError:
+                        return ''
+                    except TypeError:
                         return ''
                 else:
                     return ''
@@ -38,12 +40,18 @@ class ColorOptionMixin:
                 if data:
                     try:
                         value = data[color_option[7:]]
-                        return f'color: {self.get_color_from_value(value)};'
+                        return f'{color_string}: {self.get_color_from_value(value)};'
                     except KeyError:
+                        return ''
+                    except TypeError:
                         return ''
                 else:
                     return ''
-
+            if color_option == 'byval':
+                if data:
+                    return f'{color_string}: {self.get_color_from_value(data)};'
+                else:
+                    return ''
             color = f'color: {color_option};'
         else:
             color = ''

@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.utils.translation import get_language_info
 from django.views import View
 
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCoreTranslation, NdrCoreValue
 
 
@@ -19,7 +20,7 @@ def get_available_languages():
     return available_languages
 
 
-class SelectTranslationView(LoginRequiredMixin, View):
+class SelectTranslationView(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Translations."""
 
     def get(self, request, *args, **kwargs):
@@ -30,7 +31,7 @@ class SelectTranslationView(LoginRequiredMixin, View):
                       context=context)
 
 
-class ConfigureTranslations(LoginRequiredMixin, View):
+class ConfigureTranslations(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Translations. """
 
     def get(self, request, *args, **kwargs):
@@ -41,7 +42,7 @@ class ConfigureTranslations(LoginRequiredMixin, View):
                       context=context)
 
 
-class TranslateView(LoginRequiredMixin, View):
+class TranslateView(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Translations."""
 
     form_class = None

@@ -12,12 +12,12 @@ class TemplateStringTestCase(TestCase):
 
     def test_simple_variable(self):
         """Tests a simple variable."""
-        string = TemplateString("I want to see the {test_value}", self.test_data)
+        string = TemplateString("<p>I want to see the {test_value}</p>", self.test_data)
         self.assertEqual(string.get_variables(flatten=True), ['test_value'])
         self.assertEqual(string.variables[0].keys, ['test_value'])
         self.assertEqual(string.variables[0].is_nested(), False)
         self.assertEqual(string.variables[0].get_value(self.test_data), 'cat')
-        self.assertEqual(string.get_formatted_string(), "I want to see the cat")
+        self.assertEqual(string.get_formatted_string(), "<p>I want to see the cat</p>")
 
     def test_simple_variable_with_filters(self):
         """Tests a simple variable."""

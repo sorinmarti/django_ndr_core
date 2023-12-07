@@ -9,6 +9,7 @@ from django.views import View
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from ndr_core.admin_forms.images_forms import ImageCreateForm, ImageEditForm
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCoreImage
 from ndr_core.ndr_settings import NdrSettings
 
@@ -34,7 +35,7 @@ image_groups = [
 ]
 
 
-class ConfigureImages(LoginRequiredMixin, View):
+class ConfigureImages(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Images. """
 
     def get(self, request, *args, **kwargs):
@@ -47,7 +48,7 @@ class ConfigureImages(LoginRequiredMixin, View):
                       context=context)
 
 
-class ImagesGroupView(LoginRequiredMixin, View):
+class ImagesGroupView(AdminViewMixin, LoginRequiredMixin, View):
     """Shows a group of images. """
 
     template_name = 'ndr_core/admin_views/overview/configure_images.html'
@@ -71,8 +72,8 @@ class ImagesGroupView(LoginRequiredMixin, View):
                       context=self.get_context_data())
 
 
-class ImagesCreateView(LoginRequiredMixin, CreateView):
-    """ View to create a image """
+class ImagesCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
+    """ View to create an image """
 
     model = NdrCoreImage
     form_class = ImageCreateForm
@@ -90,7 +91,7 @@ class ImagesCreateView(LoginRequiredMixin, CreateView):
         return response
 
 
-class ImagesEditView(LoginRequiredMixin, UpdateView):
+class ImagesEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing image """
 
     model = NdrCoreImage

@@ -21,11 +21,12 @@ from ndr_core.admin_forms.color_forms import (
     ColorPaletteEditForm,
     ColorPaletteImportForm
 )
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCoreColorScheme, NdrCoreValue
 from ndr_core.ndr_settings import NdrSettings
 
 
-class ConfigureColorPalettes(LoginRequiredMixin, View):
+class ConfigureColorPalettes(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Color Palettes. """
 
     def get(self, request, *args, **kwargs):
@@ -38,7 +39,7 @@ class ConfigureColorPalettes(LoginRequiredMixin, View):
                       context=context)
 
 
-class ColorPaletteDetailView(LoginRequiredMixin, DetailView):
+class ColorPaletteDetailView(AdminViewMixin, LoginRequiredMixin, DetailView):
     """View to show details about a color palette. """
 
     model = NdrCoreColorScheme
@@ -52,7 +53,7 @@ class ColorPaletteDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class ColorPaletteCreateView(LoginRequiredMixin, CreateView):
+class ColorPaletteCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     """ View to create a new Color Palette """
 
     model = NdrCoreColorScheme
@@ -65,7 +66,7 @@ class ColorPaletteCreateView(LoginRequiredMixin, CreateView):
         return response
 
 
-class ColorPaletteEditView(LoginRequiredMixin, UpdateView):
+class ColorPaletteEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing Color Palette """
 
     model = NdrCoreColorScheme
@@ -74,7 +75,7 @@ class ColorPaletteEditView(LoginRequiredMixin, UpdateView):
     template_name = 'ndr_core/admin_views/edit/palette_edit.html'
 
 
-class ColorPaletteDeleteView(LoginRequiredMixin, DeleteView):
+class ColorPaletteDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete a Color Palette from the database. Asks to confirm."""
 
     model = NdrCoreColorScheme
@@ -82,7 +83,7 @@ class ColorPaletteDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'ndr_core/admin_views/delete/palette_confirm_delete.html'
 
 
-class ColorPaletteImportView(LoginRequiredMixin, FormView):
+class ColorPaletteImportView(AdminViewMixin, LoginRequiredMixin, FormView):
     """View to import a exported color palette. """
 
     template_name = 'ndr_core/admin_views/import/palette_import.html'

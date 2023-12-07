@@ -18,6 +18,7 @@ from ndr_core.admin_forms.settings_forms import (
     SettingsSetUnderConstructionForm,
     SettingsSetLiveForm,
 )
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCoreValue
 
 settings_group_list = {
@@ -85,7 +86,7 @@ settings_group_list = {
         }
 
 
-class ConfigureSettingsView(LoginRequiredMixin, TemplateView):
+class ConfigureSettingsView(AdminViewMixin, LoginRequiredMixin, TemplateView):
     """View to view and change value settings of NDR Core (such as HTML page title tags, etc.). """
 
     template_name = 'ndr_core/admin_views/overview/configure_settings.html'
@@ -98,7 +99,7 @@ class ConfigureSettingsView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class SettingsDetailView(LoginRequiredMixin, View):
+class SettingsDetailView(AdminViewMixin, LoginRequiredMixin, View):
     """Shows a group of settings to change in a form. """
 
     template_name = 'ndr_core/admin_views/configure_settings.html'
@@ -143,7 +144,7 @@ class SettingsDetailView(LoginRequiredMixin, View):
                       context=context)
 
 
-class SettingCreateView(LoginRequiredMixin, CreateView):
+class SettingCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     """ View to create a new Custom Setting """
 
     object = None
@@ -159,7 +160,7 @@ class SettingCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class SettingEditView(LoginRequiredMixin, UpdateView):
+class SettingEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing user_setting """
 
     model = NdrCoreValue
@@ -168,7 +169,7 @@ class SettingEditView(LoginRequiredMixin, UpdateView):
     template_name = 'ndr_core/admin_views/edit/setting_edit.html'
 
 
-class SettingDeleteView(LoginRequiredMixin, DeleteView):
+class SettingDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete a user setting from the database. Asks to confirm."""
 
     model = NdrCoreValue
@@ -176,7 +177,7 @@ class SettingDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'ndr_core/admin_views/delete/setting_confirm_delete.html'
 
 
-class SettingsImportView(LoginRequiredMixin, FormView):
+class SettingsImportView(AdminViewMixin, LoginRequiredMixin, FormView):
     """View to import a exported color palette. """
 
     template_name = 'ndr_core/admin_views/import/settings_import.html'
@@ -200,7 +201,7 @@ class SettingsImportView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class SetPageReadOnlyView(LoginRequiredMixin, FormView):
+class SetPageReadOnlyView(AdminViewMixin, LoginRequiredMixin, FormView):
     """View to set the page read-only."""
 
     template_name = "ndr_core/admin_views/page_state/settings_set_readonly.html"
@@ -213,7 +214,7 @@ class SetPageReadOnlyView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class SetPageEditableView(LoginRequiredMixin, FormView):
+class SetPageEditableView(AdminViewMixin, LoginRequiredMixin, FormView):
     """View to set the page editable. """
 
     template_name = "ndr_core/admin_views/page_state/settings_set_readonly.html"
@@ -226,7 +227,7 @@ class SetPageEditableView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class SetPageUnderConstructionView(LoginRequiredMixin, FormView):
+class SetPageUnderConstructionView(AdminViewMixin, LoginRequiredMixin, FormView):
     """View to set the page under construction. """
 
     template_name = "ndr_core/admin_views/page_state/settings_set_under_construction.html"
@@ -239,7 +240,7 @@ class SetPageUnderConstructionView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class SetPageLiveView(LoginRequiredMixin, FormView):
+class SetPageLiveView(AdminViewMixin, LoginRequiredMixin, FormView):
     """View to set the page live. """
 
     template_name = "ndr_core/admin_views/page_state/settings_set_live.html"

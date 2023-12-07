@@ -13,11 +13,12 @@ from ndr_core.admin_forms.upload_forms import (
     ManifestGroupCreateForm,
     ManifestGroupEditForm,
 )
+from ndr_core.admin_views.admin_views import AdminViewMixin
 
 from ndr_core.models import NdrCoreUpload, NdrCoreManifest, NdrCoreManifestGroup
 
 
-class ConfigureUploads(LoginRequiredMixin, View):
+class ConfigureUploads(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Uploads. """
 
     def get(self, request, *args, **kwargs):
@@ -29,7 +30,7 @@ class ConfigureUploads(LoginRequiredMixin, View):
                       context=context)
 
 
-class UploadCreateView(LoginRequiredMixin, CreateView):
+class UploadCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     """ View to create an image """
 
     model = NdrCoreUpload
@@ -38,7 +39,7 @@ class UploadCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/create/upload_create.html'
 
 
-class UploadEditView(LoginRequiredMixin, UpdateView):
+class UploadEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing image """
 
     model = NdrCoreUpload
@@ -47,7 +48,7 @@ class UploadEditView(LoginRequiredMixin, UpdateView):
     template_name = 'ndr_core/admin_views/edit/upload_edit.html'
 
 
-class UploadDeleteView(LoginRequiredMixin, DeleteView):
+class UploadDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete an upload from the database. Asks to confirm."""
 
     model = NdrCoreUpload
@@ -59,7 +60,7 @@ class UploadDeleteView(LoginRequiredMixin, DeleteView):
         return super().form_valid(form)
 
 
-class ManifestUploadCreateView(LoginRequiredMixin, CreateView):
+class ManifestUploadCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     """ View to create a manifest """
 
     model = NdrCoreManifest
@@ -68,7 +69,7 @@ class ManifestUploadCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/create/manifest_upload_create.html'
 
 
-class ManifestUploadEditView(LoginRequiredMixin, UpdateView):
+class ManifestUploadEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing manifest """
 
     model = NdrCoreManifest
@@ -77,7 +78,7 @@ class ManifestUploadEditView(LoginRequiredMixin, UpdateView):
     template_name = 'ndr_core/admin_views/edit/manifest_upload_edit.html'
 
 
-class ManifestUploadDeleteView(LoginRequiredMixin, DeleteView):
+class ManifestUploadDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete an image from the database. Asks to confirm."""
 
     model = NdrCoreManifest
@@ -89,7 +90,7 @@ class ManifestUploadDeleteView(LoginRequiredMixin, DeleteView):
         return super().form_valid(form)
 
 
-class ManifestGroupCreateView(LoginRequiredMixin, CreateView):
+class ManifestGroupCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     """ View to create a manifest """
 
     model = NdrCoreManifestGroup
@@ -98,7 +99,7 @@ class ManifestGroupCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/create/manifest_group_create.html'
 
 
-class ManifestGroupEditView(LoginRequiredMixin, UpdateView):
+class ManifestGroupEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing manifest """
 
     model = NdrCoreManifestGroup
@@ -112,7 +113,7 @@ class ManifestGroupEditView(LoginRequiredMixin, UpdateView):
         return response
 
 
-class ManifestGroupDeleteView(LoginRequiredMixin, DeleteView):
+class ManifestGroupDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete an image from the database. Asks to confirm."""
 
     model = NdrCoreManifestGroup

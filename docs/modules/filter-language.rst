@@ -14,8 +14,13 @@ upper, lower, capitalize, title
 takes: string
 returns: string
 
-pill
+pill/badge
 takes: string, dict
 
 fieldify
 takes: string, dict
+
+img
+filters: iiif_resize 0-100
+
+bool

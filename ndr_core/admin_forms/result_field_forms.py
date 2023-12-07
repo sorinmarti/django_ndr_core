@@ -13,8 +13,7 @@ class ResultFieldForm(forms.ModelForm):
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreResultField
-        fields = ['expression', 'rich_expression', 'field_type', 'field_filter', 'display_border',
-                  'html_display', 'md_display', 'field_classes']
+        fields = ['label', 'rich_expression', 'field_classes']
 
     @property
     def helper(self):
@@ -24,29 +23,7 @@ class ResultFieldForm(forms.ModelForm):
         helper.form_method = "POST"
 
         form_row = Row(
-            Column('field_type', css_class='form-group col-6'),
-            Column(
-                get_info_box('', 'page_type_info'),
-                css_class='form-group col-6'
-            ),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('field_filter', css_class='form-group col-6'),
-            Column(
-                get_info_box('Here comes information about the filters',
-                             item_id='none',
-                             box_id='filter_info_box'),
-                css_class='form-group col-6'
-            ),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
-            Column('expression', css_class='form-group col-12'),
+            Column('label', css_class='form-group col-12'),
             css_class='form-row'
         )
         layout.append(form_row)

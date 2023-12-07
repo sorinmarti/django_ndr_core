@@ -147,7 +147,7 @@ class _NdrCoreSearchView(_NdrCoreView):
         """ Translates the GET parameters provided by the search form to key-value pairs
         and saves them in the Query-object. """
         search_config = self.get_search_config_from_name(requested_search)
-        form = self.form_class(self.request.GET, ndr_page=self.ndr_page)
+        form = self.form_class(self.request.GET, ndr_page=self.ndr_page, search_config=search_config)
         form.is_valid()
 
         for field in form.fields:

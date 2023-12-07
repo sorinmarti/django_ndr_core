@@ -13,11 +13,12 @@ from django.views import View
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 
 from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm, NotFoundForm
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCorePage
 from ndr_core.ndr_settings import NdrSettings
 
 
-class ManagePages(LoginRequiredMixin, View):
+class ManagePages(AdminViewMixin, LoginRequiredMixin, View):
     """The ManagePages view shows a table of all pages in an installation and lets you define their order. You can
       edit, delete and create pages here. """
 
@@ -31,7 +32,7 @@ class ManagePages(LoginRequiredMixin, View):
                       context=context)
 
 
-class ManagePageFooter(LoginRequiredMixin, View):
+class ManagePageFooter(AdminViewMixin, LoginRequiredMixin, View):
     """Creates a form to edit the footer of the page. """
 
     def get(self, request, *args, **kwargs):
@@ -59,7 +60,7 @@ class ManagePageFooter(LoginRequiredMixin, View):
                       context=context)
 
 
-class ManageNotFoundPage(LoginRequiredMixin, View):
+class ManageNotFoundPage(AdminViewMixin, LoginRequiredMixin, View):
     """Creates a form to edit the 404 page of the installation. """
 
     def get(self, request, *args, **kwargs):
@@ -86,7 +87,7 @@ class ManageNotFoundPage(LoginRequiredMixin, View):
                       context=context)
 
 
-class PageDetailView(LoginRequiredMixin, DetailView):
+class PageDetailView(AdminViewMixin, LoginRequiredMixin, DetailView):
     """The PageDetailView shows the details of a page. It is shown when selecting a page in the table.
     The list of pages is still shown on the right side."""
 
@@ -99,7 +100,7 @@ class PageDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class PageCreateView(LoginRequiredMixin, CreateView):
+class PageCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     """ View to create a new NdrCorePage """
 
     model = NdrCorePage
@@ -132,7 +133,7 @@ class PageCreateView(LoginRequiredMixin, CreateView):
         return response
 
 
-class PageEditView(LoginRequiredMixin, UpdateView):
+class PageEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing NdrCorePage """
 
     model = NdrCorePage
@@ -164,7 +165,7 @@ class PageEditView(LoginRequiredMixin, UpdateView):
         return response
 
 
-class PageDeleteView(LoginRequiredMixin, DeleteView):
+class PageDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete an NdrCorePage from the database. Asks to confirm.
     This function also deletes the created HTML template. """
 

@@ -11,10 +11,14 @@ def get_get_filter_class(filter_name):
     """Returns the filter class."""
     if filter_name in ['lower', 'upper', 'title', 'capitalize']:
         return StringFilter
+    if filter_name == 'bool':
+        return BoolFilter
     if filter_name == 'fieldify':
         return FieldTemplateFilter
-    elif filter_name == 'pill':
+    elif filter_name in ['badge', 'pill']:
         return PillTemplateFilter
+    elif filter_name == 'img':
+        return ImageTemplateFilter
     else:
         return None
 
@@ -37,6 +41,7 @@ class AbstractFilter(ABC):
 
     def get_value(self):
         """Returns the formatted string."""
+        print(self.filter_configurations)
         return self.value
 
     def get_configuration(self, name):
@@ -67,6 +72,39 @@ class StringFilter(AbstractFilter):
             return self.get_value().capitalize()
 
         return self.get_value()
+
+
+class BoolFilter(AbstractFilter):
+
+    def get_rendered_value(self):
+        print(self.filter_configurations, self.value, type(self.value))
+        true_value = "True"
+        if self.get_configuration('o0'):
+            true_value = self.get_configuration('o0')
+        false_value = "False"
+        if self.get_configuration('o1'):
+            false_value = self.get_configuration('o1')
+
+        if isinstance(self.value, bool):
+            if self.value:
+                return self.replace_key_values(true_value)
+            else:
+                return self.replace_key_values(false_value)
+
+        if isinstance(self.value, str):
+            if self.value.lower() == 'true':
+                return self.replace_key_values(true_value)
+            else:
+                return self.replace_key_values(false_value)
+
+        return self.get_value()
+
+    @staticmethod
+    def replace_key_values(value):
+        """ Replaces a value if it is a key value"""
+        if value == '__none__':
+            return ''
+        return value
 
 
 class FieldTemplateFilter(AbstractFilter):
@@ -116,7 +154,7 @@ class PillTemplateFilter(AbstractFilter, ColorOptionMixin):
     def __init__(self, filter_name, value, filter_configurations):
         super().__init__(filter_name, value, filter_configurations)
 
-        color = self.get_color_string(self.get_configuration('color'), self.value)
+        color = self.get_color_string(self.get_configuration('color'), self.value, color_string='background-color')
 
         display_string = self.value
         if isinstance(self.value, dict):
@@ -129,7 +167,7 @@ class PillTemplateFilter(AbstractFilter, ColorOptionMixin):
             else:
                 display_string = json.dumps(self.value)
 
-        self.template = f'''<span class="badge badge-primary" style="{color}">{display_string}</span>'''
+        self.template = f'''<span class="badge badge-primary text-dark font-weight-normal" style="{color}">{display_string}</span>'''
         if ' style=""' in self.template:
             self.template = self.template.replace(' style=""', '')
 
@@ -140,3 +178,13 @@ class PillTemplateFilter(AbstractFilter, ColorOptionMixin):
     def get_rendered_value(self):
         """Returns the formatted string."""
         return self.template
+
+
+class ImageTemplateFilter(AbstractFilter):
+    def get_rendered_value(self):
+        url = self.value
+        if 'iiif_resize' in self.filter_configurations:
+            url = url.replace('/full/0/default.',
+                              f'/pct:{self.filter_configurations["iiif_resize"]}/0/default.')
+
+        return f'<img src="{url}" class="img-fluid" alt="Responsive image">'

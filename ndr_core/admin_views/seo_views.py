@@ -8,10 +8,11 @@ from django.views import View
 from django.views.generic import FormView
 
 from ndr_core.admin_forms.admin_forms import ConnectWithNdrCoreForm
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.views import create_robots_txt_view, create_sitemap_view
 
 
-class ConnectWithNdrCoreOrgView(LoginRequiredMixin, FormView):
+class ConnectWithNdrCoreOrgView(AdminViewMixin, LoginRequiredMixin, FormView):
     """View to preview the robots.txt file."""
 
     template_name = 'ndr_core/admin_views/overview/configure_seo.html'
@@ -23,7 +24,7 @@ class ConnectWithNdrCoreOrgView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class RobotsFileView(LoginRequiredMixin, View):
+class RobotsFileView(AdminViewMixin, LoginRequiredMixin, View):
     """View to preview the robots.txt file."""
 
     template_name = 'ndr_core/admin_views/overview/configure_seo.html'
@@ -35,7 +36,7 @@ class RobotsFileView(LoginRequiredMixin, View):
         return render(request, self.template_name, {'robots_txt': robots_file})
 
 
-class SitemapFileView(LoginRequiredMixin, View):
+class SitemapFileView(AdminViewMixin, LoginRequiredMixin, View):
     """View to preview the sitemap.xml file."""
 
     template_name = 'ndr_core/admin_views/overview/configure_seo.html'

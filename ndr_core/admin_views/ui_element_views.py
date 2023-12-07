@@ -10,10 +10,11 @@ from ndr_core.admin_forms.ui_element_forms import (
     UIElementCreateForm,
     UIElementEditForm
 )
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem, NdrCoreImage
 
 
-class ConfigureUIElements(LoginRequiredMixin, View):
+class ConfigureUIElements(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete UI Elements. """
 
     def get(self, request, *args, **kwargs):
@@ -25,7 +26,7 @@ class ConfigureUIElements(LoginRequiredMixin, View):
                       context=context)
 
 
-class UIElementDetailView(LoginRequiredMixin, DetailView):
+class UIElementDetailView(AdminViewMixin, LoginRequiredMixin, DetailView):
     """TODO """
 
     model = NdrCoreUIElement
@@ -37,7 +38,7 @@ class UIElementDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class UIElementCreateView(LoginRequiredMixin, CreateView):
+class UIElementCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     """ View to create a new NdrCoreUIElement """
 
     model = NdrCoreUIElement
@@ -105,7 +106,7 @@ class UIElementCreateView(LoginRequiredMixin, CreateView):
         return response
 
 
-class UIElementEditView(LoginRequiredMixin, UpdateView):
+class UIElementEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing NdrCoreUIElement """
 
     model = NdrCoreUIElement
@@ -114,7 +115,7 @@ class UIElementEditView(LoginRequiredMixin, UpdateView):
     form_class = UIElementEditForm
 
 
-class UIElementDeleteView(LoginRequiredMixin, DeleteView):
+class UIElementDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete an NdrCoreUIElement from the database. """
 
     model = NdrCoreUIElement

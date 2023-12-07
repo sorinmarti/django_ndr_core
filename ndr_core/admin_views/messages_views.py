@@ -7,10 +7,11 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DeleteView, DetailView
 
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCoreUserMessage
 
 
-class ConfigureMessages(LoginRequiredMixin, View):
+class ConfigureMessages(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Messages. """
 
     def get(self, request, *args, **kwargs):
@@ -22,7 +23,7 @@ class ConfigureMessages(LoginRequiredMixin, View):
                       context=context)
 
 
-class ArchivedMessages(LoginRequiredMixin, View):
+class ArchivedMessages(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Messages. """
 
     def get(self, request, *args, **kwargs):
@@ -34,7 +35,7 @@ class ArchivedMessages(LoginRequiredMixin, View):
                       context=context)
 
 
-class MessagesView(LoginRequiredMixin, DetailView):
+class MessagesView(AdminViewMixin, LoginRequiredMixin, DetailView):
     """ View to show a user message."""
     model = NdrCoreUserMessage
     template_name = 'ndr_core/admin_views/overview/configure_messages.html'
@@ -45,7 +46,7 @@ class MessagesView(LoginRequiredMixin, DetailView):
         return context
 
 
-class MessagesDeleteView(LoginRequiredMixin, DeleteView):
+class MessagesDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete a message. Asks to confirm."""
 
     model = NdrCoreUserMessage

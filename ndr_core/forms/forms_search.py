@@ -24,11 +24,17 @@ class AdvancedSearchForm(_NdrCoreForm):
         """Initializes all needed form fields for the configured search based on
         the page's search configuration. """
 
-        super().__init__(*args, **kwargs)
         if self.ndr_page is not None:
             self.search_configs = self.ndr_page.search_configs.all()
-        elif False:
-            self.search_configs = []
+        elif 'ndr_page' in kwargs:
+            self.ndr_page = kwargs.pop('ndr_page')
+            self.search_configs = self.ndr_page.search_configs.all()
+        elif 'search_config' in kwargs:
+            self.search_configs = [kwargs.pop('search_config')]
+        else:
+            raise AttributeError("No Search Config Found")
+
+        super().__init__(*args, **kwargs)
 
         self.query_dict = {}
         if len(args) > 0:
@@ -142,17 +148,17 @@ class AdvancedSearchForm(_NdrCoreForm):
     def get_compact_view_field():
         """Returns the compact view field for the given search configuration. """
         return forms.BooleanField(required=False,
-                                  widget=BootstrapSwitchWidget(attrs={'label': 'Compact Result View'}),
+                                  widget=BootstrapSwitchWidget(attrs={'label': _('Compact Result View')}),
                                   label='', )
 
     def init_simple_search_fields(self, search_config):
         """Create form fields for simple search. """
 
         self.fields[f'search_term_{search_config.conf_name}'] = (
-            forms.CharField(label=search_config.translated_simple_query_label(),
+            forms.CharField(label=search_config.simple_query_label,
                             required=False,
                             max_length=100,
-                            help_text=search_config.translated_simple_query_help_text()))
+                            help_text=search_config.simple_query_help_text))
 
         self.fields[f'and_or_field_{search_config.conf_name}'] = (
             forms.ChoiceField(label=_('And or Or Search'),
@@ -220,7 +226,7 @@ class AdvancedSearchForm(_NdrCoreForm):
             # Each search configuration can have a simple search tab.
             tab_simple = None
             if search_config.has_simple_search:
-                tab_simple = Tab(search_config.translated_simple_search_tab_title(),
+                tab_simple = Tab(search_config.simple_search_tab_title,
                                  css_id=f'{search_config.conf_name}_simple')
                 fields = self.get_simple_search_layout_fields(search_config)
                 tab_simple.append(Div(fields[0], css_class='form-row'))
@@ -231,7 +237,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                     tabs.append(tab_simple)
 
             # This id the tab of the advanced search.
-            tab = Tab(search_config.translated_conf_label(), css_id=search_config.conf_name)
+            tab = Tab(search_config.conf_label, css_id=search_config.conf_name)
 
             # The form fields are grouped by row and column. The row is the outer loop.
             max_row = search_config.search_form_fields.all().aggregate(Max('field_row'))

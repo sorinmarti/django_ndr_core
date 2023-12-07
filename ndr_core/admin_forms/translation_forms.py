@@ -9,7 +9,7 @@ from ndr_core.models import (
     NdrCoreTranslation,
     NdrCoreSearchField,
     NdrCoreValue,
-    NdrCoreSearchConfiguration, NdrCoreUIElement, NdrCoreImage
+    NdrCoreSearchConfiguration, NdrCoreUIElement, NdrCoreImage, NdrCoreResultField
 )
 
 
@@ -32,10 +32,12 @@ class TranslateForm(forms.Form):
         initial_values = {}
         for item in self.items:
             for field in self.translatable_fields:
-                self.fields[f"{field}_{item.pk}"] = forms.CharField(label=f"Translate: '{field}'",
+                self.fields[f"{field}_{item.pk}"] = forms.CharField(label=f"Translate: '{field}' for '{item.__getattribute__(field)}'",
                                                                     required=False,
-                                                                    max_length=100,
+                                                                    max_length=1000,
                                                                     help_text='')
+                if field.startswith('rich_'):
+                    self.fields[f"{field}_{item.pk}"].widget = forms.Textarea(attrs={'rows': 3})
 
                 initial_values[f"{field}_{item.pk}"] = self.get_initial_value(field, str(item.pk))
 
@@ -66,10 +68,9 @@ class TranslateForm(forms.Form):
 
     def get_initial_value(self, field_name, object_id):
         """Returns the initial value of the field. """
-        print(f"get_initial_value: {field_name} {object_id}, {self.lang}, {self.table_name}")
         try:
             translation_obj = NdrCoreTranslation.objects.get(language=self.lang,
-                                                             table_name=self.table_name,
+                                                             table_name=self.table_name.lower(),
                                                              field_name=field_name,
                                                              object_id=object_id)
             return translation_obj.translation
@@ -80,6 +81,7 @@ class TranslateForm(forms.Form):
         """Saves the translations to the database. """
         self.is_valid()
 
+        print(self.cleaned_data)
         for item in self.items:
             for field in self.translatable_fields:
                 self.save_translation(str(item.pk), field, self.cleaned_data[f"{field}_{item.pk}"])
@@ -87,7 +89,7 @@ class TranslateForm(forms.Form):
     def save_translation(self, object_id, field_name, translation):
         """Saves the translation to the database. """
         i18n_object = NdrCoreTranslation.objects.get_or_create(language=self.lang,
-                                                               table_name=self.table_name,
+                                                               table_name=self.table_name.lower(),
                                                                field_name=field_name,
                                                                object_id=object_id)
         i18n_object[0].translation = translation
@@ -153,6 +155,23 @@ class TranslateFormForm(TranslateForm):
     items = NdrCoreSearchConfiguration.objects.all()
     translatable_fields = ['conf_label']
     table_name = 'NdrCoreSearchConfiguration'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.init_form()
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        return self.do_helper()
+
+
+class TranslateResultForm(TranslateForm):
+    """Form to translate settings values. """
+
+    items = NdrCoreResultField.objects.all()
+    translatable_fields = ['rich_expression']
+    table_name = 'NdrCoreResultField'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -11,10 +11,13 @@
         <h4 class="mt-4">
             {% translate 'Search Results' %}
             <div class="btn-group float-right">
+                <a href="{{ result.form_links.compact }}" type="button" class="btn btn-sm btn-secondary ">
+                    {{ result.form_links.compact_label }}
+                </a>
                 <a href="{{ result.form_links.refine }}" type="button" class="btn btn-sm btn-secondary ">
                     {% translate 'Refine Search' %}
                 </a>
-                <a href="{{ result.form_links.new }}" type="button" class="btn btn-sm btn-secondary float-right">
+                <a href="{{ result.form_links.new }}" type="button" class="btn btn-sm btn-secondary">
                     {% translate 'New Search' %}
                 </a>
                 {% config_value 'search_allow_download_list_json' as allow_json %}

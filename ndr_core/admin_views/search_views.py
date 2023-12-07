@@ -10,6 +10,7 @@ from ndr_core.admin_forms.search_config_forms import (
     SearchConfigurationEditForm
 )
 from ndr_core.admin_forms.search_form_forms import SearchConfigurationFormEditForm
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import (
     NdrCoreSearchField,
     NdrCoreSearchConfiguration,
@@ -18,7 +19,7 @@ from ndr_core.models import (
 )
 
 
-class ConfigureSearch(LoginRequiredMixin, View):
+class ConfigureSearch(AdminViewMixin, LoginRequiredMixin, View):
     """View to add/edit/delete Search configurations. """
 
     def get(self, request, *args, **kwargs):
@@ -35,7 +36,7 @@ class ConfigureSearch(LoginRequiredMixin, View):
                       context=context)
 
 
-class SearchConfigurationCreateView(LoginRequiredMixin, CreateView):
+class SearchConfigurationCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     """ View to create a new API configuration """
 
     model = NdrCoreSearchConfiguration
@@ -44,7 +45,7 @@ class SearchConfigurationCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/create/search_config_create.html'
 
 
-class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
+class SearchConfigurationEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing API configuration """
 
     model = NdrCoreSearchConfiguration
@@ -53,7 +54,7 @@ class SearchConfigurationEditView(LoginRequiredMixin, UpdateView):
     template_name = 'ndr_core/admin_views/edit/search_config_edit.html'
 
 
-class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
+class SearchConfigurationDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete a Search Field from the database. Asks to confirm."""
 
     model = NdrCoreSearchConfiguration
@@ -61,7 +62,7 @@ class SearchConfigurationDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'ndr_core/admin_views/delete/search_config_confirm_delete.html'
 
 
-class SearchConfigurationCopyView(LoginRequiredMixin, View):
+class SearchConfigurationCopyView(AdminViewMixin, LoginRequiredMixin, View):
     """ View to copy a Search configuration. """
 
     def get(self, request, *args, **kwargs):
@@ -75,7 +76,7 @@ class SearchConfigurationCopyView(LoginRequiredMixin, View):
         return redirect('ndr_core:configure_search')
 
 
-class SearchConfigurationFormEditView(LoginRequiredMixin, FormView):
+class SearchConfigurationFormEditView(AdminViewMixin, LoginRequiredMixin, FormView):
     """ View to edit the form configuration for a search configuration. """
 
     form_class = SearchConfigurationFormEditForm

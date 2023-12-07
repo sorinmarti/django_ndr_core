@@ -9,11 +9,12 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import DetailView
 
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCoreColorScheme, NdrCoreValue, NdrCoreUiStyle
 from ndr_core.ndr_settings import NdrSettings
 
 
-class ConfigureUI(LoginRequiredMixin, View):
+class ConfigureUI(AdminViewMixin, LoginRequiredMixin, View):
     """The configure UI view lets you choose a UI style and a color scheme for your installation. """
 
     def get(self, request, *args, **kwargs):
@@ -28,7 +29,7 @@ class ConfigureUI(LoginRequiredMixin, View):
                       context=context)
 
 
-class UIStyleDetailView(LoginRequiredMixin, DetailView):
+class UIStyleDetailView(AdminViewMixin, LoginRequiredMixin, DetailView):
     """View to show details about a UI style. """
 
     model = NdrCoreUiStyle

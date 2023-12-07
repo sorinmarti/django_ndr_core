@@ -62,7 +62,7 @@ class TranslatableMixin:
             translation.save()
 
 
-class NdrCoreResultField(models.Model):
+class NdrCoreResultField(TranslatableMixin, models.Model):
     """An NdrCoreResultField is part of the display of a search result. Multiple result fields
     can be combined to a result card. Each result field has a type (see FieldType) which determines
     how the field is displayed. The expression (or rich_expression) is formed by mixing static text
@@ -72,67 +72,29 @@ class NdrCoreResultField(models.Model):
         and 'last_name'. The expression is 'Hello {person[first_name]} {person[last_name]}!'. The result
         field will display the text 'Hello John Doe!' if the data contains the fields 'person.first_name'
         and 'person.last_name'."""
-
-    class FieldType(models.IntegerChoices):
-        """The FieldType of a resultField is used to render the HTML result """
-
-        STRING = 1, "String"
-        """This type produces a bootstrap div with the expression as content. The content
-        can be rendered as raw HTML or as markdown."""
-
-        RICH_STRING = 2, "Rich Text String"
-        """This type produces a bootstrap div with the rich_expression as content"""
-
-        IMAGE = 3, "Image"
-        """This type produces an image tag with the expression as source"""
-
-        IIIF_IMAGE = 4, "IIIF Image"
-        """This type produces an image tag with the expression as source. The field_filter
-        can be used to resize the image."""
-
-        TABLE = 5, "Table"
-        """This type produces a table with the expression as content. The expression must be a list of lists."""
-
-        MAP = 6, "Map"
-        """This type produces a map. The expression must be a list of dictionaries with the keys 'lat' and 'lng'."""
-
-        LIST = 7, "List"
-        """This type produces a list. The expression must be a list."""
-
-    expression = models.TextField(default='', blank=True)
-    """The expression to display. This can be a static text or a template string which is filled with data from the
-    result. """
+    label = models.CharField(max_length=100,
+                             blank=True, default='',
+                             help_text="The label of the result field")
 
     rich_expression = RichTextUploadingField(null=True, blank=True,
                                              help_text='Rich text for your expression')
     """The expression to display. This can be a static text or a template string which is filled with data from the
     result. Rich text can be styled (bold, italic, etc.)"""
 
-    field_type = models.PositiveSmallIntegerField(choices=FieldType.choices,
-                                                  default=FieldType.STRING,
-                                                  help_text="Type of the display field")
-    """Type of the display field."""
-
-    field_filter = models.CharField(max_length=100, blank=True, default='',
-                                    help_text="A filter to apply to the expression.")
-
-    display_border = models.BooleanField(default=False,
-                                         help_text="Should the display have a border?")
-    """Should the display have a border?"""
-
     field_classes = models.CharField(max_length=100, blank=True, default='',
                                      help_text="Bootstrap classes to apply to the display.")
 
-    html_display = models.BooleanField(default=False,
-                                       help_text="Is the expression HTML code?")
-    """Is the expression HTML code? If yes, it will be rendered as raw HTML."""
-
-    md_display = models.BooleanField(default=False,
-                                     help_text="Is this expression markdown?")
-    """Is this expression markdown? If yes, it will be rendered as markdown."""
+    def __getattribute__(self, item):
+        """Returns the translated field for a given language. If no translation exists,
+        the default value is returned. """
+        if item in ['rich_expression']:
+            return self.translated_field(super().__getattribute__(item), item, str(self.id))
+        return super().__getattribute__(item)
 
     def __str__(self):
-        return f'{self.expression} ({self.get_field_type_display()})'
+        if self.label != '':
+            return f'{self.label}'
+        return f'{self.rich_expression}'
 
 
 class NdrCoreSearchField(TranslatableMixin, models.Model):

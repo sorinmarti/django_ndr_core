@@ -4,13 +4,14 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
+from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.form_preview import get_search_form_image_from_raw_data
 from ndr_core.admin_forms.search_field_forms import SearchFieldCreateForm, SearchFieldEditForm
 
 from ndr_core.models import NdrCoreSearchField
 
 
-class SearchFieldCreateView(LoginRequiredMixin, CreateView):
+class SearchFieldCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     """ View to create a new Search Field """
 
     model = NdrCoreSearchField
@@ -19,7 +20,7 @@ class SearchFieldCreateView(LoginRequiredMixin, CreateView):
     template_name = 'ndr_core/admin_views/create/search_field_create.html'
 
 
-class SearchFieldEditView(LoginRequiredMixin, UpdateView):
+class SearchFieldEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     """ View to edit an existing Search field """
 
     model = NdrCoreSearchField
@@ -28,7 +29,7 @@ class SearchFieldEditView(LoginRequiredMixin, UpdateView):
     template_name = 'ndr_core/admin_views/edit/search_field_edit.html'
 
 
-class SearchFieldDeleteView(LoginRequiredMixin, DeleteView):
+class SearchFieldDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     """ View to delete a Search Field from the database. Asks to confirm."""
 
     model = NdrCoreSearchField

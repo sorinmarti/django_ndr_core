@@ -59,5 +59,8 @@ def get_logo_image_path():
         logo_image = NdrCoreImage.objects.get(image_group=NdrCoreImage.ImageGroup.PAGE_LOGOS,
                                               language=get_language()).image.url
     except NdrCoreImage.DoesNotExist:
-        logo_image = 'static/ndr_core/images/logo.png'
+        try:
+            logo_image = NdrCoreImage.objects.filter(image_group=NdrCoreImage.ImageGroup.PAGE_LOGOS).first().image.url
+        except NdrCoreImage.DoesNotExist:
+            logo_image = 'static/ndr_core/images/logo.png'
     return logo_image

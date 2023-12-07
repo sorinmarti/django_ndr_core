@@ -60,11 +60,11 @@ class RenderResultNode(template.Node):
         """Creates a result field."""
         field_template = 'ndr_core/result_renderers/elements/result_field.html'
         result_field = field.result_field
-        template_string = TemplateString(result_field.expression, data)
+        template_string = TemplateString(result_field.rich_expression, data, show_errors=False)
         field_content = template_string.get_formatted_string()
+        field_content = template_string.sanitize_html(field_content)
 
         field_context = {"size": field.field_size,
-                         "border": "border" if result_field.display_border else "",
                          "classes": result_field.field_classes,
                          "field_content": field_content}
         field_template_str = get_template(field_template).render(field_context)
