@@ -19,9 +19,7 @@ class MongoDBResult(BaseResult):
         try:
             # Get the connection string and collection from the configuration
             connection_string_arr = self.search_configuration.api_connection_url.split('/')
-            print(connection_string_arr)
             connection_string = '/'.join(connection_string_arr[:-1])
-            print(connection_string)
             db_client = pymongo.MongoClient(connection_string, serverSelectionTimeoutMS=2000)
             collection = db_client[connection_string_arr[-2]][connection_string_arr[-1]]
 

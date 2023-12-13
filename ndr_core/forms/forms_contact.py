@@ -19,7 +19,6 @@ class ContactForm(ModelForm, _NdrCoreForm): # pylint: disable=too-many-ancestors
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # print(NdrCoreValue.get_or_initialize(value_name='contact_form_default_subject').translated_value())
         self.fields['message_subject'].initial = NdrCoreValue.get_or_initialize(
             value_name='contact_form_default_subject').translated_value()
         self.fields['message_subject'].label = _('Message Subject')

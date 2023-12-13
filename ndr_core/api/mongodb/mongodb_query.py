@@ -79,7 +79,6 @@ class MongoDBQuery(BaseQuery):
             except NdrCoreSearchField.DoesNotExist:
                 pass
 
-        print(query)
         return query
 
     def get_list_query(self, list_name, add_page_and_size=True, search_term=None, tags=None):

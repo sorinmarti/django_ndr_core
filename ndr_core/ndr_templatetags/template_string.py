@@ -89,7 +89,7 @@ class TemplateStringVariable:
         try:
             return data[self.variable]
         except KeyError as e:
-            raise KeyError(f"Key not found in data: {e}")
+            raise KeyError(f"Key not found in data: {e}") from e
 
     def get_value(self, data):
         """Returns the value of the variable with the filter applied."""
@@ -99,14 +99,16 @@ class TemplateStringVariable:
                 if isinstance(raw_value, list):
                     filtered_values = []
                     for value in raw_value:
-                        filtered_values.append(self.apply_filters(value))
+                        applied = self.apply_filters(value)
+                        if applied is not None:
+                            filtered_values.append(applied)
                     return filtered_values
                 return self.apply_filters(self.get_raw_value(data))
             return raw_value
         except KeyError as e:
-            raise e
+            raise KeyError(f"Key not found in data: {e}") from e
         except ValueError as e:
-            raise e
+            raise ValueError(f"Could not parse variable: {e}") from e
 
     def _get_nested_value(self, data):
         """Returns the value of the variable."""
@@ -120,9 +122,9 @@ class TemplateStringVariable:
                     try:
                         value = value[int(key)]
                     except IndexError:
-                        raise KeyError(f"Nested key not found {e}")
+                        raise IndexError(f"Nested key not found: {e}") from e
             except KeyError as e:
-                raise KeyError(f"Nested key not found {e}")
+                raise KeyError(f"Nested key not found: {e}") from e
         return value
 
     def apply_filters(self, value):
@@ -203,8 +205,7 @@ class TemplateString:
                 return flat_variables
             return variables
         except ValueError as e:
-            self.errors.append(e)
-            return []
+            raise ValueError(f"Could not parse string: {e}") from e
 
     def get_string(self):
         """Returns the string.
@@ -249,6 +250,7 @@ class TemplateString:
         return ''
 
     def get_error(self, e):
+        """Returns an error message to display within the result HTML."""
         if self.show_errors:
             alert = f'''<div class="alert alert-danger" role="alert">
                       {e}

@@ -168,7 +168,7 @@ class NdrDownloadView(_NdrCoreSearchView):
         query = api.get_record_query(record_id)
         result = api_factory.get_result_instance(query, self.request)
         result.load_result(transform_result=False)
-        return JsonResponse(result.raw_result)  # TODO RFQ: Is raw_result the right one?
+        return JsonResponse(result.raw_result)
 
 
 class NdrListDownloadView(_NdrCoreSearchView):
@@ -179,6 +179,7 @@ class NdrListDownloadView(_NdrCoreSearchView):
         self.page_size = None
 
     def create_result_for_response(self):
+        """Creates a result object for the response. """
         search_config = self.get_search_config_from_name(self.kwargs['search_config'])
         api_factory = ApiFactory(search_config)
 
@@ -186,13 +187,14 @@ class NdrListDownloadView(_NdrCoreSearchView):
         self.fill_search_query_values(self.kwargs['search_config'], query_obj)
         query_string = query_obj.get_advanced_query()
         result = api_factory.get_result_instance(query_string, self.request)
-        result.page_size = search_config.page_size  # TODO compact page size
+        result.page_size = 250
         result.load_result(transform_result=False)
+
         return result
 
     def get(self, request, *args, **kwargs):
         result = self.create_result_for_response()
-        return JsonResponse(result.raw_result)   # TODO RFQ: Is raw_result the right one?
+        return JsonResponse(result.raw_result['hits'], safe=False)
 
 
 class NdrCSVListDownloadView(NdrListDownloadView):
@@ -361,7 +363,6 @@ class FlipBookView(_NdrCoreView):
 
 def set_language_view(request, new_language):
     """A view to set the language of the page. """
-    print(f"SET TO {new_language}")
     translation.activate(new_language)
 
     redirect_url = request.META.get('HTTP_REFERER')

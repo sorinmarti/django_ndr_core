@@ -33,20 +33,24 @@ class TemplateStringTestCase(TestCase):
         string = TemplateString("I want to see the {test_value|pill:color=red}", self.test_data)
         self.assertEqual(string.get_variables(flatten=True), ['test_value'])
         self.assertEqual(string.variables[0].get_value(self.test_data),
-                         '<span class="badge badge-primary" style="color: red;">cat</span>')
+                         '<span class="badge badge-primary text-dark font-weight-normal" '
+                         'style="color: red;">cat</span>')
         self.assertEqual(
             string.get_formatted_string(),
-            "I want to see the <span class=\"badge badge-primary\" style=\"color: red;\">cat</span>")
+            "I want to see the <span class=\"badge badge-primary text-dark font-weight-normal\" "
+            "style=\"color: red;\">cat</span>")
 
     def test_simple_variable_with_multiple_filters(self):
         """Tests a simple variable."""
         string = TemplateString("I want to see the {test_value|upper|pill:color=red}", self.test_data)
         self.assertEqual(string.get_variables(flatten=True), ['test_value'])
         self.assertEqual(string.variables[0].get_value(self.test_data),
-                         '<span class="badge badge-primary" style="color: red;">CAT</span>')
+                         '<span class="badge badge-primary text-dark font-weight-normal" '
+                         'style="color: red;">CAT</span>')
         self.assertEqual(
             string.get_formatted_string(),
-            "I want to see the <span class=\"badge badge-primary\" style=\"color: red;\">CAT</span>")
+            "I want to see the <span class=\"badge badge-primary text-dark font-weight-normal\" "
+            "style=\"color: red;\">CAT</span>")
 
     def test_nested_variable(self):
         """Tests a simple variable."""
@@ -77,7 +81,8 @@ class TemplateStringTestCase(TestCase):
 
     def test_multiple_simple_variables_with_filters(self):
         """Tests a simple variable."""
-        string = TemplateString("I want to see the {test_value|upper} and the {test_list|capitalize}", self.test_data)
+        string = TemplateString("I want to see the {test_value|upper} and the {test_list|capitalize}",
+                                self.test_data)
         self.assertEqual(string.variables[0].get_value(self.test_data), 'CAT')
         self.assertEqual(string.variables[1].get_value(self.test_data), ['Fish', 'Dog', 'Guinea pig'])
         self.assertEqual(string.get_formatted_string(),
@@ -88,17 +93,25 @@ class TemplateStringTestCase(TestCase):
         string = TemplateString("I want to see the {test_value|pill:color=red} "
                                 "and the {test_list|pill:color=blue}", self.test_data)
         self.assertEqual(string.variables[0].get_value(self.test_data),
-                         '<span class="badge badge-primary" style="color: red;">cat</span>')
+                         '<span class="badge badge-primary text-dark font-weight-normal" '
+                         'style="color: red;">cat</span>')
         self.assertEqual(string.variables[1].get_value(self.test_data),
-                         ['<span class="badge badge-primary" style="color: blue;">fish</span>',
-                          '<span class="badge badge-primary" style="color: blue;">dog</span>',
-                          '<span class="badge badge-primary" style="color: blue;">guinea pig</span>'])
+                         ['<span class="badge badge-primary text-dark font-weight-normal" '
+                          'style="color: blue;">fish</span>',
+                          '<span class="badge badge-primary text-dark font-weight-normal" '
+                          'style="color: blue;">dog</span>',
+                          '<span class="badge badge-primary text-dark font-weight-normal" '
+                          'style="color: blue;">guinea pig</span>'])
         self.assertEqual(string.get_formatted_string(),
                          "I want to see the "
-                         "<span class=\"badge badge-primary\" style=\"color: red;\">cat</span> and the "
-                         "<span class=\"badge badge-primary\" style=\"color: blue;\">fish</span>, "
-                         "<span class=\"badge badge-primary\" style=\"color: blue;\">dog</span>, "
-                         "<span class=\"badge badge-primary\" style=\"color: blue;\">guinea pig</span>")
+                         "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+                         "style=\"color: red;\">cat</span> and the "
+                         "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+                         "style=\"color: blue;\">fish</span>, "
+                         "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+                         "style=\"color: blue;\">dog</span>, "
+                         "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+                         "style=\"color: blue;\">guinea pig</span>")
 
     def test_multiple_nested_variables(self):
         """Tests a simple variable."""
@@ -133,27 +146,36 @@ class TemplateStringTestCase(TestCase):
         string = TemplateString("I want to see the {another_test_list|pill}", self.test_data)
         self.assertEqual(string.get_formatted_string(),
                          "I want to see the "
-                         "<span class=\"badge badge-primary\">{\"key_1\": \"value_1\", \"key_2\": \"value_2\"}</span>, "
-                         "<span class=\"badge badge-primary\">{\"key_1\": \"value_1\", \"key_2\": \"value_2\"}</span>, "
-                         "<span class=\"badge badge-primary\">{\"key_1\": \"value_1\", \"key_2\": \"value_2\"}</span>")
+                         "<span class=\"badge badge-primary text-dark font-weight-normal\">"
+                         "{\"key_1\": \"value_1\", \"key_2\": \"value_2\"}</span>, "
+                         "<span class=\"badge badge-primary text-dark font-weight-normal\">"
+                         "{\"key_1\": \"value_1\", \"key_2\": \"value_2\"}</span>, "
+                         "<span class=\"badge badge-primary text-dark font-weight-normal\">"
+                         "{\"key_1\": \"value_1\", \"key_2\": \"value_2\"}</span>")
 
         string = TemplateString("I want to see the {another_test_list|pill:value=key_1,color=val__key_2}",
                                 self.test_data)
         self.assertEqual(
             string.get_formatted_string(),
             "I want to see the "
-            "<span class=\"badge badge-primary\" style=\"color: value_2;\">value_1</span>, "
-            "<span class=\"badge badge-primary\" style=\"color: value_2;\">value_1</span>, "
-            "<span class=\"badge badge-primary\" style=\"color: value_2;\">value_1</span>")
+            "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+            "style=\"background-color: value_2;\">value_1</span>, "
+            "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+            "style=\"background-color: value_2;\">value_1</span>, "
+            "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+            "style=\"background-color: value_2;\">value_1</span>")
 
         string = TemplateString("I want to see the {another_test_list|pill:value=key_1,color=byval__key_2}",
                                 self.test_data)
         self.assertEqual(
             string.get_formatted_string(),
             "I want to see the "
-            "<span class=\"badge badge-primary\" style=\"color: hsl(116, 100%, 50%);\">value_1</span>, "
-            "<span class=\"badge badge-primary\" style=\"color: hsl(116, 100%, 50%);\">value_1</span>, "
-            "<span class=\"badge badge-primary\" style=\"color: hsl(116, 100%, 50%);\">value_1</span>")
+            "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+            "style=\"background-color: hsl(116, 100%, 80%);\">value_1</span>, "
+            "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+            "style=\"background-color: hsl(116, 100%, 80%);\">value_1</span>, "
+            "<span class=\"badge badge-primary text-dark font-weight-normal\" "
+            "style=\"background-color: hsl(116, 100%, 80%);\">value_1</span>")
 
     def test_invalid_variable(self):
         """Tests a simple variable."""
@@ -161,8 +183,7 @@ class TemplateStringTestCase(TestCase):
         self.assertEqual(string.get_variables(flatten=True), ['invalid_variable'])
         self.assertEqual(string.variables[0].keys, ['invalid_variable'])
         self.assertEqual(string.variables[0].is_nested(), False)
-        self.assertEqual(string.variables[0].get_value(self.test_data), 'KEY_ERROR')
-        self.assertEqual(string.get_formatted_string(), "I want to see the KEY_ERROR")
+        self.assertRaises(KeyError, string.variables[0].get_value, self.test_data)
 
     def test_invalid_nested_variable(self):
         """Tests a simple variable."""
@@ -170,11 +191,8 @@ class TemplateStringTestCase(TestCase):
         self.assertEqual(string.get_variables(flatten=True), ['nested_data.invalid_variable'])
         self.assertEqual(string.variables[0].keys, ['nested_data', 'invalid_variable'])
         self.assertEqual(string.variables[0].is_nested(), True)
-        self.assertEqual(string.variables[0].get_value(self.test_data), 'KEY_ERROR')
+        self.assertRaises(KeyError, string.variables[0].get_value, self.test_data)
 
     def test_invalid_string(self):
         """Tests a simple variable."""
-        string = TemplateString("I want to see the {nested_data.invalid_variable", self.test_data)
-        self.assertEqual(string.get_variables(flatten=True), [])
-        self.assertEqual(string.variables, [])
-        self.assertEqual(string.get_formatted_string(), "I want to see the {nested_data.invalid_variable")
+        self.assertRaises(ValueError, TemplateString, "I want to see the {nested_data.invalid_variable", self.test_data)

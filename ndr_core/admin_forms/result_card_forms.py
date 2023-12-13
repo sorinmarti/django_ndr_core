@@ -19,7 +19,7 @@ class SearchConfigurationResultEditForm(forms.Form):
             if result_field_conf_row == 0:
                 required = True
 
-            result_field = forms.ModelChoiceField(queryset=NdrCoreResultField.objects.all(),
+            result_field = forms.ModelChoiceField(queryset=NdrCoreResultField.objects.all().order_by('label'),
                                                   required=required, help_text="")
             row_field = forms.IntegerField(required=required,
                                            help_text="")

@@ -182,17 +182,8 @@ class PreviewImage:
             coords_offset = self.get_coordinates(data_point['row'], data_point['col'], data_point['size'], offset=3)
             draw.rounded_rectangle(coords_offset, 5, fill=self.shadow_color, outline="#333333")
             draw.rounded_rectangle(coords, 5, fill=self.field_color, outline="#36454F")
+            draw.text((coords[0][0] + 10, coords[0][1] + 5), data_point['text'], (0, 0, 0))
 
         output = io.BytesIO()
         img.save(output, "PNG")
         return output.getvalue()
-
-
-def get_search_form_image_from_raw_data(data):
-    """This function gets called as view. It returns a preview image of a form."""
-    return PreviewImage().create_search_form_image_from_raw_data(data)
-
-
-def get_result_card_image_from_raw_data(data):
-    """This function gets called as view. It returns a preview image of a result card."""
-    return PreviewImage().create_result_card_image_from_raw_data(data)

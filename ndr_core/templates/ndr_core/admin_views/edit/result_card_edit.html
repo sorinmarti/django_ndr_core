@@ -17,10 +17,11 @@
             let imageBaseUrl = "{% url 'ndr_core:preview_result_card_image' 'image_string' %}";
             init_result_preview(imageBaseUrl);
             init_cpct_result_preview(imageBaseUrl);
+        
+            {% if not search_configuration.search_has_compact_result %}
+                let compact_tab = $("#result_card_tabs li:nth-child(2)");
+                compact_tab.children('a').attr('class', 'nav-link disabled');
+            {% endif %}
         });
-        {% if not search_configuration.search_has_compact_result %}
-            let compact_tab = $("#result_card_tabs li:nth-child(2)");
-            compact_tab.children('a').attr('class', 'nav-link disabled');
-        {% endif %}
     </script>
 {% endblock %}

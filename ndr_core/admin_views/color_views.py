@@ -97,9 +97,8 @@ class ColorPaletteImportView(AdminViewMixin, LoginRequiredMixin, FormView):
             my_string = f.read().decode('utf-8')
             deserialized_object = serializers.deserialize("json", "["+my_string+"]")
             for obj in deserialized_object:
-                if NdrCoreColorScheme.objects.filter(scheme_name=obj.object.scheme_name).count()>0:
+                if NdrCoreColorScheme.objects.filter(scheme_name=obj.object.scheme_name).count() > 0:
                     messages.info(self.request, f'The scheme "{obj.object.scheme_name}" was updated')
-                print(obj.save())
         except DeserializationError:
             messages.error(self.request, 'Could not deserialize object.')
 

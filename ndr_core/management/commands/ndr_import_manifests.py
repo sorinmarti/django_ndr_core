@@ -35,4 +35,4 @@ class Command(BaseCommand):
                                                order_value_1=year,
                                                order_value_2=issue,
                                                order_value_3=issue_id)
-                print(f"Created: {year}/{issue}: {title}")
+                self.stdout.write(self.style.SUCCESS(f"Created: {year}/{issue}: {title}"))

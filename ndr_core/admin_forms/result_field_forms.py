@@ -41,14 +41,6 @@ class ResultFieldForm(forms.ModelForm):
         layout.append(form_row)
 
         form_row = Row(
-            Column('display_border', css_class='form-group col-4'),
-            Column('html_display', css_class='form-group col-4'),
-            Column('md_display', css_class='form-group col-4'),
-            css_class='form-row'
-        )
-        layout.append(form_row)
-
-        form_row = Row(
             Column(
                 get_info_box('Access your variables in the following form', 'xxx_info'),
                 css_class='form-group col-12'

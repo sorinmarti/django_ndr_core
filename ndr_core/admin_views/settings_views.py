@@ -194,7 +194,6 @@ class SettingsImportView(AdminViewMixin, LoginRequiredMixin, FormView):
             for obj in deserialized_object:
                 if NdrCoreValue.objects.filter(value_name=obj.object.value_name).count() > 0:
                     messages.info(self.request, f'The setting "{obj.object.value_name}" was updated')
-                print(obj.save())
         except DeserializationError:
             messages.error(self.request, 'Could not deserialize object.')
 

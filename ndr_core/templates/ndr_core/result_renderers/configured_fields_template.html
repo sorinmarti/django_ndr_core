@@ -3,11 +3,10 @@
 {% load i18n %}
 
 {% block search_result_content %}
-    {{ result.results }}
    {{ card_content }}
 {% endblock %}
 
 {% block citation_info %}
     {% translate 'Cite:' %}
-    &lt;no citation&gt;
+    {{ citation }}
 {% endblock %}

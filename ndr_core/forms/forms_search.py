@@ -24,10 +24,10 @@ class AdvancedSearchForm(_NdrCoreForm):
         """Initializes all needed form fields for the configured search based on
         the page's search configuration. """
 
-        if self.ndr_page is not None:
-            self.search_configs = self.ndr_page.search_configs.all()
-        elif 'ndr_page' in kwargs:
+        if 'ndr_page' in kwargs:
             self.ndr_page = kwargs.pop('ndr_page')
+
+        if self.ndr_page is not None:
             self.search_configs = self.ndr_page.search_configs.all()
         elif 'search_config' in kwargs:
             self.search_configs = [kwargs.pop('search_config')]

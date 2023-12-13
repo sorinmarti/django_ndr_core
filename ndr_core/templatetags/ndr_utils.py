@@ -30,11 +30,20 @@ class RenderResultNode(template.Node):
     def create_card(self, context, result):
         """Creates a result card."""
         card_context = {"result": result,
-                        "card_content": self.create_grid(context, result['data'])}
+                        "card_content": self.create_grid(context, result['data']),
+                        "citation": self.create_citation(context, result)}
         card_template = 'ndr_core/result_renderers/configured_fields_template.html'
 
         card_template_str = get_template(card_template).render(card_context)
         return mark_safe(card_template_str)
+
+    def create_citation(self, context, result):
+        """Creates a citation."""
+        exp = self.search_config.resolve(context).citation_expression
+        template_string = TemplateString(exp, result['data'], show_errors=False)
+        citation = template_string.get_formatted_string()
+        citation = template_string.sanitize_html(citation)
+        return mark_safe(citation)
 
     def create_grid(self, context, data):
         """Creates a grid of result fields."""
@@ -48,7 +57,7 @@ class RenderResultNode(template.Node):
             row += 1
             fields = []
             for column in result_card_fields.filter(field_row=row).order_by('field_column'):
-                field_html = self.create_field(context, column, data)
+                field_html = self.create_field(column, data)
                 fields.append(field_html)
             row_context = {"fields": fields}
             row_template_str = get_template(row_template).render(row_context)
@@ -56,11 +65,12 @@ class RenderResultNode(template.Node):
 
         return mark_safe(card_grid_str)
 
-    def create_field(self, context, field, data):
+    @staticmethod
+    def create_field(field, data):
         """Creates a result field."""
         field_template = 'ndr_core/result_renderers/elements/result_field.html'
         result_field = field.result_field
-        template_string = TemplateString(result_field.rich_expression, data, show_errors=False)
+        template_string = TemplateString(result_field.rich_expression, data, show_errors=True)
         field_content = template_string.get_formatted_string()
         field_content = template_string.sanitize_html(field_content)
 
@@ -81,7 +91,6 @@ class RenderResultNode(template.Node):
                 html_string += self.create_card(context, result)
             else:
                 # No result card fields configured, so we render the result as pretty json
-                print("INFO: No result card fields configured, so we render the result as pretty json")
                 card_context = {"result": result}
                 card_template = 'ndr_core/result_renderers/default_template.html'
                 html_string += get_template(card_template).render(card_context)
@@ -126,4 +135,3 @@ def url_deparse(value):
 
     # return urllib.parse.unquote(value)
     return value.replace('_sl_', '/')
-

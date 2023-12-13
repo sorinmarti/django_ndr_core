@@ -245,7 +245,7 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         """Returns the list choices as a list of tuples. This is used to render the dropdowns
         in the search form and result template lists."""
         if not self.field_type == self.FieldType.LIST and not self.field_type == self.FieldType.MULTI_LIST:
-            return {}
+            return []
 
         file_handle = StringIO(self.list_choices)
         reader = csv.reader(file_handle, delimiter=',')
@@ -256,12 +256,25 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         for row in reader:
             if row_number == 0:
                 header = row
+                print(row)
             else:
+
                 try:
                     val = row[header.index(f'value_{get_language()}')]
                 except ValueError:
                     val = row[header.index('value')]
-                result_list.append((row[header.index('key')], val))
+
+                try:
+                    searchable = header.index('is_searchable')
+                    searchable = row[searchable]
+                except ValueError:
+                    searchable = 'true'
+                except IndexError:
+                    searchable = 'true'
+
+                if searchable.lower() == 'true':
+                    result_list.append((row[0], val))
+
 
             row_number += 1
 
@@ -468,6 +481,10 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                                               "check this box.")
     """If the result has a normal and a compact view, check this box."""
 
+    compact_result_is_default = models.BooleanField(default=False,
+                                                    help_text="If the compact result view is the default, "
+                                                              "check this box.")
+
     page_size = models.IntegerField(default=10,
                                     verbose_name="Page Size",
                                     help_text="Size of the result page (e.g. 'How many results at once')")
@@ -482,6 +499,10 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                      verbose_name="Repository URL",
                                      help_text="URL to the data repository where this data is stored.")
     """URL to the repository's website."""
+
+    citation_expression = models.CharField(max_length=512, default=None, null=True, blank=True,
+                                           verbose_name="Citation Expression",
+                                           help_text="Expression to generate a citation for a result.")
 
     def __str__(self):
         return self.conf_name

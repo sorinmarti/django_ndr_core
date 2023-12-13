@@ -32,11 +32,20 @@ class TranslateForm(forms.Form):
         initial_values = {}
         for item in self.items:
             for field in self.translatable_fields:
+                values = {}
+                if isinstance(field, dict):
+                    values = field
+                    field = values['field']
+
+                if 'condition' in values:
+                    if item.__getattribute__(values['condition']['field']) not in values['condition']['values']:
+                        continue
+
                 self.fields[f"{field}_{item.pk}"] = forms.CharField(label=f"Translate: '{field}' for '{item.__getattribute__(field)}'",
                                                                     required=False,
                                                                     max_length=1000,
                                                                     help_text='')
-                if field.startswith('rich_'):
+                if 'widget' in values and values['widget'] == 'textarea':
                     self.fields[f"{field}_{item.pk}"].widget = forms.Textarea(attrs={'rows': 3})
 
                 initial_values[f"{field}_{item.pk}"] = self.get_initial_value(field, str(item.pk))
@@ -54,6 +63,15 @@ class TranslateForm(forms.Form):
 
             cols = []
             for field in self.translatable_fields:
+                values = {}
+                if isinstance(field, dict):
+                    values = field
+                    field = values['field']
+
+                if 'condition' in values:
+                    if item.__getattribute__(values['condition']['field']) not in values['condition']['values']:
+                        continue
+
                 cols.append(Column(f"{field}_{item.pk}", css_class=f'form-group col-{int(12/len(self.translatable_fields))}'),)
 
             form_row = Row(
@@ -81,7 +99,6 @@ class TranslateForm(forms.Form):
         """Saves the translations to the database. """
         self.is_valid()
 
-        print(self.cleaned_data)
         for item in self.items:
             for field in self.translatable_fields:
                 self.save_translation(str(item.pk), field, self.cleaned_data[f"{field}_{item.pk}"])
@@ -117,7 +134,11 @@ class TranslateFieldForm(TranslateForm):
     """Form to translate form field values """
 
     items = NdrCoreSearchField.objects.all()
-    translatable_fields = ['field_label', 'help_text']
+    translatable_fields = ['field_label', 'help_text',
+                           {'field': 'list_choices',
+                            'widget': 'textarea',
+                            'condition': {'field': 'field_type',
+                                          'values': [NdrCoreSearchField.FieldType.INFO_TEXT]}}]
     table_name = 'NdrCoreSearchField'
 
     def __init__(self, *args, **kwargs):
@@ -170,7 +191,7 @@ class TranslateResultForm(TranslateForm):
     """Form to translate settings values. """
 
     items = NdrCoreResultField.objects.all()
-    translatable_fields = ['rich_expression']
+    translatable_fields = [{'field': 'rich_expression', 'widget': 'textarea'}]
     table_name = 'NdrCoreResultField'
 
     def __init__(self, *args, **kwargs):

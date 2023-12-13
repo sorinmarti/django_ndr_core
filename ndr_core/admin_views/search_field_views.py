@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
 from ndr_core.admin_views.admin_views import AdminViewMixin
-from ndr_core.form_preview import get_search_form_image_from_raw_data
+from ndr_core.form_preview import PreviewImage
 from ndr_core.admin_forms.search_field_forms import SearchFieldCreateForm, SearchFieldEditForm
 
 from ndr_core.models import NdrCoreSearchField
@@ -52,5 +52,5 @@ def preview_search_form_image(request, img_config):
                 'size': int(config_row[2]),
                 'text': field.field_label,
                 'type': field.field_type})
-    image_data = get_search_form_image_from_raw_data(data)
+    image_data = PreviewImage().create_search_form_image_from_raw_data(data)
     return HttpResponse(image_data, content_type="image/png")

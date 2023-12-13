@@ -6,7 +6,7 @@ from django.views.generic import CreateView, UpdateView, DeleteView, FormView
 
 from ndr_core.admin_forms.result_card_forms import SearchConfigurationResultEditForm
 from ndr_core.admin_views.admin_views import AdminViewMixin
-from ndr_core.form_preview import get_search_form_image_from_raw_data
+from ndr_core.form_preview import PreviewImage
 from ndr_core.admin_forms.result_field_forms import ResultFieldCreateForm, ResultFieldEditForm
 from ndr_core.models import (
     NdrCoreResultField,
@@ -73,8 +73,8 @@ class SearchConfigurationResultEditView(AdminViewMixin, LoginRequiredMixin, Form
         """Returns the form for this view. """
         form = super().get_form(form_class=form_class)
         all_fields = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).result_card_fields.all()
-        normal_fields = all_fields.filter(result_card_group='normal')
-        compact_fields = all_fields.filter(result_card_group='compact')
+        normal_fields = all_fields.filter(result_card_group='normal').order_by('field_column').order_by('field_row')
+        compact_fields = all_fields.filter(result_card_group='compact').order_by('field_column').order_by('field_row')
 
         form_row = 0
         for field in normal_fields:
@@ -96,6 +96,8 @@ class SearchConfigurationResultEditView(AdminViewMixin, LoginRequiredMixin, Form
         """Creates or updates the result card configuration for a search configuration. """
         response = super().form_valid(form)
         conf_object = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
+        all_fields = conf_object.result_card_fields.all()
+        all_fields.delete()
 
         for row in range(20):
             fields = self.get_row_fields(row)
@@ -142,6 +144,7 @@ class SearchConfigurationResultEditView(AdminViewMixin, LoginRequiredMixin, Form
 
 def preview_result_card_image(request, img_config):
     """Creates a result card preview image of a result form configuration. """
+
     data = []
     config_rows = img_config.split(",")
     for row in config_rows:
@@ -152,7 +155,6 @@ def preview_result_card_image(request, img_config):
                 'row': int(config_row[0]),
                 'col': int(config_row[1]),
                 'size': int(config_row[2]),
-                'text': '',
-                'type': field.field_type})
-    image_data = get_search_form_image_from_raw_data(data)
+                'text': field.label})
+    image_data = PreviewImage().create_result_card_image_from_raw_data(data)
     return HttpResponse(image_data, content_type="image/png")

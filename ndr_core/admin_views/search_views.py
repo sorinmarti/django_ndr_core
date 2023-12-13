@@ -86,7 +86,8 @@ class SearchConfigurationFormEditView(AdminViewMixin, LoginRequiredMixin, FormVi
     def get_form(self, form_class=None):
         """Returns the form for this view. """
         form = super().get_form(form_class=form_class)
-        fields = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).search_form_fields.all()
+        fields = (NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).search_form_fields.all().
+                  order_by('field_column').order_by('field_row'))
 
         form_row = 0
         for field in fields:

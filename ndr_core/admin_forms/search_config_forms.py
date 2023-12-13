@@ -18,7 +18,8 @@ class SearchConfigurationForm(forms.ModelForm):
                   'api_type', 'api_connection_url',
                   'api_user_name', 'api_password', 'api_auth_key',
                   'search_id_field', 'sort_field', 'sort_order',
-                  'search_has_compact_result', 'page_size', 'compact_page_size', 'repository_url',
+                  'search_has_compact_result', 'compact_result_is_default', 'page_size',
+                  'compact_page_size', 'citation_expression', 'repository_url',
                   'has_simple_search', 'simple_search_first', 'simple_query_main_field',
                   'simple_query_label', 'simple_query_help_text',]
 
@@ -103,6 +104,13 @@ class SearchConfigurationForm(forms.ModelForm):
             Column('page_size', css_class='col-2'),
             Column('compact_page_size', css_class='col-2'),
             Column('repository_url', css_class='col-5'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('compact_result_is_default', css_class='col-3'),
+            Column('citation_expression', css_class='col-9'),
             css_class='form-row'
         )
         layout.append(form_row)

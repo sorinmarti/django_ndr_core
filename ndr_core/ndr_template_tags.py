@@ -126,10 +126,8 @@ class TextPreRenderer:
                 else:
                     kw = {'pk': element_id}
             element = element_class.objects.get(**kw)
-            # print(f"Element found {element_class} / {element_id}: {element}")
             return element
         except element_class.DoesNotExist:
-            # print(f"Element not found {element_class} / {element_id}")
             return None
 
     def get_pre_rendered_text(self):
