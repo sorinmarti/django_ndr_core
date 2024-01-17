@@ -89,6 +89,12 @@ class NdrSettings:
         return dir_name
 
     @staticmethod
+    def get_schema_path():
+        """Returns the ndr-app's static path. Convenience method. """
+        dir_name = f'{settings.MEDIA_ROOT}/schemas'
+        return dir_name
+
+    @staticmethod
     def get_images_path():
         """Returns the ndr-app's image path. Convenience method. """
         return f"{NdrSettings.get_static_path()}/images"

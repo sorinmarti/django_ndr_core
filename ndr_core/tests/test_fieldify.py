@@ -25,7 +25,7 @@ class TemplateStringTestCase(TestCase):
 
     def test_translated_field_value(self):
         """Tests a simple variable with the field filter."""
-        string = TemplateString("I want to see the {test_value|fieldify:field=tags}", self.test_data)
+        string = TemplateString("I want to see the {test_value|fieldify:tags}", self.test_data)
         activate('en')
         self.assertEqual(string.get_formatted_string(), "I want to see the Cat")
         activate('de')
@@ -33,7 +33,7 @@ class TemplateStringTestCase(TestCase):
 
     def test_translated_field_value_list(self):
         """Tests a simple variable with the field filter."""
-        string = TemplateString("I want to see the {test_list|fieldify:field=tags}", self.test_data)
+        string = TemplateString("I want to see the {test_list|fieldify=tags}", self.test_data)
         activate('en')
         self.assertEqual(string.get_formatted_string(), "I want to see the Fish, Dog, Guinea pig")
         activate('de')
@@ -41,7 +41,7 @@ class TemplateStringTestCase(TestCase):
 
     def test_translated_field_value_nested(self):
         """Tests a simple variable with the field filter."""
-        string = TemplateString("I want to see the {nested_data[nested_value]|fieldify:field=tags}", self.test_data)
+        string = TemplateString("I want to see the {nested_data[nested_value]|fieldify=tags}", self.test_data)
         activate('en')
         self.assertEqual(string.get_formatted_string(), "I want to see the Lion")
         activate('de')
@@ -49,7 +49,7 @@ class TemplateStringTestCase(TestCase):
 
     def test_translated_field_value_nested_list(self):
         """Tests a simple variable with the field filter."""
-        string = TemplateString("I want to see the {nested_data.nested_list|fieldify:field=tags}", self.test_data)
+        string = TemplateString("I want to see the {nested_data.nested_list|fieldify=tags}", self.test_data)
         activate('en')
         self.assertEqual(string.get_formatted_string(), "I want to see the Gazelle, Zebra, Buffalo")
         activate('de')

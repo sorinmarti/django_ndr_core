@@ -32,8 +32,15 @@ class ConfigureColorPalettes(AdminViewMixin, LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         """GET request for this view. """
         value = NdrCoreValue.objects.get(value_name='ui_color_scheme')
-        context = {'palettes': NdrCoreColorScheme.objects.all().order_by('scheme_label'),
-                   'palette':  NdrCoreColorScheme.objects.get(scheme_name=value.value_value)}
+
+        palettes = NdrCoreColorScheme.objects.all().order_by('scheme_label')
+        try:
+            palette = NdrCoreColorScheme.objects.get(scheme_name=value.value_value)
+        except NdrCoreColorScheme.DoesNotExist:
+            palette = palettes.first()
+
+        context = {'palettes': palettes,
+                   'palette':  palette}
 
         return render(self.request, template_name='ndr_core/admin_views/overview/configure_colors.html',
                       context=context)

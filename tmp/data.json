@@ -1,0 +1,164 @@
+[
+  {
+    "id": "ndrcore.org",
+    "schema": "https://ndrcore.org/schemas/ndr_core_installation.json",
+    "title": "NDR Core's Homepage",
+    "site": {
+      "url": "https://ndrcore.org/",
+      "ndr_version": "1.0"
+    },
+    "project": {
+      "name": "NDR Core's Homepage",
+      "subtitle": "A repository of NDR Core installations.",
+      "description": "NDR Core's Homepage is a NDR Core Installation."
+    },
+    "database": {
+      "schema": "https://ndrcore.org/schemas/ndr_core_installation.json",
+      "data_type": "ndr core installations",
+      "data_count": 7
+    },
+    "since": "2024-01-08",
+    "meta": {
+      "last_updated": "2024-01-08"
+    }
+  },
+  {
+    "id": "asia-directories.org",
+    "schema": "https://ndrcore.org/schemas/ndr_core_installation.json",
+    "title": "FOCAL- The Asia Directories",
+    "site": {
+      "url": "https://www.asia-directories.org/focal/",
+      "ndr_version": "0.1"
+    },
+    "project": {
+      "name": "FOCAL",
+      "subtitle": "The Asia Directories Database",
+      "description": "The FOCAL database lets you search therough 80 years of Foreign Residents in East Asia."
+    },
+    "database": {
+      "schema": "http://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.1.json",
+      "data_type": "person instances",
+      "data_count": 746152
+    },
+    "since": "2022-11-01",
+    "meta": {
+      "last_updated": "2024-01-08"
+    }
+  },
+  {
+    "id": "divisive-power.org",
+    "schema": "https://ndrcore.org/schemas/ndr_core_installation.json",
+    "title": "The Divisive Power Of Citizenship",
+    "site": {
+      "url": "https://www.divisive-power.org/",
+      "ndr_version": "0.1"
+    },
+    "project": {
+      "name": "The Divisive Power of Citizenship and Loyalty",
+      "subtitle": "The French Case",
+      "description": "This project is an outcome of the Europa Institute Basel Divisive Power of Citizenship research program, funded by Swiss National Science Foundation under grant 100011_184860/1."
+    },
+    "database": {
+      "schema": "https://schemata.hasdai.org/historic-persons/historic-person-entry-v1.0.4.json",
+      "data_type": "person instances",
+      "data_count": 48172
+    }
+    ,
+    "since": "2022-11-01",
+    "meta": {
+      "last_updated": "2024-01-08"
+    }
+  },
+  {
+    "id": "avisblatt.philhist.unibas.ch",
+    "schema": "https://ndrcore.org/schemas/ndr_core_installation.json",
+    "title": "The Avisblatt",
+    "site": {
+      "url": "https://avisblatt.philhist.unibas.ch/",
+      "ndr_version": "0.9"
+    },
+    "project": {
+      "name": "Printed Markets",
+      "subtitle": "The Basel Avisblatt 1729 - 1844",
+      "description": "Printed Markets is a research project on a new form of marketplace that emerged in Europe during the seventeenth and, for the most part, in the eighteenth century: the printed advertising market of the so-called 'Intelligenzblätter' (intelligencers)."
+    },
+    "database": {
+      "schema": "http://schemata.hasdai.org/historic-persons/historic-newspaper-snippet-v1.0.0.json",
+      "data_type": "newspaper snippets",
+      "data_count": 932459
+    },
+    "since": "2023-03-01",
+    "meta": {
+      "last_updated": "2024-01-08"
+    }
+  },
+  {
+    "id": "euro-maritime-networks.euro.unibas.ch",
+    "schema": "https://ndrcore.org/schemas/ndr_core_installation.json",
+    "title": "Euro-Maritime Networks",
+    "site": {
+      "url": "https://euro-maritime-networks.euro.unibas.ch/",
+      "ndr_version": "0.7"
+    },
+    "project": {
+      "name": "Euro Maritime Networks",
+      "subtitle": "Research Seminar Database",
+      "description": ""
+    },
+    "database": {
+      "schema": "https://euro-maritime-networks.euro.unibas.ch/schemas/ships-passage.json",
+      "data_type": "ship passage",
+      "data_count": 628
+    },
+    "since": "2023-09-01",
+    "meta": {
+      "last_updated": "2024-01-08"
+    }
+  },
+  {
+    "id": "bscc.philhist.unibas.ch",
+    "schema": "https://ndrcore.org/schemas/ndr_core_installation.json",
+    "title": "Euro-Maritime Networks",
+    "site": {
+      "url": "https://bscc.philhist.unibas.ch/",
+      "ndr_version": "0.5"
+    },
+    "project": {
+      "name": "BSCC",
+      "subtitle": "The British Chamber Of Commerce in Switzerland",
+      "description": ""
+    },
+    "database": {
+      "schema": "",
+      "data_type": "company instances",
+      "data_count": 2187
+    },
+    "since": "2023-01-01",
+    "meta": {
+      "last_updated": "2024-01-08"
+    }
+  },
+  {
+    "id": "mds.philhist.unibas.ch",
+    "schema": "https://ndrcore.org/schemas/ndr_core_installation.json",
+    "title": "Macht der Stimme",
+    "site": {
+      "url": "https://bscc.philhist.unibas.ch/",
+      "ndr_version": "0.9"
+    },
+    "project": {
+      "name": "Macht Der Stimme",
+      "subtitle": "Internal Test System",
+      "description": ""
+    },
+    "database": {
+      "schema": "",
+      "data_type": "person instances",
+      "data_count": 0
+    },
+    "since": "2024-01-08",
+    "meta": {
+      "last_updated": "2024-01-08"
+    }
+  }
+]

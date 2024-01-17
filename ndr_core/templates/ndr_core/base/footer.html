@@ -21,7 +21,7 @@
                         <ul class="navbar-nav mr-auto navbar-ul-items">
                             {% for nav_item in navigation %}
                                 <li class="nav-item">
-                                    <a href="{{ nav_item.url }}" target="_blank">{{ nav_item.label }}</a>
+                                    <a href="{{ nav_item.url }}" target="_blank" class="footer-link">{{ nav_item.label }}</a>
                                 </li>
                             {% endfor %}
                         </ul>
@@ -87,7 +87,7 @@
                 </div>
             </div>
 
-            <p class="text-muted font-italic small text-center">{{ footer_copyright_text }}</p>
+            <p class="powered-by font-italic small text-center">{{ footer_copyright_text }}</p>
         </footer>
 {% endif %}
     </div>

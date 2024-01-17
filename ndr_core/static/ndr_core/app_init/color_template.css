@@ -121,6 +121,18 @@ form {
     background: [[footer_bg]] !important;
 }
 
+.footer-link {
+    color: [[footer_link_color]] !important;
+}
+
+.footer-link:hover {
+    color: [[footer_link_hover_color]] !important;
+}
+
+.powered-by {
+    color: [[powered_by_color]] !important;
+}
+
 /* TEXT */
 .ndr-text-fg {
     color: [[text_color]] !important;
@@ -139,8 +151,12 @@ p {
 }
 
 /* NAVIGATION */
+.nav-link {
+    color: [[nav_link_color]] !important;
+}
+
 .nav-link.active {
-    color: [[title_color]] !important;
+    color: [[nav_active_color]] !important;
     text-decoration: none;
     font-weight: bold;
 }
@@ -149,6 +165,15 @@ p {
     text-decoration: none;
 }
 
-.nav-link.active:hover {
+.nav-link:hover {
     text-decoration: underline;
+}
+
+/* TABS */
+.nav-link.tab-link {
+    color: [[tab_title_color]] !important;
+}
+
+.nav-link.active.tab-link {
+    color: [[tab_active_title_color]] !important;
 }

@@ -241,7 +241,11 @@ class AdvancedSearchForm(_NdrCoreForm):
 
             # The form fields are grouped by row and column. The row is the outer loop.
             max_row = search_config.search_form_fields.all().aggregate(Max('field_row'))
-            for row in range(max_row['field_row__max']):
+            field_range = max_row['field_row__max']
+            if field_range is None:
+                field_range = 0
+
+            for row in range(field_range):
                 row += 1  # The row starts with 1, not 0.
                 form_row = Div(css_class='form-row')
                 # The column is the inner loop.

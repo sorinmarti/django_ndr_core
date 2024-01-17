@@ -45,7 +45,7 @@ class TemplateStringTestCase(TestCase):
         string = TemplateString("I want to see the {test_value|upper|pill:color=red}", self.test_data)
         self.assertEqual(string.get_variables(flatten=True), ['test_value'])
         self.assertEqual(string.variables[0].get_value(self.test_data),
-                         '<span class="badge badge-primary text-dark font-weight-normal" '
+                         '<span class="badge font-weight-normal text-dark" '
                          'style="color: red;">CAT</span>')
         self.assertEqual(
             string.get_formatted_string(),

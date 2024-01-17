@@ -701,6 +701,18 @@ class NdrCoreColorScheme(models.Model):
     link_color = ColorField(help_text='Color for links.')
     """Color for hrefs."""
 
+    nav_link_color = ColorField(help_text='Color navigation for links.')
+    """Color for hrefs."""
+
+    nav_active_color = ColorField(help_text='Color for active navigation links.')
+    """Color for hrefs."""
+
+    tab_title_color = ColorField(help_text='Color for tab titles.')
+    """Color for tab titles."""
+
+    tab_active_title_color = ColorField(help_text='Color for active tab titles.')
+    """Color for active tab titles."""
+
     form_field_bg = ColorField()
     """Background color of form fields."""
 
@@ -709,6 +721,15 @@ class NdrCoreColorScheme(models.Model):
 
     footer_bg = ColorField()
     """Background color of the footer."""
+
+    footer_link_color = ColorField()
+    """Color of links in the footer."""
+
+    footer_link_hover_color = ColorField()
+    """Color of links in the footer."""
+
+    powered_by_color = ColorField()
+    """Color of the powered by text."""
 
     accent_color_1 = ColorField(help_text='Accent color 1. Used as navigation background and the like.')
     """Accent color 1."""
@@ -733,7 +754,10 @@ class NdrCoreColorScheme(models.Model):
                 'second_button_color', 'second_button_text_color', 'second_button_hover_color',
                 'second_button_border_color',
                 'form_field_bg', 'form_field_fg',
-                'link_color', 'accent_color_1', 'accent_color_2', 'info_color', 'success_color', 'error_color']
+                'footer_link_color', 'footer_link_hover_color', 'powered_by_color',
+                'tab_title_color', 'tab_active_title_color',
+                'link_color', 'nav_link_color', 'nav_active_color',
+                'accent_color_1', 'accent_color_2', 'info_color', 'success_color', 'error_color']
 
     def __str__(self):
         return self.scheme_label

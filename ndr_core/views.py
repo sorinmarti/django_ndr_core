@@ -1,5 +1,7 @@
 """This file contains the main NDR Core views. All Page views are defined here.
 For the views for the administration interface, see admin_views/* """
+import os
+
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -85,6 +87,21 @@ def dispatch(request, ndr_page=None):
                                   ndr_page=page)(request)
     except NdrCorePage.DoesNotExist:
         return TemplateView.as_view(template_name='ndr_core/not_found.html')(request)
+
+
+def display_schema_or_404(request, schema_name):
+    """Displays a schema or 404."""
+
+    # Find the schema in the media files
+    # If it exists, display it, otherwise display a 404
+
+    schema_path = NdrSettings.get_schema_path()
+    if schema_name in os.listdir(schema_path):
+        with open(f'{schema_path}/{schema_name}', 'r') as schema_file:
+            schema = schema_file.read()
+            return HttpResponse(schema, content_type='text/plain')
+
+    return render(request, 'ndr_core/404.html', status=404) # TODO implement
 
 
 class _NdrCoreView(View):
