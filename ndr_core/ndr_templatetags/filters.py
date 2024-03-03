@@ -10,22 +10,22 @@ from ndr_core.ndr_templatetags.html_element import HTMLElement
 
 def get_get_filter_class(filter_name):
     """Returns the filter class."""
-    if filter_name in ['lower', 'upper', 'title', 'capitalize']:
+    if filter_name in ["lower", "upper", "title", "capitalize"]:
         return StringFilter
-    if filter_name == 'bool':
+    if filter_name == "bool":
         return BoolFilter
-    if filter_name == 'fieldify':
+    if filter_name == "fieldify":
         return FieldTemplateFilter
-    if filter_name in ['badge', 'pill']:
+    if filter_name in ["badge", "pill"]:
         return BadgeTemplateFilter
-    if filter_name == 'img':
+    if filter_name == "img":
         return ImageTemplateFilter
 
     raise ValueError(f"Filter {filter_name} not found.")
 
 
 class StringFilter(AbstractFilter):
-    """ A class to represent a template filter. """
+    """A class to represent a template filter."""
 
     def needed_attributes(self):
         return []
@@ -38,20 +38,19 @@ class StringFilter(AbstractFilter):
 
     def get_rendered_value(self):
         """Returns the formatted string."""
-        if self.filter_name == 'upper':
+        if self.filter_name == "upper":
             return self.get_value().upper()
-        if self.filter_name == 'lower':
+        if self.filter_name == "lower":
             return self.get_value().lower()
-        if self.filter_name == 'title':
+        if self.filter_name == "title":
             return self.get_value().title()
-        if self.filter_name == 'capitalize':
+        if self.filter_name == "capitalize":
             return self.get_value().capitalize()
 
         return self.get_value()
 
 
 class BoolFilter(AbstractFilter):
-
     def needed_attributes(self):
         return []
 
@@ -59,15 +58,15 @@ class BoolFilter(AbstractFilter):
         return []
 
     def needed_options(self):
-        return ['o0', 'o1']
+        return ["o0", "o1"]
 
     def get_rendered_value(self):
         true_value = "True"
-        if self.get_configuration('o0'):
-            true_value = self.get_configuration('o0')
+        if self.get_configuration("o0"):
+            true_value = self.get_configuration("o0")
         false_value = "False"
-        if self.get_configuration('o1'):
-            false_value = self.get_configuration('o1')
+        if self.get_configuration("o1"):
+            false_value = self.get_configuration("o1")
 
         if isinstance(self.value, bool):
             if self.value:
@@ -75,7 +74,7 @@ class BoolFilter(AbstractFilter):
             return self.replace_key_values(false_value)
 
         if isinstance(self.value, str):
-            if self.value.lower() == 'true':
+            if self.value.lower() == "true":
                 return self.replace_key_values(true_value)
             return self.replace_key_values(false_value)
 
@@ -83,7 +82,7 @@ class BoolFilter(AbstractFilter):
 
 
 class FieldTemplateFilter(AbstractFilter):
-    """ A class to represent a template filter. """
+    """A class to represent a template filter."""
 
     field_value = ""
     search_field = None
@@ -91,10 +90,13 @@ class FieldTemplateFilter(AbstractFilter):
     def __init__(self, filter_name, value, filter_configurations):
         super().__init__(filter_name, value, filter_configurations)
         try:
-            self.search_field = NdrCoreSearchField.objects.get(field_name=self.get_configuration('o0'))
+            self.search_field = NdrCoreSearchField.objects.get(
+                field_name=self.get_configuration("o0")
+            )
             try:
-                self.field_value =\
-                    self.search_field.get_list_choices_as_dict()[self.value][self.get_language_value_field_name()]
+                self.field_value = self.search_field.get_list_choices_as_dict()[
+                    self.value
+                ][self.get_language_value_field_name()]
             except KeyError:
                 self.field_value = self.value
 
@@ -108,7 +110,7 @@ class FieldTemplateFilter(AbstractFilter):
         return []
 
     def needed_options(self):
-        return ['o0']
+        return ["o0"]
 
     def get_rendered_value(self):
         """Returns the formatted string."""
@@ -119,13 +121,13 @@ class FieldTemplateFilter(AbstractFilter):
 
 
 class BadgeTemplateFilter(AbstractFilter):
-    """ A class to represent a template filter. """
+    """A class to represent a template filter."""
 
     def needed_attributes(self):
         return []
 
     def allowed_attributes(self):
-        return ['field', 'color', 'bg']
+        return ["field", "color", "bg", "tt"]
 
     def needed_options(self):
         return []
@@ -133,29 +135,51 @@ class BadgeTemplateFilter(AbstractFilter):
     def get_rendered_value(self):
         """Returns the formatted string."""
 
-        badge_element = HTMLElement('span')
-        badge_element.add_attribute('class', 'badge')
-        badge_element.add_attribute('class', 'text-dark')
-        badge_element.add_attribute('class', 'font-weight-normal')
+        badge_element = HTMLElement("span")
+        badge_element.add_attribute("class", "badge")
+        badge_element.add_attribute("class", "text-dark")
+        badge_element.add_attribute("class", "font-weight-normal")
+
+        if self.get_configuration("tt"):
+            badge_element.add_attribute("data-toggle", "tooltip")
+            badge_element.add_attribute("data-placement", "top")
 
         field_options = None
-        if self.get_configuration('field'):
-            field = NdrCoreSearchField.objects.get(field_name=self.get_configuration('field'))
-            all_field_options = field.get_list_choices_as_dict()
-            field_options = all_field_options[self.value]
-            if "is_printable" in field_options:
-                if not field_options["is_printable"].lower() == "false":
-                    return None
-                badge_element.add_content(field_options[self.get_language_value_field_name()])
+        if self.get_configuration("field"):
+            # The 'field' option is set. Try to get a translated value from the NDRCoreSearchField
+            try:
+                field = NdrCoreSearchField.objects.get(
+                    field_name=self.get_configuration("field")
+                )
+                all_field_options = field.get_list_choices_as_dict()
+                field_options = all_field_options[self.value]
+                if "is_printable" in field_options:
+                    if field_options["is_printable"].lower() == "false":
+                        return None
+                # If 'is_printable' is not set, it is always printed
+                badge_element.add_content(
+                    field_options[self.get_language_value_field_name()]
+                )
+                if self.get_configuration("tt"):
+                    tt_content = self.get_configuration("tt")
+                    if tt_content == "__field__":
+                        tt_text = field_options[self.get_language_info_field_name()]
+                    else:
+                        tt_text = tt_content
+                    badge_element.add_attribute("title", tt_text)
+            except NdrCoreSearchField.DoesNotExist:
+                badge_element.add_content("Field not found")  # TODO: internationalize
         else:
             badge_element.add_content(self.value)
 
-        if self.get_configuration('color'):
-            badge_element.manage_color_attribute('color', self.get_configuration('color'),
-                                                 self.value, field_options)
-        if self.get_configuration('bg'):
-            badge_element.manage_color_attribute('bg', self.get_configuration('bg'),
-                                                 self.value, field_options)
+        if self.get_configuration("color"):
+            badge_element.manage_color_attribute(
+                "color", self.get_configuration("color"), self.value, field_options
+            )
+        if self.get_configuration("bg"):
+            badge_element.manage_color_attribute(
+                "bg", self.get_configuration("bg"), self.value, field_options
+            )
 
         return str(badge_element)
 
@@ -165,7 +189,7 @@ class ImageTemplateFilter(AbstractFilter):
         return []
 
     def allowed_attributes(self):
-        return ['iiif_resize']
+        return ["iiif_resize"]
 
     def needed_options(self):
         return []
@@ -173,13 +197,15 @@ class ImageTemplateFilter(AbstractFilter):
     def get_rendered_value(self):
         url = self.value
 
-        if self.get_configuration('iiif_resize'):
-            url = url.replace('/full/0/default.',
-                              f'/pct:{self.filter_configurations["iiif_resize"]}/0/default.')
+        if self.get_configuration("iiif_resize"):
+            url = url.replace(
+                "/full/0/default.",
+                f'/pct:{self.filter_configurations["iiif_resize"]}/0/default.',
+            )
 
-        element = HTMLElement('img')
-        element.add_attribute('src', url)
-        element.add_attribute('class', 'img-fluid')
-        element.add_attribute('alt', 'Responsive image')
+        element = HTMLElement("img")
+        element.add_attribute("src", url)
+        element.add_attribute("class", "img-fluid")
+        element.add_attribute("alt", "Responsive image")
 
         return str(element)
