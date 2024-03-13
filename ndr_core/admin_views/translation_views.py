@@ -2,22 +2,10 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.utils.translation import get_language_info
 from django.views import View
 
 from ndr_core.admin_views.admin_views import AdminViewMixin
-from ndr_core.models import NdrCoreTranslation, NdrCoreValue
-
-
-def get_available_languages():
-    """Returns a list of available languages."""
-
-    languages = NdrCoreValue.objects.get(value_name='available_languages').get_value()
-    available_languages = []
-    for lang in languages:
-        info = get_language_info(lang)
-        available_languages.append((lang, info['name_local']))
-    return available_languages
+from ndr_core.models import NdrCoreTranslation, get_available_languages
 
 
 class SelectTranslationView(AdminViewMixin, LoginRequiredMixin, View):

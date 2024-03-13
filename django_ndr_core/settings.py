@@ -148,6 +148,7 @@ LOGIN_REDIRECT_URL = reverse_lazy('ndr_core:dashboard')
 """Overwrites the default urls for the django authentication system."""
 
 # NDR FORMS SETTINGS
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 """Django crispy forms - used to render forms."""
 
@@ -204,3 +205,24 @@ SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 RECAPTCHA_PUBLIC_KEY = 'y0uR3c4PtCh4pUbL1cK3y'
 RECAPTCHA_PRIVATE_KEY = 'y0uR3c4PtCh4pr1v4t3K3y'
 """Recaptcha key to use for the captcha functionality for the contact form.. """
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+        },
+        'django.template': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
+}

@@ -1,5 +1,6 @@
 import json
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 from django.utils.translation import get_language
 
@@ -20,6 +21,10 @@ def get_get_filter_class(filter_name):
         return BadgeTemplateFilter
     if filter_name == "img":
         return ImageTemplateFilter
+    if filter_name == "date":
+        return DateFilter
+    if filter_name == "format":
+        return NumberFilter
 
     raise ValueError(f"Filter {filter_name} not found.")
 
@@ -209,3 +214,52 @@ class ImageTemplateFilter(AbstractFilter):
         element.add_attribute("alt", "Responsive image")
 
         return str(element)
+
+
+class DateFilter(AbstractFilter):
+    def needed_attributes(self):
+        return []
+
+    def allowed_attributes(self):
+        return ["format"]
+
+    def needed_options(self):
+        return ["o0"]
+
+    def get_rendered_value(self):
+        """Returns the formatted string."""
+        common_formats = ["%Y-%m-%d"]
+        if self.get_configuration("format"):
+            common_formats = [self.get_configuration("format")]
+
+        for d_format in common_formats:
+            try:
+                date_object = datetime.strptime(self.value, d_format)
+                return date_object.strftime(self.get_configuration("o0"))
+            except ValueError:
+                pass
+
+        return self.get_value()
+
+
+class NumberFilter(AbstractFilter):
+    def needed_attributes(self):
+        return []
+
+    def allowed_attributes(self):
+        return []
+
+    def needed_options(self):
+        return ['o0']
+
+    def get_rendered_value(self):
+        """Returns the formatted string."""
+        number_value = int(self.get_value())
+        try:
+            return ("{:" + self.get_configuration('o0') + "}").format(number_value)
+        except ValueError:
+            return self.get_value()
+
+    def get_value(self):
+        """Returns the formatted string."""
+        return self.value

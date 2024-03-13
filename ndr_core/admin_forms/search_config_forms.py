@@ -21,7 +21,8 @@ class SearchConfigurationForm(forms.ModelForm):
                   'search_has_compact_result', 'compact_result_is_default', 'page_size',
                   'compact_page_size', 'citation_expression', 'repository_url',
                   'has_simple_search', 'simple_search_first', 'simple_query_main_field',
-                  'simple_query_label', 'simple_query_help_text',]
+                  'simple_query_label', 'simple_query_help_text',
+                  'manifest_relation_expression', 'manifest_page_expression']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -139,6 +140,13 @@ class SearchConfigurationForm(forms.ModelForm):
         form_row = Row(
             Column('simple_query_label', css_class='col-6'),
             Column('simple_query_help_text', css_class='col-6'),
+            css_class='form-row'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('manifest_relation_expression', css_class='col-8'),
+            Column('manifest_page_expression', css_class='col-4'),
             css_class='form-row'
         )
         layout.append(form_row)

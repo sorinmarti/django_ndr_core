@@ -19,7 +19,6 @@ from django.conf import settings
 
 from ndr_core.exceptions import NdrCorePageNotFound, PreRenderError
 from ndr_core.forms.forms_contact import ContactForm
-from ndr_core.forms.forms_manifest import ManifestSelectionForm
 from ndr_core.forms.forms_search import AdvancedSearchForm
 
 from ndr_core.models import (
@@ -30,6 +29,7 @@ from ndr_core.models import (
     NdrCoreSearchConfiguration,
     NdrCoreValue,
     NdrCoreManifest,
+    NdrCoreSearchField
 )
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
@@ -436,7 +436,7 @@ Sitemap: { sitemap_url }"""
 def manifest_url_view(request, manifest_id):
     """Returns a manifest URL. """
     try:
-        manifest = NdrCoreManifest.objects.get(pk=int(manifest_id))
+        manifest = NdrCoreManifest.objects.get(identifier=manifest_id)
     except NdrCoreManifest.DoesNotExist:
         return JsonResponse({'error': 'Manifest not found.'}, status=404)
 

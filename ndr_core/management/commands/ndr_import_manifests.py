@@ -29,7 +29,8 @@ class Command(BaseCommand):
                     issue_id = data["@id"]
                     title = data["label"]
 
-                NdrCoreManifest.objects.create(title=title,
+                NdrCoreManifest.objects.create(identifier=f"{year}-{issue}",
+                                               title=title,
                                                file=f"uploads/manifests/{filename}",
                                                manifest_group_id=1,
                                                order_value_1=year,

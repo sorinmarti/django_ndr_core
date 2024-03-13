@@ -1,6 +1,6 @@
 """Views for the search field configuration pages. """
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 
@@ -54,3 +54,21 @@ def preview_search_form_image(request, img_config):
                 'type': field.field_type})
     image_data = PreviewImage().create_search_form_image_from_raw_data(data)
     return HttpResponse(image_data, content_type="image/png")
+
+
+def get_field_list_choices(request, field_name):
+    """Returns the list choices for a search field. """
+    try:
+        field = NdrCoreSearchField.objects.get(pk=field_name)
+        return JsonResponse(field.get_list_choices_as_dict(as_list=True), safe=False)
+    except NdrCoreSearchField.DoesNotExist:
+        return JsonResponse({"error": "Field not found."})
+
+
+def get_field_list_header(request, field_name):
+    """Returns the list choices for a search field. """
+    try:
+        field = NdrCoreSearchField.objects.get(pk=field_name)
+        return JsonResponse(field.get_list_header(), safe=False)
+    except NdrCoreSearchField.DoesNotExist:
+        return JsonResponse({"error": "Field not found."})

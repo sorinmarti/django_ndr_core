@@ -15,7 +15,7 @@ from ndr_core.forms.forms_base import _NdrCoreForm
 from ndr_core.forms.widgets import (
     BootstrapSwitchWidget,
     NdrCoreFormSubmit,
-    FilteredListWidget,
+    FilteredListWidget
 )
 
 
@@ -91,7 +91,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                         help_text=help_text,
                         lowest_number=int(search_field.lower_value)
                         if search_field.lower_value is not None
-                        else 1,
+                        else 0,
                         highest_number=int(search_field.upper_value)
                         if search_field.upper_value is not None
                         else 999999,
@@ -108,6 +108,16 @@ class AdvancedSearchForm(_NdrCoreForm):
                         ),
                         initial=search_field.get_initial_value(),
                     )
+                if search_field.field_type == search_field.FieldType.BOOLEAN_LIST:
+                    form_field = forms.MultipleChoiceField(
+                        label=search_field.field_label,
+                        choices=search_field.get_list_choices(),
+                        required=search_field.field_required,
+                        help_text=help_text,
+                        initial=search_field.get_initial_value(),
+                        widget=forms.CheckboxSelectMultiple,
+                    )
+
                 # Date field
                 if search_field.field_type == search_field.FieldType.DATE:
                     form_field = forms.DateField(
@@ -167,7 +177,6 @@ class AdvancedSearchForm(_NdrCoreForm):
                         widget=FilteredListWidget(
                             attrs={"data-minimum-input-length": 0}
                         ),
-                        # widget=SwitchGroupWidget(),
                         required=search_field.field_required,
                         help_text=help_text,
                         initial=search_field.get_initial_value(),
@@ -291,14 +300,9 @@ class AdvancedSearchForm(_NdrCoreForm):
                 row += 1  # The row starts with 1, not 0.
                 form_row = Div(css_class="form-row")
                 # The column is the inner loop.
-                for column in search_config.search_form_fields.filter(
-                    field_row=row
-                ).order_by("field_column"):
+                for column in search_config.search_form_fields.filter(field_row=row).order_by("field_column"):
                     # Type is INFO_TEXT, so we create a div with the text.
-                    if (
-                        column.search_field.field_type
-                        == column.search_field.FieldType.INFO_TEXT
-                    ):
+                    if column.search_field.field_type == column.search_field.FieldType.INFO_TEXT:
                         try:
                             info_text_translation = NdrCoreTranslation.objects.get(
                                 object_id=column.search_field.field_name,
@@ -308,7 +312,6 @@ class AdvancedSearchForm(_NdrCoreForm):
                             )
                             info_text = info_text_translation.translation
                         except NdrCoreTranslation.DoesNotExist:
-                            print("Not found", column.search_field.field_name)
                             info_text = column.search_field.list_choices
 
                         form_field = Div(
@@ -323,7 +326,6 @@ class AdvancedSearchForm(_NdrCoreForm):
                             ),
                             css_class=f"col-md-{column.field_size}",
                         )
-                    # All other types are form fields.
                     else:
                         form_field = Field(
                             f"{search_config.conf_name}_{column.search_field.field_name}",

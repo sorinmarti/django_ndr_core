@@ -7,8 +7,13 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from ndr_core.geo_ip_utils import get_user_ip, get_geolocation
-from ndr_core.models import NdrCoreValue, NdrCoreSearchStatisticEntry, NdrCoreManifest
+from ndr_core.models import (NdrCoreValue,
+                             NdrCoreSearchStatisticEntry,
+                             NdrCoreManifest,
+                             NdrCoreUiElementItem,
+                             NdrCorePage)
 from ndr_core.templatetags.ndr_utils import url_parse
+from ndr_core.ndr_templatetags.template_string import TemplateString
 
 
 class BaseResult(ABC):
@@ -176,24 +181,40 @@ class BaseResult(ABC):
             })
 
         # Show Source
-        # TODO Waaaaaaaaaaaaaaaaaahhhhhhhhhh!!!!!!!!!!!!!
-        try:
-            """manifest_id = NdrCoreManifest.objects.get(order_value_1=result['date']['ref'].split('-')[0],
-                                                      order_value_2=f"{result['source']['issue']:03d}").id"""
-            manifest_id = NdrCoreManifest.objects.get(id=1).id
-            view_source_url = (reverse('ndr:ndr_view', kwargs={'ndr_page': 'sources_viewer'}) +
-                               f"?manifest={manifest_id}")
+        # If a search config has a 'manifest_relation_expression', a button to view the source is added
+        # In order for that to work, the manifest_relation_expression must point to a manifest id.
+        # Then, the group this manifest belongs to has to be used in an ManifestViewer UI-Element
+        # and the UI-Element has to be used on a page.
+        if self.search_configuration.manifest_relation_expression is not None and \
+                self.search_configuration.manifest_relation_expression != "":
 
-            result_options.append({
-                "href": view_source_url,
-                "label": '<i class="fa-regular fa-book"></i>',
-                "class": "btn btn-sm btn-secondary",
-                "data-toggle": "tooltip",
-                "data-placement": "top",
-                "title": _("View this snippet in context")
-            })
-        except NdrCoreManifest.DoesNotExist:
-            pass
+            manifest_id_ts = TemplateString(self.search_configuration.manifest_relation_expression, result)
+            page_number_ts = TemplateString(self.search_configuration.manifest_page_expression, result)
+
+            try:
+                # This is the manifest id as composed by the template string
+                manifest_id = manifest_id_ts.get_formatted_string()
+                # This is the manifest group object which is associated with the manifest
+                manifest_group = NdrCoreManifest.objects.get(identifier=manifest_id).manifest_group
+                # This is the first UI-Element which is associated with the manifest group
+                first_ui_element = NdrCoreUiElementItem.objects.filter(manifest_group=manifest_group).first()
+
+                if first_ui_element is not None:
+                    first_page_w_ui_element = NdrCorePage.objects.filter(template_text__icontains=f"[[manifest_viewer|{first_ui_element.belongs_to.name}]]").first()
+                    if first_page_w_ui_element is not None:
+                        view_source_url = (reverse('ndr:ndr_view', kwargs={'ndr_page': first_page_w_ui_element.view_name}) +
+                                           f"?manifest={manifest_id}&page={page_number_ts.get_formatted_string()}")
+
+                        result_options.append({
+                            "href": view_source_url,
+                            "label": '<i class="fa-regular fa-book"></i>',
+                            "class": "btn btn-sm btn-secondary",
+                            "data-toggle": "tooltip",
+                            "data-placement": "top",
+                            "title": _("View this snippet in context")
+                        })
+            except NdrCoreManifest.DoesNotExist as e:
+                pass
 
         # Copy Citation
         result_options.append({

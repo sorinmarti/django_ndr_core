@@ -2,7 +2,7 @@
 from django import template
 from django.utils.translation import get_language
 
-from ndr_core.models import NdrCoreValue, NdrCoreImage
+from ndr_core.models import NdrCoreValue, NdrCoreImage, get_available_languages
 from ndr_core.ndr_settings import NdrSettings
 
 register = template.Library()
@@ -37,21 +37,9 @@ def get_version(name):
 
 
 @register.simple_tag(name="ndr_available_languages")
-def get_available_languages():
+def tag_get_available_languages():
     """Returns a list of available languages."""
-    try:
-        base_language = NdrCoreValue.objects.get(value_name="ndr_language")
-        additional_languages = NdrCoreValue.objects.get(
-            value_name="available_languages"
-        )
-
-        langs = [base_language.get_value()]
-        for lang in additional_languages.get_value():
-            langs.append(lang)
-
-        return langs
-    except NdrCoreValue.DoesNotExist:
-        return ""
+    return [('en', 'English')] + get_available_languages()
 
 
 @register.simple_tag(name="logo_image_path")
