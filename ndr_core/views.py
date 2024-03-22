@@ -278,8 +278,9 @@ class SearchView(_NdrCoreSearchView):
                     search_config = self.get_search_config_from_name(requested_search_actual)
 
                     api_factory = ApiFactory(search_config)
+                    query_key = f"search_term_{search_config.conf_name}"
                     query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
-                    query_string = query_obj.get_simple_query(request.GET.get('search_term', ''),
+                    query_string = query_obj.get_simple_query(request.GET.get(query_key, ''),
                                                               request.GET.get("page", 1),
                                                               and_or=request.GET.get('and_or_field', 'and'))
                 # An advanced search is called
