@@ -6,8 +6,7 @@ class ApiNinjasQuery(BaseQuery):
     """Simple implementation of the ninja-api API. """
 
     def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
-        """ Not Implemented """
-        return None
+        return self.get_base_string() + "?name=" + search_term
 
     def get_advanced_query(self, *kwargs):
         query = self.get_base_string() + "?"
