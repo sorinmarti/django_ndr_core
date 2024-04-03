@@ -105,6 +105,8 @@ class TemplateStringVariable:
                     return filtered_values
                 return self.apply_filters(self.get_raw_value(data))
             return raw_value
+        except IndexError as e:
+            raise IndexError(f"Key not found in list: {e}") from e
         except KeyError as e:
             raise KeyError(f"Key not found in data: {e}") from e
         except ValueError as e:
@@ -223,6 +225,8 @@ class TemplateString:
                 if isinstance(data, list):
                     data = self.join_list(variable, data)
                 formatted_string = formatted_string.replace(f"{{{variable.raw_variable}}}", str(data))
+            except IndexError as e:
+                formatted_string = formatted_string.replace(f"{{{variable.raw_variable}}}", self.get_error(e))
             except KeyError as e:
                 formatted_string = formatted_string.replace(f"{{{variable.raw_variable}}}", self.get_error(e))
             except ValueError as e:
