@@ -3,12 +3,21 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column
 from django import forms
 
+from ndr_core.forms.widgets import CSVTextEditorWidget
 from ndr_core.admin_forms.admin_forms import get_form_buttons
 from ndr_core.models import NdrCoreSearchField
 
 
 class SearchFieldForm(forms.ModelForm):
     """Form to create or edit a search field form. """
+
+    def __init__(self, *args, **kwargs):
+        """Initializes the form with the provided arguments."""
+        super().__init__(*args, **kwargs)
+
+        """self.fields['list_choices'] = forms.CharField(widget=CSVTextEditorWidget(
+            attrs={'instance': kwargs.get('instance', None)}
+        ))"""
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""

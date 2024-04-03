@@ -91,7 +91,7 @@ class HTMLElement:
         The value can be a bootstrap class name, a color name, a hex value, a rgb value, a hsl value,
         a value from the data dictionary."""
 
-        print(option_name, option_value, value, data)
+        # print(option_name, option_value, value, data)
 
         if option_value in self.COLOR_CLASSES:
             self.add_attribute('class', f"badge-{value}")

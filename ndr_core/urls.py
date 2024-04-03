@@ -16,7 +16,8 @@ from ndr_core.admin_views.search_field_views import (
     SearchFieldCreateView,
     SearchFieldEditView,
     preview_search_form_image,
-    SearchFieldDeleteView
+    SearchFieldDeleteView,
+    get_field_list_choices, get_field_list_header
 )
 from ndr_core.admin_views.seo_views import RobotsFileView, SitemapFileView, ConnectWithNdrCoreOrgView
 from ndr_core.admin_views.translation_views import (
@@ -272,6 +273,8 @@ urlpatterns = [
          name='preview_search_form_image'),
     path('configure/search/result/preview/<str:img_config>/', preview_result_card_image,
          name='preview_result_card_image'),
+    path('configure/search/ajax/field/<str:field_name>/choices/', get_field_list_choices, name='get_field_choices'),
+    path('configure/search/ajax/field/<str:field_name>/header/', get_field_list_header, name='get_field_header'),
 
     # SEARCH STATS
     path('configure/statistics/', StatisticsView.as_view(), name='search_statistics'),

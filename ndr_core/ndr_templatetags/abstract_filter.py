@@ -4,7 +4,7 @@ from django.utils.translation import get_language
 
 
 class AbstractFilter(ABC):
-    """ A class to represent a filter. """
+    """A class to represent a filter."""
 
     filter_name = ""
     value = ""
@@ -36,15 +36,23 @@ class AbstractFilter(ABC):
     def check_configuration(self):
         for needed_option in self.needed_options():
             if not self.get_configuration(needed_option):
-                raise ValueError(f"Filter {self.filter_name} requires option {needed_option}.")
+                raise ValueError(
+                    f"Filter {self.filter_name} requires option {needed_option}."
+                )
         for needed_attribute in self.needed_attributes():
             if not self.get_configuration(needed_attribute):
-                raise ValueError(f"Filter {self.filter_name} requires attribute {needed_attribute}.")
+                raise ValueError(
+                    f"Filter {self.filter_name} requires attribute {needed_attribute}."
+                )
         for attribute in self.filter_configurations:
-            if (attribute not in self.allowed_attributes()
-                    and attribute not in self.needed_attributes()
-                    and attribute not in self.needed_options()):
-                raise ValueError(f"Filter {self.filter_name} does not allow attribute {attribute}.")
+            if (
+                attribute not in self.allowed_attributes()
+                and attribute not in self.needed_attributes()
+                and attribute not in self.needed_options()
+            ):
+                raise ValueError(
+                    f"Filter {self.filter_name} does not allow attribute {attribute}."
+                )
 
     def get_value(self):
         """Returns the formatted string."""
@@ -62,16 +70,25 @@ class AbstractFilter(ABC):
 
     @staticmethod
     def replace_key_values(value):
-        """ Replaces a value if it is a key value"""
-        if value == '__none__':
-            return ''
+        """Replaces a value if it is a key value"""
+        if value == "__none__":
+            return ""
         return value
 
     @staticmethod
     def get_language_value_field_name():
         """Returns the language value field name."""
-        value_field_name = 'value'
+        value_field_name = "value"
         language = get_language()
-        if language != 'en':
-            value_field_name = f'value_{language}'
+        if language != "en":
+            value_field_name = f"value_{language}"
+        return value_field_name
+
+    @staticmethod
+    def get_language_info_field_name():
+        """Returns the language value field name."""
+        value_field_name = "info"
+        language = get_language()
+        if language != "en":
+            value_field_name = f"info_{language}"
         return value_field_name

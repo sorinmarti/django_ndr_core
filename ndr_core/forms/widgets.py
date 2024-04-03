@@ -1,9 +1,75 @@
 """Widgets for crispy forms. """
 from crispy_forms.layout import BaseInput
 from django import forms
+from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_select2 import forms as s2forms
 from ndr_core.ndr_helpers import get_search_field_config
+
+
+class CSVTextEditorWidget(forms.Textarea):
+    """Creates a text area for crispy forms. """
+
+    instance = None
+    def __init__(self, attrs=None):
+        """Initializes the widget. """
+        self.instance = attrs.get('instance', None)
+        super().__init__()
+
+    class Media:
+        """Add the required media for the widget. """
+        css = {
+            'all': ('ndr_core/plugins/tabulator/css/tabulator.min.css',)
+        }
+        js = ('ndr_core/plugins/tabulator/js/tabulator.min.js',)
+
+    def render(self, name, value, attrs=None, renderer=None):
+        """Renders the widget. """
+        if self.instance is None:
+            return super().render(name, value, attrs, renderer)
+
+        ajax_url = reverse('ndr_core:get_field_choices', kwargs={'field_name': self.instance.pk})
+        header_url = reverse('ndr_core:get_field_header', kwargs={'field_name': self.instance.pk})
+
+        script = f"""
+<script>
+    $.ajax({{url: "{header_url}", success: function(result){{
+        let header = result;
+        header[header.length -1]['cellClick'] = function(e, cell){{
+            if(confirm('Are you sure you want to delete this entry?')){{
+                cell.getRow().delete();
+            }}
+        }};
+        
+        var data_count = 0;
+        var table = new Tabulator("#{name}-table", {{
+            ajaxURL: "{ajax_url}",
+            index: "key",
+            movableRows: true,
+            addRowPos: "bottom",
+            layout: "fitDataFill",
+            height: "311px",
+            columns: result
+        }});
+        
+        table.on("dataLoaded", function(data){{
+            data_count = data.length;
+        }});
+        
+        document.getElementById("add-row").addEventListener("click", function(){{
+            table.addRow({{'key': data_count}});
+            data_count++;
+        }});
+        
+    }}}});
+    
+</script>"""
+        html = (f"""
+        <button class="btn btn-sm btn-secondary" type="button" id="add-row" >Add Row</button>
+        <div id="{name}-table"></div>
+        {script}
+        """)
+        return mark_safe(html)
 
 
 class BootstrapSwitchWidget(forms.Widget):
@@ -19,23 +85,6 @@ class BootstrapSwitchWidget(forms.Widget):
             <label class="custom-control-label small" for="{attrs["id"]}">{ self.attrs.get("label", "") }</label>
         </div>
         """
-        return mark_safe(html)
-
-
-class SwitchGroupWidget(forms.Widget):
-    """Creates a group of 3 switches for crispy forms. """
-
-    def render(self, name, value, attrs=None, renderer=None):
-        html = '<div class="form-group">'
-        for x in range(3):
-            html += ('<div class="custom-control custom-switch">'
-                     f'  <input type="checkbox" name="{name}" '
-                     f'         class="custom-control-input" id="{attrs["id"]}{x}">'
-                     f'  <label class="custom-control-label '
-                     f'         small" for="{attrs["id"]}{x}">{ self.attrs.get("label", "") }'
-                     f'  </label>'
-                     '</div>')
-        html += '</div>'
         return mark_safe(html)
 
 

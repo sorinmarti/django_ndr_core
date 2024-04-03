@@ -38,6 +38,7 @@ class MongoDBQuery(BaseQuery):
             try:
                 field = NdrCoreSearchField.objects.get(field_name=field_name)
                 value = None
+                filter_name = field.api_parameter
 
                 # STRING:
                 if field.field_type == NdrCoreSearchField.FieldType.STRING:
@@ -55,16 +56,31 @@ class MongoDBQuery(BaseQuery):
                                 if '{_value_}' in field.input_transformation_regex:
                                     regex_string = field.input_transformation_regex.replace('{_value_}', regex_string)
                             value = {'$regex': regex_string}
+                # LIST:
                 elif field.field_type == NdrCoreSearchField.FieldType.LIST:
                     if self.values[field_name] != '':
                         value = self.values[field_name]
+                # MULTI_LIST:
                 elif field.field_type == NdrCoreSearchField.FieldType.MULTI_LIST:
                     if type(self.values[field_name]) == list and len(self.values[field_name]) > 0:
                         # TODO - This should be configurable
                         value = {"$all": self.values[field_name]}
                         # value = {"$in": self.values[field_name]}
+                # BOOLEAN_LIST:
+                elif field.field_type == NdrCoreSearchField.FieldType.BOOLEAN_LIST:
+                    filter_name = '$or'
+                    value = []
+                    for item in self.values[field_name]:
+                        split = item.split('__')
+                        if len(split) > 1:
+                            key = split[0]
+                            condition = True if split[1] == 'true' else False
+                        else:
+                            key = item
+                            condition = True
+
+                        value.append({key: {"$eq": condition}})
                 elif field.field_type == NdrCoreSearchField.FieldType.DATE:
-                    # TODO: Implement
                     pass
                 elif field.field_type == NdrCoreSearchField.FieldType.DATE_RANGE:
                     if self.values[field_name][0] is not None and self.values[field_name][1] is not None:
@@ -75,7 +91,7 @@ class MongoDBQuery(BaseQuery):
                     value = {'$eq': self.values[field_name]}
 
                 if value is not None:
-                    query['filter'][field.api_parameter] = value
+                    query['filter'][filter_name] = value
             except NdrCoreSearchField.DoesNotExist:
                 pass
 

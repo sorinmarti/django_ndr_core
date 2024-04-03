@@ -8,7 +8,8 @@ from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.urls import reverse, NoReverseMatch
-from django.utils.translation import get_language
+from django.utils.translation import get_language, get_language_info
+from django.utils.translation import gettext_lazy as _
 
 from ndr_core.ndr_settings import NdrSettings
 
@@ -22,6 +23,17 @@ TRANSLATABLE_TABLES = (
     ('ndrcoreuielementitem', 'UI Element Table'),
 )
 """Tables which contain translatable fields."""
+
+
+def get_available_languages():
+    """Returns a list of available languages."""
+
+    languages = NdrCoreValue.objects.get(value_name='available_languages').get_value()
+    available_languages = []
+    for lang in languages:
+        info = get_language_info(lang)
+        available_languages.append((lang, info['name_local']))
+    return available_languages
 
 
 class TranslatableMixin:
@@ -134,6 +146,9 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         INFO_TEXT = 10, "Info Text"
         """This type produces a HTML component to show info text. This is not an input field"""
 
+        BOOLEAN_LIST = 11, "Boolean List"
+        """This type produces a list of checkboxes"""
+
     field_name = models.CharField(max_length=100,
                                   primary_key=True,
                                   help_text="Choose a name for the field. Can't contain spaces or special characters"
@@ -219,32 +234,90 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
             return self.translated_field(super().__getattribute__(item), item, self.field_name)
         return super().__getattribute__(item)
 
-    def get_list_choices_as_dict(self):
+    def get_list_choices_as_dict(self, as_list=False):
         """Returns the list choices as a dictionary. This is used to render the dropdowns
         in the search form and result template lists."""
-        if not self.field_type == self.FieldType.LIST and not self.field_type == self.FieldType.MULTI_LIST:
+        if not self.field_type == self.FieldType.LIST and not\
+                self.field_type == self.FieldType.MULTI_LIST and not\
+                self.field_type == self.FieldType.BOOLEAN_LIST:
             return {}
 
         file_handle = StringIO(self.list_choices)
         reader = csv.reader(file_handle, delimiter=',')
         row_number = 0
         header = []
-        result_list = {}
+
+        if as_list:
+            result_list = []
+        else:
+            result_list = {}
 
         for row in reader:
             if row_number == 0:
                 header = row
             else:
-                result_list[row[0]] = {}
+                object_to_add = {}
                 for i in range(len(row)):
-                    result_list[row[0]][header[i]] = row[i]
+                    object_to_add[header[i]] = row[i]
+                if as_list:
+                    result_list.append(object_to_add)
+                else:
+                    result_list[row[0]] = object_to_add
+
             row_number += 1
         return result_list
+
+    def get_list_header(self):
+        """Returns the list header for a search field. """
+        header = [
+            {
+                'rowHandle': True,
+                'formatter': "handle",
+                'headerSort': False,
+                'frozen': True,
+                'width': 30,
+                'minWidth': 30
+            },
+            {'title': 'Identifier', 'field': 'key', 'editor': 'input'},
+            {'title': 'Value', 'field': 'value', 'editor': 'input'}
+        ]
+        for lang in get_available_languages():
+            header.append({
+                'title': _(f'Value ({lang[1]})'),
+                'field': f'value_{lang[0]}',
+                'editor': 'input'
+            })
+
+        if self.field_type == self.FieldType.BOOLEAN_LIST:
+            header.append({
+                'title': 'Is Selected',
+                'field': 'initial',
+                'editable': True,
+                'editor': "tickCross",
+                'formatter': "tickCross"
+            })
+            header.append({
+                'title': 'Condition',
+                'field': 'condition',
+                'editable': True,
+                'editor': "tickCross",
+                'formatter': "tickCross"
+            })
+
+        header.append({
+            'title': 'Delete',
+            'formatter': "buttonCross", 'width': 40
+        })
+
+        return header
 
     def get_list_choices(self):
         """Returns the list choices as a list of tuples. This is used to render the dropdowns
         in the search form and result template lists."""
-        if not self.field_type == self.FieldType.LIST and not self.field_type == self.FieldType.MULTI_LIST:
+
+        if not self.field_type == self.FieldType.LIST and not\
+                self.field_type == self.FieldType.MULTI_LIST and not\
+                self.field_type == self.FieldType.BOOLEAN_LIST:
             return []
 
         file_handle = StringIO(self.list_choices)
@@ -256,7 +329,6 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         for row in reader:
             if row_number == 0:
                 header = row
-                print(row)
             else:
 
                 try:
@@ -273,8 +345,13 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                     searchable = 'true'
 
                 if searchable.lower() == 'true':
-                    result_list.append((row[0], val))
+                    # The choice is added to the list
+                    try:
+                        condition = row[header.index('condition')]
+                    except ValueError:
+                        condition = 'true'
 
+                    result_list.append((row[0]+"__"+condition, val))
 
             row_number += 1
 
@@ -286,6 +363,17 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
             if self.initial_value == 'true':
                 return True
             return False
+        elif self.field_type == self.FieldType.BOOLEAN_LIST:
+            choices = self.get_list_choices_as_dict(as_list=True)
+            self.initial_value = []
+            for choice in choices:
+                initial = choice.get('initial', 'false')
+                condition = choice.get('condition', 'true')
+
+                if initial == "true":
+                    self.initial_value.append(choice['key'] + "__" + condition)
+
+            return self.initial_value
 
         return self.initial_value
 
@@ -503,6 +591,10 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
     citation_expression = models.CharField(max_length=512, default=None, null=True, blank=True,
                                            verbose_name="Citation Expression",
                                            help_text="Expression to generate a citation for a result.")
+
+    manifest_relation_expression = models.CharField(max_length=512, default=None, null=True, blank=True)
+
+    manifest_page_expression = models.CharField(max_length=512, default=None, null=True, blank=True)
 
     def __str__(self):
         return self.conf_name
@@ -1089,6 +1181,11 @@ class NdrCoreManifestGroup(TranslatableMixin, models.Model):
 
 class NdrCoreManifest(TranslatableMixin, models.Model):
     """ Directory of all manifests. """
+
+    identifier = models.CharField(max_length=200, primary_key=True,
+                                  help_text='Identifier of the manifest. '
+                                            'Is used to reference the manifest in the code.')
+    """Identifier of the manifest. Is used to reference the manifest in the code."""
 
     title = models.CharField(max_length=200, blank=True, default='',
                              help_text='Title of the manifest. Is shown in the dropdown of the page.')

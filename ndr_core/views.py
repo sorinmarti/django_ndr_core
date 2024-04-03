@@ -19,7 +19,6 @@ from django.conf import settings
 
 from ndr_core.exceptions import NdrCorePageNotFound, PreRenderError
 from ndr_core.forms.forms_contact import ContactForm
-from ndr_core.forms.forms_manifest import ManifestSelectionForm
 from ndr_core.forms.forms_search import AdvancedSearchForm
 
 from ndr_core.models import (
@@ -30,6 +29,7 @@ from ndr_core.models import (
     NdrCoreSearchConfiguration,
     NdrCoreValue,
     NdrCoreManifest,
+    NdrCoreSearchField
 )
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
@@ -278,8 +278,9 @@ class SearchView(_NdrCoreSearchView):
                     search_config = self.get_search_config_from_name(requested_search_actual)
 
                     api_factory = ApiFactory(search_config)
+                    query_key = f"search_term_{search_config.conf_name}"
                     query_obj = api_factory.get_query_instance(page=request.GET.get("page", 1))
-                    query_string = query_obj.get_simple_query(request.GET.get('search_term', ''),
+                    query_string = query_obj.get_simple_query(request.GET.get(query_key, ''),
                                                               request.GET.get("page", 1),
                                                               and_or=request.GET.get('and_or_field', 'and'))
                 # An advanced search is called
@@ -436,7 +437,7 @@ Sitemap: { sitemap_url }"""
 def manifest_url_view(request, manifest_id):
     """Returns a manifest URL. """
     try:
-        manifest = NdrCoreManifest.objects.get(pk=int(manifest_id))
+        manifest = NdrCoreManifest.objects.get(identifier=manifest_id)
     except NdrCoreManifest.DoesNotExist:
         return JsonResponse({'error': 'Manifest not found.'}, status=404)
 
