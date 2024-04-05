@@ -35,6 +35,7 @@ class MongoDBQuery(BaseQuery):
         }
 
         for field_name in self.values:
+            print("FIELD", field_name, self.values[field_name])
             try:
                 field = NdrCoreSearchField.objects.get(field_name=field_name)
                 value = None
@@ -59,27 +60,27 @@ class MongoDBQuery(BaseQuery):
                 # LIST:
                 elif field.field_type == NdrCoreSearchField.FieldType.LIST:
                     if self.values[field_name] != '':
-                        value = self.values[field_name]
+                        key, condition = self.get_value_conf(self.values[field_name])
+                        value = key
                 # MULTI_LIST:
                 elif field.field_type == NdrCoreSearchField.FieldType.MULTI_LIST:
                     if type(self.values[field_name]) == list and len(self.values[field_name]) > 0:
                         # TODO - This should be configurable
-                        value = {"$all": self.values[field_name]}
+                        items = []
+                        for item in self.values[field_name]:
+                            key, condition = self.get_value_conf(item)
+                            items.append(key)
+
+                        value = {"$all": items}
                         # value = {"$in": self.values[field_name]}
                 # BOOLEAN_LIST:
                 elif field.field_type == NdrCoreSearchField.FieldType.BOOLEAN_LIST:
                     filter_name = '$or'
                     value = []
                     for item in self.values[field_name]:
-                        split = item.split('__')
-                        if len(split) > 1:
-                            key = split[0]
-                            condition = True if split[1] == 'true' else False
-                        else:
-                            key = item
-                            condition = True
-
+                        key, condition = self.get_value_conf(item)
                         value.append({key: {"$eq": condition}})
+
                 elif field.field_type == NdrCoreSearchField.FieldType.DATE:
                     pass
                 elif field.field_type == NdrCoreSearchField.FieldType.DATE_RANGE:
@@ -91,10 +92,14 @@ class MongoDBQuery(BaseQuery):
                     value = {'$eq': self.values[field_name]}
 
                 if value is not None:
-                    query['filter'][filter_name] = value
+                    if filter_name in query['filter']:
+                        query['filter'][filter_name] = query['filter'][filter_name] + value
+                    else:
+                        query['filter'][filter_name] = value
             except NdrCoreSearchField.DoesNotExist:
                 pass
 
+        print(query)
         return query
 
     def get_list_query(self, list_name, add_page_and_size=True, search_term=None, tags=None):
@@ -113,3 +118,12 @@ class MongoDBQuery(BaseQuery):
     def set_value(self, field_name, value):
         """Sets a value=key setting to compose a query from"""
         self.values[field_name] = value
+
+    @staticmethod
+    def get_value_conf(item_value):
+        """Gets the value of a key setting"""
+        if "__" in item_value:
+            split = item_value.split('__')
+            return split[0], True if split[1] == 'true' else False
+
+        return item_value, True
