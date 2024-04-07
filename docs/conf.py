@@ -21,7 +21,7 @@ django.setup()
 # -- Project information -----------------------------------------------------
 
 project = 'NDR Core'
-copyright = '2023, Sorin Marti'
+copyright = '2024, Sorin Marti'
 author = 'Sorin Marti'
 
 

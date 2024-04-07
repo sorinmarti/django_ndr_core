@@ -3,7 +3,7 @@ Helpers
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Helper modules
 
    helpers/form_preview.rst

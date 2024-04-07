@@ -11,8 +11,6 @@ Welcome to NDR Core's documentation
     ready for out-of-the-box use. If you are interested in using NDR Core,
     please contact us at https://ndrcore.org
 
-    (Also: ndrcore.org is not yet up and running, but it will be soon. :) )
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

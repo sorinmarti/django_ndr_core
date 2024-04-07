@@ -1,29 +1,26 @@
 ###################
 API Implementations
 ###################
+NDR Core can be installed and configured without the need to write code.
+This is extremely important because it allows users to create a website without the need to hire
+a developer or to learn how to code. To implement a new API however, one needs to
+write some Python code. NDR Core tries to do as much of the heavy lifting as possible and
+provides two Abstract classes which need to be implemented, so an API can be
+added to NDR Core.
 
-Current Implementations
-========================
-Currently, the following API implementations are available:
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
 
-NDR API
---------
-[TODO] Add details here
-
-MongoDB API
------------
-[TODO] Add details here
+   api_implementations/create-api
+   api_implementations/example-implementation
 
 
-Creating your own API Implementation
-====================================
-To create your own API implementation, you will need to create two classes: one that
-extends the BaseQuery class and one that extends the BaseResult class.
 
-[TODO] Add more details here.
 
 Sharing Your API Implementation
 ===============================
-You are welcome to share your API implementation with the community. Please create
-a pull request with your implementation and we will review it and merge it into
-the main repository.
+ Create a pull request on GitHub. Your code will be reviewed and merged into the
+main branch. The next version of NDR Core will feature your API implementation.
+Of course, an added API implementation can be used right away after the implementation but it will
+only be available to other users after the next release.
