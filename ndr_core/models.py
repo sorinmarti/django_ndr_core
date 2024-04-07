@@ -37,10 +37,13 @@ def get_available_languages():
 
 
 class TranslatableMixin:
-    """Mixin which provides methods to translate translatable fields. """
+    """Mixin which provides methods to translate translatable fields.
+    All text values in the configuration are saved in a primary language.
+    Database fields with translatable values have corresponding entries in
+    the NdrCoreTranslation table."""
 
     translatable_fields = []
-    """Fields which are translatable. """
+    """Fields which are translatable for the model this mixin is used with. """
 
     def translated_field(self, orig_value, field_name, object_id):
         """Returns the translated field for a given language. If no translation exists,
@@ -114,7 +117,8 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
       is used to formulate an API request."""
 
     class FieldType(models.IntegerChoices):
-        """The FieldType of a searchField is used to render the HTML form """
+        """The FieldType of a searchField is used to render the HTML
+        form and to determine the type of the API request."""
 
         STRING = 1, "String"
         """This type produces a text field"""
@@ -123,7 +127,7 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         """This type produces a number field"""
 
         LIST = 3, "Dropdown List"
-        """This field produces a dropdown or multi select field"""
+        """This field produces a dropdown list"""
 
         MULTI_LIST = 4, "Multi Select List"
         """This field produces a multi select field"""
@@ -527,10 +531,12 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
 
     sort_field = models.CharField(max_length=100, blank=False, default='id',
                                   help_text="The field to sort the result by.")
+    """The field to sort the result by. """
 
     sort_order = models.CharField(max_length=100, blank=False, default='asc',
                                   choices=(('asc', 'Ascending'), ('desc', 'Descending')),
                                   help_text="The order to sort the result by.")
+    """The order to sort the result by. """
 
     has_simple_search = models.BooleanField(default=True,
                                             help_text="Should this configuration feature a simple search?")
@@ -538,6 +544,7 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
 
     simple_search_first = models.BooleanField(default=True,
                                               help_text="Should the simple search be displayed first?")
+    """Should the simple search be displayed first? """
 
     simple_query_main_field = models.CharField(max_length=100, blank=False, default='transcription.original',
                                                help_text="The main field to query for a simple search.")
@@ -545,6 +552,7 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
 
     simple_search_tab_title = models.CharField(max_length=100, blank=False, default='Simple Search',
                                                help_text="The title for the simple search tab.")
+    """The title for the simple search tab. """
 
     simple_query_label = models.CharField(max_length=100, blank=False, default='Search',
                                           help_text="The label for the simple search field.")
@@ -552,6 +560,7 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
 
     simple_query_help_text = models.CharField(max_length=100, blank=False, default='Search the database',
                                               help_text="The help text for the simple search field.")
+    """The help text for the simple search field. """
 
     # RESULT
 
@@ -559,10 +568,12 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                             blank=False,
                                             default='default_template.html',
                                             help_text="The template to use for the result cards.")
+    """The template to use for the result cards. """
 
     """The template to use for the result cards. """
     result_card_fields = models.ManyToManyField(NdrCoreResultFieldCardConfiguration,
                                                 help_text="Result fields associated with this configuration")
+    """Result fields associated with this configuration """
 
     search_has_compact_result = models.BooleanField(default=False,
                                                     help_text="If the result has a normal and a compact view, "
@@ -572,6 +583,7 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
     compact_result_is_default = models.BooleanField(default=False,
                                                     help_text="If the compact result view is the default, "
                                                               "check this box.")
+    """If the compact result view is the default, check this box."""
 
     page_size = models.IntegerField(default=10,
                                     verbose_name="Page Size",
@@ -582,6 +594,7 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                             verbose_name="Compact Page Size",
                                             help_text="Size of the compact result page (e.g. 'How many results at "
                                                       "once')")
+    """The query results will return a page of the results. You can define the page size"""
 
     repository_url = models.URLField(default=None, null=True, blank=True,
                                      verbose_name="Repository URL",
@@ -591,10 +604,18 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
     citation_expression = models.CharField(max_length=512, default=None, null=True, blank=True,
                                            verbose_name="Citation Expression",
                                            help_text="Expression to generate a citation for a result.")
+    """Expression to generate a citation for a result."""
 
-    manifest_relation_expression = models.CharField(max_length=512, default=None, null=True, blank=True)
+    manifest_relation_expression = models.CharField(max_length=512, default=None, null=True, blank=True,
+                                                    verbose_name="Manifest Relation Expression",
+                                                    help_text="Expression to generate a relation "
+                                                              "to a manifest for a result.")
+    """Expression to generate a relation to a manifest for a result."""
 
-    manifest_page_expression = models.CharField(max_length=512, default=None, null=True, blank=True)
+    manifest_page_expression = models.CharField(max_length=512, default=None, null=True, blank=True,
+                                                verbose_name="Manifest Page Expression",
+                                                help_text="Expression to generate a link to a page in a manifest.")
+    """Expression to generate a link to a page in a manifest."""
 
     def __str__(self):
         return self.conf_name
@@ -882,6 +903,7 @@ class NdrCoreValue(models.Model):
                                   max_length=10,
                                   help_text="The type of your value",
                                   default=ValueType.STRING)
+    """The type of the value. This determines how the value is displayed and how it can be manipulated."""
 
     value_label = models.CharField(max_length=100,
                                    help_text='This is a human readable label for the value. '
@@ -989,49 +1011,49 @@ class NdrCoreCorrection(models.Model):
 
     corrected_dataset = models.ForeignKey(NdrCoreSearchConfiguration,
                                           on_delete=models.CASCADE)
-    """TODO """
+    """The dataset which is corrected. """
 
     corrected_record_id = models.CharField(max_length=255)
-    """TODO """
+    """The record ID of the corrected record. """
 
     corrector_orcid = models.CharField(max_length=50)
-    """TODO """
+    """The ORCID of the corrector. """
 
 
 class NdrCoreCorrectedField(models.Model):
-    """TODO """
+    """A field correction is part of a correction. It consists of a field name, the old value and the new value. """
 
     ndr_correction = models.ForeignKey(NdrCoreCorrection,
                                        on_delete=models.CASCADE)
-    """TODO """
+    """The correction which this field correction is part of. """
 
     field_name = models.CharField(max_length=100)
-    """TODO """
+    """The field name which is corrected. """
 
     old_value = models.TextField()
-    """TODO """
+    """The old value of the field. """
 
     new_value = models.TextField()
-    """TODO """
+    """The new value of the field. """
 
 
 class NdrCoreUserMessage(models.Model):
     """If the contact form is sent, a user message object is created. """
 
     message_subject = models.CharField(max_length=200)
-    """TODO """
+    """The subject of the message. """
 
     message_text = models.TextField()
-    """TODO """
+    """The text of the message. """
 
     message_time = models.DateTimeField(auto_now_add=True)
-    """TODO """
+    """The time the message was sent. """
 
     message_ret_email = models.EmailField()
-    """TODO """
+    """The e-mail address of the sender. """
 
     message_archived = models.BooleanField(default=False)
-    """Indicates if the message has been archived.  """
+    """Indicates if the message has been archived. """
 
     message_forwarded = models.BooleanField(default=False)
     """Indicates if the message has been forwarded to a specified e-mail address. """
@@ -1051,10 +1073,10 @@ class NdrCoreSearchStatisticEntry(models.Model):
     """The search term(s) which have been searched. """
 
     search_query = models.CharField(max_length=255, default='')
-    """TODO"""
+    """The actual query which was sent to the API. """
 
     search_no_results = models.IntegerField(default=0)
-    """TODO"""
+    """The number of results which were returned. """
 
     search_time = models.DateTimeField(auto_now_add=True)
     """The time the user searched. """
@@ -1309,13 +1331,13 @@ class NdrCoreTranslation(models.Model):
 
 
 class NdrCoreRichTextTranslation(models.Model):
-    """NdrCoreRichTextTranslation is used to translate RichTextUploadingField fields."""
+    """NdrCoreRichTextTranslation is used to translate rich text fields."""
 
     language = models.CharField(max_length=10)
-    """Language of the translation. """
+    """Language of the translation. Should be a language returned by get_available_languages(). """
 
     table_name = models.CharField(max_length=100, choices=TRANSLATABLE_TABLES)
-    """Name of the table the field belongs to. """
+    """Name of the table the field belongs to.  """
 
     object_id = models.CharField(max_length=100)
     """ID of the object the field belongs to. """
