@@ -7,3 +7,5 @@ Helpers
    :caption: Helper modules
 
    helpers/form_preview.rst
+   helpers/ndr_init.rst
+   helpers/template_tags.rst

@@ -1,5 +1,5 @@
-Dashboard
-=========
+Help
+====
 The help section is the last but not the least page of the administration interface. NDR
 Core thinks about documentation in three layers: The first layer is the documentation
 of the project and its source code, the second layer is the documentation for user who

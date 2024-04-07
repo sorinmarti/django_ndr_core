@@ -17,5 +17,4 @@ This is the *configuration database* for the NDR Core instance, not the *data da
    source_doc/views.rst
    source_doc/forms.rst
    source_doc/admin-views.rst
-   source_doc/admin-forms.rst
    source_doc/helpers.rst
