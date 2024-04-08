@@ -42,8 +42,8 @@ class SearchFieldForm(forms.ModelForm):
         layout.append(form_row)
 
         form_row = Row(
-            Column('field_type', css_class='form-group col-md-6 mb-0'),
-            Column('list_condition', css_class='form-group col-md-2 mb-0'),
+            Column('field_type', css_class='form-group col-md-5 mb-0'),
+            Column('list_condition', css_class='form-group col-md-3 mb-0'),
             Column('field_required', css_class='form-group col-md-4 mb-0'),
             css_class='form-row'
         )

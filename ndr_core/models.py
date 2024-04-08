@@ -198,7 +198,9 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
     """Comma separated list of choices for dropdowns"""
 
     list_condition = models.CharField(max_length=10, blank=True, default='OR',
-                                      choices=(('OR', 'OR'), ('AND', 'AND')),
+                                      choices=(('OR', 'OR - Either in the selection'),
+                                               ('AND', 'AND - All in the selection'),
+                                               ('CHOOSE', 'CHOOSE - Let the user decide')),
                                       help_text="Condition for multiple list values")
     """Condition for multiple list values"""
 
