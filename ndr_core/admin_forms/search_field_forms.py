@@ -24,7 +24,7 @@ class SearchFieldForm(forms.ModelForm):
         model = NdrCoreSearchField
         fields = ['field_name', 'field_label', 'field_type', 'field_required', 'help_text', 'api_parameter',
                   'lower_value', 'upper_value', 'list_choices', 'use_in_csv_export', 'initial_value', 'data_field_type',
-                  'input_transformation_regex']
+                  'input_transformation_regex', 'list_condition']
 
     @property
     def helper(self):
@@ -43,7 +43,8 @@ class SearchFieldForm(forms.ModelForm):
 
         form_row = Row(
             Column('field_type', css_class='form-group col-md-6 mb-0'),
-            Column('field_required', css_class='form-group col-md-6 mb-0'),
+            Column('list_condition', css_class='form-group col-md-2 mb-0'),
+            Column('field_required', css_class='form-group col-md-4 mb-0'),
             css_class='form-row'
         )
         layout.append(form_row)

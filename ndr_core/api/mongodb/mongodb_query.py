@@ -65,14 +65,16 @@ class MongoDBQuery(BaseQuery):
                 # MULTI_LIST:
                 elif field.field_type == NdrCoreSearchField.FieldType.MULTI_LIST:
                     if type(self.values[field_name]) == list and len(self.values[field_name]) > 0:
-                        # TODO - This should be configurable
                         items = []
                         for item in self.values[field_name]:
                             key, condition = self.get_value_conf(item)
                             items.append(key)
 
-                        value = {"$all": items}
-                        # value = {"$in": self.values[field_name]}
+                        filter_name = '$all'
+                        if field.list_condition == 'or':
+                            filter_name = '$in'
+
+                        value = {filter_name: items}
                 # BOOLEAN_LIST:
                 elif field.field_type == NdrCoreSearchField.FieldType.BOOLEAN_LIST:
                     filter_name = '$or'

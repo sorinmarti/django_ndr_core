@@ -197,6 +197,11 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                                     help_text="Comma separated list of choices for dropdowns")
     """Comma separated list of choices for dropdowns"""
 
+    list_condition = models.CharField(max_length=10, blank=True, default='OR',
+                                      choices=(('OR', 'OR'), ('AND', 'AND')),
+                                      help_text="Condition for multiple list values")
+    """Condition for multiple list values"""
+
     lower_value = models.CharField(null=True,
                                    blank=True,
                                    max_length=100,
