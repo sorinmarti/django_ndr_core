@@ -176,8 +176,8 @@ urlpatterns = [
     path('configure/uploads/edit/<int:pk>/', UploadEditView.as_view(), name='edit_upload'),
     path('configure/uploads/delete/<int:pk>/', UploadDeleteView.as_view(), name='delete_upload'),
     path('configure/manifest/uploads/create/new/', ManifestUploadCreateView.as_view(), name='create_manifest_upload'),
-    path('configure/manifest/uploads/edit/<int:pk>/', ManifestUploadEditView.as_view(), name='edit_manifest_upload'),
-    path('configure/manifest/uploads/delete/<int:pk>/', ManifestUploadDeleteView.as_view(),
+    path('configure/manifest/uploads/edit/<str:pk>/', ManifestUploadEditView.as_view(), name='edit_manifest_upload'),
+    path('configure/manifest/uploads/delete/<str:pk>/', ManifestUploadDeleteView.as_view(),
          name='delete_manifest_upload'),
     path('configure/manifest/groups/create/', ManifestGroupCreateView.as_view(), name='create_manifest_group'),
 
