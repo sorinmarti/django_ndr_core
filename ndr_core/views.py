@@ -86,7 +86,7 @@ def dispatch(request, ndr_page=None):
         return view_class.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                   ndr_page=page)(request)
     except NdrCorePage.DoesNotExist:
-        return TemplateView.as_view(template_name='ndr_core/not_found.html')(request)
+        return TemplateView.as_view(template_name='ndr_core/404.html')(request, status=404)
 
 
 def display_schema_or_404(request, schema_name):
@@ -101,7 +101,7 @@ def display_schema_or_404(request, schema_name):
             schema = schema_file.read()
             return HttpResponse(schema, content_type='text/plain')
 
-    return render(request, 'ndr_core/404.html', status=404) # TODO implement
+    return render(request, 'ndr_core/404.html', status=404)
 
 
 class _NdrCoreView(View):
@@ -446,3 +446,16 @@ def manifest_url_view(request, manifest_id):
         return JsonResponse({'error': 'Manifest not found.'}, status=404)
 
     return JsonResponse({'manifest_url': manifest.file.url})
+
+
+def google_search_console_verification_view(request, verification_file):
+    """Returns a Google Search Console verification file. """
+
+    # Open the file in the media folder
+    # If it exists, return it, otherwise return a 404
+    file_path = os.path.join(settings.MEDIA_ROOT, f"uploads/seo/google{verification_file}.html")
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
+            return HttpResponse(file.read())
+    else:
+        return render(request, 'ndr_core/404.html', status=404)

@@ -19,7 +19,8 @@ from ndr_core.admin_views.search_field_views import (
     SearchFieldDeleteView,
     get_field_list_choices, get_field_list_header
 )
-from ndr_core.admin_views.seo_views import RobotsFileView, SitemapFileView, ConnectWithNdrCoreOrgView
+from ndr_core.admin_views.seo_views import RobotsFileView, SitemapFileView, ConnectWithNdrCoreOrgView, \
+    GoogleSearchConsoleVerificationView, GoogleSearchConsoleVerificationDeleteView
 from ndr_core.admin_views.translation_views import (
     ConfigureTranslations,
     SelectTranslationView,
@@ -308,12 +309,12 @@ urlpatterns = [
          name='mark_record'),
 
     # Search Engine Optimization
-    path('configure/seo/',
-         TemplateView.as_view(template_name='ndr_core/admin_views/overview/configure_seo.html'),
-         name='seo'),
+    path('configure/seo/', TemplateView.as_view(template_name='ndr_core/admin_views/overview/configure_seo.html'), name='seo'),
     path('configure/seo/robots/', RobotsFileView.as_view(), name='seo_robots'),
     path('configure/seo/sitemap/', SitemapFileView.as_view(), name='seo_sitemap'),
     path('configure/seo/ndrcore-org/', ConnectWithNdrCoreOrgView.as_view(), name='seo_ndrcore_org'),
+    path('configure/seo/google/', GoogleSearchConsoleVerificationView.as_view(), name='seo_google'),
+    path('configure/seo/google/delete/', GoogleSearchConsoleVerificationDeleteView.as_view(), name='seo_google_delete'),
 
     # Language
     path('language/<str:new_language>/', set_language_view, name='set_language'),

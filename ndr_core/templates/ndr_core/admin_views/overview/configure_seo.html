@@ -14,6 +14,10 @@
                         <i class="fa-regular fa-n"></i>
                         Connect with ndrcore.org
                     </a>
+                    <a href="{% url 'ndr_core:seo_google' %}" class="list-group-item list-group-item-action py-2{% if "/configure/seo/google" in request.path %} active{% endif %}">
+                        <i class="fa-brands fa-google"></i>
+                        Google Verification File
+                    </a>
                     <a href="{% url 'ndr_core:seo_robots' %}" class="list-group-item list-group-item-action py-2{% if "/configure/seo/robots" in request.path %} active{% endif %}">
                         <i class="fa-regular fa-r"></i>
                         Robots File
@@ -41,6 +45,17 @@
                         ndrcore.org network, you will be found by other members of the network and people looking for
                         data you have published.
                         </p>
+                    {% elif "/configure/seo/google" in request.path %}
+                        <h5 class="card-title">Google Verification File</h5>
+                        <p>
+                        The Google Verification File is used by Google to verify that you are the owner of the site. 
+                        It is needed to enter your site into the Google Search Console.
+                        </p>
+                        <ul>
+                            <li>Go to <a href="https://search.google.com/search-console" target="_blank">Google Search Console</a></li>
+                            <li>Enter "<code>{{ request.scheme }}://{{ request.get_host }}</code>" into "URL Prefix"</li>
+                            <li>Download the provided html file and upload it here.</li>
+                        </ul>
                     {% elif "/configure/seo/robots" in request.path %}
                         <h5 class="card-title">Your robots.txt File</h5>
                         <p>
@@ -66,6 +81,22 @@
             {% if "/configure/seo/ndrcore-org" in request.path %}
                 <h5 class="card-title">Connect with ndrcore.org</h5>
                 {% crispy form %}
+            {% elif "/configure/seo/google" in request.path %}
+                <h5 class="card-title">Google Verification File</h5>
+                {% if google_search_console_verification_file %}
+                    <p>You have uploaded a google verification file:</p>
+                    <div class="alert alert-light small d-flex justify-content-between align-items-center" role="alert">
+                        <div>
+                            <i class="fa-regular fa-file"></i>
+                            <a href="{{ google_search_console_verification_file }}" target="_blank">{{ google_search_console_verification_file }}</a>
+                        </div>
+                        <a href="{% url 'ndr_core:seo_google_delete' %}" type="button" class="btn btn-danger btn-sm">
+                            <i class="fa-regular fa-trash"></i>
+                        </a>
+                    </div>
+                {% else %}
+                    {% crispy form %}
+                {% endif %}
             {% elif "/configure/seo/robots" in request.path %}
                 <h5 class="card-title">Your robots.txt File</h5>
                 <div class="border p-3 bg-dark">

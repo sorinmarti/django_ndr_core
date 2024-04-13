@@ -38,6 +38,19 @@ class ConnectWithNdrCoreForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Connect with NDRCore.org'))
 
 
+class UploadGoogleVerificationFileForm(forms.Form):
+    """A Form to upload a Google Search Console verification file. """
+
+    file = forms.FileField()
+
+    def __init__(self, *args, **kwargs):
+        """Initialises all needed form fields."""
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "POST"
+        self.helper.add_input(Submit('submit', 'Upload'))
+
+
 def get_form_buttons(submit_text):
     """Returns a button holder with a submit button with the given text.
     This is a convenience function for all forms that are used in the
