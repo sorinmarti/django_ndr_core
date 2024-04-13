@@ -7,187 +7,200 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-13 20:53+0200\n"
-"PO-Revision-Date: 2024-04-13 21:11+0200\n"
+"POT-Creation-Date: 2024-04-13 21:15+0200\n"
+"PO-Revision-Date: 2024-04-13 21:15+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: fr\n"
+"Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
 "X-Generator: Poedit 3.3.2\n"
 
 #: .\api\api_ninjas\api_ninjas_result.py:21
 #: .\api\ndr_core\ndr_core_result.py:16
 #, fuzzy
 msgid "Result could not be loaded"
-msgstr "Le résultat n’a pas pu être chargé"
+msgstr "परिणाम लोड नहीं किया जा सका"
 
 #: .\api\base_result.py:90
 #, fuzzy
 msgid "The connection timed out"
-msgstr "La connexion a expiré"
+msgstr "कनेक्शन का समय समाप्त हो गया"
 
 #: .\api\base_result.py:94
 #, fuzzy
 msgid "Query could not be requested"
-msgstr "Impossible de demander une requête"
+msgstr "क्वेरी का अनुरोध नहीं किया जा सका"
 
 #: .\api\base_result.py:102
 #, fuzzy
 msgid "The server returned status code: {result.status_code}"
-msgstr "Le serveur a renvoyé le code d’état : {result.status_code}"
+msgstr "सर्वर ने स्थिति कोड लौटाया: {result.status_code}"
 
 #: .\api\base_result.py:153
 #, fuzzy
 msgid "Download the record as a JSON file"
-msgstr "Télécharger l’enregistrement sous forme de fichier JSON"
+msgstr "रिकॉर्ड को JSON फ़ाइल के रूप में डाउनलोड करें"
 
 #: .\api\base_result.py:165
 #, fuzzy
 msgid "View The Data Repository"
-msgstr "Voir le référentiel de données"
+msgstr "डेटा रिपॉजिटरी देखें"
 
 #: .\api\base_result.py:180
 #, fuzzy
 msgid "Report this entry as incorrect"
-msgstr "Signaler cette entrée comme incorrecte"
+msgstr "इस प्रविष्टि को ग़लत के रूप में रिपोर्ट करें"
 
 #: .\api\base_result.py:214
 #, fuzzy
 msgid "View this snippet in context"
-msgstr "Afficher cet extrait dans son contexte"
+msgstr "इस स्निपेट को संदर्भ में देखें"
 
 #: .\api\base_result.py:226
 #, fuzzy
 msgid "Copy Citation"
-msgstr "Copier la citation"
+msgstr "प्रशस्ति पत्र कॉपी करें"
 
 #: .\api\base_result.py:310 .\api\base_result.py:316
 #, fuzzy
 msgid "Show full results"
-msgstr "Afficher les résultats complets"
+msgstr "पूर्ण परिणाम दिखाएं"
 
 #: .\api\base_result.py:320
 #, fuzzy
 msgid "Show compact results"
-msgstr "Afficher les résultats compacts"
+msgstr "ठोस परिणाम दिखाएं"
 
 #: .\api\mongodb\mongodb_result.py:65
 #, fuzzy
 msgid "Timed out"
-msgstr "Délai expiré"
+msgstr "समय समाप्त हो गया"
 
 #: .\forms\fields.py:32
 #, fuzzy
 msgid "Invalid value: Format is \"1,2,3-5,7\""
-msgstr "Valeur non valide : Le format est « 1,2,3-5,7 »"
+msgstr "अमान्य मान: प्रारूप \"1,2,3-5,7\" है"
 
 #: .\forms\fields.py:43 .\forms\fields.py:49
 #, fuzzy
 msgid "Value is out of range. ({}-{})"
-msgstr "La valeur est hors de portée. ({}-{})"
+msgstr "मान श्रेणी से बाहर है. ({}-{})"
 
 #: .\forms\fields.py:54
+#, fuzzy
 msgid "Invalid value"
-msgstr "Valeur non valide"
+msgstr "अमान्य मान"
 
 #: .\forms\forms_contact.py:24
+#, fuzzy
 msgid "Message Subject"
-msgstr "Objet/Sujet du Message"
+msgstr "संदेश विषय"
 
 #: .\forms\forms_contact.py:25
+#, fuzzy
 msgid "Your E-Mail address"
-msgstr "Votre email"
+msgstr "आपका ई-मेल पता"
 
 #: .\forms\forms_contact.py:26
+#, fuzzy
 msgid "Message Text"
-msgstr "Votre Message"
+msgstr "संदेश पाठ"
 
 #: .\forms\forms_contact.py:58
+#, fuzzy
 msgid "Send Message"
-msgstr "Envoyer le message"
+msgstr "संदेश भेजें"
 
 #: .\forms\forms_manifest.py:20
+#, fuzzy
 msgid "Manifest"
-msgstr "Manifeste"
+msgstr "प्रकट"
 
 #: .\forms\forms_manifest.py:23
 #, fuzzy
 msgid "Choose the manifest to display."
-msgstr "Choisissez le manifeste à afficher."
+msgstr "प्रदर्शित करने के लिए मैनिफ़ेस्ट चुनें।"
 
 #: .\forms\forms_manifest.py:37
 msgid "Show"
-msgstr "Afficher"
+msgstr "दिखाना"
 
 #: .\forms\forms_search.py:186
+#, fuzzy
 msgid "AND"
-msgstr "ET"
+msgstr "और"
 
 #: .\forms\forms_search.py:187
+#, fuzzy
 msgid "OR"
-msgstr "OU"
+msgstr "नहीं तो"
 
 #: .\forms\forms_search.py:208
 #, fuzzy
 msgid "Compact Result View"
-msgstr "Affichage compact des résultats"
+msgstr "कॉम्पैक्ट परिणाम दृश्य"
 
 #: .\forms\forms_search.py:223
 #, fuzzy
 msgid "And or Or Search"
-msgstr "et/ou rechercher"
+msgstr "और या या खोज"
 
 #: .\forms\forms_search.py:224
 #, fuzzy
 msgid "AND search"
-msgstr "ET recherche"
+msgstr "और खोजें"
 
 #: .\forms\forms_search.py:224
 #, fuzzy
 msgid "OR search"
-msgstr "Rechercher"
+msgstr "या खोज"
 
 #: .\forms\forms_search.py:265
+#, fuzzy
 msgid "Search"
-msgstr "Rechercher"
+msgstr "ढूँढ"
 
 #: .\static\ndr_core\app_init\contact.html:15
 #, fuzzy
 msgid "Fill in the form below to contact us with any queries."
-msgstr ""
-"Remplissez le formulaire ci-dessous pour nous contacter pour toute question."
+msgstr "किसी भी प्रश्न के साथ हमसे संपर्क करने के लिए नीचे दिए गए फॉर्म को भरें।"
 
 #: .\static\ndr_core\app_init\search.html:12
+#, fuzzy
 msgid "Search Results"
-msgstr "Résultats de la recherche"
+msgstr "खोज परिणाम"
 
 #: .\static\ndr_core\app_init\search.html:18
+#, fuzzy
 msgid "Refine Search"
-msgstr "Affiner votre recherche"
+msgstr "खोज परिशोधित करें"
 
 #: .\static\ndr_core\app_init\search.html:21
+#, fuzzy
 msgid "New Search"
-msgstr "Nouvelle recherche"
+msgstr "नई खोज"
 
 #: .\static\ndr_core\app_init\search.html:28
 msgid "Download"
-msgstr "Télécharger"
+msgstr "डाउनलोड"
 
 #: .\static\ndr_core\app_init\search.html:32
+#, fuzzy
 msgid "Download JSON"
-msgstr "Télécharger JSON"
+msgstr "डाउनलोड JSON"
 
 #: .\static\ndr_core\app_init\search.html:35
+#, fuzzy
 msgid "Download CSV"
-msgstr "Télécharger CSV"
+msgstr "डाउनलोड CSV"
 
 #: .\static\ndr_core\app_init\search.html:39
 #, fuzzy, python-format
 msgid "(Downloads are limited to %(max_results)s results.)"
-msgstr "(Les téléchargements sont limités à %(max_results)s résultats.)"
+msgstr "(डाउनलोड %(max_results)s परिणामों तक सीमित हैं।"
 
 #: .\static\ndr_core\app_init\search.html:49
 #, fuzzy, python-format
@@ -198,42 +211,48 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"Votre recherche a renvoyé %(total)s résultats, affichant la page %(page)s de "
-"%(num_pages)s.\n"
+"आपकी खोज ने %(num_pages)s के पृष्ठ %(page)s दिखाते हुए %(total)s परिणाम लौटाए.\n"
 "            "
 
 #: .\templates\ndr_core\404.html:16
+#, fuzzy
 msgid "Error 404"
-msgstr "Erreur 404"
+msgstr "404 त्रुटि"
 
 #: .\templates\ndr_core\404.html:18
+#, fuzzy
 msgid "Go To Home Page"
-msgstr "Retour à la page d'accueil"
+msgstr "होम पेज पर जाएं"
 
 #: .\templates\ndr_core\404.html:24
+#, fuzzy
 msgid "Oops. Something went wrong!"
-msgstr "Oups. Quelque chose s'est mal passé !"
+msgstr "उफ़। कुछ गलत हो गया!"
 
 #: .\templates\ndr_core\404.html:26
 #, fuzzy
 msgid "The page you are looking for is not available."
-msgstr "La page que vous recherchez n’est pas disponible."
+msgstr "आप जिस पृष्ठ को ढूँढ रहे हैं वह उपलब्ध नहीं है."
 
 #: .\templates\ndr_core\404.html:29
+#, fuzzy
 msgid "Main Page"
-msgstr "Page principale"
+msgstr "मुख्य पृष्ठ"
 
 #: .\templates\ndr_core\admin_views\bootstrap4-responsive.html:66
+#, fuzzy
 msgid "previous"
-msgstr "précédent"
+msgstr "पिछला"
 
 #: .\templates\ndr_core\admin_views\bootstrap4-responsive.html:86
+#, fuzzy
 msgid "next"
-msgstr "suivant"
+msgstr "अगला"
 
 #: .\templates\ndr_core\base\footer.html:38
+#, fuzzy
 msgid "Connect"
-msgstr "Connecter"
+msgstr "जोड़ना"
 
 #: .\templates\ndr_core\result_renderers\base_compact_renderer.html:11
 #: .\templates\ndr_core\result_renderers\base_renderer.html:11
@@ -244,33 +263,32 @@ msgid ""
 "            "
 msgstr ""
 "\n"
-"Votre recherche a renvoyé %(total)s résultats, affichant la page %(page)s de "
-"%(num_pages)s.\n"
+"परिणाम %(result_number)s %(total_results)s\n"
 "            "
 
 #: .\templates\ndr_core\result_renderers\configured_fields_template.html:10
 #: .\templates\ndr_core\result_renderers\default_template.html:12
 #, fuzzy
 msgid "Cite:"
-msgstr "Citer:"
+msgstr "हवाला देना:"
 
 #: .\templates\ndr_core\ui_elements\slideshow.html:14
 msgid "Previous"
-msgstr "Précédent"
+msgstr "पिछला"
 
 #: .\templates\ndr_core\ui_elements\slideshow.html:18
-#, fuzzy
 msgid "Next"
-msgstr "Suivant"
+msgstr "अगला"
 
 #: .\templates\ndr_core\under_construction.html:9
+#, fuzzy
 msgid "Under Construction"
-msgstr "En construction"
+msgstr "निर्माणाधीन"
 
 #: .\templates\ndr_core\under_construction.html:16
 #, fuzzy
 msgid "This page is currently under construction."
-msgstr "Cette page est actuellement en construction."
+msgstr "यह पृष्ठ वर्तमान में निर्माणाधीन है।"
 
 #: .\templates\ndr_core\under_construction.html:29
 #, fuzzy
@@ -278,73 +296,29 @@ msgid ""
 "This is an NDR Core installation. You are seeing this page because it has "
 "been sto to \"under construction\"."
 msgstr ""
-"Il s’agit d’une installation NDR Core. Vous voyez cette page parce qu’elle a "
-"été mise en « en construction »."
+"यह एक NDR कोर स्थापना है। आप इस पृष्ठ को देख रहे हैं क्योंकि यह \"निर्माणाधीन\" हो गया "
+"है।"
 
 #: .\views.py:278
+#, fuzzy
 msgid "Please enter a search term."
-msgstr "Veuillez entrer un mot-clé."
+msgstr "कृपया कोई खोज शब्द दर्ज करें."
 
 #: .\views.py:300
 #, fuzzy
 msgid "Please fill out at least one search field."
-msgstr "Veuillez remplir au moins un champ de recherche."
+msgstr "कृपया कम से कम एक खोज फ़ील्ड भरें."
 
 #: .\views.py:315
 msgid "No results found."
-msgstr "Aucun résultat trouvé."
+msgstr "कोई परिणाम नही मिला ।"
 
 #: .\views.py:345
 #, fuzzy
 msgid "Thank you! The message has been sent."
-msgstr "Merci! Le message a été envoyé."
+msgstr "धन्यवाद! संदेश भेज दिया गया है।"
 
 #: .\views.py:354
+#, fuzzy
 msgid "Please correct the errors below."
-msgstr "Veuillez corriger les erreurs indiquées."
-
-#~ msgid "Please Choose"
-#~ msgstr "Veuillez choisir"
-
-#~ msgid "Simple Search"
-#~ msgstr "Recherche simple"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "            Showing %(meta.total)s items. Showing page %(meta.page)s of "
-#~ "%(meta.num_pages)s.\n"
-#~ "        "
-#~ msgstr ""
-#~ "\n"
-#~ "Affichage des éléments %(meta.total)s. Affichage de la page %(meta.page)s "
-#~ "de %(meta.num_pages)s.\n"
-#~ "        "
-
-#, fuzzy
-#~| msgid "No results found."
-#~ msgid "No manifests found."
-#~ msgstr "Aucun résultat trouvé."
-
-#~ msgid "refine search"
-#~ msgstr "affiner la recherche"
-
-#, fuzzy
-#~ msgid "start a search"
-#~ msgstr "Démarrer une recherche"
-
-#, fuzzy
-#~ msgid ""
-#~ "\n"
-#~ "                Your search returned %(meta.total)s results, showing page "
-#~ "%(meta.page)s of %(meta.num_pages)s.\n"
-#~ "            "
-#~ msgstr ""
-#~ "\n"
-#~ "Votre recherche a renvoyé les résultats %(meta.total)s, affichant la page "
-#~ "%(meta.page)s de %(meta.num_pages)s.\n"
-#~ "            "
-
-#, fuzzy
-#~ msgid "start a new search"
-#~ msgstr "Commencer une nouvelle recherche"
+msgstr "कृपया नीचे दी गई त्रुटियों को ठीक करें।"

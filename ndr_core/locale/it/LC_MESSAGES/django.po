@@ -7,198 +7,194 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-25 23:50+0200\n"
-"PO-Revision-Date: 2023-05-03 22:59+0200\n"
+"POT-Creation-Date: 2024-04-13 20:53+0200\n"
+"PO-Revision-Date: 2024-04-13 21:11+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.3.2\n"
 
-#: .\api\api_ninjas\api_ninjas_result.py:20 .\api\ddb_api\ddb_result.py:20
+#: .\api\api_ninjas\api_ninjas_result.py:21
 #: .\api\ndr_core\ndr_core_result.py:16
 #, fuzzy
 msgid "Result could not be loaded"
 msgstr "Impossibile caricare il risultato"
 
-#: .\api\base_result.py:79
+#: .\api\base_result.py:90
 #, fuzzy
 msgid "The connection timed out"
 msgstr "Timeout della connessione"
 
-#: .\api\base_result.py:83
+#: .\api\base_result.py:94
 #, fuzzy
 msgid "Query could not be requested"
 msgstr "Impossibile richiedere la query"
 
-#: .\api\base_result.py:91
+#: .\api\base_result.py:102
 #, fuzzy
 msgid "The server returned status code: {result.status_code}"
 msgstr "Il server ha restituito il codice di stato: {result.status_code}"
 
-#: .\api\base_result.py:135
+#: .\api\base_result.py:153
+#, fuzzy
 msgid "Download the record as a JSON file"
-msgstr ""
+msgstr "Scaricare il record come file JSON"
 
-#: .\api\base_result.py:147
+#: .\api\base_result.py:165
+#, fuzzy
 msgid "View The Data Repository"
-msgstr ""
+msgstr "Visualizza il repository di dati"
 
-#: .\api\base_result.py:161
+#: .\api\base_result.py:180
+#, fuzzy
 msgid "Report this entry as incorrect"
-msgstr ""
+msgstr "Segnala questa voce come errata"
 
-#: .\api\base_result.py:178
+#: .\api\base_result.py:214
+#, fuzzy
 msgid "View this snippet in context"
-msgstr ""
+msgstr "Visualizzare questo frammento di codice nel contesto"
 
-#: .\api\base_result.py:189
+#: .\api\base_result.py:226
+#, fuzzy
 msgid "Copy Citation"
-msgstr ""
+msgstr "Copia citazione"
 
-#: .\api\mongodb\mongodb_result.py:48
+#: .\api\base_result.py:310 .\api\base_result.py:316
+#, fuzzy
+msgid "Show full results"
+msgstr "Mostra i risultati completi"
+
+#: .\api\base_result.py:320
+#, fuzzy
+msgid "Show compact results"
+msgstr "Mostra risultati compatti"
+
+#: .\api\mongodb\mongodb_result.py:65
 msgid "Timed out"
 msgstr "Scaduto"
 
-#: .\forms.py:87
-msgid "Search for anything!"
-msgstr ""
-
-#: .\forms.py:89
-#, fuzzy
-msgid "And or Or Search"
-msgstr "E o o Cerca"
-
-#: .\forms.py:90
-#, fuzzy
-msgid "AND search"
-msgstr "E cerca"
-
-#: .\forms.py:90
-#, fuzzy
-msgid "OR search"
-msgstr "Cerca"
-
-#: .\forms.py:96
-msgid "Compact Result View"
-msgstr ""
-
-#: .\forms.py:124
-msgid "Search"
-msgstr "Cerca"
-
-#: .\forms.py:193
+#: .\forms\fields.py:32
 #, fuzzy
 msgid "Invalid value: Format is \"1,2,3-5,7\""
 msgstr "Valore non valido: il formato è \"1,2,3-5,7\""
 
-#: .\forms.py:203 .\forms.py:206
+#: .\forms\fields.py:43 .\forms\fields.py:49
 #, fuzzy
 msgid "Value is out of range. ({}-{})"
 msgstr "Il valore è fuori portata. ({}-{})"
 
-#: .\forms.py:209
+#: .\forms\fields.py:54
 msgid "Invalid value"
 msgstr "Valore non valido"
 
-#: .\forms.py:304
-#, fuzzy
-msgid "Please Choose"
-msgstr "Si prega di scegliere"
-
-#: .\forms.py:333
-msgid "Simple Search"
-msgstr "Ricerca libera"
-
-#: .\forms.py:412
+#: .\forms\forms_contact.py:24
 msgid "Message Subject"
 msgstr "Oggetto Del Messaggio"
 
-#: .\forms.py:413
+#: .\forms\forms_contact.py:25
 #, fuzzy
 msgid "Your E-Mail address"
 msgstr "Il tuo indirizzo e-mail"
 
-#: .\forms.py:414
+#: .\forms\forms_contact.py:26
 msgid "Message Text"
 msgstr "Messaggio"
 
-#: .\forms.py:445
+#: .\forms\forms_contact.py:58
 msgid "Send Message"
 msgstr "Invia messaggio"
 
-#: .\forms.py:458
+#: .\forms\forms_manifest.py:20
 msgid "Manifest"
-msgstr ""
+msgstr "Manifest"
 
-#: .\forms.py:461
+#: .\forms\forms_manifest.py:23
+#, fuzzy
 msgid "Choose the manifest to display."
-msgstr ""
+msgstr "Scegliere il manifesto da visualizzare."
 
-#: .\forms.py:476
+#: .\forms\forms_manifest.py:37
 msgid "Show"
-msgstr ""
+msgstr "Mostra"
+
+#: .\forms\forms_search.py:186
+msgid "AND"
+msgstr "E"
+
+#: .\forms\forms_search.py:187
+msgid "OR"
+msgstr "O"
+
+#: .\forms\forms_search.py:208
+#, fuzzy
+msgid "Compact Result View"
+msgstr "Visualizzazione compatta dei risultati"
+
+#: .\forms\forms_search.py:223
+#, fuzzy
+msgid "And or Or Search"
+msgstr "E o o Cerca"
+
+#: .\forms\forms_search.py:224
+#, fuzzy
+msgid "AND search"
+msgstr "E cerca"
+
+#: .\forms\forms_search.py:224
+#, fuzzy
+msgid "OR search"
+msgstr "Cerca"
+
+#: .\forms\forms_search.py:265
+msgid "Search"
+msgstr "Cerca"
 
 #: .\static\ndr_core\app_init\contact.html:15
 #, fuzzy
 msgid "Fill in the form below to contact us with any queries."
 msgstr "Compila il modulo sottostante per contattarci per qualsiasi domanda."
 
-#: .\static\ndr_core\app_init\filtered_list.html:15
-#, fuzzy, python-format
-msgid ""
-"\n"
-"            Showing %(meta.total)s items. Showing page %(meta.page)s of %"
-"(meta.num_pages)s.\n"
-"        "
-msgstr ""
-"\n"
-"Visualizzazione degli elementi %(meta.total)s. Visualizzazione della pagina %"
-"(meta.page)s di %(meta.num_pages)s.\n"
-"        "
-
 #: .\static\ndr_core\app_init\search.html:12
 msgid "Search Results"
 msgstr "Risultati di ricerca"
 
-#: .\static\ndr_core\app_init\search.html:15
-#, fuzzy
-#| msgid "refine search"
-msgid "Refine Search"
-msgstr "Applica"
-
 #: .\static\ndr_core\app_init\search.html:18
-#, fuzzy
-msgid "New Search"
-msgstr "E cerca"
+msgid "Refine Search"
+msgstr "Filtra la tua ricerca"
 
-#: .\static\ndr_core\app_init\search.html:25
+#: .\static\ndr_core\app_init\search.html:21
+msgid "New Search"
+msgstr "Nuova Ricerca"
+
+#: .\static\ndr_core\app_init\search.html:28
 msgid "Download"
 msgstr "Download"
 
-#: .\static\ndr_core\app_init\search.html:29
+#: .\static\ndr_core\app_init\search.html:32
 #, fuzzy
 msgid "Download JSON"
 msgstr "Scarica JSON"
 
-#: .\static\ndr_core\app_init\search.html:32
+#: .\static\ndr_core\app_init\search.html:35
 msgid "Download CSV"
 msgstr "Scarica CSV"
 
-#: .\static\ndr_core\app_init\search.html:36
-#, python-format
+#: .\static\ndr_core\app_init\search.html:39
+#, fuzzy, python-format
 msgid "(Downloads are limited to %(max_results)s results.)"
-msgstr ""
+msgstr "(I download sono limitati a %(max_results)s risultati.)"
 
-#: .\static\ndr_core\app_init\search.html:46
+#: .\static\ndr_core\app_init\search.html:49
 #, fuzzy, python-format
 msgid ""
 "\n"
-"                Your search returned %(total)s results, showing page %(page)"
-"s of %(num_pages)s.\n"
+"                Your search returned %(total)s results, showing page "
+"%(page)s of %(num_pages)s.\n"
 "            "
 msgstr ""
 "\n"
@@ -206,11 +202,31 @@ msgstr ""
 "di %(num_pages)s.\n"
 "            "
 
-#: .\templates\django_tables2\bootstrap4-responsive.html:66
+#: .\templates\ndr_core\404.html:16
+msgid "Error 404"
+msgstr "Errore 404"
+
+#: .\templates\ndr_core\404.html:18
+msgid "Go To Home Page"
+msgstr "Vai alla Home Page"
+
+#: .\templates\ndr_core\404.html:24
+msgid "Oops. Something went wrong!"
+msgstr "Ops. Qualcosa è andato storto!"
+
+#: .\templates\ndr_core\404.html:26
+msgid "The page you are looking for is not available."
+msgstr "La pagina che stai cercando non è più disponibile."
+
+#: .\templates\ndr_core\404.html:29
+msgid "Main Page"
+msgstr "Pagina Principale"
+
+#: .\templates\ndr_core\admin_views\bootstrap4-responsive.html:66
 msgid "previous"
 msgstr "precedente"
 
-#: .\templates\django_tables2\bootstrap4-responsive.html:86
+#: .\templates\ndr_core\admin_views\bootstrap4-responsive.html:86
 msgid "next"
 msgstr "successivo"
 
@@ -218,77 +234,96 @@ msgstr "successivo"
 msgid "Connect"
 msgstr "Connetti"
 
-#: .\templates\ndr_core\result_renderers\default_template.html:31
-msgid "Categories:"
-msgstr ""
-
-#: .\templates\ndr_core\result_renderers\default_template.html:68
-msgid "(no image found)"
-msgstr ""
-
-#: .\templates\ndr_core\result_renderers\default_template.html:76
-msgid "Cite:"
-msgstr ""
-
-#: .\templates\ndr_core\result_renderers\styles\renderer_transcription_and_fragment.html:14
-#, python-format
+#: .\templates\ndr_core\result_renderers\base_compact_renderer.html:11
+#: .\templates\ndr_core\result_renderers\base_renderer.html:11
+#, fuzzy, python-format
 msgid ""
 "\n"
-"                            Result %(result.result_meta.result_number)s of %"
-"(result.result_meta.total_results)s\n"
-"                        "
+"                Result %(result_number)s of %(total_results)s\n"
+"            "
 msgstr ""
+"\n"
+"La ricerca ha restituito %(total)s risultati, mostrando %(page)s di pagina "
+"di %(num_pages)s.\n"
+"            "
 
-#: .\templates\ndr_core\ui_elements\slideshow.html:30
+#: .\templates\ndr_core\result_renderers\configured_fields_template.html:10
+#: .\templates\ndr_core\result_renderers\default_template.html:12
+#, fuzzy
+msgid "Cite:"
+msgstr "Citare:"
+
+#: .\templates\ndr_core\ui_elements\slideshow.html:14
 msgid "Previous"
 msgstr "Precedente"
 
-#: .\templates\ndr_core\ui_elements\slideshow.html:34
+#: .\templates\ndr_core\ui_elements\slideshow.html:18
 msgid "Next"
 msgstr "Successivo"
 
 #: .\templates\ndr_core\under_construction.html:9
 msgid "Under Construction"
-msgstr ""
+msgstr "In costruzione"
 
 #: .\templates\ndr_core\under_construction.html:16
+#, fuzzy
 msgid "This page is currently under construction."
-msgstr ""
+msgstr "Questa pagina è attualmente in costruzione."
 
 #: .\templates\ndr_core\under_construction.html:29
+#, fuzzy
 msgid ""
 "This is an NDR Core installation. You are seeing this page because it has "
 "been sto to \"under construction\"."
 msgstr ""
+"Si tratta di un'installazione di base del rapporto di mancato recapito. Stai "
+"vedendo questa pagina perché è stata sto a \"in costruzione\"."
 
-#: .\views.py:289
+#: .\views.py:278
 msgid "Please enter a search term."
 msgstr "Si prega di inserire un termine di ricerca."
 
-#: .\views.py:308
+#: .\views.py:300
 #, fuzzy
 msgid "Please fill out at least one search field."
 msgstr "Si prega di compilare almeno un campo di ricerca."
 
-#: .\views.py:323
+#: .\views.py:315
 msgid "No results found."
 msgstr "Nessun risultato trovato."
 
-#: .\views.py:375
+#: .\views.py:345
 #, fuzzy
 msgid "Thank you! The message has been sent."
 msgstr "Grazie! Il messaggio è stato inviato."
 
-#: .\views.py:384
-#, fuzzy
+#: .\views.py:354
 msgid "Please correct the errors below."
-msgstr "Si prega di correggere gli errori riportati di seguito."
+msgstr "Correggi gli errori riportati di seguito."
 
-#: .\views.py:430
 #, fuzzy
-#| msgid "No results found."
-msgid "No manifests found."
-msgstr "Nessun risultato trovato."
+#~ msgid "Please Choose"
+#~ msgstr "Si prega di scegliere"
+
+#~ msgid "Simple Search"
+#~ msgstr "Ricerca libera"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "            Showing %(meta.total)s items. Showing page %(meta.page)s of "
+#~ "%(meta.num_pages)s.\n"
+#~ "        "
+#~ msgstr ""
+#~ "\n"
+#~ "Visualizzazione degli elementi %(meta.total)s. Visualizzazione della "
+#~ "pagina %(meta.page)s di %(meta.num_pages)s.\n"
+#~ "        "
+
+#, fuzzy
+#~| msgid "No results found."
+#~ msgid "No manifests found."
+#~ msgstr "Nessun risultato trovato."
 
 #~ msgid "refine search"
 #~ msgstr "Applica"
@@ -305,8 +340,8 @@ msgstr "Nessun risultato trovato."
 #~ "            "
 #~ msgstr ""
 #~ "\n"
-#~ "La ricerca ha restituito i risultati %(meta.total)s, mostrando la pagina %"
-#~ "(meta.page)s di %(meta.num_pages)s.\n"
+#~ "La ricerca ha restituito i risultati %(meta.total)s, mostrando la pagina "
+#~ "%(meta.page)s di %(meta.num_pages)s.\n"
 #~ "            "
 
 #, fuzzy

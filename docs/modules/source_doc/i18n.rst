@@ -1,0 +1,60 @@
+Internationalization
+====================
+NDR Core's internationalization is based on the GNU gettext library.
+Only the parts of the code that are frontend-visible are internationalized.
+The administrative interface is in English only.
+
+In the ndr_core base directory, there is a folder named "locale".
+This folder contains a folder for each language that NDR Core supports.
+NDR Core uses simple language codes for the folder names, such as "en" for English and "fr" for French.
+It is not necessary to use the full language code, such as "en_US" or "fr_FR".
+
+Updating Translations
+---------------------
+After updates in the code, the translations may need to be updated. This is done withe the help of the `django-admin makemessages` command.
+To update the translations, run the following command from the ndr_core base directory:
+
+    django-admin makemessages -l <language_code>
+
+Alternately, to update all translations, run the following command from the ndr_core base directory:
+
+    django-admin makemessages -a
+
+This will generate or update the .po files in the locale folders.
+The .po files contain the translations for the strings in the code.
+The .po files are human-readable and can be edited with a text editor.
+
+After the .po files have been updated, the translations can be updated with the `django-admin compilemessages` command.
+To update the translations, run the following command from the ndr_core base directory:
+
+    django-admin compilemessages
+
+This will generate or update the .mo files in the locale folders.
+
+Adding a New Language
+---------------------
+To add a new language, create a new folder in the locale directory with the language code.
+For example, to add Spanish, create a folder named "es" in the locale directory.
+
+After creating the folder, run the following command from the ndr_core base directory:
+
+    django-admin makemessages -l <language_code>
+
+This will generate the .po file for the new language.
+
+After the .po file has been created, the translations can be added to the file.
+
+After the translations have been added, run the following command from the ndr_core base directory:
+
+    django-admin compilemessages
+
+To make the language available in the frontend, add the language to the initial_values.json fixture file.
+If you plan to use the newly created language in your current project, add it to the database manually.
+
+To do that, update the key "available_languages" table ndrcore_value with the new language code.
+You'll have to update the string in the following form:
+
+    (en,English);(de,Deutsch);(fr,Français);(it,Italiano)
+
+The string is a semicolon-separated list of tuples, where the first element of the tuple is the language code and the second element is the language name.
+The language code must correspond to the folder name in the locale directory.

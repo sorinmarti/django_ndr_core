@@ -51,7 +51,7 @@
       "value_help_text": "What languages are available? (Hold Ctrl to select multiple)",
       "value_value": "",
       "value_type": "multi_list",
-      "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano)",
+      "value_options": "(en,English);(de,Deutsch);(fr,Français);(it,Italiano);(es;Español);(hi,Hindi)",
       "is_translatable": false
     }
   },

@@ -18,3 +18,4 @@ This is the *configuration database* for the NDR Core instance, not the *data da
    source_doc/forms.rst
    source_doc/admin-views.rst
    source_doc/helpers.rst
+   source_doc/i18n.rst
