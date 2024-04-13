@@ -1,256 +1,258 @@
+// 1.) Select the type of Search Field you want to create.
+let info_text_title = $('#id_info_text_title');
+let info_text = $('#id_info_text_text');
+let info_text_detail = $('#id_info_text_detail');
+let field_type = $('#id_field_type');
 
-function setTabs(select_value) {
-    // Get the first tab and all other tabs
-    let first_tab = $("#my-tab-holder li:first");  //get the first tab
-    let other_tabs = $("#my-tab-holder li:not(:first)");  //get all tabs except first tab
+// 2.) Choose a name and connect to API.
+let field_name = $('#id_field_name');
+let api_parameter = $('#id_api_parameter');
 
-    // If no UI-Element is selected, disable all tabs
-    if (select_value === '') {
-        first_tab.children('a').text('Select a UI-Element');
-        $(other_tabs).each(function(k,v){
-            $(this).children('a').attr('class', 'nav-link disabled');
-            $(this).children('a').text('');
-        });
-        $( ".tab-pane" ).attr( "style", "display: none;" );
-        return;
-    }
+// 3.) Enter the text your users can see.
+let field_label = $('#id_field_label');
+let initial_value = $('#id_initial_value');
+let field_required = $('#id_field_required');
+let help_text = $('#id_help_text');
 
-    // Otherwise, enable all tabs
-    $( ".tab-pane" ).removeAttr( "style" );
-    first_tab.children('a').tab('show');
+// 4.) Additional options for specific field types.
+let div_list_choices = $('#div_id_list_choices');
+let list_condition = $('#id_list_condition');
+let lower_value = $('#id_lower_value');
+let upper_value = $('#id_upper_value');
 
-    // These UI-Elements feature 1 tab
-    if(['card', 'jumbotron', 'iframe', 'banner', 'manifest_viewer'].includes(select_value)) {
-        first_tab.children('a').text('Configure your ' + select_value);
-        $(other_tabs).each(function(k,v){
-            $(this).children('a').attr('class', 'nav-link disabled');
-            $(this).children('a').text('');
-        });
+let div_text_choices = $('#div_id_text_choices');
+let text_choices = $('#id_text_choices');
 
-        let first_ndr_banner_image = $('#div_id_item_0_ndr_banner_image');
-        let first_ndr_slide_image = $('#div_id_item_0_ndr_slide_image');
-        let first_ndr_card_image = $('#div_id_item_0_ndr_card_image');
-        let first_title = $('#div_id_item_0_title');
-        let first_text = $('#div_id_item_0_text');
-        let first_url = $('#div_id_item_0_url');
-        let first_manifest_group = $('#div_id_item_0_manifest_group');
+// 5.) Additional options for
+let data_field_type = $('#id_data_field_type');
+let input_transformation_regex = $('#id_input_transformation_regex');
+let use_in_csv_export = $('#id_use_in_csv_export');
 
-        switch (select_value) {
-            case 'card':
-                first_ndr_banner_image.hide();
-                first_ndr_slide_image.hide();
-                first_ndr_card_image.show();
-                first_title.show();
-                first_text.show();
-                first_url.show();
-                first_manifest_group.hide();
-                break;
-            case 'jumbotron':
-                first_ndr_banner_image.show();
-                first_ndr_slide_image.hide();
-                first_ndr_card_image.hide();
-                first_title.show();
-                first_text.show();
-                first_url.hide();
-                first_manifest_group.hide();
-                break;
-            case 'iframe':
-                first_ndr_banner_image.hide();
-                first_ndr_slide_image.hide();
-                first_ndr_card_image.hide();
-                first_title.hide();
-                first_text.show();
-                first_url.hide();
-                first_manifest_group.hide();
-                break;
-            case 'banner':
-                first_ndr_banner_image.show();
-                first_ndr_slide_image.hide();
-                first_ndr_card_image.hide();
-                first_title.hide();
-                first_text.hide();
-                first_url.hide();
-                first_manifest_group.hide();
-                break;
-            case 'manifest_viewer':
-                first_ndr_banner_image.hide();
-                first_ndr_slide_image.hide();
-                first_ndr_card_image.hide();
-                first_title.hide();
-                first_text.hide();
-                first_url.hide();
-                first_manifest_group.show();
-                break;
-        }
-    }
-    // The other UI-Elements feature 10 tabs
-    else {
-        first_tab.children('a').text('Slide 1');
-        $(other_tabs).each(function(k,v){
-            $(this).children('a').attr('class', 'nav-link');
-            $(this).children('a').text('Slide ' + (k+2));
-        });
-
-        for (let i = 0; i < 10; i++) {
-            let ndr_banner_image = $('#div_id_item_' + i + '_ndr_banner_image');
-            let ndr_slide_image = $('#div_id_item_' + i + '_ndr_slide_image');
-            let ndr_card_image = $('#div_id_item_' + i + '_ndr_card_image');
-            let title = $('#div_id_item_' + i + '_title');
-            let text = $('#div_id_item_' + i + '_text');
-            let url = $('#div_id_item_' + i + '_url');
-            let manifest_group = $('#div_id_item_' + i + '_manifest_group');
-
-            switch (select_value) {
-            case 'slides':
-                ndr_banner_image.hide();
-                ndr_slide_image.show();
-                ndr_card_image.hide();
-                title.hide();
-                text.hide();
-                url.hide();
-                manifest_group.hide();
-                break;
-            case 'carousel':
-                ndr_banner_image.hide();
-                ndr_slide_image.show();
-                ndr_card_image.hide();
-                title.show();
-                text.show();
-                url.hide();
-                manifest_group.hide();
-                break;
-            }
-        }
-
-    }
-}
-
-function setComponents(select_value) {
-    let select_help_text = $('#hint_id_type');
-
-    let ui_element_preview = $('#id_ui_element_preview');
-    let show_indicators = $('#id_show_indicators');
-    let link_element = $('#id_link_element');
-    let autoplay = $('#id_autoplay');
-
-    let new_preview_image_url = '';
-    ui_element_preview.attr('src', new_preview_image_url);
-    let preview_image_url = "/static/ndr_core/images/admin/ui_elements/_ITEM_.png";
-
-    setTabs(select_value);
-
+function setTextBox(select_value) {
     switch (select_value) {
-        case 'card':    // card
-            select_help_text.text('A Card can feature an image, a title, some text and a link');
-            new_preview_image_url = preview_image_url.replace('_ITEM_', 'card');
-            ui_element_preview.attr('src', new_preview_image_url);
-
-            show_indicators.prop( "disabled", true );
-            link_element.prop( "disabled", false );
-            autoplay.prop( "disabled", true );
+        case '1':       // String
+            info_text_title.text('String');
+            info_text.text("Generates a text input field.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Search for text</li>" +
+                                  "  <li>Use regular expressions</li>" +
+                                  "  <li>Valid initial values: any text</li>" +
+                                  "</ul>");
             break;
-        case 'slides':   // slides
-            select_help_text.text('A Slideshow features images');
-            new_preview_image_url = preview_image_url.replace('_ITEM_', 'slides');
-            ui_element_preview.attr('src', new_preview_image_url);
-
-            show_indicators.prop( "disabled", false );
-            link_element.prop( "disabled", true );
-            autoplay.prop( "disabled", false );
+        case '2':       // Number
+            info_text_title.text('Number');
+            info_text.text("Generates a Number input field.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Search for numbers</li>" +
+                                  "  <li>Define a lower and upper bound</li>" +
+                                  "  <li>Valid initial values: any integer number</li>" +
+                                  "</ul>");
             break;
-        case 'carousel':   // carousel
-            select_help_text.text('A carousel is a slideshow with text');
-            new_preview_image_url = preview_image_url.replace('_ITEM_', 'carousel');
-            ui_element_preview.attr('src', new_preview_image_url);
-
-            show_indicators.prop( "disabled", false );
-            link_element.prop( "disabled", true );
-            autoplay.prop( "disabled", false );
+        case '3':       // Dropdown List
+            info_text_title.text('Dropdown List');
+            info_text.text("Generates a dropdown list.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Lets you select <b>one</b> option.</li>" +
+                                  "  <li>Add options below</li>" +
+                                  "  <li>Options are translatable</li>" +
+                                  "  <li>Valid initial values: any option <b>key</b></li>" +
+                                  "</ul>");
             break;
-        case 'jumbotron':   // jumbotron
-            select_help_text.text('A jumbotron is a large callout which can feature a background image and text');
-            new_preview_image_url = preview_image_url.replace('_ITEM_', 'jumbotron');
-            ui_element_preview.attr('src', new_preview_image_url);
-
-            show_indicators.prop( "disabled", true );
-            link_element.prop( "disabled", true );
-            autoplay.prop( "disabled", true );
+        case '4':       // Multi Select List
+            info_text_title.text('Multi Select List');
+            info_text.text("Generates a dropdown list.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Lets you select <b>multiple</b> options.</li>" +
+                                  "  <li>Add options below</li>" +
+                                  "  <li>Options are translatable</li>" +
+                                  "  <li>Valid initial values: any option <b>keys</b>, separated by ','</li>" +
+                                  "</ul>");
             break;
-        case 'iframe':   // iframe
-            select_help_text.text('An iframe is a container for a web page');
-            new_preview_image_url = preview_image_url.replace('_ITEM_', 'iframe');
-            ui_element_preview.attr('src', new_preview_image_url);
-
-            show_indicators.prop( "disabled", true );
-            link_element.prop( "disabled", true );
-            autoplay.prop( "disabled", true );
+        case '5':       // Boolean
+            info_text_title.text('Boolean');
+            info_text.text("Generates a True/False switch.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Search for <b>True</b> or <b>False</b>.</li>" +
+                                  "  <li>Valid initial values: <b>true</b> or <b>false</b></li>" +
+                                  "  <li>Field Type setting returns 'true'/'false' (string) or 0/1 (int)</li>" +
+                                  "</ul>");
             break;
-        case 'banner':   // banner
-            select_help_text.text('A banner is a large callout which can feature an image');
-            new_preview_image_url = preview_image_url.replace('_ITEM_', 'banner');
-            ui_element_preview.attr('src', new_preview_image_url);
-
-            show_indicators.prop( "disabled", true );
-            link_element.prop( "disabled", true );
-            autoplay.prop( "disabled", true );
+        case '6':       // Date
+            info_text_title.text('Date');
+            info_text.text("Generates a date input field.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Search for dates</li>" +
+                                  "  <li>Define a lower and upper bound</li>" +
+                                  "  <li>Valid initial values: any date (within range) in the format 'YYYY-MM-DD'</li>" +
+                                  "</ul>");
             break;
-        case 'manifest_viewer':   // manifest_viewer
-            select_help_text.text('A manifest viewer is a viewer for a IIIF manifest');
-            new_preview_image_url = preview_image_url.replace('_ITEM_', 'manifest_viewer');
-            ui_element_preview.attr('src', new_preview_image_url);
-
-            show_indicators.prop( "disabled", true );
-            link_element.prop( "disabled", true );
-            autoplay.prop( "disabled", true );
+        case '7':       // Date Range
+            info_text_title.text('Date Range');
+            info_text.text("Generates two date input fields.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Search for date ranges</li>" +
+                                  "</ul>");
+            break;
+        case '8':       // Number Range
+            info_text_title.text('Number Range');
+            info_text.text("Generates two number input fields.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Search for number ranges</li>" +
+                                  "  <li>Define a lower and upper bound</li>" +
+                                  "  <li>Input format: 1-5,7,9,11-13</li>" +
+                                  "</ul>");
+            break;
+        case '9':       // Hidden
+            info_text_title.text('Hidden');
+            info_text.text("Generates a hidden input field.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Field is hidden from the user.</li>" +
+                                  "  <li>Can be used to pass information to the API.</li>" +
+                                  "  <li>Initial value is thge passed field value.</li>" +
+                                  "</ul>");
+            break;
+        case '10':      // Info Text
+            info_text_title.text('Info Text');
+            info_text.text("Generates an Info box.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Displays information.</li>" +
+                                  "  <li>Is translatable.</li>" +
+                                  "  <li>Valid initial values: any text, HTML allowed</li>" +
+                                  "</ul>");
+            break;
+        case '11':      // Boolean List
+            info_text_title.text('Boolean List');
+            info_text.text("Generates a list of True/False switches.")
+            info_text_detail.html("<ul>" +
+                                  "  <li>Search for multiple booleans.</li>" +
+                                  "  <li>Add options below</li>" +
+                                  "</ul>");
             break;
         default:
-            select_help_text.text('Select the image group you want to add images to');
-            new_preview_image_url = preview_image_url.replace('_ITEM_', 'none');
-            ui_element_preview.attr('src', new_preview_image_url);
+            info_text_title.text('Select a Field Type');
+            info_text.text("Select a field type to see more information.")
+            info_text_detail.html("");
             break;
     }
 }
 
-function show_item_preview(item_id, number) {
-    let selected_value = $(item_id).val();
+function selectType(select_value) {
+    // Set the text box
+    setTextBox(select_value);
 
-    if(selected_value === '') {
-        return;
+    // Set default values, valid for most field types
+    field_name.removeAttr('disabled');
+    api_parameter.removeAttr('disabled');
+    field_label.removeAttr('disabled');
+    initial_value.removeAttr('disabled');
+    field_required.removeAttr('disabled');
+    help_text.removeAttr('disabled');
+
+    lower_value.attr('disabled', 'disabled');
+    upper_value.attr('disabled', 'disabled');
+    div_list_choices.hide();
+    list_condition.attr('disabled', 'disabled');
+
+    text_choices.attr('disabled', 'disabled');
+    div_text_choices.hide();
+
+    data_field_type.removeAttr('disabled')
+    input_transformation_regex.removeAttr('disabled')
+    use_in_csv_export.removeAttr('disabled')
+
+    switch (select_value) {
+        case '1':       // String
+            data_field_type.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+            break;
+        case '2':       // Number
+            lower_value.removeAttr('disabled');
+            upper_value.removeAttr('disabled');
+            break;
+        case '3':       // Dropdown List
+            div_list_choices.show();
+            data_field_type.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+            break;
+        case '4':       // Multi Select List
+            div_list_choices.show();
+            list_condition.removeAttr('disabled');
+            data_field_type.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+            break;
+        case '5':       // Boolean
+            field_required.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+            break;
+        case '6':       // Date
+            data_field_type.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+            break;
+        case '7':       // Date Range
+            data_field_type.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+            break;
+        case '8':       // Number Range
+            lower_value.removeAttr('disabled');
+            upper_value.removeAttr('disabled');
+            break;
+        case '9':       // Hidden
+            field_label.attr('disabled', 'disabled');
+            field_required.attr('disabled', 'disabled');
+            help_text.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+            break;
+        case '10':      // Info Text
+            api_parameter.attr('disabled', 'disabled');
+            initial_value.attr('disabled', 'disabled');
+            help_text.attr('disabled', 'disabled');
+            data_field_type.attr('disabled', 'disabled');
+            use_in_csv_export.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+
+            text_choices.removeAttr('disabled');
+            div_text_choices.show();
+            break;
+        case '11':      // Boolean List
+            div_list_choices.show();
+            list_condition.removeAttr('disabled');
+            data_field_type.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+            break;
+        default:
+            field_name.attr('disabled', 'disabled');
+            api_parameter.attr('disabled', 'disabled');
+            field_label.attr('disabled', 'disabled');
+            initial_value.attr('disabled', 'disabled');
+            field_required.attr('disabled', 'disabled');
+            help_text.attr('disabled', 'disabled');
+            div_list_choices.hide();
+            list_condition.attr('disabled', 'disabled');
+            lower_value.attr('disabled', 'disabled');
+            upper_value.attr('disabled', 'disabled');
+            data_field_type.attr('disabled', 'disabled');
+            input_transformation_regex.attr('disabled', 'disabled');
+            use_in_csv_export.attr('disabled', 'disabled');
+            break;
     }
 
-    $.ajax({
-        url: '/ndr_core/preview/image/' + selected_value + '/',
-        success: function(data) {
-            let preview_id = '#id_ui_element_' + number + '_preview';
-            $(preview_id).attr('src', data);
-        }
-    });
+
 }
 
 $(document).ready(function() {
-
-    setComponents($('#id_type').val())
-    $('#id_type').change(function() {
-        setComponents(this.value)
+    let list_choice_table = Tabulator.findTable("#list_choices-table")[0];
+    field_type.change(function() {
+        selectType(this.value)
+        $.ajax({
+            url: "/ndr_core/configure/search/ajax/field/"+this.value+"/header/",
+            success: function(result) {
+                list_choice_table.setColumns(result);
+            },
+            error: function(result) {
+                console.log(result);
+            },
+            dataType: 'json'
+        });
     });
-
-    for(let i = 0; i < 10; i++) {
-        let item_banner_name = '#id_item_' + i + '_ndr_banner_image';
-        let item_slide_name = '#id_item_' + i + '_ndr_slide_image';
-        let item_card_name = '#id_item_' + i + '_ndr_card_image';
-
-        show_item_preview(item_banner_name, i);
-        show_item_preview(item_slide_name, i);
-        show_item_preview(item_card_name, i);
-
-        $(item_banner_name).change(function() {
-            show_item_preview(item_banner_name, i);
-        });
-        $(item_slide_name).change(function() {
-            show_item_preview(item_slide_name, i);
-        });
-        $(item_card_name).change(function() {
-            show_item_preview(item_card_name, i);
-        });
-    }
+    selectType(field_type.val());
 });

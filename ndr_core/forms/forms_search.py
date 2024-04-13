@@ -62,6 +62,7 @@ class AdvancedSearchForm(_NdrCoreForm):
             for field in search_config.search_form_fields.all():
                 search_field = field.search_field
                 form_field = None
+                condition_form_field = None
                 help_text = mark_safe(
                     f'<small id="{search_field.field_name}Help" class="form-text text-muted">'
                     f"{search_field.help_text}</small>"
@@ -111,7 +112,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                 if search_field.field_type == search_field.FieldType.BOOLEAN_LIST:
                     form_field = forms.MultipleChoiceField(
                         label=search_field.field_label,
-                        choices=search_field.get_list_choices(),
+                        choices=search_field.get_choices(),
                         required=search_field.field_required,
                         help_text=help_text,
                         initial=search_field.get_initial_value(),
@@ -163,8 +164,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                 if search_field.field_type == search_field.FieldType.LIST:
                     form_field = forms.ChoiceField(
                         label=search_field.field_label,
-                        choices=[("", _("Please Choose"))]
-                        + search_field.get_list_choices(),
+                        choices=search_field.get_choices(null_choice=True),
                         required=search_field.field_required,
                         help_text=help_text,
                         initial=search_field.get_initial_value(),
@@ -173,7 +173,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                 if search_field.field_type == search_field.FieldType.MULTI_LIST:
                     form_field = forms.MultipleChoiceField(
                         label=search_field.field_label,
-                        choices=search_field.get_list_choices(),
+                        choices=search_field.get_choices(),
                         widget=FilteredListWidget(
                             attrs={"data-minimum-input-length": 0}
                         ),
@@ -181,12 +181,24 @@ class AdvancedSearchForm(_NdrCoreForm):
                         help_text=help_text,
                         initial=search_field.get_initial_value(),
                     )
+                    if search_field.list_condition == 'CHOOSE':
+                        condition_form_field = forms.ChoiceField(label=mark_safe('&nbsp;'),
+                                                                 choices=[('AND', _('AND')),
+                                                                          ('OR', _('OR'))],
+                                                                 required=False,
+                                                                 widget=forms.Select(attrs={'style': 'height: 32px; font-size: 14px;'}),
+                                                                 help_text="<small>AND: all.<br/>OR: at least one.</small>")
 
                 # Add the field to the form if it was created.
                 if form_field is not None:
                     self.fields[
                         f"{search_config.conf_name}_{search_field.field_name}"
                     ] = form_field
+                    # Add the condition field to the form if it was created.
+                    if condition_form_field is not None:
+                        self.fields[
+                            f"{search_config.conf_name}_{search_field.field_name}_condition"
+                        ] = condition_form_field
 
     @staticmethod
     def get_compact_view_field():
@@ -327,11 +339,31 @@ class AdvancedSearchForm(_NdrCoreForm):
                             css_class=f"col-md-{column.field_size}",
                         )
                     else:
-                        form_field = Field(
-                            f"{search_config.conf_name}_{column.search_field.field_name}",
-                            # placeholder=column.search_field.translated_field_label(),
-                            wrapper_class=f"col-md-{column.field_size}",
-                        )
+                        # If the field is a list and set to CHOOSE, we create a select field.
+                        if f"{search_config.conf_name}_{column.search_field.field_name}_condition" in self.fields:
+                            print("Adding condition field for ", column.search_field.field_name)
+                            form_field = Div(
+                                Div(
+                                    Field(
+                                        f"{search_config.conf_name}_{column.search_field.field_name}",
+                                        wrapper_class="col-9 m-0 pr-0",
+                                    ),
+                                    Field(
+                                        f"{search_config.conf_name}_{column.search_field.field_name}_condition",
+                                        css_class="",
+                                        wrapper_class="col-3 m-0 pl-0",
+                                    ),
+                                    css_class="row"
+                                ),
+                                css_class=f"col-md-{column.field_size}",
+                            )
+                        # Otherwise, we create a normal field.
+                        else:
+                            form_field = Field(
+                                f"{search_config.conf_name}_{column.search_field.field_name}",
+                                # placeholder=column.search_field.translated_field_label(),
+                                wrapper_class=f"col-md-{column.field_size}",
+                            )
 
                     form_row.append(form_field)
 

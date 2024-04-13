@@ -1,0 +1,105 @@
+{% load crispy_forms_tags %}
+
+<div class="modal fade" id="importCSVModal" tabindex="-1" role="dialog" aria-labelledby="importCSVModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importCSVModalTitle">Import CSV File</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <div class="container p-3">
+            <div class="alert alert-primary" role="alert">
+              The first line of the CSV file <b>must</b> be the header row.
+                The file must at least contain the columns "<b>key</b>" and "<b>value</b>".
+            </div>
+            {% crispy form %}
+        </div>
+      <div class="modal-footer pt-3">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="import_csv">Import</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    $(document).ready(function(){
+        let modal = $('#importCSVModal');
+        let delimiter = $('#id_csv_delimiter');
+        let replace = $('#id_replace_data');
+        let list_choice_table = Tabulator.findTable("#list_choices-table")[0];
+
+        $('#import_csv').click(function(){
+            modal.modal('hide');
+            modal.on('hidden.bs.modal', async function (e) {
+                let csv_file = $('#id_csv_file')[0].files[0];
+                let fileReader = new FileReader();
+                fileReader.onload = function (fileLoadedEvent) {
+                    let textFromFileLoaded = fileLoadedEvent.target.result;
+                    let data = parseCSV(textFromFileLoaded, delimiter.val());
+                    if (replace.is(':checked')) {
+                        list_choice_table.clearData();
+                    }
+                    list_choice_table.addData(data, false);
+                };
+                fileReader.readAsText(csv_file, "UTF-8");
+            });
+        });
+    });
+
+    function parseCSV(csvString, separator) {
+        const validColumns = ["key", "value", "info", "is_searchable", "is_displayable", "condition"];
+        const validPatterns = [
+            "value_[a-z]{2}", // Matches 'value_' followed by any two lowercase letters
+            "info_[a-z]{2}" // Matches 'info_' followed by any two lowercase letters
+        ];
+
+      // Function to split a CSV line into fields accounting for quoted fields that may contain the separator
+      function splitCSVLine(line, separator) {
+        // Match either "quoted fields" (ignoring escaped quotes) or tokens separated by the separator not inside quotes
+        const regex = new RegExp(`(".*?"|[^"${separator}"]+)(?=\\s*${separator}|\\s*$)`, 'g');
+        let matches = [];
+        let match;
+
+        while ((match = regex.exec(line)) !== null) {
+          // Remove leading/trailing whitespaces and quotes from each field, and unescape double quotes
+          const matchedValue = match[1].trim();
+          matches.push(matchedValue.replace(/^"|"$/g, '').replace(/""/g, '"'));
+        }
+
+        return matches;
+      }
+
+      // Ensure the separator is properly escaped for use in a regular expression
+      const escapedSeparator = separator.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+
+      // Split the string into lines using a regex that matches both \r\n and \n
+      const lines = csvString.split(/\r?\n/);
+
+      // Extract the original header line and use splitCSVLine to split it into column names
+      const originalHeaders = splitCSVLine(lines[0], escapedSeparator);
+
+      // Determine valid headers based on the list and patterns, and their indices
+      const validHeaderIndices = originalHeaders
+        .map((header, index) => ({ header, index }))
+        .filter(({ header }) =>
+          validColumns.includes(header) ||
+          validPatterns.some(pattern => new RegExp(pattern).test(header))
+        );
+
+      // Map the remaining lines into objects, aligning values with their correct headers
+      const data = lines.slice(1).filter(line => line).map(line => {
+        // Use splitCSVLine to correctly split the line into values
+        const values = splitCSVLine(line, escapedSeparator);
+
+        // Reduce the validHeaderIndices into an object
+        return validHeaderIndices.reduce((obj, { header, index }) => {
+          obj[header] = values[index];
+          return obj;
+        }, {});
+      });
+
+      return data;
+    }
+</script>

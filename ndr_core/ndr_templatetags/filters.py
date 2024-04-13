@@ -156,12 +156,11 @@ class BadgeTemplateFilter(AbstractFilter):
                 field = NdrCoreSearchField.objects.get(
                     field_name=self.get_configuration("field")
                 )
-                all_field_options = field.get_list_choices_as_dict()
+                all_field_options = field.get_choices_list_dict()
                 field_options = all_field_options[self.value]
-                if "is_printable" in field_options:
-                    if field_options["is_printable"].lower() == "false":
-                        return None
-                # If 'is_printable' is not set, it is always printed
+                if not field_options['is_printable']:
+                    return None
+
                 badge_element.add_content(
                     field_options[self.get_language_value_field_name()]
                 )

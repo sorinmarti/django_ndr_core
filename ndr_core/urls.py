@@ -274,7 +274,7 @@ urlpatterns = [
     path('configure/search/result/preview/<str:img_config>/', preview_result_card_image,
          name='preview_result_card_image'),
     path('configure/search/ajax/field/<str:field_name>/choices/', get_field_list_choices, name='get_field_choices'),
-    path('configure/search/ajax/field/<str:field_name>/header/', get_field_list_header, name='get_field_header'),
+    path('configure/search/ajax/field/<int:field_type>/header/', get_field_list_header, name='get_field_header'),
 
     # SEARCH STATS
     path('configure/statistics/', StatisticsView.as_view(), name='search_statistics'),

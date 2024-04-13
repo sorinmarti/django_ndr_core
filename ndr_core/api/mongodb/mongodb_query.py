@@ -34,74 +34,53 @@ class MongoDBQuery(BaseQuery):
             'page': int(self.page)
         }
 
-        for field_name in self.values:
-            print("FIELD", field_name, self.values[field_name])
-            try:
-                field = NdrCoreSearchField.objects.get(field_name=field_name)
-                value = None
-                filter_name = field.api_parameter
+        and_list = []
+        or_list = []
+        for field in self.get_field_configurations():
+            # print("FIELD", field.parameter, field.condition, field.value)
 
-                # STRING:
-                if field.field_type == NdrCoreSearchField.FieldType.STRING:
-                    if self.values[field_name] != '':
-                        value = {"$regex": self.values[field_name], "$options": "i"}
-                elif field.field_type == NdrCoreSearchField.FieldType.NUMBER:
-                    value = self.values[field_name]
-                elif field.field_type == NdrCoreSearchField.FieldType.NUMBER_RANGE:
-                    if len(self.values[field_name]) > 0:
-                        if field.data_field_type == "int":
-                            value = {'$in': self.values[field_name]}
-                        else:
-                            regex_string = f'({"|".join(map(str, self.values[field_name]))})'
-                            if field.input_transformation_regex is not None and field.input_transformation_regex != '':
-                                if '{_value_}' in field.input_transformation_regex:
-                                    regex_string = field.input_transformation_regex.replace('{_value_}', regex_string)
-                            value = {'$regex': regex_string}
-                # LIST:
-                elif field.field_type == NdrCoreSearchField.FieldType.LIST:
-                    if self.values[field_name] != '':
-                        key, condition = self.get_value_conf(self.values[field_name])
-                        value = key
-                # MULTI_LIST:
-                elif field.field_type == NdrCoreSearchField.FieldType.MULTI_LIST:
-                    if type(self.values[field_name]) == list and len(self.values[field_name]) > 0:
-                        items = []
-                        for item in self.values[field_name]:
-                            key, condition = self.get_value_conf(item)
-                            items.append(key)
-
-                        filter_name = '$all'
-                        if field.list_condition == 'or':
-                            filter_name = '$in'
-
-                        value = {filter_name: items}
-                # BOOLEAN_LIST:
-                elif field.field_type == NdrCoreSearchField.FieldType.BOOLEAN_LIST:
-                    filter_name = '$or'
-                    value = []
-                    for item in self.values[field_name]:
-                        key, condition = self.get_value_conf(item)
-                        value.append({key: {"$eq": condition}})
-
-                elif field.field_type == NdrCoreSearchField.FieldType.DATE:
-                    pass
-                elif field.field_type == NdrCoreSearchField.FieldType.DATE_RANGE:
-                    if self.values[field_name][0] is not None and self.values[field_name][1] is not None:
-                        date_from = self.values[field_name][0].strftime('%Y-%m-%d')
-                        date_to = self.values[field_name][1].strftime('%Y-%m-%d')
-                        value = {"$gte": date_from, "$lte": date_to}
-                elif field.field_type == NdrCoreSearchField.FieldType.BOOLEAN:
-                    value = {'$eq': self.values[field_name]}
-
-                if value is not None:
-                    if filter_name in query['filter']:
-                        query['filter'][filter_name] = query['filter'][filter_name] + value
+            value = None
+            if field.field_type == 'string':
+                value = {"$regex": field.value, "$options": "i"}
+            elif field.field_type == 'number':
+                value = field.value
+            elif field.field_type == 'number_range':
+                if isinstance(field.value, str):
+                    value = {"$regex": field.value}
+                else:
+                    value = {"$in": field.value}
+            elif field.field_type == 'list':
+                value = field.value
+            elif field.field_type == 'multi_list':
+                if field.condition == 'or':
+                    value = {"$in": field.value}
+                else:
+                    value = {"$all": field.value}
+            elif field.field_type == 'boolean':
+                value = {'$eq': field.value}
+            elif field.field_type == 'boolean_list':
+                for key, condition in field.value:
+                    if field.condition == 'or':
+                        or_list.append({key: condition})
                     else:
-                        query['filter'][filter_name] = value
-            except NdrCoreSearchField.DoesNotExist:
-                pass
+                        and_list.append({key: condition})
 
-        print(query)
+            if value is not None:
+                query['filter'][field.parameter] = value
+
+        if len(and_list) > 0:
+            query['filter']['$and'] = and_list
+        if len(or_list) > 0:
+            query['filter']['$or'] = or_list
+
+        """
+        elif field.field_type == NdrCoreSearchField.FieldType.DATE_RANGE:
+            if self.values[field_name][0] is not None and self.values[field_name][1] is not None:
+                date_from = self.values[field_name][0].strftime('%Y-%m-%d')
+                date_to = self.values[field_name][1].strftime('%Y-%m-%d')
+                value = {"$gte": date_from, "$lte": date_to}"""
+
+        #print(query)
         return query
 
     def get_list_query(self, list_name, add_page_and_size=True, search_term=None, tags=None):

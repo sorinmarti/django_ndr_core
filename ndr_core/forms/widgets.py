@@ -1,20 +1,63 @@
 """Widgets for crispy forms. """
-from crispy_forms.layout import BaseInput
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import BaseInput, Layout, Row, Column
 from django import forms
+from django.contrib.staticfiles import finders
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django_select2 import forms as s2forms
+
 from ndr_core.ndr_helpers import get_search_field_config
+from django.template import Template, Context
+from django.template import loader
 
 
 class CSVTextEditorWidget(forms.Textarea):
     """Creates a text area for crispy forms. """
 
     instance = None
+    type_field_id = None
+
     def __init__(self, attrs=None):
         """Initializes the widget. """
         self.instance = attrs.get('instance', None)
+        self.type_field_id = attrs.get('type_field_id', None)
+
         super().__init__()
+
+    class ImportCsvForm(forms.Form):
+        """Form to import CSV data. """
+        csv_file = forms.FileField(label="CSV File",
+                                   help_text="Select a CSV file to import.")
+        csv_delimiter = forms.CharField(max_length=3, initial=",",
+                                        label="Delimiter",
+                                        help_text="The delimiter used in the CSV file. Write 'TAB' for tabulator.")
+        replace_data = forms.BooleanField(required=False,
+                                          label="Replace existing data?",
+                                          help_text="If checked, existing data will be replaced. "
+                                                    "If not checked, new data will be appended.")
+
+        @property
+        def helper(self):
+            """Creates and returns the form helper property."""
+            helper = FormHelper()
+            helper.form_method = "GET"
+            layout = helper.layout = Layout()
+
+            form_row = Row(
+                Column('csv_file', css_class='form-group col-12'),
+                css_class='form-row'
+            )
+            layout.append(form_row)
+
+            form_row = Row(
+                Column('csv_delimiter', css_class='form-group col-6'),
+                Column('replace_data', css_class='form-group col-6'),
+                css_class='form-row'
+            )
+            layout.append(form_row)
+
+            return helper
 
     class Media:
         """Add the required media for the widget. """
@@ -25,50 +68,34 @@ class CSVTextEditorWidget(forms.Textarea):
 
     def render(self, name, value, attrs=None, renderer=None):
         """Renders the widget. """
+
         if self.instance is None:
-            return super().render(name, value, attrs, renderer)
+            # New entry
+            field_type = 0
+            field_name = "create"
+        else:
+            field_type = self.instance.field_type
+            field_name = self.instance.pk
 
-        ajax_url = reverse('ndr_core:get_field_choices', kwargs={'field_name': self.instance.pk})
-        header_url = reverse('ndr_core:get_field_header', kwargs={'field_name': self.instance.pk})
+        header_url = reverse('ndr_core:get_field_header', kwargs={'field_type': field_type})
+        ajax_url = reverse('ndr_core:get_field_choices', kwargs={'field_name': field_name})
 
-        script = f"""
-<script>
-    $.ajax({{url: "{header_url}", success: function(result){{
-        let header = result;
-        header[header.length -1]['cellClick'] = function(e, cell){{
-            if(confirm('Are you sure you want to delete this entry?')){{
-                cell.getRow().delete();
-            }}
-        }};
-        
-        var data_count = 0;
-        var table = new Tabulator("#{name}-table", {{
-            ajaxURL: "{ajax_url}",
-            index: "key",
-            movableRows: true,
-            addRowPos: "bottom",
-            layout: "fitDataFill",
-            height: "311px",
-            columns: result
-        }});
-        
-        table.on("dataLoaded", function(data){{
-            data_count = data.length;
-        }});
-        
-        document.getElementById("add-row").addEventListener("click", function(){{
-            table.addRow({{'key': data_count}});
-            data_count++;
-        }});
-        
-    }}}});
-    
-</script>"""
-        html = (f"""
-        <button class="btn btn-sm btn-secondary" type="button" id="add-row" >Add Row</button>
-        <div id="{name}-table"></div>
-        {script}
-        """)
+        file_path = finders.find("ndr_core/js/widgets/csv_text_editor_widget_template.js")
+        with open(file_path, 'r') as file:
+            content = file.read()
+            script = content.replace('__header_url__', header_url)
+            script = script.replace('__ajax_url__', ajax_url)
+            script = script.replace('__name__', name)
+
+        html = (f"""<div id="{name}-table"></div>
+                    <textarea id="{name}" name="{name}" style="display: none;">{value}</textarea>
+                    <div class="mt-1">
+                        <button class="btn btn-sm btn-secondary" type="button" id="add-row">Add Row</button>
+                        <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal" data-target="#importCSVModal">Import Data</button>
+                    </div>
+                    <script>{script}</script>
+                """)
+
         return mark_safe(html)
 
 

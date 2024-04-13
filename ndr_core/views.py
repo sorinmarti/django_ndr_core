@@ -173,6 +173,10 @@ class _NdrCoreSearchView(_NdrCoreView):
                 actual_key = field[len(requested_search) + 1:]
                 if search_config.search_form_fields.filter(search_field__field_name=actual_key).count() > 0:
                     query_obj.set_value(actual_key, form.cleaned_data[field])
+                elif actual_key.endswith('condition'):
+                    query_obj.set_value(actual_key, form.cleaned_data[field])
+                else:
+                    print("Invalid search field: " + actual_key)
 
 
 class NdrDownloadView(_NdrCoreSearchView):

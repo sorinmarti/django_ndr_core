@@ -4,6 +4,8 @@ which has abstract methods which need to be overwritten for an actual
 implementation."""
 from abc import ABC, abstractmethod
 
+from ndr_core.api.ndr_core.field_configuration import FieldConfiguration
+
 
 class BaseQuery(ABC):
     """The base query class provides basic functionality to compose an
@@ -50,3 +52,25 @@ class BaseQuery(ABC):
     def set_value(self, field_name, value):
         """Sets a value=key setting to compose a query from"""
         self.values[field_name] = value
+
+    def get_set_values_names(self):
+        """Returns the values set in the query"""
+        set_values = []
+        for key, value in self.values.items():
+            if value is not None and value != '' and value != []:
+                if not key.endswith('_condition'):
+                    set_values.append(key)
+
+        return set_values
+
+    def get_field_configurations(self):
+        """Returns the configuration for a field"""
+        field_configs = []
+        for name in self.get_set_values_names():
+            field_conf = FieldConfiguration(name, self.values[name])
+            if f"{name}_condition" in self.values:
+                field_conf.user_condition = self.values[f"{name}_condition"]
+            field_configs.append(field_conf)
+        return field_configs
+
+

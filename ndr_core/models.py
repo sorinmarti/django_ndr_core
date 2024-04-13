@@ -1,5 +1,6 @@
 """models.py contains ndr_core's database models."""
 import csv
+import json
 import os.path
 from io import StringIO
 
@@ -28,11 +29,16 @@ TRANSLATABLE_TABLES = (
 def get_available_languages():
     """Returns a list of available languages."""
 
-    languages = NdrCoreValue.objects.get(value_name='available_languages').get_value()
+    languages = NdrCoreValue.get_or_initialize(value_name='available_languages',
+                                               init_value='',
+                                               init_label='Available Languages',
+                                               init_type=NdrCoreValue.ValueType.MULTI_LIST).get_value()
+
     available_languages = []
     for lang in languages:
         info = get_language_info(lang)
         available_languages.append((lang, info['name_local']))
+
     return available_languages
 
 
@@ -153,18 +159,20 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         BOOLEAN_LIST = 11, "Boolean List"
         """This type produces a list of checkboxes"""
 
+        __empty__ = 'Select a Type'
+
     field_name = models.CharField(max_length=100,
                                   primary_key=True,
                                   help_text="Choose a name for the field. Can't contain spaces or special characters"
-                                            "and must be unique")
+                                            "and must be unique in your installation. Keep it short.")
     """The field_name is used as the HTML form name. This value is translatable."""
 
     field_label = models.CharField(max_length=100,
-                                   help_text="This is the form field's label")
+                                   help_text="This is the form field's label. It is shown to the user. "
+                                             "This value is translatable.")
     """The field_label is the label for the HTML form field"""
 
     field_type = models.PositiveSmallIntegerField(choices=FieldType.choices,
-                                                  default=FieldType.STRING,
                                                   help_text="Type of the form field. String produces a text field, "
                                                             "Number a number field and dictionary a dropdown.")
     """Type of the form field. This translates to the HTML input type"""
@@ -182,7 +190,8 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
     api_parameter = models.CharField(max_length=100,
                                      blank=True,
                                      default='',
-                                     help_text="The name of the API parameter which is used to generate a query")
+                                     help_text="The name of the API parameter which is used to generate a query. "
+                                               "If empty, the field_name is used.")
     """The name of the API parameter which is used to generate a query"""
 
     schema_name = models.CharField(max_length=100,
@@ -196,6 +205,10 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                                     default='',
                                     help_text="Comma separated list of choices for dropdowns")
     """Comma separated list of choices for dropdowns"""
+
+    text_choices = models.TextField(blank=True,
+                                    default='',
+                                    help_text="Used for infor text")
 
     list_condition = models.CharField(max_length=10, blank=True, default='OR',
                                       choices=(('OR', 'OR - Either in the selection'),
@@ -223,12 +236,13 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
     initial_value = models.CharField(max_length=100,
                                      blank=True,
                                      default='',
-                                     help_text="Initial value of the field")
+                                     help_text="Initial value of the field. Refer to info box for valid values.")
     """Initial value of the field"""
 
     data_field_type = models.CharField(max_length=100,
                                        blank=True,
                                        default='',
+                                       choices=(('int', 'Integer'), ('string', 'String')),
                                        help_text="Type of the field in the data source. This may change "
                                                  "the way data is queried.")
 
@@ -236,7 +250,8 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                                                   blank=True,
                                                   default='',
                                                   help_text="Regex to transform the input value before "
-                                                            "sending it to the API.")
+                                                            "sending it to the API. {_value_} inserts the value.<br/> "
+                                                            "(Example to convert a year to a date regex: '{_value_}-??-??')")
 
     def __getattribute__(self, item):
         """Returns the translated field for a given language. If no translation exists,
@@ -245,128 +260,74 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
             return self.translated_field(super().__getattribute__(item), item, self.field_name)
         return super().__getattribute__(item)
 
-    def get_list_choices_as_dict(self, as_list=False):
-        """Returns the list choices as a dictionary. This is used to render the dropdowns
-        in the search form and result template lists."""
-        if not self.field_type == self.FieldType.LIST and not\
-                self.field_type == self.FieldType.MULTI_LIST and not\
-                self.field_type == self.FieldType.BOOLEAN_LIST:
-            return {}
+    def is_choice_field(self):
+        """Returns True if the field is a choice field. """
+        if self.field_type in [self.FieldType.LIST, self.FieldType.MULTI_LIST, self.FieldType.BOOLEAN_LIST]:
+            return True
+        return False
 
-        file_handle = StringIO(self.list_choices)
-        reader = csv.reader(file_handle, delimiter=',')
-        row_number = 0
-        header = []
+    def is_multi_field(self):
+        """Returns True if the field is a choice field. """
+        if self.field_type in [self.FieldType.MULTI_LIST, self.FieldType.BOOLEAN_LIST]:
+            return True
+        return False
 
-        if as_list:
-            result_list = []
-        else:
-            result_list = {}
-
-        for row in reader:
-            if row_number == 0:
-                header = row
-            else:
-                object_to_add = {}
-                for i in range(len(row)):
-                    object_to_add[header[i]] = row[i]
-                if as_list:
-                    result_list.append(object_to_add)
-                else:
-                    result_list[row[0]] = object_to_add
-
-            row_number += 1
-        return result_list
-
-    def get_list_header(self):
-        """Returns the list header for a search field. """
-        header = [
-            {
-                'rowHandle': True,
-                'formatter': "handle",
-                'headerSort': False,
-                'frozen': True,
-                'width': 30,
-                'minWidth': 30
-            },
-            {'title': 'Identifier', 'field': 'key', 'editor': 'input'},
-            {'title': 'Value', 'field': 'value', 'editor': 'input'}
-        ]
-        for lang in get_available_languages():
-            header.append({
-                'title': _(f'Value ({lang[1]})'),
-                'field': f'value_{lang[0]}',
-                'editor': 'input'
-            })
-
-        if self.field_type == self.FieldType.BOOLEAN_LIST:
-            header.append({
-                'title': 'Is Selected',
-                'field': 'initial',
-                'editable': True,
-                'editor': "tickCross",
-                'formatter': "tickCross"
-            })
-            header.append({
-                'title': 'Condition',
-                'field': 'condition',
-                'editable': True,
-                'editor': "tickCross",
-                'formatter': "tickCross"
-            })
-
-        header.append({
-            'title': 'Delete',
-            'formatter': "buttonCross", 'width': 40
-        })
-
-        return header
-
-    def get_list_choices(self):
-        """Returns the list choices as a list of tuples. This is used to render the dropdowns
-        in the search form and result template lists."""
-
-        if not self.field_type == self.FieldType.LIST and not\
-                self.field_type == self.FieldType.MULTI_LIST and not\
-                self.field_type == self.FieldType.BOOLEAN_LIST:
+    def get_list_keys(self):
+        """Returns the keys of the list choices. """
+        if not self.is_choice_field():
             return []
 
-        file_handle = StringIO(self.list_choices)
-        reader = csv.reader(file_handle, delimiter=',')
-        row_number = 0
-        header = []
-        result_list = []
+        keys = [('key', ''),
+                ('value', 'Undefined')]
 
-        for row in reader:
-            if row_number == 0:
-                header = row
-            else:
+        for lang in get_available_languages():
+            keys.append((f'value_{lang[0]}', 'Undefined'))
 
-                try:
-                    val = row[header.index(f'value_{get_language()}')]
-                except ValueError:
-                    val = row[header.index('value')]
+        keys += [('initial', ''),
+                 ('condition', True),
+                 ('is_searchable', True),
+                 ('is_printable', True)]
 
-                try:
-                    searchable = header.index('is_searchable')
-                    searchable = row[searchable]
-                except ValueError:
-                    searchable = 'true'
-                except IndexError:
-                    searchable = 'true'
+        for lang in get_available_languages():
+            keys.append((f'info_{lang[0]}', ''))
 
-                if searchable.lower() == 'true':
-                    # The choice is added to the list
-                    try:
-                        condition = row[header.index('condition')]
-                    except ValueError:
-                        condition = 'true'
+        return keys
 
-                    result_list.append((row[0]+"__"+condition, val))
+    def get_choices_list(self):
+        if not self.is_choice_field():
+            return []
 
-            row_number += 1
+        try:
+            choice_json_list = json.loads(self.list_choices)
+            for choice in choice_json_list:
+                for key in self.get_list_keys():
+                    if key[0] not in choice:
+                        choice[key[0]] = key[1]
 
-        return result_list
+            return choice_json_list
+        except json.JSONDecodeError as e:
+            return []
+
+    def get_choices_list_dict(self):
+        json_list = self.get_choices_list()
+        choices = {}
+        for choice in json_list:
+            choices[choice['key']] = choice
+        return choices
+
+    def get_choices(self, null_choice=False):
+        json_list = self.get_choices_list()
+        active_language = get_language()
+
+        choices = []
+        if null_choice:
+            choices.append(('', 'Please Choose'))
+        for choice in json_list:
+            value = choice['value']
+            if f'value_{active_language}' in choice:
+                value = choice[f'value_{active_language}']
+            choices.append((str(choice['key'])+'__'+str(choice['condition']).lower(), value))
+        return choices
 
     def get_initial_value(self):
         """Returns the initial value of a search field. This is used to pre-fill the form with a value. """
@@ -375,7 +336,7 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                 return True
             return False
         elif self.field_type == self.FieldType.BOOLEAN_LIST:
-            choices = self.get_list_choices_as_dict(as_list=True)
+            choices = self.get_choices_list()   # TODO check
             self.initial_value = []
             for choice in choices:
                 initial = choice.get('initial', 'false')
