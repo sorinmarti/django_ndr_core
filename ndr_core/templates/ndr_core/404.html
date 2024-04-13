@@ -1,0 +1,41 @@
+{% load static %}
+{% load i18n %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+      {% include 'ndr_core/base/base_header_tags.html' %}
+      <link href="{% static 'ndr_core/css/404.css' %}" rel="stylesheet">
+  </head>
+
+  <body class="text-center">
+
+    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
+      <header class="masthead mb-auto">
+        <div class="inner">
+          <h3 class="masthead-brand">{% translate 'Error 404' %}</h3>
+          <nav class="nav nav-masthead justify-content-center">
+            <a class="nav-link" href="{% url 'ndr:index' %}">{% translate 'Go To Home Page' %}</a>
+          </nav>
+        </div>
+      </header>
+
+      <main role="main" class="inner cover">
+        <h1 class="cover-heading">{% translate 'Oops. Something went wrong!' %}</h1>
+        <p class="lead">
+            {% translate 'The page you are looking for is not available.' %}
+        </p>
+        <p class="lead">
+          <a href="{% url 'ndr:index' %}" class="btn btn-lg btn-secondary">{% translate 'Main Page' %}</a>
+        </p>
+      </main>
+
+      <footer class="mastfoot mt-auto">
+        <div class="inner">
+          <p>Error page for <a href="https://ndrcore.org/">NDR Core</a></p>
+        </div>
+      </footer>
+    </div>
+  
+  </body>
+</html>
