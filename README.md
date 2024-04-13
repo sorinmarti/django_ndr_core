@@ -122,3 +122,17 @@ Visit http://localhost:8000/ to view your website and http://localhost:8000/ndr_
 to access the configuration interface. The last command runs your server on port 8000.
 This is not suitable for production use. You should use a webserver like nginx to serve
 your application. See the [Documentation](https://django-ndr-core.readthedocs.io/en/latest/) for more information.
+
+## Roadmap
+- [x] Create a basic version of the module
+- [x] Create a Docker image
+- [x] Create a PyPi package
+- [x] Create a documentation
+- [x] Create a demo site
+- [ ] Add more features
+- [ ] Add more tests
+- [ ] Add more documentation
+- [ ] Add more examples
+- [ ] Add more configuration options
+- [ ] Add more themes
+- [ ] Add more languages
