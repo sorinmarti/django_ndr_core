@@ -29,10 +29,7 @@ data_key is mandatory, filters can be applied and are optional. Filters can be s
 filters as just shown or complex filters with arguments. The filters can be chained and are
 applied in the order they are written. If the object the data_key is pointing to is a list, the
 filters are applied to every element of the list. The example in Figure 4.4 shows a person
-dataset which might be what NDR Core gets from the API. The following examples
-show how to access the data and render it in a certain way. They are formatted in Python
-syntax to make it easier to understand, but can be used the search field expressions the
-same way (without the double quotes).
+dataset which might be what NDR Core gets from the API.
 
 .. list-table:: CMS Tags
    :widths: 30 70
@@ -51,7 +48,28 @@ same way (without the double quotes).
    * - ``[[card|<elem_name>]] [[slideshow|<elem_name>]] [[carousel|<elem_name>]] [[jumbotron|<elem_name>]] [[banner|<elem_name>]] [[iframe|<elem_name>]] [[manifest_viewer|<elem_name>]]``
      - Creates a link to a User Interface element. Each element features a name which can be used to call it in your content. All Content Management System tags can be called multiple times, also on the same page. An exception is the manifest_viewer element; it can be called multiple times but the selection of manifests or pages will always apply to all viewers on a page.
 
-TODO Listing
+The following examples
+show how to access the data and render it in a certain way. They are formatted in Python
+syntax to make it easier to understand, but can be used the search field expressions the
+same way (without the double quotes).
+
+::
+
+    # results in "person-12345"
+    str_id = "{id}"
+
+    # results in "{’last_name’: ’Duck’, ’first_name’: ’Donald’}"
+    str_name = "{name}"
+
+    # results in "["prof-spec-1", "prof-manu-35"]"
+    profs = "{professions}"
+
+    # results in "prof-manu-35"
+    first_prof = "{professions.1}"
+
+    # results in "0000-0002-9541-1202"
+    str_orcid = "{meta.created_by.id}"
+
 
 As seen on lines 2 and 5, the variable name of a JSON object can be used to access
 the data. The system returns the value of the variable. This value can be passed to a
@@ -64,7 +82,21 @@ comma as a separator), line 17 returns the second element of the list (indexes s
 be simple and only have a name or complex and have positional or named arguments.
 The following code listing shows examples of filters, their syntax and their output
 
-TODO Lisiting
+::
+
+    # results in "PERSON-12345"
+    str_id = "{id|upper}"
+
+    # results in "Unemployed, Coat button manufacturer"
+    # ( assuming the professions are configured as in the example above )
+    profs = "{professions|fieldify:professions}"
+
+    # results in ~ "<span color="#345645">Unemployed</span>"
+    prof1 = "{professions.0|badge:field=professions,color=by_value}"
+
+    # results in "<img src="https://link-to-iiif.host/image/23,45,678,234/full/default.jpg" />"
+    image = "{source.fragment|img}"
+
 
 The first example shows a simple string filter. This one is called “upper” and converts the string to uppercase. The second example shows a complex filter with one
 positional argument. It will take a value (or a list of values) and look up the search field
@@ -81,6 +113,39 @@ the filter will color the badge with the color of the value. Another example of 
 HTML filter is the img filter. It takes the value of the data key and returns the HTML
 code for an image tag with the value as the src attribute.
 
+.. list-table:: Data-Display Tags
+   :widths: 30 70
+   :header-rows: 1
+
+   * - Tag
+     - Description
+   * - ``lower``
+     - Converts the value to lowercase. Has no impact on numbers.
+   * - ``upper``
+     - Converts the value to uppercase. Has no impact on numbers.
+   * - ``title``
+     - Converts the value to title case. This means that the first letter of every word is
+       capitalized. Has no impact on numbers.
+   * - ``capitalize``
+     - Converts the value to capitalize case. This means that the first letter of the first
+       word is capitalized.
+   * - ``fieldify:<field_name>``
+     - Takes a value and looks up the search field with the supplied field name.
+       Returns the (translated) value of the field.
+   * - ``badge:field=,color=,bg=``
+     - Takes a value and looks up the search field with the supplied field name. Returns the
+       value of the field wrapped in the HTML code for a badge. If the field parameter
+       is supplied, the filter will look up the field with the supplied name (like fieldify). Both
+       color fields (color is for the text color, bg for the background color) can be supplied with
+       a color value. See below how color values are handled.
+   * - ``img:iiif_resize=``
+     - Takes a value and returns the HTML code for an image tag with the value as the src attribute.
+       If the image source is a IIIF image, the option iiif_resize can be applied. The value of this
+       option needs to be a number between 0 and 100 and means the percentage of the original size.
+   * - ``bool:<true_val>,<false_val>``
+     - Takes a boolean value (or 0/1, on/off) and returns the true_val if the value is true and
+       the false_val if the value is false.
+
 Filters can be added to NDRCore by implementing the AbstractFilter class of the
 system. The methods which need to be implemented define the number of mandatory
 positional arguments and the possible named arguments. The most important method
@@ -95,7 +160,22 @@ or set to one of the following keywords: ``val__<field_name>``,
 ``byval__<field_name>`` or ``byval`` . See the following examples for an explanation of
 these keywords.
 
-TODO Listing
+::
+
+    # results in <span class="badge badge-primary">Unemployed</span>
+    badge = "{professions.0|badge:field=professions,color=primary}"
+
+    # <span class="badge" style="color:#112233;">Unemployed</span>
+    badge = "{professions.0|badge:field=professions,color=#112233}"
+
+    # <span class="badge" style="color:#123456;">Unemployed</span>
+    badge = "{professions.0|badge:field=professions,color=val__mycolor}"
+
+    # <span class="badge" style="color:#123456;">Unemployed</span>
+    badge = " { professions .0| badge : field = professions , color = byval__info } "
+
+    # <span class="badge" style="color:#123456;">Unemployed</span>
+    badge = "{professions.0|badge:field=professions,color=byval}"
 
 The first example shows the use of a color name, the second one shows the use of a
 static color code. The next three examples use the value of the search field configuration
@@ -109,7 +189,9 @@ up the value of the info-column and use it to calculate a color. The calculation
 by taking the MD5 hash of the value and converting it to a HSL color code. The last
 example ("byval") does this calculation with the key itself.
 
-TODO Image
+.. image:: ../../_static/admin_interface/ndr_admin_update_result.png
+   :width: 100%
+   :alt: NDR Admin Update Result
 
 In conclusion, the NDR Core filter system may be a bit of a steep learning curve for
 someone who is not used to work with this kind of syntax but it is as similar as possible

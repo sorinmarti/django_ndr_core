@@ -1,5 +1,5 @@
 """Forms for the contact form."""
-from captcha.fields import ReCaptchaField
+from django_recaptcha.fields import ReCaptchaField
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Row, Column, Layout
 from django.forms import ModelForm

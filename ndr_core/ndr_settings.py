@@ -23,7 +23,7 @@ class NdrSettings:
         'crispy_bootstrap4',
         'ckeditor',
         'ckeditor_uploader',
-        'captcha',
+        'django_recaptcha',
         'colorfield',
         'fontawesomefree',
         'django.forms',

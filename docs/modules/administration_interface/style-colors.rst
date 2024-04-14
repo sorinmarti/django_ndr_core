@@ -19,7 +19,10 @@ sizes. This means that NDR Core does not have the possibility to create a deskto
 a mobile version, but the User Interface style implementations can be designed to work
 for both versions.
 
-TODO Image
+.. image:: ../../_static/admin_interface/ndr_admin_update_colors.png
+   :width: 100%
+   :align: center
+   :alt: Admin Interface: Select Color Scheme
 
 The color management section allows users to change the colors of the website. NDR
 Core works with color palettes which can be selected, created and managed in this section.
