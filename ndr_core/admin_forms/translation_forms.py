@@ -216,7 +216,7 @@ class TranslateFormForm(TranslateForm):
     """Form to translate settings values."""
 
     items = NdrCoreSearchConfiguration.objects.all()
-    translatable_fields = ["conf_label"]
+    translatable_fields = ["conf_label", "simple_query_label", "simple_search_tab_title", "simple_query_help_text"]
     table_name = "NdrCoreSearchConfiguration"
 
     def __init__(self, *args, **kwargs):

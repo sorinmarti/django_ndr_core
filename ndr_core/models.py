@@ -321,7 +321,7 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
 
         choices = []
         if null_choice:
-            choices.append(('', 'Please Choose'))
+            choices.append(('', _("Please Choose")))
         for choice in json_list:
             value = choice['value']
             if f'value_{active_language}' in choice:
@@ -520,15 +520,15 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
 
     simple_search_tab_title = models.CharField(max_length=100, blank=False, default='Simple Search',
                                                help_text="The title for the simple search tab.")
-    """The title for the simple search tab. """
+    """The title for the simple search tab. This value is translatable."""
 
     simple_query_label = models.CharField(max_length=100, blank=False, default='Search',
                                           help_text="The label for the simple search field.")
-    """The label for the simple search field. """
+    """The label for the simple search field. This value is translatable."""
 
     simple_query_help_text = models.CharField(max_length=100, blank=False, default='Search the database',
                                               help_text="The help text for the simple search field.")
-    """The help text for the simple search field. """
+    """The help text for the simple search field. This value is translatable."""
 
     # RESULT
 

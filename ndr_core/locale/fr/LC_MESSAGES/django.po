@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-13 20:53+0200\n"
-"PO-Revision-Date: 2024-04-13 21:11+0200\n"
+"POT-Creation-Date: 2024-04-15 12:26+0200\n"
+"PO-Revision-Date: 2024-04-15 12:09+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Poedit 3.3.2\n"
 
@@ -130,29 +130,42 @@ msgstr "ET"
 msgid "OR"
 msgstr "OU"
 
-#: .\forms\forms_search.py:208
+#: .\forms\forms_search.py:193
+#, fuzzy
+msgid "AND: all."
+msgstr "ET : tous."
+
+#: .\forms\forms_search.py:194
+#, fuzzy
+msgid "OR: at least one."
+msgstr "OU : au moins un."
+
+#: .\forms\forms_search.py:212
 #, fuzzy
 msgid "Compact Result View"
 msgstr "Affichage compact des résultats"
 
-#: .\forms\forms_search.py:223
+#: .\forms\forms_search.py:227
 #, fuzzy
 msgid "And or Or Search"
 msgstr "et/ou rechercher"
 
-#: .\forms\forms_search.py:224
+#: .\forms\forms_search.py:228
 #, fuzzy
 msgid "AND search"
 msgstr "ET recherche"
 
-#: .\forms\forms_search.py:224
-#, fuzzy
+#: .\forms\forms_search.py:228
 msgid "OR search"
-msgstr "Rechercher"
+msgstr "OU Rechercher"
 
-#: .\forms\forms_search.py:265
+#: .\forms\forms_search.py:269
 msgid "Search"
 msgstr "Rechercher"
+
+#: .\models.py:324
+msgid "Please Choose"
+msgstr "Veuillez choisir"
 
 #: .\static\ndr_core\app_init\contact.html:15
 #, fuzzy
@@ -193,8 +206,8 @@ msgstr "(Les téléchargements sont limités à %(max_results)s résultats.)"
 #, fuzzy, python-format
 msgid ""
 "\n"
-"                Your search returned %(total)s results, showing page "
-"%(page)s of %(num_pages)s.\n"
+"                Your search returned %(total)s results, showing page %(page)"
+"s of %(num_pages)s.\n"
 "            "
 msgstr ""
 "\n"
@@ -303,17 +316,14 @@ msgstr "Merci! Le message a été envoyé."
 msgid "Please correct the errors below."
 msgstr "Veuillez corriger les erreurs indiquées."
 
-#~ msgid "Please Choose"
-#~ msgstr "Veuillez choisir"
-
 #~ msgid "Simple Search"
 #~ msgstr "Recherche simple"
 
 #, fuzzy
 #~ msgid ""
 #~ "\n"
-#~ "            Showing %(meta.total)s items. Showing page %(meta.page)s of "
-#~ "%(meta.num_pages)s.\n"
+#~ "            Showing %(meta.total)s items. Showing page %(meta.page)s of %"
+#~ "(meta.num_pages)s.\n"
 #~ "        "
 #~ msgstr ""
 #~ "\n"

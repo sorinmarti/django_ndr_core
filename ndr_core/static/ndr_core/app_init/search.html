@@ -12,7 +12,7 @@
             {% translate 'Search Results' %}
             <div class="btn-group float-right">
                 <a href="{{ result.form_links.compact }}" type="button" class="btn btn-sm btn-secondary ">
-                    {{ result.form_links.compact_label }}
+                    {% translate result.form_links.compact_label %}
                 </a>
                 <a href="{{ result.form_links.refine }}" type="button" class="btn btn-sm btn-secondary ">
                     {% translate 'Refine Search' %}

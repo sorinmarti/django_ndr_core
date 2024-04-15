@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-13 20:53+0200\n"
-"PO-Revision-Date: 2024-04-13 21:11+0200\n"
+"POT-Creation-Date: 2024-04-15 12:34+0200\n"
+"PO-Revision-Date: 2024-04-15 12:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.3.2\n"
 
@@ -56,13 +56,10 @@ msgid "Copy Citation"
 msgstr "Kopiere Zitierweise"
 
 #: .\api\base_result.py:310 .\api\base_result.py:316
-#, fuzzy
 msgid "Show full results"
 msgstr "Vollständige Ergebnisse anzeigen"
 
 #: .\api\base_result.py:320
-#, fuzzy
-#| msgid "Compact Result View"
 msgid "Show compact results"
 msgstr "Kompakte Ergebnisanzeige"
 
@@ -118,25 +115,37 @@ msgstr "UND"
 msgid "OR"
 msgstr "ODER"
 
-#: .\forms\forms_search.py:208
+#: .\forms\forms_search.py:193
+msgid "AND: all."
+msgstr "UND: Alle."
+
+#: .\forms\forms_search.py:194
+msgid "OR: at least one."
+msgstr "OR: Mindestens eines."
+
+#: .\forms\forms_search.py:212
 msgid "Compact Result View"
 msgstr "Kompakte Ergebnisanzeige"
 
-#: .\forms\forms_search.py:223
+#: .\forms\forms_search.py:227
 msgid "And or Or Search"
 msgstr "\"Und\" oder \"Oder\" suchen"
 
-#: .\forms\forms_search.py:224
+#: .\forms\forms_search.py:228
 msgid "AND search"
 msgstr "UND Suche"
 
-#: .\forms\forms_search.py:224
+#: .\forms\forms_search.py:228
 msgid "OR search"
 msgstr "ODER suchen"
 
-#: .\forms\forms_search.py:265
+#: .\forms\forms_search.py:269
 msgid "Search"
 msgstr "Suche"
+
+#: .\models.py:324
+msgid "Please Choose"
+msgstr "Bitte auswählen"
 
 #: .\static\ndr_core\app_init\contact.html:15
 msgid "Fill in the form below to contact us with any queries."
@@ -176,13 +185,13 @@ msgstr "(Downloads sind auf %(max_results)s Ergebnisse beschränkt.)"
 #, python-format
 msgid ""
 "\n"
-"                Your search returned %(total)s results, showing page "
-"%(page)s of %(num_pages)s.\n"
+"                Your search returned %(total)s results, showing page %(page)"
+"s of %(num_pages)s.\n"
 "            "
 msgstr ""
 "\n"
-"Ihre Suche ergab %(total)s Ergebnisse und zeigte die Seite %(page)s von "
-"%(num_pages)s.\n"
+"Ihre Suche ergab %(total)s Ergebnisse und zeigte die Seite %(page)s von %"
+"(num_pages)s.\n"
 "            "
 
 #: .\templates\ndr_core\404.html:16
@@ -219,20 +228,14 @@ msgstr "Verbinden"
 
 #: .\templates\ndr_core\result_renderers\base_compact_renderer.html:11
 #: .\templates\ndr_core\result_renderers\base_renderer.html:11
-#, fuzzy, python-format
-#| msgid ""
-#| "\n"
-#| "                Your search returned %(total)s results, showing page "
-#| "%(page)s of %(num_pages)s.\n"
-#| "            "
+#, python-format
 msgid ""
 "\n"
 "                Result %(result_number)s of %(total_results)s\n"
 "            "
 msgstr ""
 "\n"
-"Ihre Suche ergab %(total)s Ergebnisse und zeigte die Seite %(page)s von "
-"%(num_pages)s.\n"
+"                Resultat %(result_number)s von %(total_results)s\n"
 "            "
 
 #: .\templates\ndr_core\result_renderers\configured_fields_template.html:10
@@ -257,7 +260,6 @@ msgid "This page is currently under construction."
 msgstr "Diese Seite befindet sich derzeit im Aufbau."
 
 #: .\templates\ndr_core\under_construction.html:29
-#, fuzzy
 msgid ""
 "This is an NDR Core installation. You are seeing this page because it has "
 "been sto to \"under construction\"."
@@ -288,16 +290,13 @@ msgstr "Bitte korrigieren Sie die untenstehenden Fehler."
 #~ msgid "Search for anything!"
 #~ msgstr "Suche nach allem!"
 
-#~ msgid "Please Choose"
-#~ msgstr "Bitte auswählen"
-
 #~ msgid "Simple Search"
 #~ msgstr "Einfache Suche"
 
 #~ msgid ""
 #~ "\n"
-#~ "            Showing %(meta.total)s items. Showing page %(meta.page)s of "
-#~ "%(meta.num_pages)s.\n"
+#~ "            Showing %(meta.total)s items. Showing page %(meta.page)s of %"
+#~ "(meta.num_pages)s.\n"
 #~ "        "
 #~ msgstr ""
 #~ "\n"

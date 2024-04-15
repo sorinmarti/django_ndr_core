@@ -187,7 +187,11 @@ class AdvancedSearchForm(_NdrCoreForm):
                                                                           ('OR', _('OR'))],
                                                                  required=False,
                                                                  widget=forms.Select(attrs={'style': 'height: 32px; font-size: 14px;'}),
-                                                                 help_text="<small>AND: all.<br/>OR: at least one.</small>")
+                                                                 help_text='<small class="form-text text-muted">'
+                                                                           '  {and_text}<br/>'
+                                                                           '  {or_text}'
+                                                                           '</small>'.format(and_text=_('AND: all.'),
+                                                                                             or_text=_('OR: at least one.')))
 
                 # Add the field to the form if it was created.
                 if form_field is not None:

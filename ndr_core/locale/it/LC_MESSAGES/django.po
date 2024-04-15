@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-13 20:53+0200\n"
-"PO-Revision-Date: 2024-04-13 21:11+0200\n"
+"POT-Creation-Date: 2024-04-15 12:26+0200\n"
+"PO-Revision-Date: 2024-04-15 12:09+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.3.2\n"
 
@@ -130,29 +130,44 @@ msgstr "E"
 msgid "OR"
 msgstr "O"
 
-#: .\forms\forms_search.py:208
+#: .\forms\forms_search.py:193
+#, fuzzy
+msgid "AND: all."
+msgstr "E: tutti."
+
+#: .\forms\forms_search.py:194
+#, fuzzy
+msgid "OR: at least one."
+msgstr "OPPURE: almeno uno."
+
+#: .\forms\forms_search.py:212
 #, fuzzy
 msgid "Compact Result View"
 msgstr "Visualizzazione compatta dei risultati"
 
-#: .\forms\forms_search.py:223
+#: .\forms\forms_search.py:227
 #, fuzzy
 msgid "And or Or Search"
 msgstr "E o o Cerca"
 
-#: .\forms\forms_search.py:224
+#: .\forms\forms_search.py:228
 #, fuzzy
 msgid "AND search"
 msgstr "E cerca"
 
-#: .\forms\forms_search.py:224
+#: .\forms\forms_search.py:228
 #, fuzzy
 msgid "OR search"
 msgstr "Cerca"
 
-#: .\forms\forms_search.py:265
+#: .\forms\forms_search.py:269
 msgid "Search"
 msgstr "Cerca"
+
+#: .\models.py:324
+#, fuzzy
+msgid "Please Choose"
+msgstr "Si prega di scegliere"
 
 #: .\static\ndr_core\app_init\contact.html:15
 #, fuzzy
@@ -193,8 +208,8 @@ msgstr "(I download sono limitati a %(max_results)s risultati.)"
 #, fuzzy, python-format
 msgid ""
 "\n"
-"                Your search returned %(total)s results, showing page "
-"%(page)s of %(num_pages)s.\n"
+"                Your search returned %(total)s results, showing page %(page)"
+"s of %(num_pages)s.\n"
 "            "
 msgstr ""
 "\n"
@@ -301,18 +316,14 @@ msgstr "Grazie! Il messaggio è stato inviato."
 msgid "Please correct the errors below."
 msgstr "Correggi gli errori riportati di seguito."
 
-#, fuzzy
-#~ msgid "Please Choose"
-#~ msgstr "Si prega di scegliere"
-
 #~ msgid "Simple Search"
 #~ msgstr "Ricerca libera"
 
 #, fuzzy
 #~ msgid ""
 #~ "\n"
-#~ "            Showing %(meta.total)s items. Showing page %(meta.page)s of "
-#~ "%(meta.num_pages)s.\n"
+#~ "            Showing %(meta.total)s items. Showing page %(meta.page)s of %"
+#~ "(meta.num_pages)s.\n"
 #~ "        "
 #~ msgstr ""
 #~ "\n"
@@ -340,8 +351,8 @@ msgstr "Correggi gli errori riportati di seguito."
 #~ "            "
 #~ msgstr ""
 #~ "\n"
-#~ "La ricerca ha restituito i risultati %(meta.total)s, mostrando la pagina "
-#~ "%(meta.page)s di %(meta.num_pages)s.\n"
+#~ "La ricerca ha restituito i risultati %(meta.total)s, mostrando la pagina %"
+#~ "(meta.page)s di %(meta.num_pages)s.\n"
 #~ "            "
 
 #, fuzzy

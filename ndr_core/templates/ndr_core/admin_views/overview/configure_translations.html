@@ -32,10 +32,6 @@
                         <i class="fa-regular fa-language"></i>
                         Translate Image Texts
                     </a>
-                    <a href="{% url 'ndr_core:select_ui_elements_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_ui_elements_translations' or request.resolver_match.url_name == 'edit_ui_elements_translations' %}bg-selected{% endif %}">
-                        <i class="fa-regular fa-language"></i>
-                        Translate UI Elements
-                    </a>
                     <a href="{% url 'ndr_core:select_settings_translations' %}" class="list-group-item list-group-item-action py-2 {% if request.resolver_match.url_name == 'select_settings_translations' or request.resolver_match.url_name == 'edit_settings_translations' %}bg-selected{% endif %}">
                         <i class="fa-regular fa-language"></i>
                         Translate Settings
