@@ -293,18 +293,24 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
 
         return keys
 
-    def get_choices_list(self):
+    def get_choices_list(self, return_non_searchables=False):
         if not self.is_choice_field():
             return []
 
         try:
             choice_json_list = json.loads(self.list_choices)
+            new_choices = []
             for choice in choice_json_list:
                 for key in self.get_list_keys():
                     if key[0] not in choice:
                         choice[key[0]] = key[1]
+                if choice['is_searchable']:
+                    new_choices.append(choice)
+                else:
+                    if return_non_searchables:
+                        new_choices.append(choice)
 
-            return choice_json_list
+            return new_choices
         except json.JSONDecodeError as e:
             return []
 

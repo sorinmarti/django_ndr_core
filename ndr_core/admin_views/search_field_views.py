@@ -76,7 +76,7 @@ def get_field_list_choices(request, field_name):
     else:
         try:
             field = NdrCoreSearchField.objects.get(pk=field_name)
-            return JsonResponse(field.get_choices_list(), safe=False)
+            return JsonResponse(field.get_choices_list(return_non_searchables=True), safe=False)
         except NdrCoreSearchField.DoesNotExist:
             return JsonResponse({"error": "Field not found."})
 

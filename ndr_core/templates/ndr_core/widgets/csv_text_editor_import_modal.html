@@ -4,14 +4,14 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="importCSVModalTitle">Import CSV File</h5>
+        <h5 class="modal-title" id="importCSVModalTitle">Import Data File</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
         <div class="container p-3">
             <div class="alert alert-primary" role="alert">
-              The first line of the CSV file <b>must</b> be the header row.
+              You can import csv and json files. The first line of the CSV file <b>must</b> be the header row.
                 The file must at least contain the columns "<b>key</b>" and "<b>value</b>".
             </div>
             {% crispy widget_form %}
@@ -33,23 +33,44 @@
         $('#import_csv').click(function(){
             modal.modal('hide');
             modal.on('hidden.bs.modal', async function (e) {
+                let import_type = $('#id_import_type').val();
                 let csv_file = $('#id_csv_file')[0].files[0];
                 let fileReader = new FileReader();
                 fileReader.onload = function (fileLoadedEvent) {
-                    let textFromFileLoaded = fileLoadedEvent.target.result;
-                    let data = parseCSV(textFromFileLoaded, delimiter.val());
-                    if (replace.is(':checked')) {
-                        list_choice_table.clearData();
-                    }
-                    list_choice_table.addData(data, false);
-                };
-                fileReader.readAsText(csv_file, "UTF-8");
+                        let textFromFileLoaded = fileLoadedEvent.target.result;
+                        let data = {}
+                        if (import_type === 'json') {
+                            data = parseJSON(textFromFileLoaded);
+                        } 
+                        else {
+                            data = parseCSV(textFromFileLoaded, delimiter.val());
+                        }
+                        if (replace.is(':checked')) {
+                            list_choice_table.clearData();
+                        }
+                        list_choice_table.addData(data, false);
+                        let new_data = list_choice_table.getData();
+                        let text_area = $('#'+name);
+                        text_area.val(JSON.stringify(new_data));
+                    };
+                    fileReader.readAsText(csv_file, "UTF-8");
             });
         });
     });
 
+    function parseJSON(jsonString) {
+        try {
+            let jsonObj = JSON.parse(jsonString);
+            console.log(jsonObj);
+            return jsonObj;
+        } catch (e) {
+            console.error("Error parsing JSON!", e);
+        }
+        return {}
+    }
+
     function parseCSV(csvString, separator) {
-        const validColumns = ["key", "value", "info", "is_searchable", "initial", "is_printable", "condition"];
+        const validColumns = ["key", "value", "info", "is_searchable", "is_displayable", "condition"];
         const validPatterns = [
             "value_[a-z]{2}", // Matches 'value_' followed by any two lowercase letters
             "info_[a-z]{2}" // Matches 'info_' followed by any two lowercase letters
@@ -95,8 +116,14 @@
 
         // Reduce the validHeaderIndices into an object
         return validHeaderIndices.reduce((obj, { header, index }) => {
-          obj[header] = values[index];
-          return obj;
+            let val = values[index];
+            if (val === 'true') {
+                val = true;
+            } else if (val === 'false') {
+                val = false;
+            }
+            obj[header] = val;
+            return obj;
         }, {});
       });
 

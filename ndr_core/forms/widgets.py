@@ -1,6 +1,6 @@
 """Widgets for crispy forms. """
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import BaseInput, Layout, Row, Column
+from crispy_forms.layout import BaseInput, Layout, Row, Column, HTML
 from django import forms
 from django.contrib.staticfiles import finders
 from django.urls import reverse
@@ -27,11 +27,17 @@ class CSVTextEditorWidget(forms.Textarea):
 
     class ImportCsvForm(forms.Form):
         """Form to import CSV data. """
-        csv_file = forms.FileField(label="CSV File",
-                                   help_text="Select a CSV file to import.")
+        import_type = forms.ChoiceField(choices=[("csv", "CSV"), ("json", "JSON")],
+                                        label="Import Type",
+                                        help_text="Select the type of data you want to import.")
+
+        csv_file = forms.FileField(label="File",
+                                   help_text="Select a CSV or JSON file to import.")
+
         csv_delimiter = forms.CharField(max_length=3, initial=",",
                                         label="Delimiter",
                                         help_text="The delimiter used in the CSV file. Write 'TAB' for tabulator.")
+
         replace_data = forms.BooleanField(required=False,
                                           label="Replace existing data?",
                                           help_text="If checked, existing data will be replaced. "
@@ -43,6 +49,12 @@ class CSVTextEditorWidget(forms.Textarea):
             helper = FormHelper()
             helper.form_method = "GET"
             layout = helper.layout = Layout()
+
+            form_row = Row(
+                Column('import_type', css_class='form-group col-6'),
+                css_class='form-row'
+            )
+            layout.append(form_row)
 
             form_row = Row(
                 Column('csv_file', css_class='form-group col-12'),
@@ -92,6 +104,8 @@ class CSVTextEditorWidget(forms.Textarea):
                     <div class="mt-1">
                         <button class="btn btn-sm btn-secondary" type="button" id="add-row">Add Row</button>
                         <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal" data-target="#importCSVModal">Import Data</button>
+                        <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal" id="export-data">Export Data</button>
+                        <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal" id="clear-data">Clear Data</button>
                     </div>
                     <script>{script}</script>
                 """)
