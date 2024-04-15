@@ -2,9 +2,6 @@
 import csv
 from io import StringIO
 
-from django.template.loader import render_to_string
-from ndr_core.models import NdrCorePage
-
 
 def get_nested_value(obj, path):
     """Get a nested value from an object."""
@@ -46,4 +43,3 @@ def create_csv_export_string(list_of_results, mapping):
 
     string_output = output.getvalue().encode('utf-8')
     return string_output
-

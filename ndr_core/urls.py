@@ -309,7 +309,8 @@ urlpatterns = [
          name='mark_record'),
 
     # Search Engine Optimization
-    path('configure/seo/', TemplateView.as_view(template_name='ndr_core/admin_views/overview/configure_seo.html'), name='seo'),
+    path('configure/seo/', TemplateView.as_view(template_name='ndr_core/admin_views/overview/configure_seo.html'),
+         name='seo'),
     path('configure/seo/robots/', RobotsFileView.as_view(), name='seo_robots'),
     path('configure/seo/sitemap/', SitemapFileView.as_view(), name='seo_sitemap'),
     path('configure/seo/ndrcore-org/', ConnectWithNdrCoreOrgView.as_view(), name='seo_ndrcore_org'),

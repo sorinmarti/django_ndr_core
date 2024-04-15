@@ -1,8 +1,6 @@
 """models.py contains ndr_core's database models."""
-import csv
 import json
 import os.path
-from io import StringIO
 
 from ckeditor_uploader.fields import RichTextUploadingField
 from colorfield.fields import ColorField
@@ -251,7 +249,8 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                                                   default='',
                                                   help_text="Regex to transform the input value before "
                                                             "sending it to the API. {_value_} inserts the value.<br/> "
-                                                            "(Example to convert a year to a date regex: '{_value_}-??-??')")
+                                                            "(Example to convert a year to a date regex: "
+                                                            "'{_value_}-??-??')")
 
     def __getattribute__(self, item):
         """Returns the translated field for a given language. If no translation exists,
@@ -294,6 +293,7 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         return keys
 
     def get_choices_list(self, return_non_searchables=False):
+        """Returns the choices of a choice field as a list with all its options. """
         if not self.is_choice_field():
             return []
 
@@ -311,10 +311,11 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                         new_choices.append(choice)
 
             return new_choices
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             return []
 
     def get_choices_list_dict(self):
+        """Returns the choices of a choice field as a dictionary with all its options. """
         json_list = self.get_choices_list()
         choices = {}
         for choice in json_list:
@@ -322,6 +323,7 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         return choices
 
     def get_choices(self, null_choice=False):
+        """Returns the choices of a choice field as a list of tuples. """
         json_list = self.get_choices_list()
         active_language = get_language()
 
@@ -341,8 +343,9 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
             if self.initial_value == 'true':
                 return True
             return False
-        elif self.field_type == self.FieldType.BOOLEAN_LIST:
-            choices = self.get_choices_list()   # TODO check
+
+        if self.field_type == self.FieldType.BOOLEAN_LIST:
+            choices = self.get_choices_list()
             self.initial_value = []
             for choice in choices:
                 initial = choice.get('initial', 'false')
@@ -931,9 +934,11 @@ class NdrCoreValue(models.Model):
                 return []
             return val
 
+        return None
+
     def get_options(self):
         """For lists there are options, saved as string in the form: (key1,value1);(key2,value2)"""
-        if self.value_type == NdrCoreValue.ValueType.LIST or self.value_type == NdrCoreValue.ValueType.MULTI_LIST:
+        if self.value_type in (NdrCoreValue.ValueType.LIST, self.value_type == NdrCoreValue.ValueType.MULTI_LIST):
             options = []
             option_tuples = self.value_options.split(";")
             for ot in option_tuples:

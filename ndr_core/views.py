@@ -28,8 +28,7 @@ from ndr_core.models import (
     NdrCoreCorrection,
     NdrCoreSearchConfiguration,
     NdrCoreValue,
-    NdrCoreManifest,
-    NdrCoreSearchField
+    NdrCoreManifest
 )
 from ndr_core.api_factory import ApiFactory
 from ndr_core.ndr_settings import NdrSettings
@@ -48,7 +47,7 @@ def get_page_type_view_class(page_type):
         NdrCorePage.PageType.ABOUT_PAGE: AboutUsView,
     }
 
-    if page_type not in translator.keys():
+    if page_type not in translator:
         raise NdrCorePageNotFound(f"Page type {page_type} not found.")
 
     return translator[page_type]
@@ -97,7 +96,7 @@ def display_schema_or_404(request, schema_name):
 
     schema_path = NdrSettings.get_schema_path()
     if schema_name in os.listdir(schema_path):
-        with open(f'{schema_path}/{schema_name}', 'r') as schema_file:
+        with open(f'{schema_path}/{schema_name}', 'r', encoding='utf-8') as schema_file:
             schema = schema_file.read()
             return HttpResponse(schema, content_type='text/plain')
 
@@ -455,7 +454,7 @@ def google_search_console_verification_view(request, verification_file):
     # If it exists, return it, otherwise return a 404
     file_path = os.path.join(settings.MEDIA_ROOT, f"uploads/seo/google{verification_file}.html")
     if os.path.exists(file_path):
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             return HttpResponse(file.read())
     else:
         return render(request, 'ndr_core/404.html', status=404)

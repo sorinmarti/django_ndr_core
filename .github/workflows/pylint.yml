@@ -22,7 +22,7 @@ jobs:
         pip install -r requirements.txt
     - name: Analysing the code with pylint
       run: |
-        pylint --load-plugins pylint_django --django-settings-module=django_ndr_core.settings --max-line-length=120 --exit-zero --output-format=text:output.txt $(git ls-files '*.py')
+        pylint --load-plugins pylint_django --django-settings-module=django_ndr_core.settings --max-line-length=120 --max-parents=10 --exit-zero --output-format=text:output.txt $(git ls-files '*.py')
     - name: Update README
       run: python extract_pylint_score.py
     - name: Set up Git Config

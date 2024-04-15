@@ -14,8 +14,11 @@ def count_file(filename):
     return lines, words, chars
 
 
-def process_directory(directory, exclude_extensions=[]):
+def process_directory(directory, exclude_extensions=None):
     """Processes a directory and returns the stats."""
+    if exclude_extensions is None:
+        exclude_extensions = []
+
     stats = defaultdict(lambda: {'files': [], 'total_lines': 0, 'total_words': 0, 'total_chars': 0})
     log = []
     for root, dirs, files in os.walk(directory):
@@ -35,7 +38,7 @@ def process_directory(directory, exclude_extensions=[]):
                 stats[file_extension]['total_chars'] += char_count
                 log.append(f"Processed file {file_path}")
             except Exception as e:
-                raise Exception(f"Error processing file {file_path}: {e}")
+                raise Exception(f"Error processing file {file_path}: {e}") from e
     return stats, log
 
 
