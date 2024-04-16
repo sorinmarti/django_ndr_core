@@ -20,13 +20,13 @@ jobs:
           
           # Bump the patch version
           IFS='.' read -ra VER <<< "$VERSION"
-          echo "Current version parts: $VER"
+          echo "Current version parts: ${VER[0]}, ${VER[1]}, ${VER[2]}"
           
           ((VER[2]++))
           NEW_VERSION="${VER[0]}.${VER[1]}.${VER[2]}"
           
           # Update the JSON file with the new version
-          jq --arg v "$NEW_VERSION" '.version = $v' ./path/to/your/file.json > temp.json && mv temp.json ./info.json
+          jq --arg v "$NEW_VERSION" '.version = $v' ./info.json > temp.json && mv temp.json ./info.json
           echo "New version: $NEW_VERSION"
 
           # Write the new version to a separate file
