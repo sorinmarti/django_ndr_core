@@ -20,6 +20,8 @@ jobs:
           
           # Bump the patch version
           IFS='.' read -ra VER <<< "$VERSION"
+          echo "Current version parts: $VER"
+          
           ((VER[2]++))
           NEW_VERSION="${VER[0]}.${VER[1]}.${VER[2]}"
           
