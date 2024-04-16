@@ -28,7 +28,7 @@ jobs:
         echo "Patch before increment: $PATCH"
         
         # Attempt to increment the patch
-        ((PATCH++)) || (echo "Failed to increment" && exit 1)
+        PATCH=$(($PATCH + 1))
         echo "Patch after increment: $PATCH"
         
         NEW_VERSION="${VER[0]}.${VER[1]}.$PATCH"
