@@ -14,6 +14,8 @@ jobs:
 
       - name: Bump version in JSON
         run: |
+          shell: bash
+          
           # Read the current version from the JSON file
           VERSION=$(jq -r '.version' ./info.json)
           echo "Current version: $VERSION"
