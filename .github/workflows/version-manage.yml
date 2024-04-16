@@ -24,10 +24,11 @@ jobs:
           
           ((VER[2]++))
           NEW_VERSION="${VER[0]}.${VER[1]}.${VER[2]}"
+          echo "New version: $NEW_VERSION"
           
           # Update the JSON file with the new version
           jq --arg v "$NEW_VERSION" '.version = $v' ./info.json > temp.json && mv temp.json ./info.json
-          echo "New version: $NEW_VERSION"
+          echo "New version saved"
 
           # Write the new version to a separate file
           echo $NEW_VERSION > ./ndr_core/VERSION
