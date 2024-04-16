@@ -1,4 +1,5 @@
 # django-ndr-core
+![NDR Core version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsorinmarti%2Fdjango_ndr_core%2Fmaster%2Finfo.json&query=version&label=NDR%20Core%20version)
 
 Django NDR Core is a django app which helps you build a web interface to present your research
 data. This repository contains the sources to the ndr_core module. You are free to clone
