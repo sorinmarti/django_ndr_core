@@ -14,7 +14,7 @@ jobs:
 
       - name: Bump version in JSON
         shell: bash
-        run: |  
+        run: |
           # Read the current version from the JSON file
           VERSION=$(jq -r '.version' ./info.json)
           echo "Current version: $VERSION"
@@ -22,24 +22,22 @@ jobs:
           # Bump the patch version
           IFS='.' read -ra VER <<< "$VERSION"
           echo "Current version parts: ${VER[0]}, ${VER[1]}, ${VER[2]}"
-
-          if ! [[ "${VER[2]}" =~ ^[0-9]+$ ]]; then
-            echo "Error: Patch version '${VER[2]}' is not a number."
-            exit 1
-          fi
           
-          ((VER[2]++))
-          NEW_VERSION="${VER[0]}.${VER[1]}.${VER[2]}"
+          # Try to increment the patch version using a temporary variable
+          PATCH=${VER[2]}
+          echo "Patch before increment: $PATCH"
+          
+          ((PATCH++))
+          echo "Patch after increment: $PATCH"
+          
+          NEW_VERSION="${VER[0]}.${VER[1]}.$PATCH"
           echo "New version: $NEW_VERSION"
           
+          # Assuming the rest of your script continues from here...
           # Update the JSON file with the new version
-          if ! jq --arg v "$NEW_VERSION" '.version = $v' ./info.json > temp.json; then
-            echo "Failed to update JSON file"
-            exit 1
-          fi
-          mv temp.json ./info.json
+          jq --arg v "$NEW_VERSION" '.version = $v' ./info.json > temp.json && mv temp.json ./info.json
           echo "New version saved"
-
+    
           # Write the new version to a separate file
           echo $NEW_VERSION > ./ndr_core/VERSION
           echo "Version file updated"
