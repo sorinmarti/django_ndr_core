@@ -32,17 +32,34 @@ jobs:
           echo "New version: $NEW_VERSION"
           
           # Update the JSON file with the new version
-          jq --arg v "$NEW_VERSION" '.version = $v' ./info.json > temp.json && mv temp.json ./info.json
+          if ! jq --arg v "$NEW_VERSION" '.version = $v' ./info.json > temp.json; then
+            echo "Failed to update JSON file"
+            exit 1
+          fi
+          mv temp.json ./info.json
           echo "New version saved"
 
           # Write the new version to a separate file
           echo $NEW_VERSION > ./ndr_core/VERSION
+          echo "Version file updated"
           
           # Set up Git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-          # Commit and push the changes
+          # Add changes to staging
           git add ./info.json ./ndr_core/VERSION
-          git commit -m "Bump version to $NEW_VERSION"
-          git push
+          echo "Files added to Git staging"
+          
+          # Check if there are changes to commit
+          git diff --cached --exit-code
+          if [ $? -ne 0 ]; then
+            # Commit and push the changes
+            git commit -m "Bump version to $NEW_VERSION"
+            echo "Commit made"
+            git push
+            echo "Changes pushed"
+          else
+            echo "No changes to commit."
+            exit 1
+          end
