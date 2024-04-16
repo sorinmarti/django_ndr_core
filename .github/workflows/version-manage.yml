@@ -21,6 +21,11 @@ jobs:
           # Bump the patch version
           IFS='.' read -ra VER <<< "$VERSION"
           echo "Current version parts: ${VER[0]}, ${VER[1]}, ${VER[2]}"
+
+          if ! [[ "${VER[2]}" =~ ^[0-9]+$ ]]; then
+            echo "Error: Patch version '${VER[2]}' is not a number."
+            exit 1
+          fi
           
           ((VER[2]++))
           NEW_VERSION="${VER[0]}.${VER[1]}.${VER[2]}"
