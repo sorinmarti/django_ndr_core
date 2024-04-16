@@ -1,0 +1,40 @@
+name: Bump JSON Version and update Version file
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Bump version in JSON
+        run: |
+          # Read the current version from the JSON file
+          VERSION=$(jq -r '.version' ./info.json)
+          echo "Current version: $VERSION"
+          
+          # Bump the patch version
+          IFS='.' read -ra VER <<< "$VERSION"
+          ((VER[2]++))
+          NEW_VERSION="${VER[0]}.${VER[1]}.${VER[2]}"
+          
+          # Update the JSON file with the new version
+          jq --arg v "$NEW_VERSION" '.version = $v' ./path/to/your/file.json > temp.json && mv temp.json ./info.json
+          echo "New version: $NEW_VERSION"
+
+          # Write the new version to a separate file
+          echo $NEW_VERSION > ./ndr_core/VERSION
+          
+          # Set up Git
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Commit and push the changes
+          git add ./info.json ./ndr_core/VERSION
+          git commit -m "Bump version to $NEW_VERSION"
+          git push
