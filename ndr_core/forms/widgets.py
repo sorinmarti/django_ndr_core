@@ -52,20 +52,20 @@ class CSVTextEditorWidget(forms.Textarea):
 
             form_row = Row(
                 Column('import_type', css_class='form-group col-6'),
-                css_class='form-row'
+                css_class='row g-2'
             )
             layout.append(form_row)
 
             form_row = Row(
                 Column('csv_file', css_class='form-group col-12'),
-                css_class='form-row'
+                css_class='row g-2'
             )
             layout.append(form_row)
 
             form_row = Row(
                 Column('csv_delimiter', css_class='form-group col-6'),
                 Column('replace_data', css_class='form-group col-6'),
-                css_class='form-row'
+                css_class='row g-2'
             )
             layout.append(form_row)
 

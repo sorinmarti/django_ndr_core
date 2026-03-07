@@ -89,13 +89,13 @@
     <!-- Tabs Navigation -->
     <ul class="nav nav-tabs mb-3" id="uploadTabs" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="files-tab" data-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">
+            <a class="nav-link active" id="files-tab" data-bs-toggle="tab" href="#files" role="tab" aria-controls="files" aria-selected="true">
                 <i class="fa-regular fa-file"></i> General Files
                 <span class="badge badge-primary">{{ files|length }}</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="groups-tab" data-toggle="tab" href="#groups" role="tab" aria-controls="groups" aria-selected="false">
+            <a class="nav-link" id="groups-tab" data-bs-toggle="tab" href="#groups" role="tab" aria-controls="groups" aria-selected="false">
                 <i class="fa-regular fa-folder"></i> Manifest Groups
                 <span class="badge badge-primary">{{ manifest_groups|length }}</span>
             </a>
@@ -110,7 +110,7 @@
 
             <!-- Action Bar -->
             <div class="d-flex flex-wrap align-items-center bg-light border rounded p-2 mb-3">
-                <div class="mr-auto">
+                <div class="me-auto">
                     <a href="{% url 'ndr_core:create_upload' %}" class="btn btn-sm btn-success m-1">
                         <i class="fa-regular fa-plus"></i> Upload File
                     </a>
@@ -121,7 +121,7 @@
                 <div>
                     <input type="search" class="form-control form-control-sm" id="fileSearch" placeholder="Search files...">
                 </div>
-                <div class="ml-2">
+                <div class="ms-2">
                     <select class="form-control form-control-sm" id="fileTypeFilter">
                         <option value="">All Types</option>
                         <option value="pdf">PDF</option>
@@ -131,7 +131,7 @@
                         <option value="other">Other</option>
                     </select>
                 </div>
-                <div class="ml-2">
+                <div class="ms-2">
                     <a href="{% url 'ndr_core:help_chapter' 'files' %}" class="btn btn-sm btn-outline-secondary m-1">
                         <i class="fa-regular fa-circle-info"></i> Help
                     </a>
@@ -257,7 +257,7 @@
 
             <!-- Action Bar -->
             <div class="d-flex flex-wrap align-items-center bg-light border rounded p-2 mb-3">
-                <div class="mr-auto">
+                <div class="me-auto">
                     <a href="{% url 'ndr_core:create_manifest_group' %}" class="btn btn-sm btn-success m-1">
                         <i class="fa-regular fa-plus"></i> Create Group
                     </a>
@@ -271,7 +271,7 @@
                 <div>
                     <input type="search" class="form-control form-control-sm" id="groupSearch" placeholder="Search groups...">
                 </div>
-                <div class="ml-2">
+                <div class="ms-2">
                     <a href="{% url 'ndr_core:help_chapter' 'files' %}" class="btn btn-sm btn-outline-secondary m-1">
                         <i class="fa-regular fa-circle-info"></i> Help
                     </a>
@@ -285,13 +285,13 @@
                         <div class="card group-card">
                             <div class="card-header" id="heading{{ group.pk }}">
                                 <div class="d-flex align-items-center">
-                                    <button class="btn btn-link flex-grow-1 text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse{{ group.pk }}" aria-expanded="false" aria-controls="collapse{{ group.pk }}">
+                                    <button class="btn btn-link flex-grow-1 text-left collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ group.pk }}" aria-expanded="false" aria-controls="collapse{{ group.pk }}">
                                         <i class="fa-regular fa-chevron-down collapse-icon"></i>
-                                        <i class="fa-regular fa-folder mr-2"></i>
+                                        <i class="fa-regular fa-folder me-2"></i>
                                         <strong>{{ group.title }}</strong>
-                                        <span class="badge badge-info ml-2">{{ group.get_manifest_count }} manifests</span>
+                                        <span class="badge badge-info ms-2">{{ group.get_manifest_count }} manifests</span>
                                     </button>
-                                    <div class="btn-group btn-group-sm mr-2" role="group">
+                                    <div class="btn-group btn-group-sm me-2" role="group">
                                         <a href="{% url 'ndr_core:edit_manifest_group' group.pk %}" class="btn btn-outline-secondary" title="Edit Group">
                                             <i class="fa-regular fa-pen-to-square"></i>
                                         </a>
@@ -301,7 +301,7 @@
                                     </div>
                                 </div>
                                 {% if group.order_value_1_title or group.order_value_2_title or group.order_value_3_title %}
-                                    <div class="ml-4 mt-1">
+                                    <div class="ms-4 mt-1">
                                         <small class="text-muted">
                                             <i class="fa-regular fa-tags"></i>
                                             {% if group.order_value_1_title %}{{ group.order_value_1_title }}{% endif %}
@@ -533,9 +533,9 @@
             <div class="d-flex align-items-center justify-content-between">
                 <div class="flex-grow-1">
                     <div class="d-flex align-items-center">
-                        <i class="fa-regular fa-file mr-2"></i>
+                        <i class="fa-regular fa-file me-2"></i>
                         <strong>${escapeHtml(file.name)}</strong>
-                        <small class="text-muted ml-2">(${formatFileSize(file.size)})</small>
+                        <small class="text-muted ms-2">(${formatFileSize(file.size)})</small>
                     </div>
                     <div class="progress-bar-custom mt-1" style="width: 0%;"></div>
                 </div>

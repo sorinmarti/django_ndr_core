@@ -2,7 +2,6 @@
 import json
 import re
 import uuid
-from collections import defaultdict
 from datetime import datetime, timedelta
 
 from django import template
@@ -57,18 +56,12 @@ class RenderSingleNode(template.Node):
         """Creates a CSS Grid of result fields - copied from RenderResultNode."""
         result_card_fields = self.search_config.resolve(
             context
-        ).result_card_fields.filter(result_card_group=compact_view).order_by('tab_order', 'tab_name', 'field_row', 'field_column')
+        ).result_card_fields.filter(result_card_group=compact_view).order_by('field_row', 'field_column')
 
         if not result_card_fields.exists():
             return ""
 
-        # Check if any fields have tab_name set
-        has_tabs = any(field.tab_name for field in result_card_fields)
-
-        if has_tabs:
-            return RenderResultNode.create_tabbed_grid(result_card_fields, data)
-        else:
-            return RenderResultNode.create_simple_grid(result_card_fields, data)
+        return RenderResultNode.create_simple_grid(result_card_fields, data)
 
     @staticmethod
     def create_field(field_config, data):
@@ -142,18 +135,12 @@ class RenderDataListNode(template.Node):
         """Creates a CSS Grid of result fields using the compact configuration."""
         result_card_fields = self.search_config.resolve(
             context
-        ).result_card_fields.filter(result_card_group=compact_view).order_by('tab_order', 'tab_name', 'field_row', 'field_column')
+        ).result_card_fields.filter(result_card_group=compact_view).order_by('field_row', 'field_column')
 
         if not result_card_fields.exists():
             return ""
 
-        # Check if any fields have tab_name set
-        has_tabs = any(field.tab_name for field in result_card_fields)
-
-        if has_tabs:
-            return RenderResultNode.create_tabbed_grid(result_card_fields, data)
-        else:
-            return RenderResultNode.create_simple_grid(result_card_fields, data)
+        return RenderResultNode.create_simple_grid(result_card_fields, data)
 
     @staticmethod
     def create_field(field_config, data):
@@ -232,22 +219,16 @@ class RenderResultNode(template.Node):
         """Creates a CSS Grid of result fields, with tab support."""
         result_card_fields = self.search_config.resolve(
             context
-        ).result_card_fields.filter(result_card_group=compact_view).order_by('tab_order', 'tab_name', 'field_row', 'field_column')
+        ).result_card_fields.filter(result_card_group=compact_view).order_by('field_row', 'field_column')
 
         if not result_card_fields.exists():
             return ""
 
-        # Check if any fields have tab_name set
-        has_tabs = any(field.tab_name for field in result_card_fields)
-
-        if has_tabs:
-            return self.create_tabbed_grid(result_card_fields, data)
-        else:
-            return self.create_simple_grid(result_card_fields, data)
+        return self.create_simple_grid(result_card_fields, data)
 
     @staticmethod
     def create_simple_grid(field_configs, data):
-        """Creates a simple CSS Grid container without tabs (backward compatible)."""
+        """Creates a CSS Grid container for result fields."""
         grid_html = '<div class="result-grid">'
 
         for field_config in field_configs:
@@ -256,65 +237,6 @@ class RenderResultNode(template.Node):
 
         grid_html += '</div>'
         return mark_safe(grid_html)
-
-    @staticmethod
-    def create_tabbed_grid(field_configs, data):
-        """Creates a tabbed interface for result fields."""
-        # Group fields by tab_name
-        tabs = defaultdict(list)
-        no_tab_fields = []
-
-        for field_config in field_configs:
-            if field_config.tab_name:
-                tabs[field_config.tab_name].append(field_config)
-            else:
-                no_tab_fields.append(field_config)
-
-        # Generate unique ID for this card's tabs
-        tab_id = f"result-tabs-{uuid.uuid4().hex[:8]}"
-
-        # Build tab navigation
-        tab_html = '<div class="result-card-tabs">'
-        tab_html += '<ul class="nav nav-tabs" role="tablist">'
-
-        # Sort tabs by tab_order of first field in each tab
-        sorted_tabs = sorted(tabs.items(), key=lambda x: x[1][0].tab_order if x[1] else 999)
-
-        for idx, (tab_name, _) in enumerate(sorted_tabs):
-            active = 'active' if idx == 0 else ''
-            tab_html += f'''
-                <li class="nav-item">
-                    <a class="nav-link {active}" data-bs-toggle="tab"
-                       href="#{tab_id}-{idx}" role="tab">{tab_name}</a>
-                </li>
-            '''
-
-        tab_html += '</ul>'
-        tab_html += '<div class="tab-content">'
-
-        # Build tab panes with grids
-        for idx, (tab_name, fields) in enumerate(sorted_tabs):
-            active = 'show active' if idx == 0 else ''
-            tab_html += f'<div class="tab-pane fade {active}" id="{tab_id}-{idx}" role="tabpanel">'
-            tab_html += '<div class="result-grid">'
-
-            for field_config in fields:
-                tab_html += RenderResultNode.create_field(field_config, data)
-
-            tab_html += '</div></div>'
-
-        tab_html += '</div>'
-
-        # Add non-tabbed fields below tabs (if any)
-        if no_tab_fields:
-            tab_html += '<div class="result-grid result-grid-below-tabs">'
-            for field_config in no_tab_fields:
-                tab_html += RenderResultNode.create_field(field_config, data)
-            tab_html += '</div>'
-
-        tab_html += '</div>'
-
-        return mark_safe(tab_html)
 
     @staticmethod
     def render_tab_container(result_field, data):
@@ -487,3 +409,13 @@ def get_item(dictionary, key):
     if dictionary is None:
         return None
     return dictionary.get(key)
+
+
+@register.filter
+def has_content(html):
+    """Check if HTML has actual content beyond empty tags and whitespace entities."""
+    if not html:
+        return False
+    text = re.sub(r'<[^>]+>', '', html)
+    text = text.replace('&nbsp;', '').replace('&#160;', '')
+    return bool(text.strip())

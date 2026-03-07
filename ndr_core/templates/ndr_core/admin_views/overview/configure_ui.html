@@ -7,7 +7,7 @@
 
     <!-- Options Bar -->
     <div class="d-flex flex-wrap align-items-center bg-light border rounded p-2 mb-3">
-        <div class="mr-auto">
+        <div class="me-auto">
             <span class="text-muted">Select a UI style below to change your site's layout</span>
         </div>
         <div>
@@ -22,7 +22,7 @@
         <div class="card-body py-2">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <div class="mr-3" style="max-width: 100px;">
+                    <div class="me-3" style="max-width: 100px;">
                         {% with 'ndr_core/images/admin/'|add:ui_style.filename|add:'.png' as image_static %}
                             <img src="{% static image_static %}" class="img-fluid border" alt="{{ ui_style.label }}">
                         {% endwith %}
@@ -51,7 +51,7 @@
                                     <h6 class="card-title mb-1">
                                         {{ style.label }}
                                         {% if ui_style.pk == style.pk %}
-                                            <span class="badge badge-success badge-sm ml-1">Current</span>
+                                            <span class="badge badge-success badge-sm ms-1">Current</span>
                                         {% endif %}
                                     </h6>
                                     <p class="card-text small text-muted mb-0">{{ style.description }}</p>

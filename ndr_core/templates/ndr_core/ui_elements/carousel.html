@@ -1,8 +1,8 @@
-<div id="carouselIndicators" class="carousel slide" data-ride="carousel">
+<div id="carouselIndicators" class="carousel slide" data-bs-ride="carousel">
     {% if data.show_indicators %}
         <ol class="carousel-indicators">
             {% for slide in data.slides %}
-                <li data-target="#carouselIndicators" data-slide-to="{{ forloop.counter }}"{% if forloop.first %} class="active"{% endif %}></li>
+                <li data-bs-target="#carouselIndicators" data-bs-slide-to="{{ forloop.counter }}"{% if forloop.first %} class="active"{% endif %}></li>
             {% endfor %}
         </ol>
     {% endif %}
@@ -22,13 +22,13 @@
         {% endfor %}
     </div>
     {% if data.show_indicators %}
-        <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-slide="prev">
+        <a class="carousel-control-prev" href="#carouselIndicators" role="button" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
+            <span class="visually-hidden">Previous</span>
         </a>
-        <a class="carousel-control-next" href="#carouselIndicators" role="button" data-slide="next">
+        <a class="carousel-control-next" href="#carouselIndicators" role="button" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
+            <span class="visually-hidden">Next</span>
         </a>
     {% endif %}
 </div>

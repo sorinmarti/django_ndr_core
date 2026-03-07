@@ -5,7 +5,7 @@
 
     <!-- Options Bar -->
     <div class="d-flex flex-wrap align-items-center bg-light border rounded p-2 mb-3">
-        <div class="mr-auto">
+        <div class="me-auto">
             <a href="{% url 'ndr_core:configure_ui_elements' %}" class="btn btn-sm btn-primary m-1{% if not object %} active{% endif %}">
                 <i class="fa-regular fa-list"></i> Manage UI Elements
             </a>
@@ -118,7 +118,7 @@
                 <div>
                     <h5 class="mb-0">
                         <i class="fa-regular fa-eye"></i> Preview: <strong>{% if object.label %}{{ object.label }}{% else %}{{ object.name }}{% endif %}</strong>
-                        <span class="badge badge-secondary ml-2">{{ object.get_type_display }}</span>
+                        <span class="badge badge-secondary ms-2">{{ object.get_type_display }}</span>
                     </h5>
                     {% if object.label %}
                         <small class="text-muted">Slug: {{ object.name }}</small>

@@ -1,6 +1,7 @@
 {% load static %}
 {% load i18n %}
 {% load ndr_values %}
+{% load ndr_utils %}
 
 {% config_value 'main_view' as logo_view_name %}
 {% get_current_language as LANGUAGE_CODE %}
@@ -36,7 +37,7 @@
                         </div>
 
                         <div class="d-flex justify-content-end align-items-center navbar-light p-2 d-md-none d-lg-none d-xl-none">
-                            <button class="navbar-toggler order-first" type="button" data-toggle="collapse" data-target="#links" aria-controls="links" aria-expanded="false" aria-label="Toggle navigation">
+                            <button class="navbar-toggler order-first" type="button" data-bs-toggle="collapse" data-bs-target="#links" aria-controls="links" aria-expanded="false" aria-label="Toggle navigation">
                                 <span class="navbar-toggler-icon "></span>
                             </button>
                         </div>
@@ -49,7 +50,7 @@
                                     {% for nav_item in navigation %}
                                         {% if nav_item.ndrcorepage_set.all %}
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.ndrcorepage_set.all %} active{% endif %}" href="#" data-toggle="dropdown" aria-expanded="false">
+                                                <a class="nav-link dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.ndrcorepage_set.all %} active{% endif %}" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                                     {{ nav_item.label }}
                                                 </a>
                                                 <div class="dropdown-menu">
@@ -86,7 +87,7 @@
                                         {% if language.code == LANGUAGE_CODE %}
                                             <li>{{ language.code }}</li>
                                         {% else %}
-                                            <li><a data-toggle="tooltip" data-placement="top" title="{{ language.name_local}}"
+                                            <li><a data-bs-toggle="tooltip" data-placement="top" title="{{ language.name_local}}"
                                                    href="{% url 'ndr_core:set_language' language.code %}">{{ language.code }}</a> </li>
                                         {% endif %}
                                         {% if not forloop.last %}
@@ -96,15 +97,15 @@
                                 </ul>
                             {% endif %}
 
-                            <button id="themeToggle" class="btn btn-sm btn-outline-secondary ml-2" type="button" aria-pressed="false" aria-label="{% trans 'Toggle dark mode' %}">
+                            <button id="themeToggle" class="btn btn-sm btn-outline-secondary ms-2" type="button" aria-pressed="false" aria-label="{% trans 'Toggle dark mode' %}">
                                 <i class="fa-solid fa-adjust"></i> <span id="themeToggleText">{% trans "Dark" %}</span>
                             </button>
                         </nav>
 
-                    <div class="collapse py-1 mb-2 ml-0 d-xl-none d-lg-none" id="links"> <!-- mobile - all other sizes -->
+                    <div class="collapse py-1 mb-2 ms-0 d-xl-none d-lg-none" id="links"> <!-- mobile - all other sizes -->
                         <nav class="d-flex flex-column">
                             <div class="col-12 offset-md-1">
-                                <ul class="navbar-nav mr-auto navbar-ul-items">
+                                <ul class="navbar-nav me-auto navbar-ul-items">
                                     {% for nav_item in navigation %}
                                          <li class="nav-item border">
                                              <a class="nav-link p-3 text-center{% if nav_item.view_name == page.view_name %} active{% endif %}" style="display: block;" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
@@ -138,7 +139,9 @@
             {% endblock %}
 
             {% block content %}
-                {{ rendered_text|safe }}
+                {% if rendered_text|has_content %}
+                    {{ rendered_text|safe }}
+                {% endif %}
             {% endblock %}
 
             {% block generated_content %}
@@ -150,12 +153,11 @@
         {% if page.show_footer %}
         <div class="container">
             {% block footer %}
-                {% include 'ndr_core/base/footer.html' %}
+                {% include 'ndr_core/base/styles/footers/footer_default.html' %}
             {% endblock %}
         </div>
         {% endif %}
 
-        <script src="{% static 'ndr_core/js/popper.min.js' %}"></script>
         <script src="{% static 'ndr_core/js/bootstrap.min.js' %}"></script>
 
         <script src="{% static 'fontawesomefree/js/fontawesome.js' %}"></script>
@@ -164,7 +166,7 @@
 
         <script>
             $(document).ready(function(){
-                $('[data-toggle="tooltip"]').tooltip();
+                $('[data-bs-toggle="tooltip"]').tooltip();
             });
         </script>
 

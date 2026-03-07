@@ -249,7 +249,7 @@ class TeamGridForm(BaseUIElementForm):
         # Grid options section
         layout.append(Row(
             Column(HTML('<h5 class="mt-3 mb-3">Grid Options</h5>'), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         self.add_field_row(layout, 'columns_layout', 'card_style', col_class='col-md-4')

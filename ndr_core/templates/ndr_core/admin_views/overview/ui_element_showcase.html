@@ -293,6 +293,29 @@
                 </div>
             </div>
         </div>
+
+        <!-- JavaScript Module -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'ndr_core/images/admin/ui_elements/js_module.png' %}"
+                     class="card-img-top"
+                     alt="JavaScript Module"
+                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;"
+                     onerror="this.src='{% static 'ndr_core/images/admin/ui_elements/none.png' %}'">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fa-regular fa-code"></i> JavaScript Module
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Create custom JavaScript visualizations and interactive widgets. Upload packages with
+                        hundreds of assets or use external CDN libraries like D3.js, Chart.js, and Plotly.
+                    </p>
+                    <a href="{% url 'ndr_core:create_ui_element_js_module' %}" class="btn btn-primary btn-block">
+                        <i class="fa-regular fa-plus-circle"></i> Create JS Module
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
 {% endblock %}

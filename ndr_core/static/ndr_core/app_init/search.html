@@ -7,7 +7,7 @@
 
 {% block generated_content %}
 
-    {% if rendered_text %}
+    {% if rendered_text|has_content %}
         <div class="row bg-white mb-3">
             <div class="col-12 p-3">
                 {{ rendered_text|safe }}
@@ -80,13 +80,33 @@
     {% if not result %}
         <script>
             $(document).ready(function () {
+                // Show tab based on URL parameter
                 var url_params = new URLSearchParams(window.location.search);
                 if (url_params.has('tab')) {
-                     $('a[href="#' + url_params.get('tab') + '"]').tab('show');
+                    var tabEl = document.querySelector('a[href="#' + url_params.get('tab') + '"]');
+                    if (tabEl) {
+                        var tab = new bootstrap.Tab(tabEl);
+                        tab.show();
+                    }
                 }
                 {% if requested_search %}
-                    $('a[href="#{{ requested_search }}"]').tab('show');
+                    var requestedTabEl = document.querySelector('a[href="#{{ requested_search }}"]');
+                    if (requestedTabEl) {
+                        var requestedTab = new bootstrap.Tab(requestedTabEl);
+                        requestedTab.show();
+                    }
                 {% endif %}
+
+                // Update URL when tab is clicked - use Bootstrap 5 event
+                document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tabEl) {
+                    tabEl.addEventListener('shown.bs.tab', function (e) {
+                        var tabId = e.target.getAttribute('href').substring(1); // Remove the '#'
+                        var newUrl = new URL(window.location.href);
+                        newUrl.searchParams.set('tab', tabId);
+                        newUrl.hash = ''; // Remove any hash
+                        window.history.replaceState({}, '', newUrl);
+                    });
+                });
 
                 $('form').bind("keypress", function(e) {
                   if (e.keyCode == 13) {

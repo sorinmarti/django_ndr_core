@@ -1,13 +1,20 @@
 {% load static %}
+{% load i18n %}
 {% load ndr_values %}
+{% load ndr_utils %}
 
 {% config_value 'main_view' as logo_view_name %}
+{% get_current_language as LANGUAGE_CODE %}
 
 <!doctype html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
     <head>
         {% include 'ndr_core/base/base_header_tags.html' %}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="{% static 'ndr_core/css/ndr_core_top_fixed.css' %}" rel="stylesheet">
+        {% block module_css %}
+            <!-- module css -->
+        {% endblock %}
         {% block custom_css %}
             <!-- custom css -->
         {% endblock %}
@@ -18,32 +25,65 @@
     <body>
         {% if page.show_navigation %}
         <nav class="navbar navbar-expand-md navbar-dark fixed-top accent-1-bg">
-            {% block logo %}
-                <a class="navbar-brand" href="/">
-                    <img src="{% block logo_url %}{% static 'ndr_core/images/logo.png' %}{% endblock %}" style="height: 3em;"/>
-                </a>
-            {% endblock logo %}
+            <div class="container-fluid">
+                {% block logo %}
+                    <a class="navbar-brand" href="/">
+                        <img src="{% block logo_url %}{% static 'ndr_core/images/logo.png' %}{% endblock %}" style="height: 3em;"/>
+                    </a>
+                {% endblock logo %}
 
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav mr-auto">
-                    {% for nav_item in navigation %}
-                        <li class="nav-item">
-                            <a class="nav-link ndr-text-fg" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <button id="themeToggle" class="btn btn-sm btn-outline-light" type="button" aria-pressed="false" aria-label="Toggle dark mode">
-                    <i class="fa-solid fa-adjust"></i> <span id="themeToggleText">Dark</span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="{% trans 'Toggle navigation' %}">
+                    <span class="navbar-toggler-icon"></span>
                 </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav me-auto">
+                        {% for nav_item in navigation %}
+                            {% if nav_item.ndrcorepage_set.all %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link ndr-text-fg dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.ndrcorepage_set.all %} active{% endif %}"
+                                       href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{ nav_item.label }}
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="{{ nav_item.url }}">{{ nav_item.label }}</a></li>
+                                        {% for sub_page in nav_item.ndrcorepage_set.all|dictsort:"index" %}
+                                            <li><a class="dropdown-item" href="{{ sub_page.url }}">{{ sub_page.label }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-link ndr-text-fg{% if nav_item.view_name == page.view_name %} active{% endif %}" href="{{ nav_item.url }}">{{ nav_item.label }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    <div class="d-flex align-items-center gap-2">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% ndr_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% if languages|length > 1 %}
+                            {% for language in languages %}
+                                {% if language.code != LANGUAGE_CODE %}
+                                    <form action="{% url 'ndr_core:set_language' language.code %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <input name="next" type="hidden" value="{{ request.path }}">
+                                        <button type="submit" class="btn btn-link text-white p-0 text-decoration-none">{{ language.name_local }}</button>
+                                    </form>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        <button id="themeToggle" class="btn btn-sm btn-outline-light" type="button" aria-pressed="false" aria-label="{% trans 'Toggle dark mode' %}">
+                            <i class="fa-solid fa-adjust"></i> <span id="themeToggleText">{% trans "Dark" %}</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </nav>
         {% endif %}
 
         <div class="{% if page.center_content %}ndr-content-wrapper{% endif %}">
-        <main role="main" class="container" {% if page.show_navigation %}style="padding-top: 7em;"{% endif %}>
+        <main role="main" class="container my-4" {% if page.show_navigation %}style="padding-top: 7em;"{% endif %}>
             {% block page_title %}
                 {% if page_background.bg_mode == 'HEADER_ONLY' %}
                     <div class="page-header-bg">
@@ -52,27 +92,38 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    <h1>{{ page.name }}</h1>
+                    {% if page.show_page_title == True %}
+                        <h1>{{ page.name }}</h1>
+                    {% endif %}
+                {% endif %}
+            {% endblock %}
+
+            {% block content %}
+                {% if rendered_text|has_content %}
+                    {{ rendered_text|safe }}
                 {% endif %}
             {% endblock %}
 
             {% block generated_content %}
             {% endblock %}
-
-            {% block content %}
-                {{ page.template_text|safe }}
-            {% endblock %}
         </main>
         </div>
         {% if page.show_footer %}
-        {% block footer %}
-            NDR core
-        {% endblock %}
+        <footer class="site-footer mt-5 py-4">
+            <div class="container small">
+                {% block footer %}
+                    {% include 'ndr_core/base/styles/footers/footer_default.html' %}
+                {% endblock %}
+            </div>
+        </footer>
         {% endif %}
 
-        <script src="{% static 'ndr_core/js/popper.min.js' %}"></script>
-        <script src="{% static 'ndr_core/js/bootstrap.min.js' %}"></script>
-        <script src="{% static 'fontawesome/js/all.min.js' %}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="{% static 'ndr_core/js/jquery.min.js' %}"></script>
+
+        <script src="{% static 'fontawesomefree/js/fontawesome.js' %}"></script>
+        <script src="{% static 'fontawesomefree/js/solid.js' %}"></script>
+        <script src="{% static 'fontawesomefree/js/brands.js' %}"></script>
 
         <script>
             (function(){
@@ -104,7 +155,7 @@
                     btn.setAttribute("aria-pressed", isDark ? "true":"false");
                     const textEl = document.getElementById("themeToggleText");
                     if (textEl) {
-                        textEl.textContent = isDark ? "Light" : "Dark";
+                        textEl.textContent = isDark ? "{% trans 'Light' %}" : "{% trans 'Dark' %}";
                     }
                 }
             })();

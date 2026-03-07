@@ -73,7 +73,7 @@ class DataObjectForm(BaseUIElementForm):
         # Data Object content section
         layout.append(Row(
             Column(HTML('<h5 class="mt-3 mb-3">Data Object Configuration</h5>'), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         self.add_field_row(layout, 'search_configuration', col_class='col-md-6')

@@ -1619,6 +1619,7 @@ class NdrCoreUIElement(models.Model):
         AUDIO = "audio", "Audio Player"
         ACADEMIC_ABOUT = "academic_about", "About Me"
         TEAM_GRID = "team_grid", "Team Members Grid"
+        JS_MODULE = "js_module", "JavaScript Module"
 
     type = models.CharField(max_length=100,
                             choices=UIElementType.choices,
@@ -1720,6 +1721,27 @@ class NdrCoreUiElementItem(models.Model, TranslatableMixin):
         help_text='Provider type (youtube, vimeo, switchtube, etc.)'
     )
     """Provider type for video embeds and social media widgets. """
+
+    js_module_config = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text='Module configuration (auto-populated from package or manual)'
+    )
+    """Module configuration JSON for JS_MODULE type elements. """
+
+    js_module_package = models.FileField(
+        upload_to='js_modules/packages/',
+        null=True,
+        blank=True,
+        help_text='Uploaded module package (zip file with static/ and media/ folders)'
+    )
+    """Uploaded module package file for JS_MODULE type elements. """
+
+    js_module_extracted = models.BooleanField(
+        default=False,
+        help_text='Whether the package has been extracted'
+    )
+    """Flag indicating if JS module package has been extracted. """
 
     translatable_fields = ['title', 'text', 'rich_text']
     """Fields which are translatable for this model. """

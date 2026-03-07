@@ -64,7 +64,7 @@ class SearchConfigurationResultEditForm(forms.Form):
         tab = Tab('Result Card')
         cpct_tab = Tab('Compact Result Card')
 
-        form_row = Div(css_class='form-row', css_id='result_field_config_title_row')
+        form_row = Div(css_class='row g-2', css_id='result_field_config_title_row')
         form_row.append(Div(HTML('Result Field'), css_class='col-md-6'))
         form_row.append(Div(HTML('Row'), css_class='col-md-2'))
         form_row.append(Div(HTML('Col'), css_class='col-md-1'))
@@ -72,7 +72,7 @@ class SearchConfigurationResultEditForm(forms.Form):
         form_row.append(Div(HTML('Height'), css_class='col-md-1'))
         tab.append(form_row)
 
-        form_row = Div(css_class='form-row', css_id='cpct_result_field_config_title_row')
+        form_row = Div(css_class='row g-2', css_id='cpct_result_field_config_title_row')
         form_row.append(Div(HTML('Compact Result Field'), css_class='col-md-6'))
         form_row.append(Div(HTML('Row'), css_class='col-md-2'))
         form_row.append(Div(HTML('Col'), css_class='col-md-1'))
@@ -81,9 +81,9 @@ class SearchConfigurationResultEditForm(forms.Form):
         cpct_tab.append(form_row)
 
         for row in range(20):
-            form_row = Div(css_class='form-row',
+            form_row = Div(css_class='row g-2',
                            css_id=f'result_field_config_row_{row}')
-            cpct_form_row = Div(css_class='form-row',
+            cpct_form_row = Div(css_class='row g-2',
                                 css_id=f'cpct_result_field_config_row_{row}')
 
             form_field_result_field = Field(f'result_field_{row}',
@@ -145,7 +145,7 @@ class SearchConfigurationResultEditForm(forms.Form):
                            css_class='btn btn-sm btn-secondary float-right ml-3'),
                     css_class='display-flex'),
                 css_class='col-md-3'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         tab.append(form_row)
 
@@ -158,7 +158,7 @@ class SearchConfigurationResultEditForm(forms.Form):
                            css_class='btn btn-sm btn-secondary float-right ml-3'),
                     css_class='display-flex'),
                 css_class='col-md-3'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         cpct_tab.append(cpct_form_row)
 

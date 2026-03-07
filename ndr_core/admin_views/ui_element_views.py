@@ -15,6 +15,7 @@ from ndr_core.admin_forms.ui_element_types import (
     SlidesCreateForm, SlidesEditForm,
     CarouselCreateForm, CarouselEditForm,
     DataObjectCreateForm, DataObjectEditForm,
+    JSModuleCreateForm, JSModuleEditForm,
 )
 from ndr_core.admin_forms.ui_element_types.video_forms import VideoCreateForm, VideoEditForm
 from ndr_core.admin_forms.ui_element_types.audio_forms import AudioCreateForm, AudioEditForm
@@ -23,7 +24,7 @@ from ndr_core.admin_forms.ui_element_types.team_grid_forms import TeamGridCreate
 from ndr_core.admin_forms.ui_element_types.slides_forms import SlidesItemFormSet
 from ndr_core.admin_forms.ui_element_types.carousel_forms import CarouselItemFormSet
 from ndr_core.admin_views.admin_views import AdminViewMixin
-from ndr_core.models import NdrCoreUIElement, NdrCoreImage
+from ndr_core.models import NdrCoreUIElement, NdrCoreImage, NdrCoreUiElementItem
 
 
 class ConfigureUIElements(AdminViewMixin, LoginRequiredMixin, View):
@@ -442,6 +443,22 @@ class AcademicAboutEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     form_class = AcademicAboutEditForm
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
     template_name = 'ndr_core/admin_views/edit/ui_element_academic_about_edit.html'
+
+
+class JSModuleCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
+    """View to create a new JavaScript Module UI Element."""
+    model = NdrCoreUIElement
+    form_class = JSModuleCreateForm
+    success_url = reverse_lazy('ndr_core:configure_ui_elements')
+    template_name = 'ndr_core/admin_views/create/ui_element_js_module_create.html'
+
+
+class JSModuleEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
+    """View to edit an existing JavaScript Module UI Element."""
+    model = NdrCoreUIElement
+    form_class = JSModuleEditForm
+    success_url = reverse_lazy('ndr_core:configure_ui_elements')
+    template_name = 'ndr_core/admin_views/edit/ui_element_js_module_edit.html'
 
 
 # ============================================================================

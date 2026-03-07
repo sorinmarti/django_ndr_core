@@ -7,7 +7,7 @@
 
     <!-- Options Bar -->
     <div class="d-flex flex-wrap align-items-center bg-light border rounded p-2 mb-3">
-        <div class="mr-auto">
+        <div class="me-auto">
             <a href="{% url 'ndr_core:configure_pages' %}" class="btn btn-sm btn-primary m-1{% if not footer_form and not not_found_form %} active{% endif %}">
                 <i class="fa-regular fa-list"></i> Manage Pages
             </a>
@@ -69,7 +69,7 @@
                                 </tr>
                                 {% for sub_page in page.ndrcorepage_set.all|dictsort:"index" %}
                                     <tr class="table-active">
-                                        <td class="pl-5">
+                                        <td class="ps-5">
                                             <i class="fa-regular fa-level-down-alt"></i>
                                             {{ sub_page.name }}
                                         </td>

@@ -2,7 +2,7 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, ButtonHolder, HTML
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-from django.forms import forms
+from django.forms import forms, FileField
 
 
 class NdrCoreLoginForm(AuthenticationForm):
@@ -41,7 +41,7 @@ class ConnectWithNdrCoreForm(forms.Form):
 class UploadGoogleVerificationFileForm(forms.Form):
     """A Form to upload a Google Search Console verification file. """
 
-    file = forms.FileField()
+    file = FileField()
 
     def __init__(self, *args, **kwargs):
         """Initialises all needed form fields."""

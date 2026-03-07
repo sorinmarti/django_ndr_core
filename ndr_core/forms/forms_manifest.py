@@ -36,7 +36,7 @@ class ManifestSelectionForm(_NdrCoreForm):
         form_row = Row(
             Column('manifest', css_class='form-group col-md-9 mb-0'),
             Column(NdrCoreFormSubmit('submit', _('Show')), css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 

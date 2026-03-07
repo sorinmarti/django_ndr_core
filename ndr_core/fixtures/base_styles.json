@@ -34,5 +34,23 @@
       "filename": "style_unibas_brand",
       "description": "Modern style with colored brand panel at top, white navigation bar, and dark mode support."
     }
+  },
+  {
+    "model": "ndr_core.NdrCoreUiStyle",
+    "fields": {
+      "name": "minimal_modern",
+      "label": "Minimal Modern",
+      "filename": "style_minimal_modern",
+      "description": "Clean, content-focused design with transparent navbar, floating scroll button, card-based layout, and smooth animations. Perfect for modern research platforms and digital humanities projects."
+    }
+  },
+  {
+    "model": "ndr_core.NdrCoreUiStyle",
+    "fields": {
+      "name": "glass_harmony",
+      "label": "Glass Harmony",
+      "filename": "style_glass_harmony",
+      "description": "Elegant glassmorphism design with frosted glass UI elements, translucent containers, and beautiful backdrop blur effects. Features animated gradient backgrounds and premium aesthetics. Perfect for modern, visually-striking presentations."
+    }
   }
 ]

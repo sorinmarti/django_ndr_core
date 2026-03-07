@@ -87,7 +87,7 @@
                 <div id="formset-container">
                     {% for form in formset %}
                         <div class="formset-item">
-                            <div class="formset-item-header" style="cursor: pointer;" data-toggle="collapse" data-target="#collapse-{{ forloop.counter }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
+                            <div class="formset-item-header" style="cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#collapse-{{ forloop.counter }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
                                 <h6 class="mb-0">
                                     <i class="fa fa-chevron-down collapse-icon"></i>
                                     <span class="member-number">Team Member #{{ forloop.counter }}</span>

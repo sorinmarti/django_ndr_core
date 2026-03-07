@@ -33,7 +33,7 @@
                                 <a class="navbar-brand" href="{% url 'ndr_core:dashboard' %}">
                                     <img src="{% static 'ndr_core/images/admin/logo.png' %}" style="height: 30px;">
                                 </a>
-                                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                                     <span class="navbar-toggler-icon"></span>
                                 </button>
 
@@ -53,7 +53,7 @@
                                                 </a>
                                             </li>
                                             <li class="nav-item dropdown{% if "/configure/ui_settings/" in request.path or "/configure/colors/" in request.path %} active{% endif %}">
-                                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <i class="fa-regular fa-palette"></i>
                                                     Style & Colors
                                                 </a>
@@ -69,7 +69,7 @@
                                                 </div>
                                             </li>
                                             <li class="nav-item dropdown{% if "/configure/ui_elements/" in request.path or "/configure/images/" in request.path or "/configure/logos/" in request.path or "/configure/uploads/" in request.path or "/configure/translations" in request.path %} active{% endif %}">
-                                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <i class="fa-regular fa-folder-open"></i>
                                                     Resources
                                                 </a>
@@ -100,7 +100,7 @@
 
                                         {% if page_is_editable %}
                                             <li class="nav-item dropdown">
-                                                <a class="nav-link dropdown-toggle {% if "configure/messages/" in request.path or "configure/corrections/" in request.path or "configure/statistics/" in request.path or "configure/seo/" in request.path %} active{% endif %}" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                                <a class="nav-link dropdown-toggle {% if "configure/messages/" in request.path or "configure/corrections/" in request.path or "configure/statistics/" in request.path or "configure/seo/" in request.path %} active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <i class="fa-regular fa-pen"></i>
                                                     Maintenance
                                                 </a>
@@ -194,7 +194,6 @@
             {% endblock %}
         </div>
 
-        <script src="{% static 'ndr_core/js/popper.min.js' %}"></script>
         <script src="{% static 'ndr_core/js/bootstrap.min.js' %}"></script>
         <script src="{% static 'fontawesomefree/js/fontawesome.js' %}"></script>
         <script src="{% static 'fontawesomefree/js/solid.js' %}"></script>

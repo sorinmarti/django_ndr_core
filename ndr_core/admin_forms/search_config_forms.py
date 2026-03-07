@@ -42,14 +42,14 @@ class SearchConfigurationForm(forms.ModelForm):
             <small>(Keep the name short and avoid special characters!))</small>
             <hr/>
             ''')), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('conf_name', css_class='col-6'),
             Column('conf_label', css_class='col-6'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -61,14 +61,14 @@ class SearchConfigurationForm(forms.ModelForm):
                     <small>(Select a type to see how to compose the connection string)</small>
                     <hr/>
                     ''')), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('api_type', css_class='col-4'),
             Column('api_connection_url', css_class='col-8'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -76,7 +76,7 @@ class SearchConfigurationForm(forms.ModelForm):
             Column('api_user_name', css_class='col-3'),
             Column('api_password', css_class='col-3'),
             Column('api_auth_key', css_class='col-6'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -88,7 +88,7 @@ class SearchConfigurationForm(forms.ModelForm):
                             <small>()</small>
                             <hr/>
                             ''')), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -96,7 +96,7 @@ class SearchConfigurationForm(forms.ModelForm):
             Column('search_id_field', css_class='col-4'),
             Column('sort_field', css_class='col-4'),
             Column('sort_order', css_class='col-4'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -105,14 +105,14 @@ class SearchConfigurationForm(forms.ModelForm):
             Column('page_size', css_class='col-2'),
             Column('compact_page_size', css_class='col-2'),
             Column('repository_url', css_class='col-5'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('compact_result_is_default', css_class='col-3'),
             Column('citation_expression', css_class='col-9'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -125,7 +125,7 @@ class SearchConfigurationForm(forms.ModelForm):
                                     field search with your search form.)</small>
                                     <hr/>
                                     ''')), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -133,27 +133,27 @@ class SearchConfigurationForm(forms.ModelForm):
             Column('has_simple_search', css_class='col-4'),
             Column('simple_search_first', css_class='col-4'),
             Column('simple_query_main_field', css_class='col-4'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('simple_query_label', css_class='col-6'),
             Column('simple_search_tab_title', css_class='col-6'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('simple_query_help_text', css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('manifest_relation_expression', css_class='col-8'),
             Column('manifest_page_expression', css_class='col-4'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 

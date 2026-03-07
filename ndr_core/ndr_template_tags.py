@@ -608,6 +608,14 @@ class TextPreRenderer:
             context['show_bios'] = getattr(element, '_show_bios', True)
             context['card_style'] = getattr(element, '_card_style', 'standard')
 
+        # Special handling for JS_MODULE type
+        if element.type == NdrCoreUIElement.UIElementType.JS_MODULE:
+            items = element.items()
+            if items:
+                item = items[0]
+                context['module_config'] = item.js_module_config
+                context['module_package'] = item.js_module_package
+
         # Render the template
         try:
             element_html_string = render_to_string(f'ndr_core/ui_elements/{template_name}.html',

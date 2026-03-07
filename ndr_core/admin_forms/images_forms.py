@@ -27,20 +27,20 @@ class ImageForm(forms.ModelForm):
                                "You can add contextual information (title, caption, etc.) "
                                "when using the image in UI Elements."),
                    css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('image', css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('alt_text', css_class='form-group col-9'),
             Column('image_active', css_class='form-group col-3'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -74,7 +74,7 @@ class ImageEditForm(ImageForm):
             Column(get_info_box("Edit image information. "
                                "You can replace the image file if needed (e.g., replacing a placeholder with the actual image)."),
                    css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         helper.layout.append(get_form_buttons('Save Changes'))
         return helper
@@ -94,7 +94,7 @@ class LogoUploadForm(forms.Form):
 
         form_row = Row(
             Column('upload_file', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 

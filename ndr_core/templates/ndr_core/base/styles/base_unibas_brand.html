@@ -1,6 +1,7 @@
 {% load static %}
 {% load i18n %}
 {% load ndr_values %}
+{% load ndr_utils %}
 
 {% config_value 'main_view' as logo_view_name %}
 {% get_current_language as LANGUAGE_CODE %}
@@ -112,7 +113,9 @@
     {% endblock %}
 
     {% block content %}
-        {{ rendered_text|safe }}
+        {% if rendered_text|has_content %}
+            {{ rendered_text|safe }}
+        {% endif %}
     {% endblock %}
 
     {% block generated_content %}
@@ -124,7 +127,7 @@
 <footer class="site-footer mt-5 py-4">
     <div class="container small">
         {% block footer %}
-            {% include 'ndr_core/base/footer.html' %}
+            {% include 'ndr_core/base/styles/footers/footer_default.html' %}
         {% endblock %}
     </div>
 </footer>

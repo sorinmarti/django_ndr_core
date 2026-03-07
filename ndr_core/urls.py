@@ -125,6 +125,7 @@ from ndr_core.admin_views.ui_element_views import (
     AudioCreateView, AudioEditView,
     AcademicAboutCreateView, AcademicAboutEditView,
     TeamGridCreateView, TeamGridEditView,
+    JSModuleCreateView, JSModuleEditView,
     # Helper
     get_ndr_image_path
 )
@@ -287,6 +288,8 @@ urlpatterns = [
     path('configure/ui_elements/edit/academic_about/<str:pk>/', AcademicAboutEditView.as_view(), name='edit_ui_element_academic_about'),
     path('configure/ui_elements/create/team_grid/', TeamGridCreateView.as_view(), name='create_ui_element_team_grid'),
     path('configure/ui_elements/edit/team_grid/<str:pk>/', TeamGridEditView.as_view(), name='edit_ui_element_team_grid'),
+    path('configure/ui_elements/create/js_module/', JSModuleCreateView.as_view(), name='create_ui_element_js_module'),
+    path('configure/ui_elements/edit/js_module/<str:pk>/', JSModuleEditView.as_view(), name='edit_ui_element_js_module'),
 
     # SEARCH CONFIGURATIONS
     path('configure/search/', ConfigureSearch.as_view(), name='configure_search'),

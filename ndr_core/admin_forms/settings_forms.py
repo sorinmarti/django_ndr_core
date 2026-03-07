@@ -144,7 +144,7 @@ class SettingsListForm(forms.Form):
             if self.is_custom_form:
                 cols = '11'
 
-            form_row = Row(css_class='form-row')
+            form_row = Row(css_class='row g-2')
             form_row.append(Column(f"save_{setting}", css_class=f'form-group col-md-{cols} mb-0'))
 
             if self.is_custom_form:
@@ -187,19 +187,19 @@ class SettingForm(forms.ModelForm):
         form_row = Row(
             Column('value_name', css_class='form-group col-md-6 mb-0'),
             Column('value_label', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('value_help_text', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('value_value', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
         return helper
@@ -242,7 +242,7 @@ class SettingsImportForm(forms.Form):
 
         form_row = Row(
             Column('settings_file', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         helper.layout.append(form_row)
 
@@ -409,13 +409,13 @@ class LogoManagementForm(forms.Form):
                 "Configure logos for your site. Page logos can be set per language for internationalization. "
                 "Partner logos appear in the footer."
             ), css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         # Page logos section
         layout.append(Row(
             Column(HTML('<h5 class="mt-3 mb-3">Page Logos (Per Language)</h5>'), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         # Add fields for each language
@@ -424,7 +424,7 @@ class LogoManagementForm(forms.Form):
 
         layout.append(Row(
             Column(f'logo_{base_language}', css_class='form-group col-md-6'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         available_languages = get_available_languages()
@@ -432,18 +432,18 @@ class LogoManagementForm(forms.Form):
             if lang_code != base_language:
                 layout.append(Row(
                     Column(f'logo_{lang_code}', css_class='form-group col-md-6'),
-                    css_class='form-row'
+                    css_class='row g-2'
                 ))
 
         # Partner logos section
         layout.append(Row(
             Column(HTML('<h5 class="mt-4 mb-3">Footer Partner Logos</h5>'), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(Row(
             Column('partner_logos', css_class='form-group col-md-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(get_form_buttons('Save Logo Settings'))

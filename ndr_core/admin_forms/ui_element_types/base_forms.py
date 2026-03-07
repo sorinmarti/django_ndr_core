@@ -129,4 +129,4 @@ class BaseUIElementForm(forms.ModelForm):
     def add_field_row(self, layout, *fields, col_class='col-md-6'):
         """Add a row with fields to the layout."""
         columns = [Column(field, css_class=f'form-group {col_class} mb-0') for field in fields]
-        layout.append(Row(*columns, css_class='form-row'))
+        layout.append(Row(*columns, css_class='row g-2'))

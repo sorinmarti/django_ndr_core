@@ -137,7 +137,7 @@ class PageForm(forms.ModelForm):
         form_row = Row(
             Column('name', css_class='form-group col-md-6 mb-0'),
             Column('label', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -159,7 +159,7 @@ class PageForm(forms.ModelForm):
         form_row = Row(
             Column('view_name', css_class='form-group col-md-6 mb-0'),
             Column('parent_page', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -169,13 +169,13 @@ class PageForm(forms.ModelForm):
                 get_info_box('', 'page_type_info'),
                 css_class='form-group col-md-6 mb-0'
             ),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('search_configs', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -183,31 +183,31 @@ class PageForm(forms.ModelForm):
         background_tab_content = [
             Row(
                 Column('use_default_background', css_class='form-group col-md-12 mb-0'),
-                css_class='form-row'
+                css_class='row g-2'
             ),
             Row(
                 Column('background_image', css_class='form-group col-md-6 mb-0'),
                 Column('background_image_dark', css_class='form-group col-md-6 mb-0'),
-                css_class='form-row'
+                css_class='row g-2'
             ),
             Row(
                 Column('background_display_mode', css_class='form-group col-md-6 mb-0'),
                 Column('background_position', css_class='form-group col-md-3 mb-0'),
                 Column('background_size', css_class='form-group col-md-3 mb-0'),
-                css_class='form-row'
+                css_class='row g-2'
             ),
             Row(
                 Column(
                     HTML('<h5 class="mt-3 mb-2">Overlay Settings (for better text readability)</h5>'),
                     css_class='col-md-12'
                 ),
-                css_class='form-row'
+                css_class='row g-2'
             ),
             Row(
                 Column('overlay_enabled', css_class='form-group col-md-4 mb-0'),
                 Column('overlay_color', css_class='form-group col-md-4 mb-0'),
                 Column('overlay_opacity', css_class='form-group col-md-4 mb-0'),
-                css_class='form-row'
+                css_class='row g-2'
             ),
         ]
 
@@ -224,7 +224,7 @@ class PageForm(forms.ModelForm):
 
             form_row = Row(
                 Column(tab_holder, css_class='form-group center col-md-12 mb-0'),
-                css_class='form-row'
+                css_class='row g-2'
             )
             layout.append(form_row)
         else:
@@ -235,7 +235,7 @@ class PageForm(forms.ModelForm):
             )
             form_row = Row(
                 Column(tab_holder, css_class='form-group center col-md-12 mb-0'),
-                css_class='form-row'
+                css_class='row g-2'
             )
             layout.append(form_row)
 
@@ -288,13 +288,13 @@ class FooterForm(SettingsListForm):
             Column(HTML(f'<a href="{reverse("ndr_core:view_images", kwargs={"group": "logos"})}" '
                         f'class="btn btn-sm btn-secondary">Manage Partner Logos</a>'),
                    css_class='form-group col-md-2 mb-0 text-right'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('save_footer_show_main_navigation', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -306,13 +306,13 @@ class FooterForm(SettingsListForm):
             Column('save_footer_show_socials', css_class='form-group col-md-10 mb-0'),
             Column(HTML(html),
                    css_class='form-group col-md-2 mb-0 text-right'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('save_footer_copyright_text', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
         layout.append(get_form_buttons('Save Settings'))

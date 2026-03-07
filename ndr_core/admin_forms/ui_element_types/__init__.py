@@ -9,6 +9,7 @@ from .slides_forms import SlidesCreateForm, SlidesEditForm
 from .carousel_forms import CarouselCreateForm, CarouselEditForm
 from .data_object_forms import DataObjectCreateForm, DataObjectEditForm
 from .team_grid_forms import TeamGridCreateForm, TeamGridEditForm
+from .js_module_forms import JSModuleCreateForm, JSModuleEditForm
 
 __all__ = [
     'BaseUIElementForm',
@@ -32,4 +33,6 @@ __all__ = [
     'DataObjectEditForm',
     'TeamGridCreateForm',
     'TeamGridEditForm',
+    'JSModuleCreateForm',
+    'JSModuleEditForm',
 ]

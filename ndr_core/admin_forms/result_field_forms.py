@@ -25,20 +25,20 @@ class ResultFieldForm(forms.ModelForm):
 
         form_row = Row(
             Column('label', css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('rich_expression', css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('field_classes', css_class='form-group col-6'),
             Column('border_label', css_class='form-group col-6'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -47,7 +47,7 @@ class ResultFieldForm(forms.ModelForm):
                 get_info_box('Access your variables in the following form', 'xxx_info'),
                 css_class='form-group col-12'
             ),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -149,14 +149,14 @@ class TabFieldForm(forms.ModelForm):
         # Label field
         form_row = Row(
             Column('label', css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         # Tab configuration widget
         form_row = Row(
             Column('tab_children_text', css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 

@@ -38,20 +38,20 @@ class ContactForm(ModelForm, _NdrCoreForm): # pylint: disable=too-many-ancestors
         form_row = Row(
             Column('message_subject', css_class='form-group col-md-6 mb-0'),
             Column('message_ret_email', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('message_text', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         if NdrCoreValue.get_or_initialize(value_name='contact_form_display_captcha').get_value():
             form_row = Row(
                 Column('captcha', css_class='form-group col-md-12 mb-0'),
-                css_class='form-row'
+                css_class='row g-2'
             )
             layout.append(form_row)
 

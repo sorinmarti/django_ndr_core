@@ -72,7 +72,7 @@ class AudioForm(BaseUIElementForm):
         # Audio content section
         layout.append(Row(
             Column(HTML('<h5 class="mt-3 mb-3">Audio Configuration</h5>'), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         self.add_field_row(layout, 'audio_file', col_class='col-md-6')

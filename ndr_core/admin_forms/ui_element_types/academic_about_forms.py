@@ -99,7 +99,7 @@ class AcademicAboutForm(BaseUIElementForm):
         # Profile content section
         layout.append(Row(
             Column(HTML('<h5 class="mt-3 mb-3">Profile Information</h5>'), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         self.add_field_row(layout, 'profile_image', col_class='col-md-6')
@@ -110,7 +110,7 @@ class AcademicAboutForm(BaseUIElementForm):
         # Links section
         layout.append(Row(
             Column(HTML('<h5 class="mt-3 mb-3">Links & Identifiers</h5>'), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         self.add_field_row(layout, 'website', col_class='col-md-6')

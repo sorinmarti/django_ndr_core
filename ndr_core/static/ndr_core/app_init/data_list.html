@@ -11,7 +11,7 @@
     {% if detail_page_id %}
         {% render_single result search_config %}
     {% else %}
-        {% if rendered_text %}
+        {% if rendered_text|has_content %}
             {{ rendered_text|safe }}
         {% endif %}
 

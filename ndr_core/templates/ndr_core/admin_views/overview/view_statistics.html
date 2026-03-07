@@ -9,7 +9,7 @@
 
     <!-- Options Bar -->
     <div class="d-flex flex-wrap align-items-center bg-light border rounded p-2 mb-3">
-        <div class="mr-auto">
+        <div class="me-auto">
             {% if statistics_enabled %}
                 <a href="{% url 'ndr_core:set_statistics_option' 'false' %}" class="btn btn-sm btn-warning m-1">
                     <i class="fa-regular fa-toggle-on"></i> Disable Statistics
@@ -24,7 +24,7 @@
             </a>
         </div>
         <div>
-            <span class="mr-2">
+            <span class="me-2">
                 Status: {% if statistics_enabled %}<strong class="text-success">Enabled</strong>{% else %}<strong class="text-danger">Disabled</strong>{% endif %}
             </span>
             <a href="{% url 'ndr_core:help_chapter' 'statistics' %}" class="btn btn-sm btn-outline-secondary m-1">

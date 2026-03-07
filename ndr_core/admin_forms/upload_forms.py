@@ -57,7 +57,7 @@ class UploadForm(forms.ModelForm):
         form_row = Row(
             Column('title', css_class='form-group col-md-6 mb-0'),
             Column('file', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -143,14 +143,14 @@ class ManifestUploadForm(forms.ModelForm):
         form_row = Row(
             Column('manifest_group', css_class='form-group col-md-6 mb-0'),
             Column('identifier', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('title', css_class='form-group col-md-6 mb-0'),
             Column('file', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -196,7 +196,7 @@ class ManifestGroupForm(forms.ModelForm):
 
         form_row = Row(
             Column('title', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -308,13 +308,13 @@ class ManifestBulkUploadForm(forms.Form):
         form_row = Row(
             Column('manifest_group', css_class='form-group col-md-6 mb-0'),
             Column('new_group_title', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('zip_file', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 

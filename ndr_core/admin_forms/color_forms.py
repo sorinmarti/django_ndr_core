@@ -27,21 +27,21 @@ class ColorPaletteForm(forms.ModelForm):
         layout.append(Row(
             Column('scheme_label', css_class='form-group col-md-6 mb-0'),
             Column('scheme_name', css_class='form-group col-md-6 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         # Typography
         layout.append(HTML('<h4 class="mt-4 mb-3">Typography</h4>'))
         layout.append(Row(
             Column('font_family', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
         layout.append(Row(
             Column('h1_size', css_class='form-group col-md-3 mb-0'),
             Column('h2_size', css_class='form-group col-md-3 mb-0'),
             Column('h3_size', css_class='form-group col-md-3 mb-0'),
             Column('h4_size', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         # Brand Panel (for unibas_brand style)
@@ -49,7 +49,7 @@ class ColorPaletteForm(forms.ModelForm):
         layout.append(Row(
             Column('brand_panel_bg', css_class='form-group col-md-3 mb-0'),
             Column('brand_panel_text', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         # Light Mode Colors
@@ -60,14 +60,14 @@ class ColorPaletteForm(forms.ModelForm):
             Column('background_color', css_class='form-group col-md-3 mb-0'),
             Column('container_bg_color', css_class='form-group col-md-3 mb-0'),
             Column('footer_bg', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Text</h5>'))
         layout.append(Row(
             Column('text_color', css_class='form-group col-md-3 mb-0'),
             Column('title_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Navigation</h5>'))
@@ -75,14 +75,14 @@ class ColorPaletteForm(forms.ModelForm):
             Column('link_color', css_class='form-group col-md-3 mb-0'),
             Column('nav_link_color', css_class='form-group col-md-3 mb-0'),
             Column('nav_active_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Tabs</h5>'))
         layout.append(Row(
             Column('tab_title_color', css_class='form-group col-md-3 mb-0'),
             Column('tab_active_title_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Footer</h5>'))
@@ -90,14 +90,14 @@ class ColorPaletteForm(forms.ModelForm):
             Column('footer_link_color', css_class='form-group col-md-3 mb-0'),
             Column('footer_link_hover_color', css_class='form-group col-md-3 mb-0'),
             Column('powered_by_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Accents</h5>'))
         layout.append(Row(
             Column('accent_color_1', css_class='form-group col-md-3 mb-0'),
             Column('accent_color_2', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Primary Buttons</h5>'))
@@ -106,7 +106,7 @@ class ColorPaletteForm(forms.ModelForm):
             Column('button_hover_color', css_class='form-group col-md-3 mb-0'),
             Column('button_text_color', css_class='form-group col-md-3 mb-0'),
             Column('button_border_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Secondary Buttons</h5>'))
@@ -115,14 +115,14 @@ class ColorPaletteForm(forms.ModelForm):
             Column('second_button_hover_color', css_class='form-group col-md-3 mb-0'),
             Column('second_button_text_color', css_class='form-group col-md-3 mb-0'),
             Column('second_button_border_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Form Fields</h5>'))
         layout.append(Row(
             Column('form_field_bg', css_class='form-group col-md-3 mb-0'),
             Column('form_field_fg', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Alerts</h5>'))
@@ -130,7 +130,7 @@ class ColorPaletteForm(forms.ModelForm):
             Column('info_color', css_class='form-group col-md-3 mb-0'),
             Column('success_color', css_class='form-group col-md-3 mb-0'),
             Column('error_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         # Dark Mode Colors
@@ -140,7 +140,7 @@ class ColorPaletteForm(forms.ModelForm):
         layout.append(Row(
             Column('dark_brand_panel_bg', css_class='form-group col-md-3 mb-0'),
             Column('dark_brand_panel_text', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Backgrounds (Dark)</h5>'))
@@ -148,14 +148,14 @@ class ColorPaletteForm(forms.ModelForm):
             Column('dark_background_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_container_bg_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_footer_bg', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Text (Dark)</h5>'))
         layout.append(Row(
             Column('dark_text_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_title_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Navigation (Dark)</h5>'))
@@ -163,14 +163,14 @@ class ColorPaletteForm(forms.ModelForm):
             Column('dark_link_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_nav_link_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_nav_active_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Tabs (Dark)</h5>'))
         layout.append(Row(
             Column('dark_tab_title_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_tab_active_title_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Footer (Dark)</h5>'))
@@ -178,14 +178,14 @@ class ColorPaletteForm(forms.ModelForm):
             Column('dark_footer_link_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_footer_link_hover_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_powered_by_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Accents (Dark)</h5>'))
         layout.append(Row(
             Column('dark_accent_color_1', css_class='form-group col-md-3 mb-0'),
             Column('dark_accent_color_2', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Primary Buttons (Dark)</h5>'))
@@ -194,7 +194,7 @@ class ColorPaletteForm(forms.ModelForm):
             Column('dark_button_hover_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_button_text_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_button_border_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Secondary Buttons (Dark)</h5>'))
@@ -203,14 +203,14 @@ class ColorPaletteForm(forms.ModelForm):
             Column('dark_second_button_hover_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_second_button_text_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_second_button_border_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Form Fields (Dark)</h5>'))
         layout.append(Row(
             Column('dark_form_field_bg', css_class='form-group col-md-3 mb-0'),
             Column('dark_form_field_fg', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         layout.append(HTML('<h5 class="mt-3 mb-2">Alerts (Dark)</h5>'))
@@ -218,7 +218,7 @@ class ColorPaletteForm(forms.ModelForm):
             Column('dark_info_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_success_color', css_class='form-group col-md-3 mb-0'),
             Column('dark_error_color', css_class='form-group col-md-3 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         return helper
@@ -259,7 +259,7 @@ class ColorPaletteImportForm(forms.Form):
 
         form_row = Row(
             Column('palette_file', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         helper.layout.append(form_row)
 

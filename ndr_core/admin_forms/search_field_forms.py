@@ -44,7 +44,7 @@ class SearchFieldForm(forms.ModelForm):
                             <small></small>
                             <hr/>
                             ''')), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -61,7 +61,7 @@ class SearchFieldForm(forms.ModelForm):
         form_row = Row(
             Column('field_type', css_class='form-group col-5'),
             Column(html, css_class='form-group col-7'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -75,14 +75,14 @@ class SearchFieldForm(forms.ModelForm):
                                     <small></small>
                                     <hr/>
                                     ''')), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('field_name', css_class='form-group col-6'),
             Column('api_parameter', css_class='form-group col-6'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -96,26 +96,26 @@ class SearchFieldForm(forms.ModelForm):
                                     <small></small>
                                     <hr/>
                                     ''')), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('field_label', css_class='form-group col-6'),
             Column('initial_value', css_class='form-group col-6'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('field_required', css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('help_text', css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -129,7 +129,7 @@ class SearchFieldForm(forms.ModelForm):
                                     <small></small>
                                     <hr/>
                                     ''')), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -137,25 +137,25 @@ class SearchFieldForm(forms.ModelForm):
             Column('list_condition', css_class='form-group col-4'),
             Column('lower_value', css_class='form-group col-4'),
             Column('upper_value', css_class='form-group col-4'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('comparison_operator', css_class='form-group col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('list_choices', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
         form_row = Row(
             Column('text_choices', css_class='form-group col-md-12 mb-0'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 
@@ -169,7 +169,7 @@ class SearchFieldForm(forms.ModelForm):
                                     <small></small>
                                     <hr/>
                                     ''')), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 

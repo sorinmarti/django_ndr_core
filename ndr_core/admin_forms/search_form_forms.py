@@ -39,7 +39,7 @@ class SearchConfigurationFormEditForm(forms.Form):
         helper.form_method = "POST"
         layout = helper.layout = Layout()
 
-        form_row = Div(css_class='form-row', css_id='search_field_config_title_row')
+        form_row = Div(css_class='row g-2', css_id='search_field_config_title_row')
         form_row.append(Div(HTML('Search Field'), css_class='col-md-6'))
         form_row.append(Div(HTML('Row (1-?)'), css_class='col-md-2'))
         form_row.append(Div(HTML('Column (1-12)'), css_class='col-md-2'))
@@ -47,7 +47,7 @@ class SearchConfigurationFormEditForm(forms.Form):
         layout.append(form_row)
 
         for row in range(20):
-            form_row = Div(css_class='form-row', css_id=f'search_field_config_row_{row}')
+            form_row = Div(css_class='row g-2', css_id=f'search_field_config_row_{row}')
             form_field_search_field = Field(f'search_field_{row}',
                                             placeholder=f"Search Field {row+1}",
                                             wrapper_class='col-md-6')
@@ -79,7 +79,7 @@ class SearchConfigurationFormEditForm(forms.Form):
                            css_class='btn btn-sm btn-secondary float-right ml-3'),
                     css_class='display-flex'),
                 css_class='col-md-3'),
-            css_class='form-row'
+            css_class='row g-2'
         )
         layout.append(form_row)
 

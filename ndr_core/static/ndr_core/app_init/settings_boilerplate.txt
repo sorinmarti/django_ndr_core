@@ -148,14 +148,15 @@ LOGIN_REDIRECT_URL = reverse_lazy('ndr_core:dashboard')
 """Overwrites the default urls for the django authentication system."""
 
 # NDR FORMS SETTINGS
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 """Django crispy forms - used to render forms."""
 
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 """This renderer gives you complete control of how form and widget templates are sourced."""
 
 # NDR TABLES SETTINGS
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 """Django tables2 - used to render tables."""
 
 # MESSAGE TAGS SETTINGS
@@ -172,7 +173,7 @@ MESSAGE_TAGS = {
 CORS_ALLOW_ALL_ORIGINS = True  # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://avisblatt.dg-basel.hasdai.org',
+
 ]
 
 CORS_ORIGIN_WHITELIST = (
@@ -204,3 +205,177 @@ SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 RECAPTCHA_PUBLIC_KEY = 'y0uR3c4PtCh4pUbL1cK3y'
 RECAPTCHA_PRIVATE_KEY = 'y0uR3c4PtCh4pr1v4t3K3y'
 """Recaptcha key to use for the captcha functionality for the contact form.. """
+
+customColorPalette = [
+        {
+            'color': 'hsl(4, 90%, 58%)',
+            'label': 'Red'
+        },
+        {
+            'color': 'hsl(340, 82%, 52%)',
+            'label': 'Pink'
+        },
+        {
+            'color': 'hsl(291, 64%, 42%)',
+            'label': 'Purple'
+        },
+        {
+            'color': 'hsl(262, 52%, 47%)',
+            'label': 'Deep Purple'
+        },
+        {
+            'color': 'hsl(231, 48%, 48%)',
+            'label': 'Indigo'
+        },
+        {
+            'color': 'hsl(207, 90%, 54%)',
+            'label': 'Blue'
+        },
+    ]
+
+# CKEDITOR 5 SETTINGS
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': ['heading', '|', 'bold', 'italic', 'link',
+                    'bulletedList', 'numberedList', 'blockQuote'],
+    },
+    'page_editor': {
+        'toolbar': [
+            'heading', '|',
+            'bold', 'italic', 'underline', 'strikethrough', '|',
+            'link', '|',
+            'bulletedList', 'numberedList', '|',
+            'outdent', 'indent', '|',
+            'blockQuote', 'insertTable', '|',
+            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+            'code', 'subscript', 'superscript', 'highlight', '|',
+            'removeFormat', 'sourceEditing'
+        ],
+        'table': {
+            'contentToolbar': [
+                'tableColumn', 'tableRow', 'mergeTableCells',
+                'tableProperties', 'tableCellProperties'
+            ],
+            'tableProperties': {
+                'borderColors': customColorPalette,
+                'backgroundColors': customColorPalette,
+                'defaultProperties': {
+                    'borderStyle': 'solid',
+                    'borderWidth': '1px',
+                    'borderColor': 'hsl(0, 0%, 90%)',
+                },
+            },
+            'tableCellProperties': {
+                'borderColors': customColorPalette,
+                'backgroundColors': customColorPalette,
+            }
+        },
+        'htmlSupport': {
+            'allow': [
+                {
+                    'name': 'table',
+                    'classes': True,
+                    'styles': True,
+                    'attributes': True
+                },
+                {
+                    'name': 'td',
+                    'classes': True,
+                    'styles': True,
+                    'attributes': True
+                },
+                {
+                    'name': 'th',
+                    'classes': True,
+                    'styles': True,
+                    'attributes': True
+                },
+                {
+                    'name': 'p',
+                    'classes': ['lead', 'lead-sm', 'lead-lg'],
+                    'styles': True,
+                    'attributes': True
+                }
+            ]
+        },
+        'heading': {
+            'options': [
+                {'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph'},
+                {'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1'},
+                {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2'},
+                {'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3'},
+                {'model': 'lead', 'view': {'name': 'p', 'classes': 'lead'}, 'title': 'Lead Text', 'class': 'ck-heading_lead'},
+                {'model': 'leadSmall', 'view': {'name': 'p', 'classes': ['lead', 'lead-sm']}, 'title': 'Lead Text (Small)', 'class': 'ck-heading_lead-sm'},
+                {'model': 'leadLarge', 'view': {'name': 'p', 'classes': ['lead', 'lead-lg']}, 'title': 'Lead Text (Large)', 'class': 'ck-heading_lead-lg'},
+            ]
+        }
+    },
+    'result_editor': {
+        'toolbar': [
+            'heading', '|',
+            'bold', 'italic', 'underline', 'strikethrough', '|',
+            'link', '|',
+            'bulletedList', 'numberedList', '|',
+            'outdent', 'indent', '|',
+            'blockQuote', 'insertTable', '|',
+            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+            'code', 'subscript', 'superscript', 'highlight', '|',
+            'removeFormat', 'sourceEditing'
+        ],
+        'table': {
+            'contentToolbar': [
+                'tableColumn', 'tableRow', 'mergeTableCells',
+                'tableProperties', 'tableCellProperties'
+            ],
+            'tableProperties': {
+                'borderColors': customColorPalette,
+                'backgroundColors': customColorPalette,
+                'defaultProperties': {
+                    'borderStyle': 'solid',
+                    'borderWidth': '1px',
+                    'borderColor': 'hsl(0, 0%, 90%)',
+                },
+            },
+            'tableCellProperties': {
+                'borderColors': customColorPalette,
+                'backgroundColors': customColorPalette,
+            }
+        },
+        'htmlSupport': {
+            'allow': [
+                {
+                    'name': 'table',
+                    'classes': True,
+                    'styles': True,
+                    'attributes': True
+                },
+                {
+                    'name': 'td',
+                    'classes': True,
+                    'styles': True,
+                    'attributes': True
+                },
+                {
+                    'name': 'th',
+                    'classes': True,
+                    'styles': True,
+                    'attributes': True
+                },
+                {
+                    'name': 'p',
+                    'classes': ['lead', 'lead-sm', 'lead-lg'],
+                    'styles': True,
+                    'attributes': True
+                }
+            ]
+        },
+        'heading': {
+            'options': [
+                {'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph'},
+                {'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1'},
+                {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2'},
+                {'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3'}
+            ]
+        }
+    }
+}

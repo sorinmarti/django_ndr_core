@@ -6,13 +6,13 @@
 
     <!-- Options Bar -->
     <div class="d-flex flex-wrap align-items-center bg-light border rounded p-2 mb-3">
-        <div class="mr-auto">
+        <div class="me-auto">
             <a href="{% url 'ndr_core:create_image' %}" class="btn btn-sm btn-primary m-1">
                 <i class="fa-regular fa-upload"></i> Upload Image
             </a>
         </div>
         <div>
-            <span class="mr-2 text-muted">{{ images|length }} image{{ images|length|pluralize }} in library</span>
+            <span class="me-2 text-muted">{{ images|length }} image{{ images|length|pluralize }} in library</span>
             <a href="{% url 'ndr_core:help_chapter' 'images' %}" class="btn btn-sm btn-outline-secondary m-1">
                 <i class="fa-regular fa-circle-info"></i> Help
             </a>

@@ -58,7 +58,7 @@ class IFrameForm(BaseUIElementForm):
         # IFrame content section
         layout.append(Row(
             Column(HTML('<h5 class="mt-3 mb-3">IFrame Content</h5>'), css_class='col-12'),
-            css_class='form-row'
+            css_class='row g-2'
         ))
 
         self.add_field_row(layout, 'iframe_code', col_class='col-md-12')
