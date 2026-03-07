@@ -1,0 +1,47 @@
+{% load ndr_values %}
+{% load i18n %}
+
+{% comment %}
+Component: Social Media Links
+Optional: Display social media icons
+{% endcomment %}
+
+{% config_value 'footer_show_socials' as show_socials %}
+
+{% if show_socials %}
+    {% config_value 'socials_twitter' as socials_twitter %}
+    {% config_value 'socials_instagram' as socials_instagram %}
+    {% config_value 'socials_facebook' as socials_facebook %}
+    {% config_value 'socials_mastodon' as socials_mastodon %}
+
+    {% if socials_twitter or socials_instagram or socials_facebook or socials_mastodon %}
+    <div class="footer-socials">
+        <div class="social-title mb-2">{% translate 'Connect' %}</div>
+        <div class="social-icons">
+            {% if socials_twitter %}
+                <a class="social-link" href="{{ socials_twitter }}" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+                    <i class="fa-brands fa-twitter"></i>
+                </a>
+            {% endif %}
+
+            {% if socials_instagram %}
+                <a class="social-link" href="{{ socials_instagram }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+            {% endif %}
+
+            {% if socials_facebook %}
+                <a class="social-link" href="{{ socials_facebook }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                    <i class="fa-brands fa-facebook"></i>
+                </a>
+            {% endif %}
+
+            {% if socials_mastodon %}
+                <a class="social-link" href="{{ socials_mastodon }}" target="_blank" rel="noopener noreferrer" aria-label="Mastodon">
+                    <i class="fa-brands fa-mastodon"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+{% endif %}

@@ -1,0 +1,32 @@
+{% load ndr_values %}
+
+{% comment %}
+Component: Partner Institution Logos
+Critical: User-configured content that must be preserved across all styles
+{% endcomment %}
+
+{% config_value 'footer_show_partners' as show_partners %}
+
+{% if show_partners %}
+<div class="footer-partners">
+    <div class="row align-items-center justify-content-center">
+        {% for partner in partners %}
+            <div class="col-sm text-center">
+                {% if partner.url %}
+                    <a href="{{ partner.url }}" target="_blank" rel="noopener noreferrer">
+                        <img src="{{ partner.image.url }}"
+                             alt="{{ partner.alt_text }}"
+                             class="partner-logo"
+                             style="max-height: 50px; max-width: 120px; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto;">
+                    </a>
+                {% else %}
+                    <img src="{{ partner.image.url }}"
+                         alt="{{ partner.alt_text }}"
+                         class="partner-logo"
+                         style="max-height: 50px; max-width: 120px; width: auto; height: auto; object-fit: contain; display: block; margin: 0 auto;">
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}

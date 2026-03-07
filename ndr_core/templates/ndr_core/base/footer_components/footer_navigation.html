@@ -1,0 +1,20 @@
+{% load ndr_values %}
+
+{% comment %}
+Component: Footer Navigation Links
+Optional: Design choice to repeat main navigation in footer
+{% endcomment %}
+
+{% config_value 'footer_show_main_navigation' as show_navigation %}
+
+{% if show_navigation %}
+<nav class="footer-navigation">
+    <ul class="navbar-nav navbar-ul-items">
+        {% for nav_item in navigation %}
+            <li class="nav-item">
+                <a href="{{ nav_item.url }}" class="footer-link">{{ nav_item.label }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endif %}

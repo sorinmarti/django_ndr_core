@@ -1,0 +1,47 @@
+{% load static %}
+{% load ndr_values %}
+{% load i18n %}
+
+{% comment %}
+Minimal Modern Footer Layout
+Used by: base_minimal_modern.html
+Clean, centered three-column design with modern styling
+{% endcomment %}
+
+<div class="minimal-modern-footer-wrapper">
+    {# Main footer content - 3 columns #}
+    <div class="footer-main py-5">
+        <div class="row align-items-start g-4">
+            {# Left column: Logo + Copyright #}
+            <div class="col-md-4">
+                {% include 'ndr_core/base/footer_components/footer_logo.html' %}
+                <div class="mt-3">
+                    {% include 'ndr_core/base/footer_components/footer_copyright.html' %}
+                </div>
+            </div>
+
+            {# Center column: Navigation #}
+            <div class="col-md-4">
+                {% config_value 'footer_show_main_navigation' as show_navigation %}
+                {% if show_navigation %}
+                    <h6 class="footer-heading mb-3">{% trans "Navigation" %}</h6>
+                    {% include 'ndr_core/base/footer_components/footer_navigation.html' %}
+                {% endif %}
+            </div>
+
+            {# Right column: Socials #}
+            <div class="col-md-4">
+                {% include 'ndr_core/base/footer_components/footer_socials.html' %}
+            </div>
+        </div>
+    </div>
+
+    {# Partner institutions section - Always included if configured #}
+    {% config_value 'footer_show_partners' as show_partners %}
+    {% if show_partners %}
+    <div class="footer-partners-section py-5 border-top">
+        <h6 class="footer-heading text-center mb-4">{% trans "Our Partners" %}</h6>
+        {% include 'ndr_core/base/footer_components/footer_partners.html' %}
+    </div>
+    {% endif %}
+</div>

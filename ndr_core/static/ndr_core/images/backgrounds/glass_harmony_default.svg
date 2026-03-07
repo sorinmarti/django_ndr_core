@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:rgb(99,102,241);stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:rgb(168,85,247);stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:rgb(236,72,153);stop-opacity:0.3" />
+    </linearGradient>
+    <linearGradient id="grad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgb(251,146,60);stop-opacity:0.25" />
+      <stop offset="50%" style="stop-color:rgb(34,197,94);stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:rgb(59,130,246);stop-opacity:0.25" />
+    </linearGradient>
+    <filter id="blur1">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="80" />
+    </filter>
+    <filter id="blur2">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="100" />
+    </filter>
+  </defs>
+
+  <!-- Base gradient -->
+  <rect width="1920" height="1080" fill="#f8f9fa"/>
+
+  <!-- Large organic shapes with blur -->
+  <ellipse cx="300" cy="200" rx="400" ry="350" fill="url(#grad1)" filter="url(#blur1)" opacity="0.6">
+    <animate attributeName="cx" values="300;400;300" dur="20s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="200;300;200" dur="15s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <ellipse cx="1600" cy="300" rx="450" ry="400" fill="url(#grad2)" filter="url(#blur1)" opacity="0.5">
+    <animate attributeName="cx" values="1600;1500;1600" dur="18s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="300;400;300" dur="22s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <ellipse cx="1000" cy="800" rx="500" ry="450" fill="url(#grad1)" filter="url(#blur2)" opacity="0.4">
+    <animate attributeName="cx" values="1000;1100;1000" dur="25s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="800;700;800" dur="20s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <circle cx="600" cy="900" r="350" fill="url(#grad2)" filter="url(#blur1)" opacity="0.45">
+    <animate attributeName="cx" values="600;700;600" dur="22s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="900;850;900" dur="18s" repeatCount="indefinite"/>
+  </circle>
+
+  <ellipse cx="1400" cy="850" rx="380" ry="420" fill="url(#grad1)" filter="url(#blur2)" opacity="0.35">
+    <animate attributeName="cx" values="1400;1300;1400" dur="24s" repeatCount="indefinite"/>
+    <animate attributeName="cy" values="850;750;850" dur="19s" repeatCount="indefinite"/>
+  </ellipse>
+
+  <!-- Subtle overlay gradient for depth -->
+  <rect width="1920" height="1080" fill="url(#grad1)" opacity="0.1"/>
+</svg>

@@ -1,0 +1,39 @@
+{% load static %}
+{% load ndr_values %}
+{% load i18n %}
+
+{% comment %}
+Default Footer Layout
+Used by: base_default.html, base_unibas_brand.html, base_left.html, base_top_fixed.html
+Matches the original footer.html design exactly
+{% endcomment %}
+
+<div style="width:100%; left:0; right: 0; position:absolute; padding-top: 50px;">
+    <footer class="pt-3 pb-3 mt-3 footer-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-2">
+                    {% include 'ndr_core/base/footer_components/footer_logo.html' %}
+                </div>
+                <div class="col-6 offset-2">
+                    {% include 'ndr_core/base/footer_components/footer_navigation.html' %}
+                </div>
+
+                <div>
+                    {% include 'ndr_core/base/footer_components/footer_socials.html' %}
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {% config_value 'footer_show_partners' as show_partners %}
+    {% if show_partners %}
+        <footer>
+            <div class="container pt-5">
+                {% include 'ndr_core/base/footer_components/footer_partners.html' %}
+            </div>
+
+            {% include 'ndr_core/base/footer_components/footer_copyright.html' with css_class="text-center mt-3" %}
+        </footer>
+    {% endif %}
+</div>

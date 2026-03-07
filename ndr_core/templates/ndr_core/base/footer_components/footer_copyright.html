@@ -1,0 +1,10 @@
+{% load ndr_values %}
+
+{% comment %}
+Component: Copyright Text
+Standard: Display copyright/powered-by text
+{% endcomment %}
+
+{% config_value 'footer_copyright_text' as footer_copyright_text %}
+
+<p class="footer-copyright powered-by font-italic small">{{ footer_copyright_text }}</p>
