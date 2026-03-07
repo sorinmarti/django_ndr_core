@@ -1,0 +1,28 @@
+{% load crispy_forms_filters %}
+{% load l10n %}
+
+<div {% if field_class %}class="{{ field_class }}"{% endif %}>
+    {% for group, options, index in field|optgroups %}
+    {% if group %}<strong>{{ group }}</strong>{% endif %}
+    {% for option in options %}
+    <div class="form-check form-switch form-check-inline">
+        <input type="checkbox" class="form-check-input{% if field.errors %} is-invalid{% endif %}" name="{{ field.html_name }}" value="{{ option.value|unlocalize }}" {% include "bootstrap5/layout/attrs.html" with widget=option %}>
+        <label class="form-check-label" for="{{ option.attrs.id }}">
+            {{ option.label|unlocalize }}
+        </label>
+        {% if field.errors and forloop.last and not inline_class and forloop.parentloop.last %}
+            {% include 'bootstrap5/layout/field_errors_block.html' %}
+            {% endif %}
+    </div>
+   {% endfor %}
+   {% endfor %}
+    {% if field.errors and inline_class %}
+    <div class="w-100 form-check{% if inline_class %} form-check-inline{% endif %}">
+        {# the following input is only meant to allow boostrap to render the error message as it has to be after an invalid input. As the input has no name, no data will be sent. #}
+        <input type="checkbox" class="form-check-input {% if field.errors %}is-invalid{%endif%}">
+        {% include 'bootstrap5/layout/field_errors_block.html' %}
+    </div>
+    {% endif %}
+
+    {% include 'bootstrap5/layout/help_text.html' %}
+</div>
