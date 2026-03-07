@@ -1,0 +1,98 @@
+{% load static %}
+
+{# Get module configuration from first item #}
+{% with items=data.ndrcoreuielementitem_set.all %}
+    {% if items %}
+        {% with item=items.0 config=items.0.js_module_config %}
+
+            {# Container for the module #}
+            <div id="js-module-{{ data.name }}"
+                 class="js-module-container ndr-ui-element"
+                 data-module-name="{{ data.name }}"
+                 style="width: 100%; min-height: 400px;">
+                <div class="text-center py-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading module...</span>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                (function() {
+                    'use strict';
+
+                    const containerId = 'js-module-{{ data.name }}';
+                    const container = document.getElementById(containerId);
+                    const config = {{ config|safe }};
+
+                    // Load dependencies sequentially
+                    function loadScripts(urls, callback) {
+                        if (!urls || urls.length === 0) {
+                            callback();
+                            return;
+                        }
+
+                        let loaded = 0;
+                        urls.forEach(function(url, index) {
+                            const script = document.createElement('script');
+                            script.src = url;
+                            script.onload = function() {
+                                loaded++;
+                                if (loaded === urls.length) {
+                                    callback();
+                                }
+                            };
+                            script.onerror = function() {
+                                console.error('[NDR Core] Failed to load script:', url);
+                                container.innerHTML = '<div class="alert alert-danger">Failed to load module script: ' + url + '</div>';
+                            };
+                            document.head.appendChild(script);
+                        });
+                    }
+
+                    // Load styles
+                    function loadStyles(urls) {
+                        if (!urls) return;
+                        urls.forEach(function(url) {
+                            const link = document.createElement('link');
+                            link.rel = 'stylesheet';
+                            link.href = url;
+                            document.head.appendChild(link);
+                        });
+                    }
+
+                    // Initialize module
+                    function initModule() {
+                        try {
+                            const constructorName = config.constructor || '{{ data.name }}';
+
+                            if (typeof window[constructorName] === 'function') {
+                                // Clear loading indicator
+                                container.innerHTML = '';
+
+                                // Initialize module
+                                new window[constructorName]('#' + containerId, config.options || {});
+                                console.log('[NDR Core] Initialized module:', constructorName);
+                            } else {
+                                throw new Error('Constructor not found: ' + constructorName);
+                            }
+                        } catch (error) {
+                            console.error('[NDR Core] Module initialization error:', error);
+                            container.innerHTML = '<div class="alert alert-danger">Module initialization failed. Check console for details.</div>';
+                        }
+                    }
+
+                    // Load everything
+                    loadStyles(config.styles);
+                    loadScripts(config.scripts, initModule);
+
+                })();
+            </script>
+
+        {% endwith %}
+    {% else %}
+        <div class="alert alert-warning">
+            No JavaScript module configured. Please edit this UI element and configure the module.
+        </div>
+    {% endif %}
+{% endwith %}
