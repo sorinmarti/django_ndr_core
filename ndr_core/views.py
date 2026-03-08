@@ -82,13 +82,23 @@ def dispatch(request, ndr_page=None):
     if ndr_page is None:
         ndr_page = 'index'
 
+    # Traverse path segments to find the page, supporting hierarchical URLs
+    # e.g. 'datasets/a' -> find root page 'datasets', then child 'a'
+    segments = ndr_page.split('/')
+    page = None
+    parent = None
     try:
-        page = NdrCorePage.objects.get(view_name=ndr_page)
-        view_class = get_page_type_view_class(page.page_type)
+        for segment in segments:
+            page = NdrCorePage.objects.get(view_name=segment, parent_page=parent)
+            parent = page
+    except NdrCorePage.DoesNotExist:
+        return TemplateView.as_view(template_name='ndr_core/404.html')(request, status=404)
 
+    try:
+        view_class = get_page_type_view_class(page.page_type)
         return view_class.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
                                   ndr_page=page)(request)
-    except NdrCorePage.DoesNotExist:
+    except NdrCorePageNotFound:
         return TemplateView.as_view(template_name='ndr_core/404.html')(request, status=404)
 
 

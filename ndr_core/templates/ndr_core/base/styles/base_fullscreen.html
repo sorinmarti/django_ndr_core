@@ -1,0 +1,41 @@
+{% load static %}
+{% load i18n %}
+{% load ndr_values %}
+{% load ndr_utils %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
+    <head>
+        {% include 'ndr_core/base/base_header_tags.html' %}
+        <link href="{% static 'ndr_core/css/ndr_core_default.css' %}" rel="stylesheet">
+        {% block module_css %}{% endblock %}
+        {% block custom_css %}{% endblock %}
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+            .ndr-fullscreen-wrapper {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="ndr-fullscreen-wrapper">
+            {% block content %}
+                {% if rendered_text %}
+                    {{ rendered_text|safe }}
+                {% endif %}
+            {% endblock %}
+        </div>
+
+        <script src="{% static 'ndr_core/js/bootstrap.min.js' %}"></script>
+        {% block page_js %}{% endblock %}
+    </body>
+</html>

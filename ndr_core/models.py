@@ -677,8 +677,7 @@ class NdrCorePage(TranslatableMixin, models.Model):
         """A full screen page renders only the template text — no navigation, no footer, no container."""
 
     view_name = models.CharField(max_length=200,
-                                 help_text='The url part of your page (e.g. https://yourdomain.org/p/view_name)',
-                                 unique=True)
+                                 help_text='The url part of your page (e.g. https://yourdomain.org/p/view_name)')
     """The view_name is part of the page url in the form: https://yourdomain.org/p/view_name"""
 
     page_type = models.IntegerField(choices=PageType.choices,
@@ -846,6 +845,13 @@ class NdrCorePage(TranslatableMixin, models.Model):
         except NdrCoreRichTextTranslation.DoesNotExist:
             return self.template_text
 
+    def get_full_path(self):
+        """Returns the full URL path segment for this page, including parent segments.
+        E.g. a page 'mysubview' with parent 'myview' returns 'myview/mysubview'."""
+        if self.parent_page is None:
+            return self.view_name
+        return f'{self.parent_page.get_full_path()}/{self.view_name}'
+
     def url(self):
         """Returns the url of a given page or '#' if none is found"""
         if not os.path.isdir(NdrSettings.APP_NAME):
@@ -855,7 +861,8 @@ class NdrCorePage(TranslatableMixin, models.Model):
             reverse_url = reverse(f'{NdrSettings.APP_NAME}:{self.view_name}')
         except NoReverseMatch:
             try:
-                reverse_url = reverse(f'{NdrSettings.APP_NAME}:ndr_view', kwargs={'ndr_page': self.view_name})
+                reverse_url = reverse(f'{NdrSettings.APP_NAME}:ndr_view',
+                                      kwargs={'ndr_page': self.get_full_path()})
             except NoReverseMatch:
                 reverse_url = '#'
 
@@ -939,6 +946,9 @@ class NdrCorePage(TranslatableMixin, models.Model):
                 'overlay_color': self.overlay_color,
                 'overlay_opacity': self.overlay_opacity,
             }
+
+    class Meta:
+        unique_together = [('parent_page', 'view_name')]
 
     def __str__(self):
         return f"{self.name}: {self.label}"

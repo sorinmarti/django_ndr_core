@@ -91,6 +91,9 @@ class PageForm(forms.ModelForm):
         """clean() is executed when the form is sent to check it. Here, page types are checked against its
         requirements. Example: A simple search needs an API config but no List- and SearchConfiguration."""
         cleaned_data = super().clean()
+        view_name = cleaned_data.get('view_name', '')
+        if '/' in view_name or '\\' in view_name:
+            self.add_error('view_name', "View name must not contain slashes. Use letters, digits, hyphens and underscores only.")
         page_type = cleaned_data['page_type']
         search_configs = cleaned_data['search_configs']
 

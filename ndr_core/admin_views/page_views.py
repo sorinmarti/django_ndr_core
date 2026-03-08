@@ -151,6 +151,7 @@ class PageEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
         new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{updated_instance.view_name}.html'
 
         if old_filename != new_filename:
+            os.makedirs(os.path.dirname(new_filename), exist_ok=True)
             os.rename(old_filename, new_filename)
 
         # The file has been renamed. If the page type has changed, we need to replace the file
