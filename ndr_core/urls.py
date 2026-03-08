@@ -57,6 +57,7 @@ from ndr_core.admin_views.page_views import (
     PageDetailView,
     move_page_up,
     ManagePageFooter,
+    BulkPageCreateView,
 )
 
 from ndr_core.admin_views.search_views import (
@@ -158,6 +159,7 @@ urlpatterns = [
     path('configure/pages/footer/', ManagePageFooter.as_view(), name='page_footer'),
     path('configure/pages/view/<int:pk>/', PageDetailView.as_view(), name='view_page'),
     path('configure/pages/create/new/', PageCreateView.as_view(), name='create_page'),
+    path('configure/pages/create/bulk/', BulkPageCreateView.as_view(), name='bulk_create_pages'),
     path('configure/pages/edit/<int:pk>/', PageEditView.as_view(), name='edit_page'),
     path('configure/pages/delete/<int:pk>/', PageDeleteView.as_view(), name='delete_page'),
     path('configure/pages/move/up/<int:pk>/', move_page_up, name='move_page_up'),

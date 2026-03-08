@@ -96,7 +96,7 @@ def dispatch(request, ndr_page=None):
 
     try:
         view_class = get_page_type_view_class(page.page_type)
-        return view_class.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.view_name}.html',
+        return view_class.as_view(template_name=f'{NdrSettings.APP_NAME}/{page.get_full_path()}.html',
                                   ndr_page=page)(request)
     except NdrCorePageNotFound:
         return TemplateView.as_view(template_name='ndr_core/404.html')(request, status=404)

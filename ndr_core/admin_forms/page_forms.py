@@ -4,6 +4,7 @@ from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML
 from django import forms
+from django.forms import formset_factory
 from django.urls import reverse
 from django_select2 import forms as s2forms
 
@@ -271,6 +272,41 @@ class PageEditForm(PageForm):
         helper = super().helper
         helper.layout.append(get_form_buttons('Save Page', include_save_and_continue=True))
         return helper
+
+
+class BulkPageRowForm(forms.Form):
+    """A single row in the bulk page creation form."""
+    name = forms.CharField(max_length=200, required=False,
+                           widget=forms.TextInput(attrs={'class': 'form-control form-control-sm',
+                                                         'placeholder': 'Page Title'}))
+    view_name = forms.CharField(max_length=200, required=False,
+                                widget=forms.TextInput(attrs={'class': 'form-control form-control-sm',
+                                                              'placeholder': 'view-name'}))
+    parent_page = forms.ModelChoiceField(
+        queryset=NdrCorePage.objects.filter(parent_page=None).order_by('index'),
+        required=False,
+        empty_label='— top level —',
+        widget=forms.Select(attrs={'class': 'form-select form-select-sm'})
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        name = (cleaned_data.get('name') or '').strip()
+        view_name = (cleaned_data.get('view_name') or '').strip()
+        if name and not view_name:
+            self.add_error('view_name', 'Required when title is set.')
+        if view_name and not name:
+            self.add_error('name', 'Required when view name is set.')
+        if view_name and ('/' in view_name or '\\' in view_name):
+            self.add_error('view_name', 'No slashes allowed.')
+        return cleaned_data
+
+    def is_empty(self):
+        return not (self.cleaned_data.get('name') or '').strip() and \
+               not (self.cleaned_data.get('view_name') or '').strip()
+
+
+BulkPageFormSet = formset_factory(BulkPageRowForm, extra=10, max_num=10)
 
 
 class FooterForm(SettingsListForm):

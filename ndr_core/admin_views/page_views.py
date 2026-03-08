@@ -12,7 +12,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 
-from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm, NotFoundForm
+from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm, NotFoundForm, BulkPageFormSet
 from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCorePage
 from ndr_core.ndr_settings import NdrSettings
@@ -191,6 +191,59 @@ class PageDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
             messages.warning(self.request, "HTML template to delete was not found.")
 
         return super().form_valid(form)
+
+
+class BulkPageCreateView(AdminViewMixin, LoginRequiredMixin, View):
+    """Create multiple Template pages at once from a simple table form."""
+
+    template_name = 'ndr_core/admin_views/create/bulk_page_create.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'formset': BulkPageFormSet()})
+
+    def post(self, request, *args, **kwargs):
+        formset = BulkPageFormSet(request.POST)
+        if not formset.is_valid():
+            return render(request, self.template_name, {'formset': formset})
+
+        max_index = NdrCorePage.objects.aggregate(Max('index'))['index__max'] or 0
+        created, skipped = [], []
+        base_file = get_base_file_name(NdrCorePage.PageType.TEMPLATE)
+
+        for form in formset:
+            if not form.is_valid() or form.is_empty():
+                continue
+            name = form.cleaned_data['name'].strip()
+            view_name = form.cleaned_data['view_name'].strip()
+            parent_page = form.cleaned_data.get('parent_page')
+
+            if NdrCorePage.objects.filter(view_name=view_name, parent_page=parent_page).exists():
+                skipped.append(f"'{view_name}' (already exists)")
+                continue
+
+            max_index += 1
+            page = NdrCorePage.objects.create(
+                name=name,
+                view_name=view_name,
+                label=name,
+                parent_page=parent_page,
+                page_type=NdrCorePage.PageType.TEMPLATE,
+                index=max_index,
+            )
+
+            filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{page.get_full_path()}.html'
+            if not os.path.isfile(filename):
+                os.makedirs(os.path.dirname(filename), exist_ok=True)
+                shutil.copyfile(base_file, filename)
+
+            created.append(name)
+
+        if created:
+            messages.success(request, f"Created {len(created)} page(s): {', '.join(created)}")
+        for msg in skipped:
+            messages.warning(request, f"Skipped {msg}")
+
+        return redirect('ndr_core:configure_pages')
 
 
 @login_required

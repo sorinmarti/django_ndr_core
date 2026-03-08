@@ -14,6 +14,9 @@
             <a href="{% url 'ndr_core:create_page' %}" class="btn btn-sm btn-secondary m-1">
                 <i class="fa-regular fa-file"></i> Create Page
             </a>
+            <a href="{% url 'ndr_core:bulk_create_pages' %}" class="btn btn-sm btn-secondary m-1">
+                <i class="fa-regular fa-copy"></i> Bulk Create
+            </a>
             <a href="{% url 'ndr_core:page_footer' %}" class="btn btn-sm btn-primary m-1{% if footer_form %} active{% endif %}">
                 <i class="fa-regular fa-window-minimize"></i> Manage Footer
             </a>
