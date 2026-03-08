@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "cr9t)@#@em!^no^y(-00t^+l)!8_t8kzynr-!7m^n24lym&%sj"
+SECRET_KEY = "i!z9v*-jdwx)xt2h1u+a*k)jh-zi7z8%swt#_i6l366ru-qyuj"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -148,14 +148,15 @@ LOGIN_REDIRECT_URL = reverse_lazy('ndr_core:dashboard')
 """Overwrites the default urls for the django authentication system."""
 
 # NDR FORMS SETTINGS
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 """Django crispy forms - used to render forms."""
 
 FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 """This renderer gives you complete control of how form and widget templates are sourced."""
 
 # NDR TABLES SETTINGS
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap5.html"
 """Django tables2 - used to render tables."""
 
 # MESSAGE TAGS SETTINGS
@@ -172,7 +173,7 @@ MESSAGE_TAGS = {
 CORS_ALLOW_ALL_ORIGINS = True  # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
-    'https://avisblatt.dg-basel.hasdai.org',
+
 ]
 
 CORS_ORIGIN_WHITELIST = (
@@ -198,6 +199,12 @@ GEOIP_PATH = os.path.join('geoip/')
 # CKEDITOR SETTINGS
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 """Needed for the ck-editor"""
+
+# RECAPTCHA SETTINGS
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+RECAPTCHA_PUBLIC_KEY = 'y0uR3c4PtCh4pUbL1cK3y'
+RECAPTCHA_PRIVATE_KEY = 'y0uR3c4PtCh4pr1v4t3K3y'
+"""Recaptcha key to use for the captcha functionality for the contact form.. """
 
 customColorPalette = [
         {
@@ -372,9 +379,3 @@ CKEDITOR_5_CONFIGS = {
         }
     }
 }
-
-# RECAPTCHA SETTINGS
-SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
-RECAPTCHA_PUBLIC_KEY = 'y0uR3c4PtCh4pUbL1cK3y'
-RECAPTCHA_PRIVATE_KEY = 'y0uR3c4PtCh4pr1v4t3K3y'
-"""Recaptcha key to use for the captcha functionality for the contact form.. """

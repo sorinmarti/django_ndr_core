@@ -123,10 +123,11 @@ class PageCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
         # create objects for the translations
         form.save_translations()
 
-        new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{form.cleaned_data["view_name"]}.html'
+        new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{self.object.get_full_path()}.html'
         if os.path.isfile(new_filename):
             messages.error(self.request, "The file name already existed. No new template was generated.")
         else:
+            os.makedirs(os.path.dirname(new_filename), exist_ok=True)
             base_file = get_base_file_name(self.object.page_type)
             shutil.copyfile(base_file, new_filename)
 
@@ -147,8 +148,8 @@ class PageEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
         updated_instance = form.save(commit=False)
         original_instance = NdrCorePage.objects.get(pk=updated_instance.pk)
 
-        old_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{original_instance.view_name}.html'
-        new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{updated_instance.view_name}.html'
+        old_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{original_instance.get_full_path()}.html'
+        new_filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{updated_instance.get_full_path()}.html'
 
         if old_filename != new_filename:
             os.makedirs(os.path.dirname(new_filename), exist_ok=True)
@@ -183,7 +184,7 @@ class PageDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     def form_valid(self, form):
         """Overwrites form_valid function of DeleteView. Deletes the object and its template."""
 
-        filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{self.object.view_name}.html'
+        filename = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{self.object.get_full_path()}.html'
         if os.path.isfile(filename):
             os.remove(filename)
         else:
