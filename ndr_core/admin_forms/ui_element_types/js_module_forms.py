@@ -32,18 +32,9 @@ class JSModuleForm(BaseUIElementForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, ui_element_type='js_module', **kwargs)
 
-        # Load existing item data if editing
-        if self.instance and self.instance.pk:
-            try:
-                item = self.instance.ndrcoreuielementitem_set.first()
-                if item:
-                    self.initial['js_module_config'] = item.js_module_config
-            except NdrCoreUiElementItem.DoesNotExist:
-                pass
-
     def clean_js_module_config(self):
         """Validate JSON configuration structure."""
-        config = self.cleaned_data.get('js_module_config', {})
+        config = self.cleaned_data.get('js_module_config') or {}
 
         if not isinstance(config, dict):
             raise forms.ValidationError('Configuration must be a JSON object')
@@ -67,7 +58,7 @@ class JSModuleForm(BaseUIElementForm):
 
             # Handle module package upload and extraction
             package_file = self.cleaned_data.get('js_module_package')
-            module_config = self.cleaned_data.get('js_module_config', {})
+            module_config = self.cleaned_data.get('js_module_config') or {}
 
             if package_file:
                 # Extract package and get auto-populated config
@@ -79,9 +70,21 @@ class JSModuleForm(BaseUIElementForm):
                     ''  # module_name_hint not needed, will use instance.name
                 )
 
-                # Use extracted config if no manual config provided
+                extracted = extracted_config.get('config', {})
                 if not module_config:
-                    module_config = extracted_config.get('config', {})
+                    # No manual config — use the fully extracted config
+                    module_config = extracted
+                else:
+                    # Manual config provided — always merge local file paths from package
+                    for key in ('scripts', 'styles'):
+                        manual_list = module_config.setdefault(key, [])
+                        for path in extracted.get(key, []):
+                            if path.startswith('/media/') and path not in manual_list:
+                                manual_list.append(path)
+                    if extracted.get('extracted_media'):
+                        module_config['extracted_media'] = extracted['extracted_media']
+                    if extracted.get('options', {}).get('mediaBasePath'):
+                        module_config.setdefault('options', {})['mediaBasePath'] = extracted['options']['mediaBasePath']
 
                 # Create item with package reference
                 NdrCoreUiElementItem.objects.create(
@@ -175,14 +178,17 @@ class JSModuleEditForm(JSModuleForm):
     """Form for editing an existing JavaScript Module UI Element."""
 
     def __init__(self, *args, **kwargs):
+        self._original_name = kwargs['instance'].name if 'instance' in kwargs else None
         super().__init__(*args, **kwargs)
-        # Track original name for rename detection
+        # Load existing item data for editing
         if self.instance and self.instance.pk:
-            self._original_name = self.instance.name
+            item = self.instance.ndrcoreuielementitem_set.first()
+            if item:
+                self.fields['js_module_config'].initial = item.js_module_config
 
     def save(self, commit=True):
         """Handle rename if name changed."""
-        if hasattr(self, '_original_name') and self._original_name != self.cleaned_data['name']:
+        if self._original_name and self._original_name != self.cleaned_data['name']:
             # Name changed - delete old instance after creating new one
             old_instance = NdrCoreUIElement.objects.get(pk=self._original_name)
 

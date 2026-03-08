@@ -46,6 +46,7 @@ def get_page_type_view_class(page_type):
         NdrCorePage.PageType.CONTACT: ContactView,
         NdrCorePage.PageType.FLIP_BOOK: FlipBookView,
         NdrCorePage.PageType.ABOUT_PAGE: AboutUsView,
+        NdrCorePage.PageType.FULLSCREEN: FullScreenView,
     }
 
     if page_type not in translator:
@@ -154,6 +155,14 @@ class _NdrCoreView(View):
 
 class NdrTemplateView(_NdrCoreView):
     """Basic template view. """
+
+
+class FullScreenView(_NdrCoreView):
+    """Full screen page — renders only the template text with no navigation, footer, or container wrapper."""
+
+    def get(self, request, *args, **kwargs):
+        context = {'rendered_text': self.pre_render_text(), 'page': self.ndr_page}
+        return render(request, self.template_name, context)
 
 
 class _NdrCoreSearchView(_NdrCoreView):

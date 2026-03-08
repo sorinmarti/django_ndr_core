@@ -673,6 +673,9 @@ class NdrCorePage(TranslatableMixin, models.Model):
         ABOUT_PAGE = 8, "About Us Page"
         """TODO """
 
+        FULLSCREEN = 9, "Full Screen Page"
+        """A full screen page renders only the template text — no navigation, no footer, no container."""
+
     view_name = models.CharField(max_length=200,
                                  help_text='The url part of your page (e.g. https://yourdomain.org/p/view_name)',
                                  unique=True)

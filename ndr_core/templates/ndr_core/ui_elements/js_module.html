@@ -25,29 +25,29 @@
                     const container = document.getElementById(containerId);
                     const config = {{ config|safe }};
 
-                    // Load dependencies sequentially
+                    // Load scripts sequentially so dependencies are ready before dependents
                     function loadScripts(urls, callback) {
                         if (!urls || urls.length === 0) {
                             callback();
                             return;
                         }
 
-                        let loaded = 0;
-                        urls.forEach(function(url, index) {
+                        function loadNext(index) {
+                            if (index >= urls.length) {
+                                callback();
+                                return;
+                            }
                             const script = document.createElement('script');
-                            script.src = url;
-                            script.onload = function() {
-                                loaded++;
-                                if (loaded === urls.length) {
-                                    callback();
-                                }
-                            };
+                            script.src = urls[index];
+                            script.onload = function() { loadNext(index + 1); };
                             script.onerror = function() {
-                                console.error('[NDR Core] Failed to load script:', url);
-                                container.innerHTML = '<div class="alert alert-danger">Failed to load module script: ' + url + '</div>';
+                                console.error('[NDR Core] Failed to load script:', urls[index]);
+                                container.innerHTML = '<div class="alert alert-danger">Failed to load module script: ' + urls[index] + '</div>';
                             };
                             document.head.appendChild(script);
-                        });
+                        }
+
+                        loadNext(0);
                     }
 
                     // Load styles

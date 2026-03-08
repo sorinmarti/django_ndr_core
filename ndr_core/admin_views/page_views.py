@@ -242,6 +242,8 @@ def get_base_file_name(page_type):
         base_file = finders.find('ndr_core/app_init/flip_book.html')
     elif page_type == NdrCorePage.PageType.ABOUT_PAGE:
         base_file = finders.find('ndr_core/app_init/about_us.html')
+    elif page_type == NdrCorePage.PageType.FULLSCREEN:
+        base_file = finders.find('ndr_core/app_init/fullscreen.html')
 
     if base_file is None:
         raise FileNotFoundError(f'Base file for page type {page_type} not found.')
