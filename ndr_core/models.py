@@ -1633,6 +1633,7 @@ class NdrCoreUIElement(models.Model):
         ACADEMIC_ABOUT = "academic_about", "About Me"
         TEAM_GRID = "team_grid", "Team Members Grid"
         JS_MODULE = "js_module", "JavaScript Module"
+        CARD_GRID = "card_grid", "Card Grid"
 
     type = models.CharField(max_length=100,
                             choices=UIElementType.choices,

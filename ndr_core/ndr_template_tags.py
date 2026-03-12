@@ -608,6 +608,18 @@ class TextPreRenderer:
             context['show_bios'] = getattr(element, '_show_bios', True)
             context['card_style'] = getattr(element, '_card_style', 'standard')
 
+        # Special handling for CARD_GRID type
+        if element.type == NdrCoreUIElement.UIElementType.CARD_GRID:
+            items = element.items()
+            card_items = []
+            for item in items:
+                if item.object_id:
+                    try:
+                        card_items.append(NdrCoreUIElement.objects.get(name=item.object_id))
+                    except NdrCoreUIElement.DoesNotExist:
+                        pass
+            context['card_items'] = card_items
+
         # Special handling for JS_MODULE type
         if element.type == NdrCoreUIElement.UIElementType.JS_MODULE:
             items = element.items()

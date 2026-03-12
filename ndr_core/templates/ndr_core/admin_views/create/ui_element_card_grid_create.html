@@ -1,0 +1,123 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h2><i class="fa-regular fa-grid-2"></i> Create Card Grid UI Element</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Main Form (crispy, no form tag rendered) -->
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                {% crispy form %}
+            </div>
+        </div>
+
+        <!-- Cards Section -->
+        <div class="card bg-light mb-3">
+            <div class="card-header">
+                <h5 class="mb-0">Cards in Grid</h5>
+            </div>
+            <div class="card-body">
+                {{ formset.management_form }}
+
+                <div id="formset-container">
+                    {% for item_form in formset %}
+                        <div class="formset-item d-flex align-items-center gap-2 mb-2 p-2 border rounded bg-white">
+                            <span class="text-muted fw-bold me-1" style="min-width:1.5rem;">#{{ forloop.counter }}</span>
+                            {{ item_form.id }}
+                            {{ item_form.ORDER }}
+                            {{ item_form.DELETE }}
+                            <div class="flex-grow-1">
+                                {{ item_form.card_element }}
+                                {% if item_form.card_element.errors %}
+                                    <div class="text-danger small">{{ item_form.card_element.errors|join:", " }}</div>
+                                {% endif %}
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItem(this)" title="Remove">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="addItem()">
+                    <i class="fa-regular fa-plus"></i> Add Card
+                </button>
+            </div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="text-center mb-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save"></i> Create Card Grid
+            </button>
+            <a href="{% url 'ndr_core:configure_ui_elements' %}" class="btn btn-secondary">
+                <i class="fa-regular fa-arrow-left"></i> Cancel
+            </a>
+        </div>
+    </form>
+{% endblock %}
+
+{% block page_js %}
+<script>
+    function removeItem(btn) {
+        var item = btn.closest('.formset-item');
+        var deleteInput = item.querySelector('input[name$="-DELETE"]');
+        if (deleteInput) {
+            deleteInput.checked = true;
+            item.style.display = 'none';
+        } else {
+            item.remove();
+        }
+        updateNumbers();
+    }
+
+    function addItem() {
+        var container = document.getElementById('formset-container');
+        var totalForms = document.getElementById('id_ndrcoreuielementitem_set-TOTAL_FORMS');
+        var maxForms = parseInt(document.getElementById('id_ndrcoreuielementitem_set-MAX_NUM_FORMS').value);
+        var currentCount = parseInt(totalForms.value);
+
+        if (currentCount >= maxForms) {
+            alert('Maximum number of cards reached (' + maxForms + ')');
+            return;
+        }
+
+        var existing = container.querySelectorAll('.formset-item');
+        if (existing.length === 0) return;
+        var template = existing[0].cloneNode(true);
+        template.style.display = '';
+
+        template.querySelectorAll('input, select').forEach(function(el) {
+            ['name', 'id'].forEach(function(attr) {
+                if (el.getAttribute(attr)) {
+                    el.setAttribute(attr, el.getAttribute(attr).replace(/-\d+-/, '-' + currentCount + '-'));
+                }
+            });
+            if (el.type === 'checkbox') el.checked = false;
+            else el.value = '';
+        });
+        template.querySelectorAll('label').forEach(function(el) {
+            if (el.getAttribute('for')) {
+                el.setAttribute('for', el.getAttribute('for').replace(/-\d+-/, '-' + currentCount + '-'));
+            }
+        });
+
+        container.appendChild(template);
+        totalForms.value = currentCount + 1;
+        updateNumbers();
+    }
+
+    function updateNumbers() {
+        var visible = 0;
+        document.querySelectorAll('#formset-container .formset-item').forEach(function(item) {
+            if (item.style.display !== 'none') {
+                visible++;
+                item.querySelector('span.text-muted').textContent = '#' + visible;
+            }
+        });
+    }
+</script>
+{% endblock %}

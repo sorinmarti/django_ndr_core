@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
+from django.forms import inlineformset_factory
 from django.views.generic import CreateView, UpdateView, DeleteView, DetailView
 
 from ndr_core.admin_forms.ui_element_types import (
@@ -16,6 +17,7 @@ from ndr_core.admin_forms.ui_element_types import (
     CarouselCreateForm, CarouselEditForm,
     DataObjectCreateForm, DataObjectEditForm,
     JSModuleCreateForm, JSModuleEditForm,
+    CardGridCreateForm, CardGridEditForm, CardGridItemFormSet,
 )
 from ndr_core.admin_forms.ui_element_types.video_forms import VideoCreateForm, VideoEditForm
 from ndr_core.admin_forms.ui_element_types.audio_forms import AudioCreateForm, AudioEditForm
@@ -459,6 +461,84 @@ class JSModuleEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     form_class = JSModuleEditForm
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
     template_name = 'ndr_core/admin_views/edit/ui_element_js_module_edit.html'
+
+
+class CardGridCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
+    """View to create a new Card Grid UI Element with formset."""
+    model = NdrCoreUIElement
+    form_class = CardGridCreateForm
+    success_url = reverse_lazy('ndr_core:configure_ui_elements')
+    template_name = 'ndr_core/admin_views/create/ui_element_card_grid_create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.POST:
+            context['formset'] = CardGridItemFormSet(self.request.POST, instance=self.object)
+        else:
+            context['formset'] = CardGridItemFormSet(instance=self.object)
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            return redirect(self.success_url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
+
+
+class CardGridEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
+    """View to edit an existing Card Grid UI Element with formset."""
+    model = NdrCoreUIElement
+    form_class = CardGridEditForm
+    success_url = reverse_lazy('ndr_core:configure_ui_elements')
+    template_name = 'ndr_core/admin_views/edit/ui_element_card_grid_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        EditFormSet = inlineformset_factory(
+            NdrCoreUIElement,
+            NdrCoreUiElementItem,
+            form=CardGridItemFormSet.form,
+            extra=0,
+            max_num=20,
+            can_delete=True,
+            can_order=True,
+            min_num=0,
+        )
+        if self.request.POST:
+            context['formset'] = EditFormSet(self.request.POST, instance=self.object)
+        else:
+            context['formset'] = EditFormSet(
+                instance=self.object,
+                queryset=self.object.ndrcoreuielementitem_set.all().order_by('order_idx')
+            )
+        return context
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        formset = context['formset']
+        if formset.is_valid():
+            self.object = form.save()
+
+            old_instance_to_delete = getattr(self.object, '_old_instance_to_delete', None)
+            if old_instance_to_delete:
+                for formset_form in formset.forms:
+                    if formset_form.instance.pk:
+                        formset_form.instance.pk = None
+
+            formset.instance = self.object
+            formset.save()
+
+            if old_instance_to_delete:
+                old_instance_to_delete.delete()
+
+            return redirect(self.success_url)
+        else:
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 # ============================================================================

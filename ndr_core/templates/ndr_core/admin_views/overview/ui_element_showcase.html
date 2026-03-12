@@ -23,19 +23,18 @@
         <strong>Choose a UI Element Type:</strong> Select the type that best fits your needs. Each type has specific features and use cases.
     </div>
 
-    <!-- Grid of UI Element Types -->
-    <div class="row">
+    <!-- ── Cards ──────────────────────────────────────────────────────────── -->
+    <h4 class="mt-2 mb-3"><i class="fa-regular fa-square"></i> Cards</h4>
+    <div class="row mb-4">
+
         <!-- Card -->
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <img src="{% static 'ndr_core/images/admin/ui_elements/card.png' %}"
-                     class="card-img-top"
-                     alt="Card"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                     class="card-img-top" alt="Card"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-square"></i> Card
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-square"></i> Card</h5>
                     <p class="card-text flex-grow-1">
                         Display an image with a title, description text, and optional link.
                         Perfect for highlighting features or services.
@@ -47,39 +46,40 @@
             </div>
         </div>
 
-        <!-- Jumbotron -->
+        <!-- Card Grid -->
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
-                <img src="{% static 'ndr_core/images/admin/ui_elements/jumbotron.png' %}"
-                     class="card-img-top"
-                     alt="Jumbotron"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                <img src="{% static 'ndr_core/images/admin/ui_elements/none.png' %}"
+                     class="card-img-top" alt="Card Grid"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;"
+                     onerror="this.src='{% static 'ndr_core/images/admin/ui_elements/none.png' %}'">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-rectangle-wide"></i> Jumbotron
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-grid-2"></i> Card Grid</h5>
                     <p class="card-text flex-grow-1">
-                        Large callout area with background image, title, and text.
-                        Great for hero sections and announcements.
+                        Display a collection of existing Card elements in a responsive grid layout.
+                        Create cards first, then arrange them in a grid.
                     </p>
-                    <a href="{% url 'ndr_core:create_ui_element_jumbotron' %}" class="btn btn-primary btn-block">
-                        <i class="fa-regular fa-plus-circle"></i> Create Jumbotron
+                    <a href="{% url 'ndr_core:create_ui_element_card_grid' %}" class="btn btn-primary btn-block">
+                        <i class="fa-regular fa-plus-circle"></i> Create Card Grid
                     </a>
                 </div>
             </div>
         </div>
 
+    </div>
+
+    <!-- ── Images & Sliders ───────────────────────────────────────────────── -->
+    <h4 class="mt-2 mb-3"><i class="fa-regular fa-image"></i> Images &amp; Sliders</h4>
+    <div class="row mb-4">
+
         <!-- Banner -->
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <img src="{% static 'ndr_core/images/admin/ui_elements/banner.png' %}"
-                     class="card-img-top"
-                     alt="Banner"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                     class="card-img-top" alt="Banner"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-image"></i> Banner
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-image"></i> Banner</h5>
                     <p class="card-text flex-grow-1">
                         Full-width image banner.
                         Perfect for headers, visual separators, or promotional images.
@@ -91,45 +91,20 @@
             </div>
         </div>
 
-        <!-- IFrame -->
+        <!-- Jumbotron -->
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
-                <img src="{% static 'ndr_core/images/admin/ui_elements/iframe.png' %}"
-                     class="card-img-top"
-                     alt="IFrame"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                <img src="{% static 'ndr_core/images/admin/ui_elements/jumbotron.png' %}"
+                     class="card-img-top" alt="Jumbotron"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-browser"></i> IFrame
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-rectangle-wide"></i> Jumbotron</h5>
                     <p class="card-text flex-grow-1">
-                        Embed external content like videos, maps, or other websites.
-                        Paste the iframe HTML code to display external content.
+                        Large callout area with background image, title, and text.
+                        Great for hero sections and announcements.
                     </p>
-                    <a href="{% url 'ndr_core:create_ui_element_iframe' %}" class="btn btn-primary btn-block">
-                        <i class="fa-regular fa-plus-circle"></i> Create IFrame
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Manifest Viewer -->
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card h-100 shadow-sm">
-                <img src="{% static 'ndr_core/images/admin/ui_elements/manifest_viewer.png' %}"
-                     class="card-img-top"
-                     alt="Manifest Viewer"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-book-open"></i> Manifest Viewer
-                    </h5>
-                    <p class="card-text flex-grow-1">
-                        Display IIIF manifests (digital images/documents) with an interactive viewer.
-                        Select a manifest group to display.
-                    </p>
-                    <a href="{% url 'ndr_core:create_ui_element_manifest_viewer' %}" class="btn btn-primary btn-block">
-                        <i class="fa-regular fa-plus-circle"></i> Create Manifest Viewer
+                    <a href="{% url 'ndr_core:create_ui_element_jumbotron' %}" class="btn btn-primary btn-block">
+                        <i class="fa-regular fa-plus-circle"></i> Create Jumbotron
                     </a>
                 </div>
             </div>
@@ -139,13 +114,10 @@
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <img src="{% static 'ndr_core/images/admin/ui_elements/slides.png' %}"
-                     class="card-img-top"
-                     alt="Slideshow"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                     class="card-img-top" alt="Slideshow"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-images"></i> Slideshow
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-images"></i> Slideshow</h5>
                     <p class="card-text flex-grow-1">
                         Display multiple images that users can navigate through.
                         Supports indicators and autoplay. Add up to 20 slides.
@@ -161,13 +133,10 @@
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <img src="{% static 'ndr_core/images/admin/ui_elements/carousel.png' %}"
-                     class="card-img-top"
-                     alt="Carousel"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                     class="card-img-top" alt="Carousel"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-images"></i> Carousel
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-images"></i> Carousel</h5>
                     <p class="card-text flex-grow-1">
                         Slideshow with text overlays. Each slide can have an image, title, and description.
                         Add up to 20 slides with content.
@@ -179,41 +148,21 @@
             </div>
         </div>
 
-        <!-- Data Object -->
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-            <div class="card h-100 shadow-sm">
-                <img src="{% static 'ndr_core/images/admin/ui_elements/data_object.png' %}"
-                     class="card-img-top"
-                     alt="Data Object"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;"
-                     onerror="this.src='{% static 'ndr_core/images/admin/ui_elements/none.png' %}'">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-database"></i> Data Object
-                    </h5>
-                    <p class="card-text flex-grow-1">
-                        Fetch and display a single item from your configured APIs.
-                        Specify search configuration, object ID, and result field for rendering.
-                    </p>
-                    <a href="{% url 'ndr_core:create_ui_element_data_object' %}" class="btn btn-primary btn-block">
-                        <i class="fa-regular fa-plus-circle"></i> Create Data Object
-                    </a>
-                </div>
-            </div>
-        </div>
+    </div>
+
+    <!-- ── Media &amp; Embeds ──────────────────────────────────────────────── -->
+    <h4 class="mt-2 mb-3"><i class="fa-regular fa-video"></i> Media &amp; Embeds</h4>
+    <div class="row mb-4">
 
         <!-- Video -->
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <img src="{% static 'ndr_core/images/admin/ui_elements/video.png' %}"
-                     class="card-img-top"
-                     alt="Video"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;"
+                     class="card-img-top" alt="Video"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;"
                      onerror="this.src='{% static 'ndr_core/images/admin/ui_elements/none.png' %}'">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-video"></i> Video
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-video"></i> Video</h5>
                     <p class="card-text flex-grow-1">
                         Embed videos from YouTube, Vimeo, or SwitchTube. Just enter the video ID
                         and select the provider for a responsive video player.
@@ -229,14 +178,11 @@
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <img src="{% static 'ndr_core/images/admin/ui_elements/audio.png' %}"
-                     class="card-img-top"
-                     alt="Audio Player"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;"
+                     class="card-img-top" alt="Audio Player"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;"
                      onerror="this.src='{% static 'ndr_core/images/admin/ui_elements/none.png' %}'">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-music"></i> Audio Player
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-music"></i> Audio Player</h5>
                     <p class="card-text flex-grow-1">
                         Upload and play audio files with a simple HTML5 audio player.
                         Supports MP3, WAV, and OGG formats.
@@ -248,18 +194,59 @@
             </div>
         </div>
 
+        <!-- IFrame -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'ndr_core/images/admin/ui_elements/iframe.png' %}"
+                     class="card-img-top" alt="IFrame"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title"><i class="fa-regular fa-browser"></i> IFrame</h5>
+                    <p class="card-text flex-grow-1">
+                        Embed external content like videos, maps, or other websites.
+                        Paste the iframe HTML code to display external content.
+                    </p>
+                    <a href="{% url 'ndr_core:create_ui_element_iframe' %}" class="btn btn-primary btn-block">
+                        <i class="fa-regular fa-plus-circle"></i> Create IFrame
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manifest Viewer -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'ndr_core/images/admin/ui_elements/manifest_viewer.png' %}"
+                     class="card-img-top" alt="Manifest Viewer"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title"><i class="fa-regular fa-book-open"></i> Manifest Viewer</h5>
+                    <p class="card-text flex-grow-1">
+                        Display IIIF manifests (digital images/documents) with an interactive viewer.
+                        Select a manifest group to display.
+                    </p>
+                    <a href="{% url 'ndr_core:create_ui_element_manifest_viewer' %}" class="btn btn-primary btn-block">
+                        <i class="fa-regular fa-plus-circle"></i> Create Manifest Viewer
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── People &amp; Teams ─────────────────────────────────────────────── -->
+    <h4 class="mt-2 mb-3"><i class="fa-regular fa-users"></i> People &amp; Teams</h4>
+    <div class="row mb-4">
+
         <!-- About Me -->
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <img src="{% static 'ndr_core/images/admin/ui_elements/academic_about.png' %}"
-                     class="card-img-top"
-                     alt="About Me"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;"
+                     class="card-img-top" alt="About Me"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;"
                      onerror="this.src='{% static 'ndr_core/images/admin/ui_elements/none.png' %}'">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-user-graduate"></i> About Me
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-user-graduate"></i> About Me</h5>
                     <p class="card-text flex-grow-1">
                         Professional profile widget with photo, biography, ORCID badge,
                         and website link. Perfect for researcher, faculty, and personal pages.
@@ -275,20 +262,43 @@
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <img src="{% static 'ndr_core/images/admin/ui_elements/team_grid.png' %}"
-                     class="card-img-top"
-                     alt="Team Members Grid"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;"
+                     class="card-img-top" alt="Team Members Grid"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;"
                      onerror="this.src='{% static 'ndr_core/images/admin/ui_elements/none.png' %}'">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-users"></i> Team Members Grid
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-users"></i> Team Members Grid</h5>
                     <p class="card-text flex-grow-1">
                         Display team members in a responsive grid with photos, names, titles/positions,
-                        ORCID links, and optional biographies. Perfect for research teams and project staff.
+                        ORCID links, and optional biographies.
                     </p>
                     <a href="{% url 'ndr_core:create_ui_element_team_grid' %}" class="btn btn-primary btn-block">
                         <i class="fa-regular fa-plus-circle"></i> Create Team Grid
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── Data &amp; Code ────────────────────────────────────────────────── -->
+    <h4 class="mt-2 mb-3"><i class="fa-regular fa-code"></i> Data &amp; Code</h4>
+    <div class="row mb-4">
+
+        <!-- Data Object -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'ndr_core/images/admin/ui_elements/data_object.png' %}"
+                     class="card-img-top" alt="Data Object"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;"
+                     onerror="this.src='{% static 'ndr_core/images/admin/ui_elements/none.png' %}'">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title"><i class="fa-regular fa-database"></i> Data Object</h5>
+                    <p class="card-text flex-grow-1">
+                        Fetch and display a single item from your configured APIs.
+                        Specify search configuration, object ID, and result field for rendering.
+                    </p>
+                    <a href="{% url 'ndr_core:create_ui_element_data_object' %}" class="btn btn-primary btn-block">
+                        <i class="fa-regular fa-plus-circle"></i> Create Data Object
                     </a>
                 </div>
             </div>
@@ -298,14 +308,11 @@
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">
                 <img src="{% static 'ndr_core/images/admin/ui_elements/js_module.png' %}"
-                     class="card-img-top"
-                     alt="JavaScript Module"
-                     style="height: 180px; object-fit: contain; padding: 20px; background: #f8f9fa;"
+                     class="card-img-top" alt="JavaScript Module"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;"
                      onerror="this.src='{% static 'ndr_core/images/admin/ui_elements/none.png' %}'">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">
-                        <i class="fa-regular fa-code"></i> JavaScript Module
-                    </h5>
+                    <h5 class="card-title"><i class="fa-regular fa-code"></i> JavaScript Module</h5>
                     <p class="card-text flex-grow-1">
                         Create custom JavaScript visualizations and interactive widgets. Upload packages with
                         hundreds of assets or use external CDN libraries like D3.js, Chart.js, and Plotly.
@@ -316,6 +323,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
 {% endblock %}

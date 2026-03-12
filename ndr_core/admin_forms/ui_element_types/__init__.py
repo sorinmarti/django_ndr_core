@@ -10,6 +10,7 @@ from .carousel_forms import CarouselCreateForm, CarouselEditForm
 from .data_object_forms import DataObjectCreateForm, DataObjectEditForm
 from .team_grid_forms import TeamGridCreateForm, TeamGridEditForm
 from .js_module_forms import JSModuleCreateForm, JSModuleEditForm
+from .card_grid_forms import CardGridCreateForm, CardGridEditForm, CardGridItemFormSet
 
 __all__ = [
     'BaseUIElementForm',
@@ -35,4 +36,7 @@ __all__ = [
     'TeamGridEditForm',
     'JSModuleCreateForm',
     'JSModuleEditForm',
+    'CardGridCreateForm',
+    'CardGridEditForm',
+    'CardGridItemFormSet',
 ]

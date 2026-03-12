@@ -3,8 +3,36 @@ from crispy_forms.layout import Layout, Row, Column, HTML
 from django import forms
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons
-from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem
+from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem, NdrCorePage
 from .base_forms import BaseUIElementForm
+
+
+class PageChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):
+        if obj.parent_page_id:
+            return f'{obj.parent_page.label} → {obj.label}'
+        return obj.label
+
+    @staticmethod
+    def sorted_choices(empty_label):
+        """Return choices ordered: parents A-Z, each followed by children A-Z."""
+        all_pages = list(NdrCorePage.objects.select_related('parent_page').all())
+        top_level = sorted(
+            (p for p in all_pages if p.parent_page_id is None),
+            key=lambda p: (p.label or '').lower()
+        )
+        children_map = {}
+        for p in all_pages:
+            if p.parent_page_id is not None:
+                children_map.setdefault(p.parent_page_id, []).append(p)
+
+        result = [('', empty_label)]
+        for parent in top_level:
+            result.append((parent.pk, parent.label))
+            for child in sorted(children_map.get(parent.pk, []),
+                                key=lambda p: (p.label or '').lower()):
+                result.append((child.pk, f'{parent.label} → {child.label}'))
+        return result
 
 
 class CardForm(BaseUIElementForm):
@@ -29,10 +57,17 @@ class CardForm(BaseUIElementForm):
         label='Text',
         help_text='Card description text'
     )
-    url = forms.URLField(
+    internal_page = PageChoiceField(
+        queryset=NdrCorePage.objects.all().order_by('index'),
         required=False,
-        label='Link URL',
-        help_text='Optional link when card is clicked'
+        label='Internal Page',
+        empty_label='— or enter a custom URL below —',
+        help_text='Link to an internal page. Takes precedence over the custom URL field.'
+    )
+    url = forms.CharField(
+        required=False,
+        label='Custom URL',
+        help_text='External or custom URL (e.g. https://example.com). Ignored when an internal page is selected.'
     )
 
     def __init__(self, *args, **kwargs):
@@ -44,6 +79,11 @@ class CardForm(BaseUIElementForm):
             help_text='Select an image for the card'
         )
 
+        # Apply sorted page choices to the widget
+        self.fields['internal_page'].widget.choices = PageChoiceField.sorted_choices(
+            empty_label='— or enter a custom URL below —'
+        )
+
     def save(self, commit=True):
         """Save the Card UI Element and its single item."""
         instance = super().save(commit=commit)
@@ -52,6 +92,10 @@ class CardForm(BaseUIElementForm):
             # Delete existing items and create a new one
             instance.ndrcoreuielementitem_set.all().delete()
 
+            # Resolve link URL: internal page takes precedence over custom URL
+            internal_page = self.cleaned_data.get('internal_page')
+            link_url = internal_page.url if internal_page else self.cleaned_data.get('url', '')
+
             # Create the card item
             NdrCoreUiElementItem.objects.create(
                 belongs_to=instance,
@@ -59,7 +103,7 @@ class CardForm(BaseUIElementForm):
                 ndr_image=self.cleaned_data.get('card_image'),
                 title=self.cleaned_data.get('title', ''),
                 text=self.cleaned_data.get('text', ''),
-                url=self.cleaned_data.get('url', '')
+                url=link_url
             )
 
         return instance
@@ -90,6 +134,12 @@ class CardForm(BaseUIElementForm):
         self.add_field_row(layout, 'card_image', col_class='col-md-6')
         self.add_field_row(layout, 'title', col_class='col-md-6')
         self.add_field_row(layout, 'text', col_class='col-md-12')
+
+        layout.append(Row(
+            Column(HTML('<h5 class="mt-3 mb-3">Link</h5>'), css_class='col-12'),
+            css_class='row g-2'
+        ))
+        self.add_field_row(layout, 'internal_page', col_class='col-md-6')
         self.add_field_row(layout, 'url', col_class='col-md-6')
 
         return helper
@@ -124,7 +174,16 @@ class CardEditForm(CardForm):
                 self.fields['card_image'].initial = item.ndr_image
                 self.fields['title'].initial = item.title
                 self.fields['text'].initial = item.text
-                self.fields['url'].initial = item.url
+                # Try to match stored URL back to an internal page
+                if item.url:
+                    matched_page = next(
+                        (p for p in NdrCorePage.objects.all() if p.url == item.url),
+                        None
+                    )
+                    if matched_page:
+                        self.fields['internal_page'].initial = matched_page
+                    else:
+                        self.fields['url'].initial = item.url
 
     def save(self, commit=True):
         """Save with special handling for name changes (PK changes)."""

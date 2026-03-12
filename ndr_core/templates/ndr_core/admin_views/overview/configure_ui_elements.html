@@ -49,7 +49,7 @@
                                     <td><span class="badge badge-secondary">{{ element.get_type_display }}</span></td>
                                     <td>
                                         {% with item_count=element.ndrcoreuielementitem_set.count %}
-                                            {% if element.type in "slides,carousel" %}
+                                            {% if element.type in "slides,carousel,team_grid,card_grid" %}
                                                 {# Multi-item types: show count #}
                                                 {% if item_count > 0 %}
                                                     {{ item_count }} item{{ item_count|pluralize }}
@@ -153,6 +153,15 @@
                     {% include 'ndr_core/ui_elements/audio.html' with data=object %}
                 {% elif object.type == "academic_about" %}
                     {% include 'ndr_core/ui_elements/academic_about.html' with data=object %}
+                {% elif object.type == "card_grid" %}
+                    {% with items=object.items %}
+                        <p class="text-muted mb-1"><i class="fa-regular fa-grid-2"></i> Card Grid — {{ items|length }} card{{ items|length|pluralize }} configured.</p>
+                        <ul class="list-unstyled small mb-0">
+                            {% for item in items %}
+                                <li><i class="fa-regular fa-square"></i> {{ item.object_id }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endwith %}
                 {% endif %}
             </div>
             <div class="card-footer">

@@ -127,6 +127,7 @@ from ndr_core.admin_views.ui_element_views import (
     AcademicAboutCreateView, AcademicAboutEditView,
     TeamGridCreateView, TeamGridEditView,
     JSModuleCreateView, JSModuleEditView,
+    CardGridCreateView, CardGridEditView,
     # Helper
     get_ndr_image_path
 )
@@ -292,6 +293,8 @@ urlpatterns = [
     path('configure/ui_elements/edit/team_grid/<str:pk>/', TeamGridEditView.as_view(), name='edit_ui_element_team_grid'),
     path('configure/ui_elements/create/js_module/', JSModuleCreateView.as_view(), name='create_ui_element_js_module'),
     path('configure/ui_elements/edit/js_module/<str:pk>/', JSModuleEditView.as_view(), name='edit_ui_element_js_module'),
+    path('configure/ui_elements/create/card_grid/', CardGridCreateView.as_view(), name='create_ui_element_card_grid'),
+    path('configure/ui_elements/edit/card_grid/<str:pk>/', CardGridEditView.as_view(), name='edit_ui_element_card_grid'),
 
     # SEARCH CONFIGURATIONS
     path('configure/search/', ConfigureSearch.as_view(), name='configure_search'),

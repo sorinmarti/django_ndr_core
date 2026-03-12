@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "(%(0a$8+0ju*w0^92(!!ju^rn(+ypfv6b7@ync)ewxb7jw6hb+"
+SECRET_KEY = "cr9t)@#@em!^no^y(-00t^+l)!8_t8kzynr-!7m^n24lym&%sj"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -194,6 +194,10 @@ CORS_ALLOW_HEADERS = [
 # GEOIP SETTINGS
 GEOIP_PATH = os.path.join('geoip/')
 """Needed for the geoip functionality."""
+
+# CKEDITOR SETTINGS
+CKEDITOR_UPLOAD_PATH = 'uploads/'
+"""Needed for the ck-editor"""
 
 customColorPalette = [
         {

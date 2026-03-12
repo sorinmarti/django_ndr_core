@@ -1,0 +1,17 @@
+<!-- Card Grid UI Element -->
+<style>
+    .ndr-card-grid .card { width: 100%; }
+</style>
+<div class="ndr-card-grid">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for card_element in card_items %}
+            <div class="col">
+                {% include 'ndr_core/ui_elements/card.html' with data=card_element %}
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p class="text-muted"><em>No cards added to this grid yet.</em></p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
