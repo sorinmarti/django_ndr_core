@@ -1,6 +1,8 @@
 <!-- This template expects a NdrCorePage as data, with optional render_type, style, and size -->
+{% with label=custom_label|default:data.label href=page_href|default:data.url %}
 {% if render_type == 'btn' %}
-    <a href="{{ data.url }}" class="btn btn-{{ style|default:'primary' }}{% if size %} btn-{{ size }}{% endif %}">{{ data.label }}</a>
+    <a href="{{ href }}" class="btn btn-{{ style|default:'primary' }}{% if size %} btn-{{ size }}{% endif %}">{{ label }}</a>
 {% else %}
-    <a href="{{ data.url }}"{% if style and style != 'secondary' %} class="link-{{ style }}"{% endif %}>{{ data.label }}</a>
+    <a href="{{ href }}"{% if style and style != 'secondary' %} class="link-{{ style }}"{% endif %}>{{ label }}</a>
 {% endif %}
+{% endwith %}

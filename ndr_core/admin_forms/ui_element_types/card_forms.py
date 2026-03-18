@@ -94,7 +94,7 @@ class CardForm(BaseUIElementForm):
 
             # Resolve link URL: internal page takes precedence over custom URL
             internal_page = self.cleaned_data.get('internal_page')
-            link_url = internal_page.url if internal_page else self.cleaned_data.get('url', '')
+            link_url = internal_page.url() if internal_page else self.cleaned_data.get('url', '')
 
             # Create the card item
             NdrCoreUiElementItem.objects.create(
@@ -177,7 +177,7 @@ class CardEditForm(CardForm):
                 # Try to match stored URL back to an internal page
                 if item.url:
                     matched_page = next(
-                        (p for p in NdrCorePage.objects.all() if p.url == item.url),
+                        (p for p in NdrCorePage.objects.all() if p.url() == item.url),
                         None
                     )
                     if matched_page:

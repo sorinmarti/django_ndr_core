@@ -1,4 +1,5 @@
 """Views for the UI Element admin pages."""
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -63,6 +64,53 @@ class UIElementDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteView):
     model = NdrCoreUIElement
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
     template_name = 'ndr_core/admin_views/delete/ui_element_confirm_delete.html'
+
+
+class UIElementCopyView(AdminViewMixin, LoginRequiredMixin, View):
+    """Duplicates a UI Element and all its items, then redirects to the copy."""
+
+    def post(self, request, pk, *args, **kwargs):
+        try:
+            original = NdrCoreUIElement.objects.get(pk=pk)
+        except NdrCoreUIElement.DoesNotExist:
+            messages.error(request, "UI Element not found.")
+            return redirect('ndr_core:configure_ui_elements')
+
+        # Find a unique name for the copy
+        base = f"{original.name}_copy"
+        new_name = base
+        counter = 2
+        while NdrCoreUIElement.objects.filter(name=new_name).exists():
+            new_name = f"{base}{counter}"
+            counter += 1
+
+        copy = NdrCoreUIElement.objects.create(
+            name=new_name,
+            label=f"{original.label} (Copy)" if original.label else "",
+            type=original.type,
+            show_indicators=original.show_indicators,
+            autoplay=original.autoplay,
+        )
+
+        for item in original.items():
+            NdrCoreUiElementItem.objects.create(
+                belongs_to=copy,
+                order_idx=item.order_idx,
+                ndr_image=item.ndr_image,
+                title=item.title,
+                text=item.text,
+                url=item.url,
+                manifest_group=item.manifest_group,
+                search_configuration=item.search_configuration,
+                object_id=item.object_id,
+                result_field=item.result_field,
+                rich_text=item.rich_text,
+                upload_file=item.upload_file,
+                provider=item.provider,
+            )
+
+        messages.success(request, f"Copied to '{new_name}'.")
+        return redirect('ndr_core:view_ui_element', pk=copy.pk)
 
 
 # ============================================================================

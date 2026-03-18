@@ -845,6 +845,10 @@ class NdrCorePage(TranslatableMixin, models.Model):
         except NdrCoreRichTextTranslation.DoesNotExist:
             return self.template_text
 
+    def visible_children(self):
+        """Returns child pages that have show_in_navigation=True, ordered by index."""
+        return self.ndrcorepage_set.filter(show_in_navigation=True).order_by('index')
+
     def get_full_path(self):
         """Returns the full URL path segment for this page, including parent segments.
         E.g. a page 'mysubview' with parent 'myview' returns 'myview/mysubview'."""

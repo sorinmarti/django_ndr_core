@@ -44,6 +44,6 @@ class _NdrCoreForm(forms.Form):
                 ),
                 css_class="col-md-4",
             ),
-            css_class="form-row",
+            css_class="row g-2",
         )
         return div

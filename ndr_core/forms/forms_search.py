@@ -373,7 +373,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                 ),
                 css_class="col-md-3",
             ),
-            css_class="form-row",
+            css_class="row g-2",
         )
         return div
 
@@ -398,8 +398,8 @@ class AdvancedSearchForm(_NdrCoreForm):
                     css_id=f"{search_config.conf_name}_simple",
                 )
                 fields = self.get_simple_search_layout_fields(search_config)
-                tab_simple.append(Div(fields[0], css_class="form-row"))
-                tab_simple.append(Div(*fields[1:], css_class="form-row"))
+                tab_simple.append(Div(fields[0], css_class="row g-2"))
+                tab_simple.append(Div(*fields[1:], css_class="row g-2"))
 
                 tab_simple.append(self.get_search_button(search_config, simple=True))
                 if search_config.simple_search_first:
@@ -416,7 +416,7 @@ class AdvancedSearchForm(_NdrCoreForm):
 
             for row in range(field_range):
                 row += 1  # The row starts with 1, not 0.
-                form_row = Div(css_class="form-row")
+                form_row = Div(css_class="row g-2")
                 # The column is the inner loop.
                 for column in search_config.search_form_fields.filter(field_row=row).order_by("field_column"):
                     # Type is INFO_TEXT, so we create a div with the text.
@@ -447,7 +447,6 @@ class AdvancedSearchForm(_NdrCoreForm):
                     else:
                         # If the field is a list and set to CHOOSE, we create a select field.
                         if f"{search_config.conf_name}_{column.search_field.field_name}_condition" in self.fields:
-                            print("Adding condition field for ", column.search_field.field_name)
                             form_field = Div(
                                 Div(
                                     Field(
@@ -465,7 +464,6 @@ class AdvancedSearchForm(_NdrCoreForm):
                             )
                         # If the field has an operator dropdown (comparison_operator set to CHOOSE)
                         elif f"{search_config.conf_name}_{column.search_field.field_name}_operator" in self.fields:
-                            print("Adding operator field for ", column.search_field.field_name)
                             form_field = Div(
                                 Div(
                                     Field(

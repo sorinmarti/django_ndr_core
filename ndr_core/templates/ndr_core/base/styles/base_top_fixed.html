@@ -38,15 +38,15 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto">
                         {% for nav_item in navigation %}
-                            {% if nav_item.ndrcorepage_set.all %}
+                            {% if nav_item.visible_children %}
                                 <li class="nav-item dropdown">
-                                    <a class="nav-link ndr-text-fg dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.ndrcorepage_set.all %} active{% endif %}"
+                                    <a class="nav-link ndr-text-fg dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.visible_children %} active{% endif %}"
                                        href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         {{ nav_item.label }}
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="{{ nav_item.url }}">{{ nav_item.label }}</a></li>
-                                        {% for sub_page in nav_item.ndrcorepage_set.all|dictsort:"index" %}
+                                        {% for sub_page in nav_item.visible_children %}
                                             <li><a class="dropdown-item" href="{{ sub_page.url }}">{{ sub_page.label }}</a></li>
                                         {% endfor %}
                                     </ul>

@@ -153,7 +153,11 @@ class PageEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
 
         if old_filename != new_filename:
             os.makedirs(os.path.dirname(new_filename), exist_ok=True)
-            os.rename(old_filename, new_filename)
+            if os.path.isfile(old_filename):
+                os.rename(old_filename, new_filename)
+            elif not os.path.isfile(new_filename):
+                base_file = get_base_file_name(updated_instance.page_type)
+                shutil.copyfile(base_file, new_filename)
 
         # The file has been renamed. If the page type has changed, we need to replace the file
         if original_instance.page_type != updated_instance.page_type:

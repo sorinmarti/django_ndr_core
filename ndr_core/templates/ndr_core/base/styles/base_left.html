@@ -37,14 +37,14 @@
 
                 <ul class="list-unstyled components">
                     {% for nav_item in navigation %}
-                        {% if nav_item.ndrcorepage_set.all %}
+                        {% if nav_item.visible_children %}
                             <li>
-                                <a href="#submenu{{ forloop.counter }}" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.ndrcorepage_set.all %} active{% endif %}">
+                                <a href="#submenu{{ forloop.counter }}" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.visible_children %} active{% endif %}">
                                     {{ nav_item.label }}
                                 </a>
                                 <ul class="collapse list-unstyled" id="submenu{{ forloop.counter }}">
                                     <li><a href="{{ nav_item.url }}">{{ nav_item.label }}</a></li>
-                                    {% for sub_page in nav_item.ndrcorepage_set.all|dictsort:"index" %}
+                                    {% for sub_page in nav_item.visible_children %}
                                         <li><a href="{{ sub_page.url }}">{{ sub_page.label }}</a></li>
                                     {% endfor %}
                                 </ul>

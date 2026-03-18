@@ -111,6 +111,7 @@ from ndr_core.admin_views.ui_element_views import (
     UIElementShowcaseView,
     UIElementDetailView,
     UIElementDeleteView,
+    UIElementCopyView,
     # Single-item types
     CardCreateView, CardEditView,
     JumbotronCreateView, JumbotronEditView,
@@ -261,6 +262,7 @@ urlpatterns = [
     path('configure/ui_elements/showcase/', UIElementShowcaseView.as_view(), name='ui_element_showcase'),
     path('configure/ui_elements/view/<str:pk>/', UIElementDetailView.as_view(), name='view_ui_element'),
     path('configure/ui_elements/delete/<str:pk>/', UIElementDeleteView.as_view(), name='delete_ui_element'),
+    path('configure/ui_elements/copy/<str:pk>/', UIElementCopyView.as_view(), name='copy_ui_element'),
 
     # Single-item type routes
     path('configure/ui_elements/create/card/', CardCreateView.as_view(), name='create_ui_element_card'),

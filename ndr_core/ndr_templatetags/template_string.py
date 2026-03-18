@@ -349,12 +349,14 @@ class TemplateString:
                 # Check if any filter has a default value
                 default_value = self.get_default_value_from_variable(variable)
                 if default_value is not None:
-                    # Apply filters to the default value if there are any
-                    if len(variable.value_filters) > 0:
+                    # If the fallback comes from a standalone |default: filter, return it raw
+                    # (bypassing badge, linkify, etc.). If it's inline in another filter's
+                    # config (e.g. badge:bg=red,default=n/a), apply the full filter chain.
+                    has_default_filter = 'default' in variable.value_filters
+                    if not has_default_filter and len(variable.value_filters) > 0:
                         try:
                             default_value = variable.apply_filters(default_value, self.data)
                         except Exception:
-                            # If filter fails on default value, use raw default
                             pass
                     formatted_string = formatted_string.replace(f"{{{variable.raw_variable}}}", str(default_value))
                 else:
@@ -366,13 +368,18 @@ class TemplateString:
 
     def get_default_value_from_variable(self, variable):
         """Check if any filter in the variable has a default value configured."""
-        for filter_config in variable.filter_configurations:
+        for i, filter_config in enumerate(variable.filter_configurations):
             # Check for universal 'default' parameter
             if 'default' in filter_config:
                 return filter_config['default']
             # Check for DefaultFilter's 'value' parameter
             if 'value' in filter_config:
                 return filter_config['value']
+            # Support shorthand default:value syntax (stored as positional o0)
+            if (i < len(variable.value_filters)
+                    and variable.value_filters[i] == 'default'
+                    and 'o0' in filter_config):
+                return filter_config['o0']
         return None
 
     @staticmethod

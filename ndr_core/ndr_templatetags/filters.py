@@ -1109,6 +1109,9 @@ class IframeFilter(AbstractFilter):
 class DefaultFilter(AbstractFilter):
     """A filter that just returns the value as-is. Used when you only want to specify a default value."""
 
+    def check_configuration(self):
+        pass  # Intentionally permissive — accepts value=, o0, or nothing
+
     def needed_attributes(self):
         return []
 

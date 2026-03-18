@@ -17,7 +17,7 @@ class TextPreRenderer:
 
     MAX_ITERATIONS = 50
     ui_element_regex = r'\[\[element\|([a-zA-Z0-9_-]+)\]\]'
-    link_element_regex = r'\[\[(file|page|orcid|plotly)(?:-([a-z]+)-([a-z]+)(?:-([a-z]+))?)?\|([0-9a-zA-Z_ -]*)\]\]'
+    link_element_regex = r'\[\[(file|page|orcid|plotly)(?:-([a-z]+)-([a-z0-9]+)(?:-([a-z0-9]+))?)?\|([0-9a-zA-Z_ /?=&;-]*)(?:\|([^\]]*))?\]\]'
     lead_text_regex = r'\[\[lead(?:-(sm|lg))?\|([^\]]+)\]\]'
     url_element_regex = r'\[\[url\|([0-9a-zA-Z_ -]*)\]\]'
     setting_regex = r'\[\[setting\|([a-zA-Z0-9_-]+)\]\]'
@@ -342,12 +342,14 @@ class TextPreRenderer:
             style = groups[2] if len(groups) > 2 else None  # primary, secondary, etc
             size = groups[3] if len(groups) > 3 else None  # sm, lg, or None
             element_id = groups[4] if len(groups) > 4 else groups[1]  # identifier/viewname
+            custom_label = groups[5] if len(groups) > 5 else None  # optional label override
 
             rendered_text = self.render_element(template=template,
                                                 element_id=element_id,
                                                 render_type=render_type,
                                                 style=style,
                                                 size=size,
+                                                custom_label=custom_label,
                                                 text=rendered_text)
 
             match = re.search(self.link_element_regex, rendered_text)
@@ -658,7 +660,7 @@ class TextPreRenderer:
 
         return None
 
-    def render_element(self, template, element_id, text, render_type=None, style=None, size=None):
+    def render_element(self, template, element_id, text, render_type=None, style=None, size=None, custom_label=None):
         """Renders an element with optional styling parameters."""
         if template == "orcid":
             # Validate ORCID format
@@ -679,11 +681,26 @@ class TextPreRenderer:
             return text.replace(f"[[{template}|{element_id}]]", orcid_html)
 
         if template == "plotly":
+            # Reconstruct the original tag (may include options like -height-800)
+            options_str = ''
+            if render_type:
+                options_str += f'-{render_type}'
+                if style:
+                    options_str += f'-{style}'
+                    if size:
+                        options_str += f'-{size}'
+            original_tag = f'[[{template}{options_str}|{element_id}]]'
+
+            # Build config dict from parsed options (e.g. -height-800 → {'height': '800'})
+            config = {}
+            if render_type and style:
+                config[render_type] = style
+
             # Load the JSON file and render as Plotly chart
             element = self.get_element(template, element_id)
             if element is None:
                 error_html = f"<span class='text-danger'>Plotly file not found: {element_id}</span>"
-                return text.replace(f"[[{template}|{element_id}]]", error_html)
+                return text.replace(original_tag, error_html)
 
             try:
                 # Read file content
@@ -698,29 +715,48 @@ class TextPreRenderer:
                 from ndr_core.ndr_templatetags.filters import PlotlyFilter
 
                 # Render using PlotlyFilter
-                plotly_filter = PlotlyFilter('plotly', plotly_data, {}, None)
+                plotly_filter = PlotlyFilter('plotly', plotly_data, config, None)
                 plotly_html = plotly_filter.get_rendered_value()
 
-                return text.replace(f"[[{template}|{element_id}]]", plotly_html)
+                return text.replace(original_tag, plotly_html)
 
             except FileNotFoundError:
                 error_html = f"<span class='text-danger'>Plotly file not found on disk: {element_id}</span>"
-                return text.replace(f"[[{template}|{element_id}]]", error_html)
+                return text.replace(original_tag, error_html)
             except json.JSONDecodeError as e:
                 error_html = f"<span class='text-danger'>Invalid JSON in Plotly file: {e}</span>"
-                return text.replace(f"[[{template}|{element_id}]]", error_html)
+                return text.replace(original_tag, error_html)
             except Exception as e:
                 error_html = f"<span class='text-danger'>Error rendering Plotly chart: {e}</span>"
-                return text.replace(f"[[{template}|{element_id}]]", error_html)
+                return text.replace(original_tag, error_html)
 
-        element = self.get_element(template, element_id)
+        # Split query string from element_id before lookup (only relevant for page links)
+        lookup_id = element_id
+        query_string = None
+        if template == 'page' and '?' in element_id:
+            lookup_id, query_string = element_id.split('?', 1)
+            # Unescape HTML entities in the query string only (e.g. &amp; → &)
+            # element_id itself is kept encoded for the text.replace() call later
+            import html as _html
+            query_string = _html.unescape(query_string)
+
+        element = self.get_element(template, lookup_id)
+
+        # Build the final href for page links (base URL + optional query string)
+        page_href = None
+        if template == 'page' and element is not None:
+            page_href = element.url()
+            if query_string:
+                page_href = f"{page_href}?{query_string}"
 
         # Build context with element data and styling parameters
         context = {
             'data': element,
             'render_type': render_type or ('href' if template == 'page' else None),
             'style': style or ('secondary' if template == 'page' else None),
-            'size': size
+            'size': size,
+            'custom_label': custom_label,
+            'page_href': page_href,
         }
 
         if isinstance(element, NdrCoreUIElement) and element.type == NdrCoreUIElement.UIElementType.MANIFEST_VIEWER:
@@ -732,7 +768,6 @@ class TextPreRenderer:
 
         # Build the original tag pattern to replace
         if render_type or style or size:
-            # Complex tag with styling
             tag_parts = [template]
             if render_type:
                 tag_parts.append(render_type)
@@ -742,8 +777,9 @@ class TextPreRenderer:
                 tag_parts.append(size)
             original_tag = f'[[{"-".join(tag_parts)}|{element_id}]]'
         else:
-            # Simple tag
             original_tag = f'[[{template}|{element_id}]]'
+        if custom_label is not None:
+            original_tag = original_tag[:-2] + f'|{custom_label}]]'
 
         text = text.replace(original_tag, element_html_string)
 
@@ -751,6 +787,9 @@ class TextPreRenderer:
 
     def get_element(self, template, element_id):
         """Returns an element."""
+        if template == 'page':
+            return self._get_page_element(element_id)
+
         if template in self.link_element_classes:
             element_class = self.link_element_classes[template]
         else:
@@ -767,6 +806,21 @@ class TextPreRenderer:
             element = element_class.objects.get(**kw)
             return element
         except element_class.DoesNotExist:
+            return None
+
+    def _get_page_element(self, element_id):
+        """Looks up a page by view_name (top-level) or parent/child path."""
+        try:
+            if '/' in element_id:
+                parent = None
+                page = None
+                for segment in element_id.split('/'):
+                    page = NdrCorePage.objects.get(view_name=segment, parent_page=parent)
+                    parent = page
+                return page
+            else:
+                return NdrCorePage.objects.get(view_name=element_id, parent_page=None)
+        except NdrCorePage.DoesNotExist:
             return None
 
     def get_pre_rendered_text(self):

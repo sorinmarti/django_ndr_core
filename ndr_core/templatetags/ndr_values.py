@@ -1,11 +1,21 @@
 """Template tags for NDR Core."""
 from django import template
+from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 
 from ndr_core.models import NdrCoreValue, NdrCoreImage, get_available_languages
 from ndr_core.ndr_settings import NdrSettings
 
 register = template.Library()
+
+
+@register.filter(name='render_settings', is_safe=True)
+def render_settings(text):
+    """Replaces [[setting|name]] tags in a string with their stored values."""
+    from ndr_core.ndr_template_tags import TextPreRenderer
+    if not text:
+        return text
+    return mark_safe(TextPreRenderer(str(text), None).create_settings())
 
 
 @register.simple_tag(name="config_value")

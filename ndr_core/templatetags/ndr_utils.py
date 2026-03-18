@@ -12,6 +12,15 @@ from ndr_core.ndr_templatetags.template_string import TemplateString
 
 register = template.Library()
 
+
+def _apply_page_tags(content, request):
+    """Run TextPreRenderer.create_links() on content if it contains [[ tags."""
+    if request is None or '[[' not in content:
+        return content
+    from ndr_core.ndr_template_tags import TextPreRenderer
+    renderer = TextPreRenderer(content, request)
+    return mark_safe(renderer.create_links())
+
 @register.tag(name="render_single")
 def render_single_tag(parser, token):
     """Renders a single result without header/footer wrapper.
@@ -61,31 +70,7 @@ class RenderSingleNode(template.Node):
         if not result_card_fields.exists():
             return ""
 
-        return RenderResultNode.create_simple_grid(result_card_fields, data)
-
-    @staticmethod
-    def create_field(field_config, data):
-        """Creates a result field with CSS Grid positioning - copied from RenderResultNode."""
-        field_template = "ndr_core/result_renderers/elements/result_field.html"
-        result_field = field_config.result_field
-
-        template_string = TemplateString(
-            result_field.rich_expression, data, show_errors=True
-        )
-        field_content = template_string.get_formatted_string()
-        field_content = template_string.sanitize_html(field_content)
-
-        field_context = {
-            "field_row": field_config.field_row,
-            "field_column": field_config.field_column,
-            "field_column_span": field_config.field_column_span,
-            "field_row_span": field_config.field_row_span,
-            "classes": result_field.field_classes,
-            "field_content": field_content,
-            "border_label": result_field.border_label,
-        }
-        field_template_str = get_template(field_template).render(field_context)
-        return mark_safe(field_template_str)
+        return RenderResultNode.create_simple_grid(result_card_fields, data, request=context.get('request'))
 
 
 @register.tag(name="render_data_list")
@@ -140,31 +125,7 @@ class RenderDataListNode(template.Node):
         if not result_card_fields.exists():
             return ""
 
-        return RenderResultNode.create_simple_grid(result_card_fields, data)
-
-    @staticmethod
-    def create_field(field_config, data):
-        """Creates a result field with CSS Grid positioning."""
-        field_template = "ndr_core/result_renderers/elements/result_field.html"
-        result_field = field_config.result_field
-
-        template_string = TemplateString(
-            result_field.rich_expression, data, show_errors=True
-        )
-        field_content = template_string.get_formatted_string()
-        field_content = template_string.sanitize_html(field_content)
-
-        field_context = {
-            "field_row": field_config.field_row,
-            "field_column": field_config.field_column,
-            "field_column_span": field_config.field_column_span,
-            "field_row_span": field_config.field_row_span,
-            "classes": result_field.field_classes,
-            "field_content": field_content,
-            "border_label": result_field.border_label,
-        }
-        field_template_str = get_template(field_template).render(field_context)
-        return mark_safe(field_template_str)
+        return RenderResultNode.create_simple_grid(result_card_fields, data, request=context.get('request'))
 
     def render(self, context):
         """Renders a result object."""
@@ -224,22 +185,22 @@ class RenderResultNode(template.Node):
         if not result_card_fields.exists():
             return ""
 
-        return self.create_simple_grid(result_card_fields, data)
+        return self.create_simple_grid(result_card_fields, data, request=context.get('request'))
 
     @staticmethod
-    def create_simple_grid(field_configs, data):
+    def create_simple_grid(field_configs, data, request=None):
         """Creates a CSS Grid container for result fields."""
         grid_html = '<div class="result-grid">'
 
         for field_config in field_configs:
-            field_html = RenderResultNode.create_field(field_config, data)
+            field_html = RenderResultNode.create_field(field_config, data, request=request)
             grid_html += field_html
 
         grid_html += '</div>'
         return mark_safe(grid_html)
 
     @staticmethod
-    def render_tab_container(result_field, data):
+    def render_tab_container(result_field, data, request=None):
         """Renders a tab container with child result fields as tabs."""
         from ndr_core.models import NdrCoreResultField
 
@@ -289,6 +250,7 @@ class RenderResultNode(template.Node):
                     )
                     child_content = template_string.get_formatted_string()
                     child_content = template_string.sanitize_html(child_content)
+                    child_content = _apply_page_tags(child_content, request)
 
                     tab_html += f'<div class="tab-pane-content">{child_content}</div>'
                 except NdrCoreResultField.DoesNotExist:
@@ -303,20 +265,21 @@ class RenderResultNode(template.Node):
         return mark_safe(tab_html)
 
     @staticmethod
-    def create_field(field_config, data):
+    def create_field(field_config, data, request=None):
         """Creates a result field with CSS Grid positioning."""
         field_template = "ndr_core/result_renderers/elements/result_field.html"
         result_field = field_config.result_field
 
         # Check if this is a tab container field
         if result_field.is_tab_container and result_field.tab_children:
-            field_content = RenderResultNode.render_tab_container(result_field, data)
+            field_content = RenderResultNode.render_tab_container(result_field, data, request=request)
         else:
             template_string = TemplateString(
                 result_field.rich_expression, data, show_errors=True
             )
             field_content = template_string.get_formatted_string()
             field_content = template_string.sanitize_html(field_content)
+            field_content = _apply_page_tags(field_content, request)
 
         field_context = {
             # Remove old Bootstrap size, add CSS Grid properties
@@ -409,6 +372,12 @@ def get_item(dictionary, key):
     if dictionary is None:
         return None
     return dictionary.get(key)
+
+
+@register.filter
+def tojson(value):
+    """Serialize a Python value to a JSON string safe for embedding in a <script> tag."""
+    return mark_safe(json.dumps(value))
 
 
 @register.filter

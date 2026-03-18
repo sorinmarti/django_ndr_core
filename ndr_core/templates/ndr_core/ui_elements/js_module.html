@@ -1,4 +1,5 @@
 {% load static %}
+{% load ndr_utils %}
 
 {# Get module configuration from first item #}
 {% with items=data.ndrcoreuielementitem_set.all %}
@@ -23,7 +24,7 @@
 
                     const containerId = 'js-module-{{ data.name }}';
                     const container = document.getElementById(containerId);
-                    const config = {{ config|safe }};
+                    const config = {{ config|tojson }};
 
                     // Load scripts sequentially so dependencies are ready before dependents
                     function loadScripts(urls, callback) {
