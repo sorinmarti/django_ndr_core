@@ -381,6 +381,12 @@ def tojson(value):
 
 
 @register.filter
+def contains_page(nav_item, page):
+    """Returns True if page is any child of nav_item, regardless of show_in_navigation."""
+    return nav_item.ndrcorepage_set.filter(pk=page.pk).exists()
+
+
+@register.filter
 def has_content(html):
     """Check if HTML has actual content beyond empty tags and whitespace entities."""
     if not html:

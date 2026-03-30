@@ -42,7 +42,7 @@
                 {% for nav_item in navigation %}
                     {% if nav_item.visible_children %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.visible_children %} active{% endif %}"
+                            <a class="nav-link dropdown-toggle{% if nav_item.view_name == page.view_name or page.parent_page == nav_item %} active{% endif %}"
                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ nav_item.label }}
                             </a>
@@ -55,7 +55,7 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link{% if nav_item.view_name == page.view_name %} active{% endif %}"
+                            <a class="nav-link{% if nav_item.view_name == page.view_name or page.parent_page == nav_item %} active{% endif %}"
                                href="{{ nav_item.url }}">{{ nav_item.label }}</a>
                         </li>
                     {% endif %}

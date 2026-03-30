@@ -39,7 +39,7 @@
                     {% for nav_item in navigation %}
                         {% if nav_item.visible_children %}
                             <li>
-                                <a href="#submenu{{ forloop.counter }}" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle{% if nav_item.view_name == page.view_name or page in nav_item.visible_children %} active{% endif %}">
+                                <a href="#submenu{{ forloop.counter }}" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle{% if nav_item.view_name == page.view_name or page.parent_page == nav_item %} active{% endif %}">
                                     {{ nav_item.label }}
                                 </a>
                                 <ul class="collapse list-unstyled" id="submenu{{ forloop.counter }}">
@@ -51,7 +51,7 @@
                             </li>
                         {% else %}
                             <li>
-                                <a href="{{ nav_item.url }}" class="{% if nav_item.view_name == page.view_name %} active{% endif %}">{{ nav_item.label }}</a>
+                                <a href="{{ nav_item.url }}" class="{% if nav_item.view_name == page.view_name or page.parent_page == nav_item %} active{% endif %}">{{ nav_item.label }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}
