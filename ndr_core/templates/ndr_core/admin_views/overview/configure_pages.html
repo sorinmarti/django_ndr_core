@@ -2,6 +2,18 @@
 {% load render_table from django_tables2 %}
 {% load crispy_forms_tags %}
 
+{% block extra_css %}
+    {% if background_form %}
+        {% include 'ndr_core/admin_views/includes/image_picker_init_css.html' %}
+    {% endif %}
+{% endblock %}
+
+{% block page_js %}
+    {% if background_form %}
+        {% include 'ndr_core/admin_views/includes/image_picker_init_js.html' %}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     <h2><i class="fa-regular fa-file"></i> Manage Pages</h2>
 
@@ -20,6 +32,9 @@
             <a href="{% url 'ndr_core:page_footer' %}" class="btn btn-sm btn-primary m-1{% if footer_form %} active{% endif %}">
                 <i class="fa-regular fa-window-minimize"></i> Manage Footer
             </a>
+            <a href="{% url 'ndr_core:page_background' %}" class="btn btn-sm btn-primary m-1{% if background_form %} active{% endif %}">
+                <i class="fa-regular fa-image"></i> Manage Background
+            </a>
         </div>
         <div>
             <a href="{% url 'ndr_core:help_chapter' 'pages' %}" class="btn btn-sm btn-outline-secondary m-1">
@@ -28,7 +43,7 @@
         </div>
     </div>
 
-    {% if not footer_form and not not_found_form %}
+    {% if not footer_form and not not_found_form and not background_form %}
         <div class="card bg-light mb-3">
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -111,6 +126,15 @@
             <div class="card-body">
                 <h5 class="card-title">Manage Page Footer</h5>
                 {% crispy footer_form %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if background_form %}
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Manage Default Background</h5>
+                {% crispy background_form %}
             </div>
         </div>
     {% endif %}

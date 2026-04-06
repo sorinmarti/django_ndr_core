@@ -37,6 +37,7 @@ from ndr_core.admin_views.uploads_views import (
     ManifestGroupCreateView, ManifestGroupEditView, ManifestGroupDeleteView,
     AjaxFileUploadView,
     ManifestBulkUploadView,
+    upload_embed_view,
 )
 from ndr_core.admin_views.export_views import (
     export_color_palette,
@@ -57,6 +58,7 @@ from ndr_core.admin_views.page_views import (
     PageDetailView,
     move_page_up,
     ManagePageFooter,
+    ManagePageBackground,
     BulkPageCreateView,
 )
 
@@ -129,6 +131,7 @@ from ndr_core.admin_views.ui_element_views import (
     TeamGridCreateView, TeamGridEditView,
     JSModuleCreateView, JSModuleEditView,
     CardGridCreateView, CardGridEditView,
+    PdfViewerCreateView, PdfViewerEditView,
     # Helper
     get_ndr_image_path
 )
@@ -159,6 +162,7 @@ urlpatterns = [
     # PAGES
     path('configure/pages/', ManagePages.as_view(), name='configure_pages'),
     path('configure/pages/footer/', ManagePageFooter.as_view(), name='page_footer'),
+    path('configure/pages/background/', ManagePageBackground.as_view(), name='page_background'),
     path('configure/pages/view/<int:pk>/', PageDetailView.as_view(), name='view_page'),
     path('configure/pages/create/new/', PageCreateView.as_view(), name='create_page'),
     path('configure/pages/create/bulk/', BulkPageCreateView.as_view(), name='bulk_create_pages'),
@@ -199,9 +203,10 @@ urlpatterns = [
     path('configure/uploads/edit/<int:pk>/', UploadEditView.as_view(), name='edit_upload'),
     path('configure/uploads/delete/<int:pk>/', UploadDeleteView.as_view(), name='delete_upload'),
     path('configure/uploads/ajax/upload/', AjaxFileUploadView.as_view(), name='ajax_file_upload'),
+    path('uploads/embed/<int:pk>/', upload_embed_view, name='upload_embed'),
     path('configure/manifest/uploads/create/new/', ManifestUploadCreateView.as_view(), name='create_manifest_upload'),
-    path('configure/manifest/uploads/edit/<str:pk>/', ManifestUploadEditView.as_view(), name='edit_manifest_upload'),
-    path('configure/manifest/uploads/delete/<str:pk>/', ManifestUploadDeleteView.as_view(),
+    path('configure/manifest/uploads/edit/<path:pk>/', ManifestUploadEditView.as_view(), name='edit_manifest_upload'),
+    path('configure/manifest/uploads/delete/<path:pk>/', ManifestUploadDeleteView.as_view(),
          name='delete_manifest_upload'),
     path('configure/manifest/groups/create/', ManifestGroupCreateView.as_view(), name='create_manifest_group'),
     path('configure/manifest/groups/edit/<int:pk>/', ManifestGroupEditView.as_view(), name='edit_manifest_group'),
@@ -289,6 +294,8 @@ urlpatterns = [
     path('configure/ui_elements/edit/video/<str:pk>/', VideoEditView.as_view(), name='edit_ui_element_video'),
     path('configure/ui_elements/create/audio/', AudioCreateView.as_view(), name='create_ui_element_audio'),
     path('configure/ui_elements/edit/audio/<str:pk>/', AudioEditView.as_view(), name='edit_ui_element_audio'),
+    path('configure/ui_elements/create/pdf_viewer/', PdfViewerCreateView.as_view(), name='create_ui_element_pdf_viewer'),
+    path('configure/ui_elements/edit/pdf_viewer/<str:pk>/', PdfViewerEditView.as_view(), name='edit_ui_element_pdf_viewer'),
     path('configure/ui_elements/create/academic_about/', AcademicAboutCreateView.as_view(), name='create_ui_element_academic_about'),
     path('configure/ui_elements/edit/academic_about/<str:pk>/', AcademicAboutEditView.as_view(), name='edit_ui_element_academic_about'),
     path('configure/ui_elements/create/team_grid/', TeamGridCreateView.as_view(), name='create_ui_element_team_grid'),

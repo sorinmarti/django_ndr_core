@@ -1,10 +1,11 @@
 """Views for the Uploads section of the admin panel. """
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
-from django.shortcuts import render
+from django.http import JsonResponse, FileResponse, Http404
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, UpdateView, DeleteView
 
@@ -337,3 +338,16 @@ class ManifestBulkUploadView(AdminViewMixin, LoginRequiredMixin, View):
         return render(request,
                      template_name='ndr_core/admin_views/create/manifest_bulk_upload_results.html',
                      context=context)
+
+
+@xframe_options_exempt
+def upload_embed_view(request, pk):
+    """Serve an uploaded file inline for embedding (e.g. PDF viewer).
+
+    The @xframe_options_exempt decorator removes the X-Frame-Options header so
+    the browser's native PDF viewer (which uses internal frames) can load the file.
+    """
+    upload = get_object_or_404(NdrCoreUpload, pk=pk)
+    if not upload.file:
+        raise Http404
+    return FileResponse(upload.file.open('rb'), as_attachment=False)

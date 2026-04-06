@@ -1,0 +1,56 @@
+{% comment %}
+Shared link-style controls for the NDR tag modal.
+Expects a `prefix` variable (e.g. "ndrPage" or "ndrExt") used to make IDs unique.
+{% endcomment %}
+<div class="mb-3">
+  <label class="form-label">Style</label>
+  <div class="d-flex gap-3">
+    <div class="form-check">
+      <input class="form-check-input ndr-update ndr-style-radio" type="radio"
+             name="{{ prefix }}Style" id="{{ prefix }}StyleLink" value="link" checked>
+      <label class="form-check-label" for="{{ prefix }}StyleLink">Link</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input ndr-update ndr-style-radio" type="radio"
+             name="{{ prefix }}Style" id="{{ prefix }}StyleBtn" value="btn">
+      <label class="form-check-label" for="{{ prefix }}StyleBtn">Button</label>
+    </div>
+  </div>
+</div>
+<div class="{{ prefix }}-btn-options" style="display:none;">
+  <div class="row g-2 mb-3">
+    <div class="col-md-6">
+      <label for="{{ prefix }}Color" class="form-label">Color</label>
+      <select class="form-select ndr-update" id="{{ prefix }}Color">
+        <option value="primary">Primary</option>
+        <option value="secondary">Secondary</option>
+        <option value="success">Success</option>
+        <option value="danger">Danger</option>
+        <option value="warning">Warning</option>
+        <option value="info">Info</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Size</label>
+      <div class="d-flex gap-2 mt-1">
+        <div class="form-check">
+          <input class="form-check-input ndr-update" type="radio"
+                 name="{{ prefix }}Size" id="{{ prefix }}SizeNormal" value="" checked>
+          <label class="form-check-label" for="{{ prefix }}SizeNormal">Normal</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input ndr-update" type="radio"
+                 name="{{ prefix }}Size" id="{{ prefix }}SizeSm" value="sm">
+          <label class="form-check-label" for="{{ prefix }}SizeSm">Small</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input ndr-update" type="radio"
+                 name="{{ prefix }}Size" id="{{ prefix }}SizeLg" value="lg">
+          <label class="form-check-label" for="{{ prefix }}SizeLg">Large</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

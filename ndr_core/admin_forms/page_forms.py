@@ -1,5 +1,5 @@
 """Contains forms used in the NDRCore admin interface for the creation or edit of NDR pages."""
-from django_ckeditor_5.widgets import CKEditor5Widget
+from ndr_core.admin_forms.ndr_ckeditor_widget import NdrCKEditor5Widget
 from crispy_forms.bootstrap import TabHolder, Tab
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, HTML
@@ -66,7 +66,8 @@ class PageForm(forms.ModelForm):
         fields = ['name', 'show_page_title', 'label', 'show_in_navigation', 'show_navigation', 'show_footer',
                   'center_content', 'page_type', 'parent_page', 'search_configs', 'view_name', 'template_text',
                   'use_default_background', 'background_image', 'background_image_dark', 'background_display_mode',
-                  'background_position', 'background_size', 'overlay_enabled', 'overlay_color', 'overlay_opacity']
+                  'background_position', 'background_size', 'overlay_enabled', 'overlay_color', 'overlay_opacity',
+                  'image_opacity']
 
     def __init__(self, *args, **kwargs):
         """Init class and create form helper."""
@@ -75,10 +76,14 @@ class PageForm(forms.ModelForm):
         self.main_language = NdrCoreValue.objects.get(value_name='ndr_language').get_value()
         self.additional_languages = NdrCoreValue.objects.get(value_name='available_languages').get_value()
 
+        # Override the widget for the main template_text field (CKEditor5Field sets
+        # it to plain CKEditor5Widget; we need NdrCKEditor5Widget for the tag inserter)
+        self.fields['template_text'].widget = NdrCKEditor5Widget(config_name='page_editor')
+
         for lang in self.additional_languages:
             self.fields[f'template_text_{lang}'] = forms.CharField(label=f"Template Text ({lang})",
                                                                    required=False,
-                                                                   widget=CKEditor5Widget(config_name='page_editor'))
+                                                                   widget=NdrCKEditor5Widget(config_name='page_editor'))
             try:
                 translation = NdrCoreRichTextTranslation.objects.get(language=lang,
                                                                      table_name='NdrCorePage',
@@ -211,6 +216,7 @@ class PageForm(forms.ModelForm):
                 Column('overlay_enabled', css_class='form-group col-md-4 mb-0'),
                 Column('overlay_color', css_class='form-group col-md-4 mb-0'),
                 Column('overlay_opacity', css_class='form-group col-md-4 mb-0'),
+                Column('image_opacity', css_class='form-group col-md-4 mb-0'),
                 css_class='row g-2'
             ),
         ]
@@ -355,6 +361,137 @@ class FooterForm(SettingsListForm):
         )
         layout.append(form_row)
         layout.append(get_form_buttons('Save Settings'))
+        return helper
+
+
+class BackgroundForm(forms.Form):
+    """Form to configure the site-wide default background image and overlay."""
+
+    bg_image = ImageChoiceField(
+        queryset=NdrCoreImage.objects.filter(image_active=True).order_by('-uploaded_at'),
+        required=False,
+        label='Default Background Image (Light Mode)',
+        help_text='Shown on all pages that use the default background.',
+    )
+    bg_image_dark = ImageChoiceField(
+        queryset=NdrCoreImage.objects.filter(image_active=True).order_by('-uploaded_at'),
+        required=False,
+        label='Default Background Image (Dark Mode)',
+        help_text='Falls back to the light mode image if not set.',
+    )
+    display_mode = forms.ChoiceField(
+        required=False,
+        label='Display Mode',
+        help_text='How the background image is displayed.',
+    )
+    overlay_enabled = forms.BooleanField(
+        required=False,
+        label='Enable Overlay',
+        help_text='Adds a semi-transparent colour layer over the image for better text readability.',
+    )
+    overlay_color = forms.CharField(
+        required=False,
+        max_length=20,
+        label='Overlay Colour',
+        help_text='Hex colour code, e.g. #000000.',
+        widget=forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),
+    )
+    overlay_opacity = forms.FloatField(
+        required=False,
+        min_value=0.0,
+        max_value=1.0,
+        label='Overlay Opacity',
+        help_text='0.0 = fully transparent, 1.0 = fully opaque.',
+        widget=forms.NumberInput(attrs={'step': '0.05'}),
+    )
+    image_opacity = forms.FloatField(
+        required=False,
+        min_value=0.0,
+        max_value=1.0,
+        label='Image Opacity',
+        help_text='0.0 = invisible, 1.0 = fully visible.',
+        widget=forms.NumberInput(attrs={'step': '0.05'}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Populate display mode choices from the NdrCoreValue fixture options
+        mode_setting = NdrCoreValue.get_or_initialize('default_bg_display_mode')
+        self.fields['display_mode'].choices = mode_setting.get_options() or []
+
+        # Load current values as form initials
+        def _image_initial(value_name):
+            raw = NdrCoreValue.get_or_initialize(value_name).get_value()
+            if raw and str(raw).strip().isdigit():
+                try:
+                    return NdrCoreImage.objects.get(pk=int(raw))
+                except NdrCoreImage.DoesNotExist:
+                    pass
+            return None
+
+        self.initial = {
+            'bg_image':        _image_initial('default_bg_image_id'),
+            'bg_image_dark':   _image_initial('default_bg_image_dark_id'),
+            'display_mode':    NdrCoreValue.get_or_initialize('default_bg_display_mode').get_value(),
+            'overlay_enabled': NdrCoreValue.get_or_initialize('default_overlay_enabled').get_value(),
+            'overlay_color':   NdrCoreValue.get_or_initialize('default_overlay_color').get_value(),
+            'overlay_opacity': NdrCoreValue.get_or_initialize('default_overlay_opacity').get_value(),
+            'image_opacity':   NdrCoreValue.get_or_initialize(
+                'default_bg_image_opacity', init_value='1.0',
+                init_label='Default Background Image Opacity'
+            ).get_value(),
+        }
+
+    def save(self):
+        """Persist all values to NdrCoreValue."""
+        def _set(name, value):
+            obj = NdrCoreValue.objects.get(value_name=name)
+            obj.value_value = str(value) if value is not None else ''
+            obj.save()
+
+        img = self.cleaned_data.get('bg_image')
+        _set('default_bg_image_id', img.pk if img else '')
+
+        img_dark = self.cleaned_data.get('bg_image_dark')
+        _set('default_bg_image_dark_id', img_dark.pk if img_dark else '')
+
+        _set('default_bg_display_mode', self.cleaned_data.get('display_mode') or 'NONE')
+        _set('default_overlay_enabled', 'true' if self.cleaned_data.get('overlay_enabled') else 'false')
+        _set('default_overlay_color', self.cleaned_data.get('overlay_color') or '#000000')
+
+        opacity = self.cleaned_data.get('overlay_opacity')
+        _set('default_overlay_opacity', opacity if opacity is not None else 0.5)
+
+        img_opacity = self.cleaned_data.get('image_opacity')
+        _set('default_bg_image_opacity', img_opacity if img_opacity is not None else 1.0)
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_method = 'POST'
+        layout = helper.layout = Layout()
+
+        layout.append(Row(
+            Column('bg_image', css_class='col-md-6'),
+            Column('bg_image_dark', css_class='col-md-6'),
+            css_class='row g-2',
+        ))
+        layout.append(Row(
+            Column('display_mode', css_class='col-md-12'),
+            css_class='row g-2',
+        ))
+        layout.append(Row(
+            Column('overlay_enabled', css_class='col-md-12'),
+            css_class='row g-2',
+        ))
+        layout.append(Row(
+            Column('overlay_color', css_class='col-md-4'),
+            Column('overlay_opacity', css_class='col-md-4'),
+            Column('image_opacity', css_class='col-md-4'),
+            css_class='row g-2',
+        ))
+        layout.append(get_form_buttons('Save Background Settings'))
         return helper
 
 

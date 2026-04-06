@@ -1,0 +1,18 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h2><i class="fa-regular fa-file-pdf"></i> Create PDF Viewer UI Element</h2>
+
+    <div class="card bg-light mb-3">
+        <div class="card-body">
+            {% crispy form %}
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'ndr_core:configure_ui_elements' %}" class="btn btn-secondary">
+            <i class="fa-regular fa-arrow-left"></i> Back to UI Elements
+        </a>
+    </div>
+{% endblock %}

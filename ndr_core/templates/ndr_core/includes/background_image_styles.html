@@ -23,70 +23,88 @@
             margin: 0;
             padding: 0;
         }
-        body {
-            background-image: url('{{ page_background.bg_image.image.url }}') !important;
-            background-size: {{ page_background.bg_size }} !important;
-            background-position: {{ page_background.bg_position }} !important;
-            background-repeat: no-repeat !important;
-            background-attachment: {% if page_background.bg_mode == 'FIXED_PARALLAX' %}fixed{% else %}scroll{% endif %} !important;
-        }
-        {% if page_background.bg_image_dark %}
-        [data-theme="dark"] body {
-            background-image: url('{{ page_background.bg_image_dark.image.url }}') !important;
-        }
-        {% endif %}
-        {% if page_background.overlay_enabled %}
-            body::before {
-                content: '';
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: {{ page_background.overlay_color }};
-                opacity: {{ page_background.overlay_opacity }};
-                z-index: 0;
-                pointer-events: none;
-            }
-            body > * {
-                position: relative;
-                z-index: 1;
-            }
-        {% endif %}
-    {% elif page_background.bg_mode == 'HEADER_ONLY' %}
-        .page-header-bg {
+
+        {# Background image lives in ::after so its opacity is independent of content #}
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background-image: url('{{ page_background.bg_image.image.url }}');
             background-size: {{ page_background.bg_size }};
             background-position: {{ page_background.bg_position }};
             background-repeat: no-repeat;
-            padding: 80px 0;
-            margin-bottom: 2rem;
-            {% if page_background.overlay_enabled %}
-                position: relative;
-            {% endif %}
+            background-attachment: {% if page_background.bg_mode == 'FIXED_PARALLAX' %}fixed{% else %}scroll{% endif %};
+            opacity: {{ page_background.image_opacity }};
+            z-index: -1;
+            pointer-events: none;
         }
         {% if page_background.bg_image_dark %}
-        [data-theme="dark"] .page-header-bg {
+        [data-theme="dark"] body::after {
             background-image: url('{{ page_background.bg_image_dark.image.url }}');
         }
         {% endif %}
+
         {% if page_background.overlay_enabled %}
-            .page-header-bg::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: {{ page_background.overlay_color }};
-                opacity: {{ page_background.overlay_opacity }};
-                z-index: 0;
-            }
-            .page-header-bg > * {
-                position: relative;
-                z-index: 1;
-            }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: {{ page_background.overlay_color }};
+            opacity: {{ page_background.overlay_opacity }};
+            z-index: 0;
+            pointer-events: none;
+        }
         {% endif %}
+
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
+
+    {% elif page_background.bg_mode == 'HEADER_ONLY' %}
+        .page-header-bg {
+            position: relative;
+            padding: 80px 0;
+            margin-bottom: 2rem;
+        }
+
+        {# Background image in ::after, overlay in ::before #}
+        .page-header-bg::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('{{ page_background.bg_image.image.url }}');
+            background-size: {{ page_background.bg_size }};
+            background-position: {{ page_background.bg_position }};
+            background-repeat: no-repeat;
+            opacity: {{ page_background.image_opacity }};
+            z-index: 0;
+        }
+        {% if page_background.bg_image_dark %}
+        [data-theme="dark"] .page-header-bg::after {
+            background-image: url('{{ page_background.bg_image_dark.image.url }}');
+        }
+        {% endif %}
+
+        {% if page_background.overlay_enabled %}
+        .page-header-bg::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: {{ page_background.overlay_color }};
+            opacity: {{ page_background.overlay_opacity }};
+            z-index: 1;
+        }
+        {% endif %}
+
+        .page-header-bg > * {
+            position: relative;
+            z-index: 2;
+        }
     {% endif %}
 </style>
 {% endif %}

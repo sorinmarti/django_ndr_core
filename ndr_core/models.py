@@ -824,6 +824,13 @@ class NdrCorePage(TranslatableMixin, models.Model):
     )
     """Opacity of the overlay (0.0 to 1.0)."""
 
+    image_opacity = models.FloatField(
+        default=1.0,
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+        help_text="Background image opacity (0.0 = invisible, 1.0 = fully visible)"
+    )
+    """Opacity of the background image itself (independent of the overlay)."""
+
     def __getattribute__(self, item):
         """Returns the translated field for a given language. If no translation exists,
         the default value is returned. """
@@ -909,12 +916,21 @@ class NdrCorePage(TranslatableMixin, models.Model):
                 default_overlay_enabled = NdrCoreValue.objects.get(value_name='default_overlay_enabled').get_value()
                 default_overlay_color = NdrCoreValue.objects.get(value_name='default_overlay_color').get_value()
                 default_overlay_opacity = NdrCoreValue.objects.get(value_name='default_overlay_opacity').get_value()
+                default_image_opacity = NdrCoreValue.get_or_initialize(
+                    'default_bg_image_opacity', init_value='1.0',
+                    init_label='Default Background Image Opacity'
+                ).get_value()
 
-                # Convert opacity string to float
+                # Convert opacity strings to float
                 try:
                     overlay_opacity_float = float(default_overlay_opacity)
                 except (ValueError, TypeError):
                     overlay_opacity_float = 0.5
+
+                try:
+                    image_opacity_float = float(default_image_opacity)
+                except (ValueError, TypeError):
+                    image_opacity_float = 1.0
 
                 return {
                     'bg_image': default_bg_image,
@@ -925,9 +941,9 @@ class NdrCorePage(TranslatableMixin, models.Model):
                     'overlay_enabled': default_overlay_enabled,
                     'overlay_color': default_overlay_color,
                     'overlay_opacity': overlay_opacity_float,
+                    'image_opacity': image_opacity_float,
                 }
             except NdrCoreValue.DoesNotExist:
-                # If defaults don't exist, return no background
                 return {
                     'bg_image': None,
                     'bg_image_dark': None,
@@ -937,6 +953,7 @@ class NdrCorePage(TranslatableMixin, models.Model):
                     'overlay_enabled': False,
                     'overlay_color': '#000000',
                     'overlay_opacity': 0.5,
+                    'image_opacity': 1.0,
                 }
         else:
             # Return page-specific settings
@@ -949,6 +966,7 @@ class NdrCorePage(TranslatableMixin, models.Model):
                 'overlay_enabled': self.overlay_enabled,
                 'overlay_color': self.overlay_color,
                 'overlay_opacity': self.overlay_opacity,
+                'image_opacity': self.image_opacity,
             }
 
     class Meta:
@@ -1465,6 +1483,11 @@ class NdrCoreUpload(models.Model):
     file = models.FileField(upload_to='uploads/files/')
     """Actual file"""
 
+    def __str__(self):
+        if self.title:
+            return self.title
+        return self.file.name if self.file else f'Upload {self.pk}'
+
     def get_file_extension(self):
         """Returns the file extension in lowercase."""
         import os
@@ -1638,6 +1661,7 @@ class NdrCoreUIElement(models.Model):
         TEAM_GRID = "team_grid", "Team Members Grid"
         JS_MODULE = "js_module", "JavaScript Module"
         CARD_GRID = "card_grid", "Card Grid"
+        PDF_VIEWER = "pdf_viewer", "PDF Viewer"
 
     type = models.CharField(max_length=100,
                             choices=UIElementType.choices,

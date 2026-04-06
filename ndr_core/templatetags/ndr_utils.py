@@ -5,12 +5,34 @@ import uuid
 from datetime import datetime, timedelta
 
 from django import template
-from django.template.loader import get_template
+from django.template.loader import get_template, render_to_string
 from django.utils.safestring import mark_safe
 from django.utils import timezone
 from ndr_core.ndr_templatetags.template_string import TemplateString
 
 register = template.Library()
+
+
+@register.simple_tag(takes_context=True)
+def ndr_tag_inserter(context):
+    """Renders the NDR template-tag inserter modal and its trigger JS.
+
+    Place once in the admin base template.  The modal is pre-populated with
+    all pages, UI elements, file uploads and string-type settings so no AJAX
+    is needed at runtime.
+    """
+    from ndr_core.models import NdrCorePage, NdrCoreUIElement, NdrCoreUpload, NdrCoreValue
+
+    ctx = {
+        'pages': NdrCorePage.objects.all().order_by('name'),
+        'ui_elements': NdrCoreUIElement.objects.all().order_by('type', 'name'),
+        'uploads': NdrCoreUpload.objects.all().order_by('title'),
+        'settings': NdrCoreValue.objects.filter(
+            value_type__in=['string', 'rich', 'url']
+        ).order_by('value_label'),
+    }
+    html = render_to_string('ndr_core/admin_views/ndr_tag_modal.html', ctx, request=context.get('request'))
+    return mark_safe(html)
 
 
 def _apply_page_tags(content, request):

@@ -11,6 +11,7 @@ from .data_object_forms import DataObjectCreateForm, DataObjectEditForm
 from .team_grid_forms import TeamGridCreateForm, TeamGridEditForm
 from .js_module_forms import JSModuleCreateForm, JSModuleEditForm
 from .card_grid_forms import CardGridCreateForm, CardGridEditForm, CardGridItemFormSet
+from .pdf_viewer_forms import PdfViewerCreateForm, PdfViewerEditForm
 
 __all__ = [
     'BaseUIElementForm',
@@ -39,4 +40,6 @@ __all__ = [
     'CardGridCreateForm',
     'CardGridEditForm',
     'CardGridItemFormSet',
+    'PdfViewerCreateForm',
+    'PdfViewerEditForm',
 ]

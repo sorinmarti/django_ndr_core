@@ -22,6 +22,7 @@ from ndr_core.admin_forms.ui_element_types import (
 )
 from ndr_core.admin_forms.ui_element_types.video_forms import VideoCreateForm, VideoEditForm
 from ndr_core.admin_forms.ui_element_types.audio_forms import AudioCreateForm, AudioEditForm
+from ndr_core.admin_forms.ui_element_types.pdf_viewer_forms import PdfViewerCreateForm, PdfViewerEditForm
 from ndr_core.admin_forms.ui_element_types.academic_about_forms import AcademicAboutCreateForm, AcademicAboutEditForm
 from ndr_core.admin_forms.ui_element_types.team_grid_forms import TeamGridCreateForm, TeamGridEditForm, TeamGridItemFormSet
 from ndr_core.admin_forms.ui_element_types.slides_forms import SlidesItemFormSet
@@ -477,6 +478,22 @@ class AudioEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     form_class = AudioEditForm
     success_url = reverse_lazy('ndr_core:configure_ui_elements')
     template_name = 'ndr_core/admin_views/edit/ui_element_audio_edit.html'
+
+
+class PdfViewerCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
+    """View to create a new PDF Viewer UI Element."""
+    model = NdrCoreUIElement
+    form_class = PdfViewerCreateForm
+    success_url = reverse_lazy('ndr_core:configure_ui_elements')
+    template_name = 'ndr_core/admin_views/create/ui_element_pdf_viewer_create.html'
+
+
+class PdfViewerEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
+    """View to edit an existing PDF Viewer UI Element."""
+    model = NdrCoreUIElement
+    form_class = PdfViewerEditForm
+    success_url = reverse_lazy('ndr_core:configure_ui_elements')
+    template_name = 'ndr_core/admin_views/edit/ui_element_pdf_viewer_edit.html'
 
 
 class AcademicAboutCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):

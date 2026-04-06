@@ -17,9 +17,8 @@ class TextPreRenderer:
 
     MAX_ITERATIONS = 50
     ui_element_regex = r'\[\[element\|([a-zA-Z0-9_-]+)\]\]'
-    link_element_regex = r'\[\[(file|page|orcid|plotly)(?:-([a-z]+)-([a-z0-9]+)(?:-([a-z0-9]+))?)?\|([0-9a-zA-Z_ /?=&;-]*)(?:\|([^\]]*))?\]\]'
-    lead_text_regex = r'\[\[lead(?:-(sm|lg))?\|([^\]]+)\]\]'
-    url_element_regex = r'\[\[url\|([0-9a-zA-Z_ -]*)\]\]'
+    link_element_regex = r'\[\[(file|page|orcid|plotly|link)(?:-([a-z]+)-([a-z0-9]+)(?:-([a-z0-9]+))?)?\|([0-9a-zA-Z_ /?=&;:.#%~+@-]*)(?:\|([^\]]*))?\]\]'
+    url_element_regex = r'\[\[url\|([0-9a-zA-Z_ -]*)\]\]'  # deprecated, kept for parse-compat
     setting_regex = r'\[\[setting\|([a-zA-Z0-9_-]+)\]\]'
     # Updated regex to capture both old syntax ([[start_block=Title]]) and new syntax ([[start_block:options]])
     container_regex = r'\[\[(start|end)_(block|cell)(?:[:=](.*?))?\]\]'
@@ -495,36 +494,6 @@ class TextPreRenderer:
 
         return rendered_text
 
-    def create_lead_text(self):
-        """Creates styled lead text for hero/intro sections."""
-        rendered_text = self.text
-        match = re.search(self.lead_text_regex, rendered_text)
-        security_breaker = 0
-
-        while match:
-            size = match.group(1) if match.group(1) else None  # sm, lg, or None
-            text_content = match.group(2)  # The actual text
-
-            # Build CSS classes
-            classes = ['lead']
-            if size:
-                classes.append(f'lead-{size}')
-
-            # Create the lead paragraph HTML
-            lead_html = f'<p class="{" ".join(classes)}">{text_content}</p>'
-
-            # Replace the tag with the rendered HTML
-            full_tag = match.group(0)
-            rendered_text = rendered_text.replace(full_tag, lead_html, 1)
-
-            # Search for next lead tag
-            match = re.search(self.lead_text_regex, rendered_text)
-
-            security_breaker += 1
-            if security_breaker > self.MAX_ITERATIONS:
-                raise PreRenderError("Too many lead text rendering iterations.")
-
-        return rendered_text
 
     def render_ui_element(self, element_name, text):
         """Renders a UI element by name."""
@@ -590,6 +559,18 @@ class TextPreRenderer:
                 context['audio_file'] = item.upload_file
                 context['audio_title'] = item.title
                 context['audio_description'] = item.text
+
+        # Special handling for PDF_VIEWER type
+        if element.type == NdrCoreUIElement.UIElementType.PDF_VIEWER:
+            items = element.items()
+            if items:
+                context['pdf_files'] = [item.upload_file for item in items if item.upload_file]
+                context['pdf_title'] = items[0].title
+                context['pdf_description'] = items[0].text
+                try:
+                    context['pdf_height'] = int(items[0].object_id) if items[0].object_id else 800
+                except (ValueError, TypeError):
+                    context['pdf_height'] = 800
 
         # Special handling for ACADEMIC_ABOUT type
         if element.type == NdrCoreUIElement.UIElementType.ACADEMIC_ABOUT:
@@ -679,6 +660,38 @@ class TextPreRenderer:
             </a>
             """
             return text.replace(f"[[{template}|{element_id}]]", orcid_html)
+
+        if template == "link":
+            # Direct external URL — no database lookup needed
+            url = element_id
+            label = custom_label or url
+
+            if render_type == "btn":
+                css_class = f"btn btn-{style or 'primary'}"
+                if size:
+                    css_class += f" btn-{size}"
+                link_html = f'<a href="{url}" class="{css_class}" target="_blank" rel="noopener noreferrer">{label}</a>'
+            elif style:
+                link_html = f'<a href="{url}" class="link-{style}" target="_blank" rel="noopener noreferrer">{label}</a>'
+            else:
+                link_html = f'<a href="{url}" target="_blank" rel="noopener noreferrer">{label}</a>'
+
+            # Reconstruct the original tag to replace
+            if render_type or style or size:
+                tag_parts = ["link"]
+                if render_type:
+                    tag_parts.append(render_type)
+                if style:
+                    tag_parts.append(style)
+                if size:
+                    tag_parts.append(size)
+                original_tag = f'[[{"-".join(tag_parts)}|{url}]]'
+            else:
+                original_tag = f'[[link|{url}]]'
+            if custom_label is not None:
+                original_tag = original_tag[:-2] + f'|{custom_label}]]'
+
+            return text.replace(original_tag, link_html)
 
         if template == "plotly":
             # Reconstruct the original tag (may include options like -height-800)
@@ -831,13 +844,11 @@ class TextPreRenderer:
             return self.text
 
         try:
-            self.text = self.create_lead_text()
             self.text = self.create_code_blocks()
             self.text = self.create_containers()
             self.text = self.create_toc()
             self.text = self.create_ui_elements()
             self.text = self.create_settings()
-            self.text = self.create_urls()
             self.text = self.create_links()
         except PreRenderError as e:
             raise e

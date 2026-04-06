@@ -1,5 +1,6 @@
 {% load static %}
 {% load ndr_values %}
+{% load ndr_utils %}
 
 <!doctype html>
 <html lang="en">
@@ -60,11 +61,11 @@
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="{% url 'ndr_core:ui_settings' %}">
                                                         <i class="fa-regular fa-window-maximize"></i>
-                                                        Change UI Style
+                                                        UI Style
                                                     </a>
                                                     <a class="dropdown-item" href="{% url 'ndr_core:configure_colors' %}">
                                                         <i class="fa-regular fa-palette"></i>
-                                                        Manage Color Palettes
+                                                        Color Palettes
                                                     </a>
                                                 </div>
                                             </li>
@@ -76,23 +77,23 @@
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="{% url 'ndr_core:configure_images' %}">
                                                         <i class="fa-regular fa-images"></i>
-                                                        Manage Page Images
+                                                        Page Images
                                                     </a>
                                                     <a class="dropdown-item" href="{% url 'ndr_core:manage_logos' %}">
                                                         <i class="fa-regular fa-image"></i>
-                                                        Manage Logos
+                                                        Logos
                                                     </a>
                                                     <a class="dropdown-item" href="{% url 'ndr_core:configure_ui_elements' %}">
                                                         <i class="fa-regular fa-window-restore"></i>
-                                                        Manage UI Elements
+                                                        UI Elements
                                                     </a>
                                                     <a class="dropdown-item" href="{% url 'ndr_core:configure_uploads' %}">
                                                         <i class="fa-regular fa-file-upload"></i>
-                                                        Manage File Uploads
+                                                        File Uploads
                                                     </a>
                                                     <a class="dropdown-item" href="{% url 'ndr_core:configure_translations' %}">
                                                         <i class="fa-regular fa-language"></i>
-                                                        Manage Translations
+                                                        Translations
                                                     </a>
                                                 </div>
                                             </li>
@@ -107,15 +108,15 @@
                                                 <div class="dropdown-menu">
                                                     <a class="dropdown-item" href="{% url 'ndr_core:configure_messages' %}">
                                                         <i class="fa-regular fa-inbox"></i>
-                                                        View Contact Messages
+                                                        Contact Messages
                                                     </a>
                                                     <a class="dropdown-item" href="{% url 'ndr_core:configure_corrections' %}">
                                                         <i class="fa-regular fa-check-double"></i>
-                                                        View Correction Suggestions
+                                                        Correction Suggestions
                                                     </a>
                                                     <a class="dropdown-item" href="{% url 'ndr_core:search_statistics' %}">
                                                         <i class="fa-regular fa-chart-simple"></i>
-                                                        View Search Statistics
+                                                        Search Statistics
                                                     </a>
                                                     <a class="dropdown-item" href="{% url 'ndr_core:seo' %}">
                                                         <i class="fa-brands fa-google"></i>
@@ -202,6 +203,9 @@
 
         {% block page_js %}
         {% endblock %}
+
+        {% ndr_tag_inserter %}
+        <script src="{% static 'ndr_core/js/ndr_tag_inserter.js' %}"></script>
 
     </body>
 </html>

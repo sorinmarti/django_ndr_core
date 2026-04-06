@@ -32,6 +32,38 @@ class JSModuleForm(BaseUIElementForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, ui_element_type='js_module', **kwargs)
 
+    def clean_js_module_package(self):
+        """Validate zip package structure before saving."""
+        import zipfile
+        import json
+        from io import BytesIO
+
+        package_file = self.cleaned_data.get('js_module_package')
+        if not package_file:
+            return package_file
+
+        try:
+            zip_data = package_file.read()
+            zip_file = zipfile.ZipFile(BytesIO(zip_data))
+        except zipfile.BadZipFile:
+            raise forms.ValidationError("Invalid zip file format.")
+
+        try:
+            config_data = zip_file.read('config.json').decode('utf-8')
+            json.loads(config_data)
+        except KeyError:
+            raise forms.ValidationError("Package must contain config.json at root level.")
+        except json.JSONDecodeError as e:
+            raise forms.ValidationError(f"Invalid JSON in config.json: {e}")
+        except UnicodeDecodeError:
+            raise forms.ValidationError("config.json must be UTF-8 encoded.")
+        finally:
+            zip_file.close()
+
+        # Reset file pointer so save() can re-read the file
+        package_file.seek(0)
+        return package_file
+
     def clean_js_module_config(self):
         """Validate JSON configuration structure."""
         config = self.cleaned_data.get('js_module_config') or {}

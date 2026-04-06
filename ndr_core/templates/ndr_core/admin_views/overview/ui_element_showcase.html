@@ -194,6 +194,25 @@
             </div>
         </div>
 
+        <!-- PDF Viewer -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'ndr_core/images/admin/ui_elements/none.png' %}"
+                     class="card-img-top" alt="PDF Viewer"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title"><i class="fa-regular fa-file-pdf"></i> PDF Viewer</h5>
+                    <p class="card-text flex-grow-1">
+                        Embed an uploaded PDF file directly in your page using the browser's
+                        native PDF renderer. Configurable height with a download fallback.
+                    </p>
+                    <a href="{% url 'ndr_core:create_ui_element_pdf_viewer' %}" class="btn btn-primary btn-block">
+                        <i class="fa-regular fa-plus-circle"></i> Create PDF Viewer
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- IFrame -->
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             <div class="card h-100 shadow-sm">

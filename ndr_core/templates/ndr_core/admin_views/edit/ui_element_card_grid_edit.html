@@ -42,6 +42,21 @@
                     {% endfor %}
                 </div>
 
+                <div id="empty-form-template" style="display:none;">
+                    <div class="formset-item d-flex align-items-center gap-2 mb-2 p-2 border rounded bg-white">
+                        <span class="text-muted fw-bold me-1" style="min-width:1.5rem;">#</span>
+                        {{ formset.empty_form.id }}
+                        {{ formset.empty_form.ORDER }}
+                        {{ formset.empty_form.DELETE }}
+                        <div class="flex-grow-1">
+                            {{ formset.empty_form.card_element }}
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeItem(this)" title="Remove">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="addItem()">
                     <i class="fa-regular fa-plus"></i> Add Card
                 </button>
@@ -85,15 +100,14 @@
             return;
         }
 
-        var existing = container.querySelectorAll('.formset-item');
-        if (existing.length === 0) return;
-        var template = existing[0].cloneNode(true);
+        var templateSource = document.querySelector('#empty-form-template .formset-item');
+        var template = templateSource.cloneNode(true);
         template.style.display = '';
 
         template.querySelectorAll('input, select').forEach(function(el) {
             ['name', 'id'].forEach(function(attr) {
                 if (el.getAttribute(attr)) {
-                    el.setAttribute(attr, el.getAttribute(attr).replace(/-\d+-/, '-' + currentCount + '-'));
+                    el.setAttribute(attr, el.getAttribute(attr).replace('__prefix__', currentCount));
                 }
             });
             if (el.type === 'checkbox') el.checked = false;
@@ -101,7 +115,7 @@
         });
         template.querySelectorAll('label').forEach(function(el) {
             if (el.getAttribute('for')) {
-                el.setAttribute('for', el.getAttribute('for').replace(/-\d+-/, '-' + currentCount + '-'));
+                el.setAttribute('for', el.getAttribute('for').replace('__prefix__', currentCount));
             }
         });
 

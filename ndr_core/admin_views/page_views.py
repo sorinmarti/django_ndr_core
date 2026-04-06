@@ -12,7 +12,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DeleteView, CreateView, DetailView, UpdateView
 
-from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm, NotFoundForm, BulkPageFormSet
+from ndr_core.admin_forms.page_forms import PageCreateForm, PageEditForm, FooterForm, BackgroundForm, NotFoundForm, BulkPageFormSet
 from ndr_core.admin_views.admin_views import AdminViewMixin
 from ndr_core.models import NdrCorePage
 from ndr_core.ndr_settings import NdrSettings
@@ -58,6 +58,28 @@ class ManagePageFooter(AdminViewMixin, LoginRequiredMixin, View):
         return render(self.request,
                       template_name='ndr_core/admin_views/overview/configure_pages.html',
                       context=context)
+
+
+class ManagePageBackground(AdminViewMixin, LoginRequiredMixin, View):
+    """Creates a form to configure the site-wide default background image and overlay."""
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
+            'background_form': BackgroundForm(),
+        }
+        return render(request, 'ndr_core/admin_views/overview/configure_pages.html', context)
+
+    def post(self, request, *args, **kwargs):
+        form = BackgroundForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Background settings saved.")
+        context = {
+            'pages': NdrCorePage.objects.filter(parent_page=None).order_by('index'),
+            'background_form': form,
+        }
+        return render(request, 'ndr_core/admin_views/overview/configure_pages.html', context)
 
 
 class ManageNotFoundPage(AdminViewMixin, LoginRequiredMixin, View):

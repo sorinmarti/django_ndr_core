@@ -1,0 +1,85 @@
+{% load i18n %}
+
+<div class="pdf-viewer-container mb-4">
+    {% if pdf_title %}
+        <h4>{{ pdf_title }}</h4>
+    {% endif %}
+
+    {% if pdf_description %}
+        <p>{{ pdf_description }}</p>
+    {% endif %}
+
+    {% if pdf_files %}
+        {% if pdf_files|length > 1 %}
+            <div class="mb-2">
+                <select id="pdf-selector-{{ data.name }}" class="form-select">
+                    {% for pdf in pdf_files %}
+                        <option value="{% url 'ndr_core:upload_embed' pdf.pk %}">
+                            {% if pdf.title %}{{ pdf.title }}{% else %}PDF {{ forloop.counter }}{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endif %}
+
+        <embed id="pdf-embed-{{ data.name }}"
+               src="{% url 'ndr_core:upload_embed' pdf_files.0.pk %}"
+               type="application/pdf"
+               width="100%"
+               height="{{ pdf_height }}px"
+               style="border: 1px solid #dee2e6; border-radius: 4px; display: block;">
+
+        <div class="mt-2 text-muted small">
+            <i class="fa-regular fa-file-pdf"></i>
+            {% for pdf in pdf_files %}
+                <a href="{{ pdf.file.url }}" target="_blank" rel="noopener">
+                    {% trans "Download" %}{% if pdf.title %}: {{ pdf.title }}{% endif %}
+                </a>{% if not forloop.last %} &nbsp;|&nbsp; {% endif %}
+            {% endfor %}
+        </div>
+
+        <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var pdfParam = params.get('pdf');
+            var pageParam = params.get('page');
+            var embed  = document.getElementById('pdf-embed-{{ data.name }}');
+            var select = document.getElementById('pdf-selector-{{ data.name }}');
+
+            function withPage(url, page) {
+                return page ? url + '#page=' + page : url;
+            }
+
+            if (select) {
+                // resolve ?pdf= by numeric index or label text
+                if (pdfParam !== null) {
+                    var idx = parseInt(pdfParam, 10);
+                    if (!isNaN(idx) && idx >= 0 && idx < select.options.length) {
+                        select.selectedIndex = idx;
+                    } else {
+                        for (var i = 0; i < select.options.length; i++) {
+                            if (select.options[i].text.trim().toLowerCase() === pdfParam.toLowerCase()) {
+                                select.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+                embed.src = withPage(select.value, pageParam);
+
+                select.addEventListener('change', function () {
+                    embed.src = this.value;  // page reset on manual switch
+                });
+            } else if (pageParam) {
+                // single PDF — just apply page
+                embed.src = withPage(embed.src, pageParam);
+            }
+        })();
+        </script>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="fa-regular fa-triangle-exclamation"></i>
+            {% trans "No PDF file configured for this viewer." %}
+        </div>
+    {% endif %}
+</div>
