@@ -107,6 +107,10 @@ p {
     padding: 0.5rem;
     margin-top: 0.5rem;
     background: var(--container-bg-color);
+    --bs-dropdown-link-hover-color: var(--button-text-color);
+    --bs-dropdown-link-hover-bg: var(--accent-color-1);
+    --bs-dropdown-link-active-color: var(--button-text-color);
+    --bs-dropdown-link-active-bg: var(--accent-color-1);
 }
 
 [data-theme="dark"] .dropdown-menu {
@@ -120,9 +124,19 @@ p {
     transition: all 0.2s ease;
 }
 
-.dropdown-item:hover {
-    background: var(--accent-color-1);
-    color: var(--button-text-color);
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: var(--accent-color-1) !important;
+    color: var(--button-text-color) !important;
+}
+
+.dropdown-item:hover i,
+.dropdown-item:focus i,
+.dropdown-item.active i,
+.dropdown-item:active i {
+    color: var(--button-text-color) !important;
 }
 
 /* Content wrapper */
@@ -188,10 +202,6 @@ p {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
-.card:hover {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-}
 
 /* Floating scroll-to-top button */
 .scroll-top-btn {

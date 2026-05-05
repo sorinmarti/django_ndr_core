@@ -7,36 +7,59 @@
     <script src="{% static 'tify/dist/tify.js' %}"></script>
     {% with manifest_group=data.items.0.manifest_group %}
         {% if manifest_group %}
+            {% with manifest_count=manifest_group.ndrcoremanifest_set.count %}
 
-            {% crispy manifest_selection_form %}
+            {% if manifest_count > 1 %}
+                {% crispy manifest_selection_form %}
+            {% endif %}
 
             <div id="tify" style="height: 500px"></div>
             {% get_current_language as LANGUAGE_CODE %}
             <script>
-                let selected_manifest_id = getUrlParameter('manifest', '0')
-                if (selected_manifest_id == '0') {
-                    new Tify({
-                          container: '#tify',
-                          manifestUrl: '{{ manifest_group.ndrcoremanifest_set.all.0.file.url}}',
-                          language: '{{ LANGUAGE_CODE }}',
-                          pageLabelFormat: 'P',
-                          pages: [ getUrlParameter('page', 1) ]
-                        });
+                var tifyInstance = null;
+
+                function loadManifestById(manifestId) {
+                    var req_url = '/ndr_core/manifest/id/' + manifestId + '/';
+                    $.ajax({
+                        url: req_url,
+                        success: function (data) {
+                            if (tifyInstance) { tifyInstance.destroy(); }
+                            tifyInstance = new Tify({
+                                container: '#tify',
+                                manifestUrl: data.manifest_url,
+                                language: '{{ LANGUAGE_CODE }}',
+                                pageLabelFormat: 'P',
+                            });
+                        }
+                    });
                 }
-                let req_url = '/ndr_core/manifest/id/' + selected_manifest_id + '/'
-                $.ajax({
-                    url: req_url,
-                    success: function (data) {
-                        new Tify({
-                          container: '#tify',
-                          manifestUrl: data.manifest_url,
-                          language: '{{ LANGUAGE_CODE }}',
-                          pageLabelFormat: 'P',
-                          pages: [ getUrlParameter('page', 1) ]
-                        });
-                    }
+
+                function loadManifestByUrl(manifestUrl) {
+                    if (tifyInstance) { tifyInstance.destroy(); }
+                    tifyInstance = new Tify({
+                        container: '#tify',
+                        manifestUrl: manifestUrl,
+                        language: '{{ LANGUAGE_CODE }}',
+                        pageLabelFormat: 'P',
+                        pages: [ getUrlParameter('page', 1) ]
+                    });
+                }
+
+                // Initial load: use URL param if present, otherwise first manifest
+                var selectedManifestId = getUrlParameter('manifest', '0');
+                if (selectedManifestId !== '0') {
+                    loadManifestById(selectedManifestId);
+                } else {
+                    loadManifestByUrl('{{ manifest_group.ndrcoremanifest_set.all.0.file.url }}');
+                }
+
+                // Auto-load on selection change — use select2:select for reliability
+                $(document).on('select2:select', '#id_manifest', function () {
+                    var manifestId = $(this).val();
+                    if (manifestId) { loadManifestById(manifestId); }
                 });
             </script>
+            {% endwith %}
         {% endif %}
     {% endwith %}
 </div>

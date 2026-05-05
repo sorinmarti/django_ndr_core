@@ -120,8 +120,8 @@
 }
 
 .select2-results__option--highlighted[aria-selected] {
-    background-color: var(--secondary) !important;
-    color: white !important;
+    background-color: var(--accent-color-1) !important;
+    color: var(--button-text-color) !important;
 }
 
 /* Selected items (badges) styling */
@@ -180,43 +180,43 @@ body > .select2-container--default.select2-container--open .select2-dropdown {
 
 /* DARK MODE SUPPORT */
 [data-theme="dark"] .select2-selection {
-    background-color: #2A2A2A !important;
+    background-color: var(--container-bg-color) !important;
     border-color: rgba(255, 255, 255, 0.2) !important;
-    color: #E9ECEF !important;
+    color: var(--text-color) !important;
 }
 
 [data-theme="dark"] .select2-dropdown {
-    background-color: #2A2A2A !important;
+    background-color: var(--container-bg-color) !important;
     border-color: rgba(255, 255, 255, 0.2) !important;
-    color: #E9ECEF !important;
+    color: var(--text-color) !important;
 }
 
 [data-theme="dark"] .select2-search__field {
-    background-color: #2A2A2A !important;
-    color: #E9ECEF !important;
+    background-color: var(--container-bg-color) !important;
+    color: var(--text-color) !important;
     border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 [data-theme="dark"] .select2-results__option {
-    background-color: #2A2A2A !important;
-    color: #E9ECEF !important;
+    background-color: var(--container-bg-color) !important;
+    color: var(--text-color) !important;
 }
 
 [data-theme="dark"] .select2-results__option--highlighted[aria-selected] {
-    background-color: #00B0B9 !important;
-    color: #FFFFFF !important;
+    background-color: var(--accent-color-1) !important;
+    color: var(--button-text-color) !important;
 }
 
 [data-theme="dark"] .select2-selection__choice {
     background-color: rgba(255, 255, 255, 0.1) !important;
-    color: #E9ECEF !important;
+    color: var(--text-color) !important;
     border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 [data-theme="dark"] .select2-selection__choice__remove {
-    color: #E9ECEF !important;
+    color: var(--text-color) !important;
 }
 
 [data-theme="dark"] .select2-selection__choice__remove:hover {
-    color: #DC3545 !important;
+    color: var(--error-color) !important;
 }

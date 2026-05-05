@@ -7,7 +7,14 @@ class MongoDBQuery(BaseQuery):
     """Implementation of the mongo DB API. """
 
     def get_simple_query(self, search_term, add_page_and_size=True, and_or='and'):
-        """ Not Implemented """
+        """Returns a simple search query. Uses Atlas Search when enabled, otherwise falls back to regex."""
+
+        # Convert sort_order to MongoDB format: 1 for ascending, -1 for descending
+        sort_direction = -1 if self.search_config.sort_order == 'desc' else 1
+
+        mongodb_settings = (self.search_config.api_settings or {}).get('mongodb', {})
+        if mongodb_settings.get('use_atlas_search', False):
+            return self._build_atlas_search_query(search_term, sort_direction)
 
         search_words = search_term.split(' ')
         if and_or == 'and':
@@ -15,20 +22,103 @@ class MongoDBQuery(BaseQuery):
         else:
             regex_string = f"({'|'.join(search_words)})"
 
-        # Convert sort_order to MongoDB format: 1 for ascending, -1 for descending
-        sort_direction = -1 if self.search_config.sort_order == 'desc' else 1
+        regex_clause = {'$regex': regex_string, '$options': 'msi'}
+
+        path_parts = [p.strip() for p in self.search_config.simple_query_main_field.split(',') if p.strip()]
+        if len(path_parts) > 1:
+            field_filter = {'$or': [{field: regex_clause} for field in path_parts]}
+        else:
+            field_filter = {path_parts[0]: regex_clause}
 
         query = {
-            'filter': {
-                self.search_config.simple_query_main_field: {
-                    '$regex': regex_string,
-                    '$options': 'msi'
-                }
-            },
+            'filter': field_filter,
             'sort': list({self.search_config.sort_field: sort_direction}.items()),
             'page': int(self.page)
         }
         return query
+
+    def _build_atlas_search_query(self, search_term, sort_direction):
+        """Builds a MongoDB Atlas Search aggregation pipeline query.
+
+        Reads settings from api_settings['mongodb']:
+          atlas_search_index           str   index name (default: 'default')
+          atlas_search_fuzzy           bool  enable fuzzy matching
+          atlas_search_fuzzy_max_edits int   max Levenshtein edits (1 or 2)
+          atlas_sort_by_relevance      bool  sort by score (default True);
+                                            False uses sort_field/sort_order
+          atlas_highlighting           bool  inject _hl highlights into results
+
+        The search path comes from simple_query_main_field (comma-separated for
+        multi-field, e.g. "actor.entity_canonical,content.raw_text").
+        """
+        mongodb_settings = (self.search_config.api_settings or {}).get('mongodb', {})
+
+        index_name = mongodb_settings.get('atlas_search_index') or 'default'
+        use_fuzzy = mongodb_settings.get('atlas_search_fuzzy', False)
+        max_edits = mongodb_settings.get('atlas_search_fuzzy_max_edits') or 1
+        sort_by_relevance = mongodb_settings.get('atlas_sort_by_relevance', True)
+        use_highlighting = mongodb_settings.get('atlas_highlighting', False)
+        page = int(self.page)
+        page_size = self.search_config.page_size
+        skip = page * page_size - page_size
+
+        # simple_query_main_field doubles as the search path; supports comma-sep multi-field
+        raw_path = self.search_config.simple_query_main_field or '_search'
+        path_parts = [p.strip() for p in raw_path.split(',') if p.strip()]
+        path = path_parts[0] if len(path_parts) == 1 else path_parts
+
+        # autocomplete_path is a single field indexed with type:autocomplete in Atlas.
+        # When set, the query becomes a compound that combines full-token text matching
+        # with prefix (edge-gram) matching, so partial input like "aebi" finds "Aebischer".
+        autocomplete_path = (mongodb_settings.get('atlas_autocomplete_path') or '').strip()
+
+        text_clause = {"query": search_term, "path": path}
+        if use_fuzzy:
+            text_clause["fuzzy"] = {"maxEdits": max_edits}
+
+        if autocomplete_path:
+            # compound: text covers all paths (full-token + fuzzy),
+            # autocomplete covers prefix matching on the autocomplete-indexed field.
+            operator = {
+                "compound": {
+                    "should": [
+                        {"text": text_clause},
+                        {"autocomplete": {"query": search_term, "path": autocomplete_path}},
+                    ],
+                    "minimumShouldMatch": 1,
+                }
+            }
+        else:
+            operator = {"text": text_clause}
+
+        search_stage = {"index": index_name, **operator}
+        if use_highlighting:
+            search_stage["highlight"] = {"path": path_parts}
+
+        pipeline = [{"$search": search_stage}]
+
+        if not sort_by_relevance:
+            pipeline.append({"$sort": {self.search_config.sort_field: sort_direction}})
+
+        if use_highlighting:
+            # Materialize the $searchHighlights metadata field into a regular document field
+            # before $facet, which strips metadata fields from its sub-pipeline documents.
+            pipeline.append({"$addFields": {"_searchHighlights": {"$meta": "searchHighlights"}}})
+
+        pipeline.append({"$facet": {
+            "hits": [
+                {"$skip": skip},
+                {"$limit": page_size}
+            ],
+            "total": [{"$count": "count"}]
+        }})
+
+        return {
+            'pipeline': pipeline,
+            'sort': list({self.search_config.sort_field: sort_direction}.items()),
+            'page': page,
+            'type': 'atlas_search'
+        }
 
     def get_advanced_query(self, *kwargs):
         # Convert sort_order to MongoDB format: 1 for ascending, -1 for descending
@@ -145,7 +235,6 @@ class MongoDBQuery(BaseQuery):
                 date_to = self.values[field_name][1].strftime('%Y-%m-%d')
                 value = {"$gte": date_from, "$lte": date_to}"""
 
-        print("QUERY", query)
         return query
 
     def get_list_query(self, list_name, add_page_and_size=True, search_term=None, tags=None):

@@ -1,10 +1,33 @@
 """Implementation of the MongoDBResult class. """
+import html as _html
 import json
+import logging
 
 import pymongo
 import pymongo.errors
 from bson import json_util
 from django.utils.translation import gettext_lazy as _
+
+logger = logging.getLogger(__name__)
+
+
+def _set_nested_value(d, keys, value):
+    """Write *value* into nested dict *d* following the *keys* path."""
+    for key in keys[:-1]:
+        d = d.setdefault(key, {})
+    d[keys[-1]] = value
+
+
+def _build_highlight_html(texts):
+    """Convert an Atlas Search highlight texts list to HTML with <mark> tags."""
+    parts = []
+    for item in texts:
+        escaped = _html.escape(str(item.get('value', '')))
+        if item.get('type') == 'hit':
+            parts.append(f'<mark>{escaped}</mark>')
+        else:
+            parts.append(escaped)
+    return ''.join(parts)
 
 from ndr_core.api.base_result import BaseResult
 from ndr_core.utils import get_nested_value
@@ -17,11 +40,27 @@ class MongoDBResult(BaseResult):
         """Retrieves the result from the MongoDB."""
 
         try:
-            # Get the connection string and collection from the configuration
-            connection_string_arr = self.search_configuration.api_connection_url.split('/')
-            connection_string = '/'.join(connection_string_arr[:-1])
-            db_client = pymongo.MongoClient(connection_string, serverSelectionTimeoutMS=2000)
-            collection = db_client[connection_string_arr[-2]][connection_string_arr[-1]]
+            # Parse connection URL: <protocol>://<host>/<db>/<collection>
+            # Strip query parameters before splitting (e.g. ?appName=... from Atlas URLs)
+            raw_url = self.search_configuration.api_connection_url.split('?')[0].rstrip('/')
+            connection_string_arr = raw_url.split('/')
+            connection_string = '/'.join(connection_string_arr[:-2])
+            db_name = connection_string_arr[-2]
+            collection_name = connection_string_arr[-1]
+
+            # Use a longer timeout for Atlas (SRV) connections than for local ones
+            timeout_ms = 30000 if connection_string.startswith('mongodb+srv') else 2000
+
+            # Pass credentials when provided
+            username = self.search_configuration.api_user_name or None
+            password = self.search_configuration.api_password or None
+            db_client = pymongo.MongoClient(
+                connection_string,
+                username=username,
+                password=password,
+                serverSelectionTimeoutMS=timeout_ms,
+            )
+            collection = db_client[db_name][collection_name]
 
             # If the query is a single document, return the raw result to be downloaded.
             if 'type' in self.query and self.query['type'] == 'single':
@@ -34,6 +73,34 @@ class MongoDBResult(BaseResult):
                 self.page = self.query['page']
             except KeyError:
                 self.page = 0
+
+            # Atlas Search: run aggregation pipeline (built by _build_atlas_search_query)
+            if self.query.get('type') == 'atlas_search':
+                cursor = collection.aggregate(self.query['pipeline'])
+                facet_result = next(cursor, {})
+                hits = []
+                for raw_hit in facet_result.get('hits', []):
+                    hit = json.loads(json_util.dumps(raw_hit))
+                    # Extract _searchHighlights (materialized from $meta before $facet)
+                    search_highlights = hit.pop('_searchHighlights', [])
+                    if search_highlights:
+                        hl_dict = {}
+                        for hl in search_highlights:
+                            _set_nested_value(
+                                hl_dict,
+                                hl['path'].split('.'),
+                                _build_highlight_html(hl.get('texts', []))
+                            )
+                        hit['_hl'] = hl_dict
+                    hits.append(hit)
+                total_list = facet_result.get('total', [])
+                total_count = total_list[0]['count'] if total_list else 0
+                self.raw_result = {
+                    "total": total_count,
+                    "page": self.page,
+                    "hits": hits
+                }
+                return
 
             # Calculate the number of documents to skip in order to get the correct list. Size of the list is page_size
             # and the page number is 1-based.
@@ -61,8 +128,22 @@ class MongoDBResult(BaseResult):
                 "hits": hits
             }
 
-        except pymongo.errors.ServerSelectionTimeoutError:
+        except pymongo.errors.ServerSelectionTimeoutError as e:
             self.error = _("Timed out")
+            print(f"[MongoDB] ServerSelectionTimeoutError: {e}")
+            logger.error("MongoDB server selection timed out: %s", e)
+        except pymongo.errors.OperationFailure as e:
+            self.error = f"MongoDB operation failed: {e.details.get('errmsg', str(e))}"
+            print(f"[MongoDB] OperationFailure (code {e.code}): {e}")
+            logger.error("MongoDB operation failure (code %s): %s", e.code, e)
+        except pymongo.errors.ConfigurationError as e:
+            self.error = f"MongoDB configuration error: {e}"
+            print(f"[MongoDB] ConfigurationError: {e}")
+            logger.error("MongoDB configuration error: %s", e)
+        except pymongo.errors.PyMongoError as e:
+            self.error = f"MongoDB error: {e}"
+            print(f"[MongoDB] {type(e).__name__}: {e}")
+            logger.error("Unexpected MongoDB error (%s): %s", type(e).__name__, e, exc_info=True)
 
     def save_raw_result(self, text):
         """ Normally this would save the raw result to a json object.

@@ -388,10 +388,14 @@ class SearchView(_NdrCoreSearchView):
                 else:
                     context.update({'search_config': search_config})
                     context.update({'result': result})
-                    is_compact = request.GET.get(f'compact_view_{requested_search}', 'normal')
-                    if is_compact == "on":
-                        is_compact = 'compact'
-                    context.update({'result_card_group': is_compact})
+                    # Determine initial compact view state: checkbox in form overrides model default
+                    conf = search_config.conf_name
+                    compact_checked = (
+                        request.GET.get(f'compact_view_{conf}', 'off') == 'on'
+                        or request.GET.get(f'compact_view_{conf}_simple', 'off') == 'on'
+                    )
+                    initial_compact = compact_checked if search_config.search_has_compact_result else False
+                    context.update({'initial_compact_view': initial_compact})
 
                     # Add search explanation for results summary
                     search_explanation = self.build_search_explanation(form, requested_search, search_config)
@@ -619,3 +623,76 @@ def google_search_console_verification_view(request, verification_file):
             return HttpResponse(file.read())
     else:
         return render(request, 'ndr_core/404.html', status=404)
+
+
+def atlas_autocomplete_view(request, search_config):
+    """Returns Atlas Search autocomplete suggestions as a JSON array.
+
+    GET parameters:
+      q  --  the prefix typed by the user (minimum 2 characters)
+
+    The field to autocomplete is taken from api_settings['mongodb']['atlas_autocomplete_path'].
+    It must be indexed with type: autocomplete in the Atlas Search index.
+
+    Usage in a result template:
+      Add a <datalist id="ndr-ac-{conf_name}"> and point the search input to it.
+      The NDR Core JS (ndr_autocomplete.js) handles this automatically when
+      data-ndr-autocomplete="{conf_name}" is present on the search input.
+    """
+    q = request.GET.get('q', '').strip()
+    if len(q) < 2:
+        return JsonResponse([], safe=False)
+
+    try:
+        config = NdrCoreSearchConfiguration.objects.get(conf_name=search_config)
+    except NdrCoreSearchConfiguration.DoesNotExist:
+        return JsonResponse([], safe=False)
+
+    mongodb_settings = (config.api_settings or {}).get('mongodb', {})
+    if not mongodb_settings.get('use_atlas_search'):
+        return JsonResponse([], safe=False)
+
+    autocomplete_path = mongodb_settings.get('atlas_autocomplete_path', '').strip()
+    if not autocomplete_path:
+        return JsonResponse([], safe=False)
+
+    try:
+        import pymongo
+
+        raw_url = config.api_connection_url.split('?')[0].rstrip('/')
+        parts = raw_url.split('/')
+        connection_string = '/'.join(parts[:-2])
+        db_name = parts[-2]
+        collection_name = parts[-1]
+
+        client = pymongo.MongoClient(
+            connection_string,
+            username=config.api_user_name or None,
+            password=config.api_password or None,
+            serverSelectionTimeoutMS=10000,
+        )
+        collection = client[db_name][collection_name]
+
+        pipeline = [
+            {"$search": {
+                "index": mongodb_settings.get('atlas_search_index') or 'default',
+                "autocomplete": {"query": q, "path": autocomplete_path}
+            }},
+            {"$limit": 8},
+            {"$project": {"_id": 0, autocomplete_path: 1}},
+        ]
+
+        suggestions = []
+        for doc in collection.aggregate(pipeline):
+            val = doc
+            for key in autocomplete_path.split('.'):
+                val = val.get(key) if isinstance(val, dict) else None
+                if val is None:
+                    break
+            if isinstance(val, str):
+                suggestions.append(val)
+
+        return JsonResponse(suggestions, safe=False)
+
+    except Exception:
+        return JsonResponse([], safe=False)

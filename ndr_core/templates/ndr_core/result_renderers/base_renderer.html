@@ -4,12 +4,15 @@
 {% load i18n %}
 
 <!-- This card is the top element of one result. -->
-<div class="card mb-2 box-shadow">
-    <!-- Header of the card. Contains the title and the image. -->
-    <div class="card-header p-0 ps-3">
-        <small>
+<div class="card mb-3" style="border-top: 2px solid var(--accent-color-1);">
+    <!-- Header of the card. Contains the result counter. -->
+    <div class="card-header py-1 px-3 d-flex align-items-center border-bottom-0 bg-transparent">
+        <span class="badge rounded-pill me-2" style="background-color: var(--accent-color-1); color: var(--button-text-color); font-size: 0.7rem;">
+            {{ result.result_meta.result_number }}
+        </span>
+        <small class="text-muted" style="font-size: 0.75rem;">
             {% blocktrans with result.result_meta.result_number as result_number and result.result_meta.total_results as total_results %}
-                Result {{ result_number }} of {{ total_results }}
+                of {{ total_results }} results
             {% endblocktrans %}
         </small>
     </div>

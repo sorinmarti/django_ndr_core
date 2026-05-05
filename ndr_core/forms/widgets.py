@@ -100,10 +100,10 @@ class CSVTextEditorWidget(forms.Textarea):
             script = script.replace('__name__', name)
 
         html = (f"""<div id="{name}-table"></div>
-                    <textarea id="{name}" name="{name}" style="display: none;">{value}</textarea>
+                    <textarea id="{name}" name="{name}" style="display: none;">{value or ''}</textarea>
                     <div class="mt-1">
                         <button class="btn btn-sm btn-secondary" type="button" id="add-row">Add Row</button>
-                        <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal" data-target="#importCSVModal">Import Data</button>
+                        <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#importCSVModal">Import Data</button>
                         <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal" id="export-data">Export Data</button>
                         <button class="btn btn-sm btn-secondary" type="button" data-toggle="modal" id="clear-data">Clear Data</button>
                     </div>

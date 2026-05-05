@@ -174,18 +174,21 @@ class RenderResultNode(template.Node):
         self.result = template.Variable(result)
         self.search_config = template.Variable(search_config)
 
-    def create_card(self, context, result, compact_view):
-        """Creates a result card."""
-
+    def create_card(self, context, result, initial_compact):
+        """Creates a result card with both normal and compact views."""
+        search_config = self.search_config.resolve(context)
+        has_compact = search_config.search_has_compact_result
         card_context = {
             "result": result,
-            "card_content": self.create_grid(context, result["data"], compact_view),
             "citation": self.create_citation(context, result["data"]),
+            "normal_content": self.create_grid(context, result["data"], "normal"),
+            "has_compact": has_compact,
+            "compact_is_default": initial_compact,
         }
+        if has_compact:
+            card_context["compact_content"] = self.create_grid(context, result["data"], "compact")
         card_template = "ndr_core/result_renderers/configured_fields_template.html"
-
-        card_template_str = get_template(card_template).render(card_context)
-        return mark_safe(card_template_str)
+        return mark_safe(get_template(card_template).render(card_context))
 
     def create_citation(self, context, result):
         """Creates a citation."""
@@ -319,23 +322,16 @@ class RenderResultNode(template.Node):
     def render(self, context):
         """Renders a result object."""
         result_object = self.result.resolve(context)
-        conf = self.search_config.resolve(context)
+        search_config = self.search_config.resolve(context)
+        num_result_fields = search_config.result_card_fields.all().count()
 
-        compact_view = "normal"
-        if (
-                result_object.request.GET.get(f"compact_view_{conf.conf_name}_simple", "off") == "on"
-                or result_object.request.GET.get(f"compact_view_{conf.conf_name}", "off") == "on"
-        ):
-            compact_view = "compact"
-
-        num_result_fields = (
-            self.search_config.resolve(context).result_card_fields.all().count()
-        )
+        # Respect the initial compact state set by the view (checkbox + model default)
+        initial_compact = context.get('initial_compact_view', search_config.compact_result_is_default)
 
         html_string = ""
         for result in result_object.results:
             if num_result_fields > 0:
-                html_string += self.create_card(context, result, compact_view)
+                html_string += self.create_card(context, result, initial_compact)
             else:
                 # No result card fields configured, so we render the result as pretty json
                 card_context = {"result": result}

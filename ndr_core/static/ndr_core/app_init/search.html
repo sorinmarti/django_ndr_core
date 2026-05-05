@@ -16,48 +16,58 @@
     {% endif %}
 
     {% if result %}
-        <h4 class="mt-4">
-            {% translate 'Search Results' %}
-            <div class="btn-group float-right">
-                <a href="{{ result.form_links.compact }}" type="button" class="btn btn-sm btn-secondary ">
-                    {% translate result.form_links.compact_label %}
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-2 mt-4 mb-2">
+            <div>
+                <h4 class="mb-1">{% translate 'Search Results' %}</h4>
+                <p class="text-muted small mb-0">
+                    {% blocktranslate with total=result.total page=result.page num_pages=result.num_pages search_desc=search_explanation %}
+                        Your search for {{ search_desc }} returned {{ total }} results, showing page {{ page }} of {{ num_pages }}.
+                    {% endblocktranslate %}
+                </p>
+            </div>
+            <div class="d-flex gap-1 align-items-center">
+                {% if search_config.search_has_compact_result %}
+                    <button id="ndr-view-toggle"
+                            type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            title="{% if initial_compact_view %}{% translate 'Show full results' %}{% else %}{% translate 'Show compact results' %}{% endif %}"
+                            data-bs-toggle="tooltip"
+                            data-compact-default="{{ initial_compact_view|yesno:'true,false' }}">
+                        <span class="ndr-icon-to-compact {% if initial_compact_view %}d-none{% endif %}"><i class="fa-solid fa-table-cells-large"></i></span>
+                        <span class="ndr-icon-to-normal {% if not initial_compact_view %}d-none{% endif %}"><i class="fa-solid fa-table-list"></i></span>
+                    </button>
+                {% endif %}
+                <a href="{{ result.form_links.refine }}" class="btn btn-sm btn-outline-secondary" title="{% translate 'Refine Search' %}" data-bs-toggle="tooltip">
+                    <i class="fa-solid fa-filter"></i>
                 </a>
-                <a href="{{ result.form_links.refine }}" type="button" class="btn btn-sm btn-secondary ">
-                    {% translate 'Refine Search' %}
-                </a>
-                <a href="{{ result.form_links.new }}" type="button" class="btn btn-sm btn-secondary">
-                    {% translate 'New Search' %}
+                <a href="{{ result.form_links.new }}" class="btn btn-sm btn-outline-secondary" title="{% translate 'New Search' %}" data-bs-toggle="tooltip">
+                    <i class="fa-solid fa-rotate-left"></i>
                 </a>
                 {% config_value 'search_allow_download_list_json' as allow_json %}
                 {% config_value 'search_allow_download_list_csv' as allow_csv %}
                 {% if allow_json or allow_csv %}
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {% translate 'Download' %}
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" title="{% translate 'Download' %}">
+                            <i class="fa-solid fa-download"></i>
                         </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                             {% if allow_json %}
-                                <a class="dropdown-item" href="{{ result.form_links.bulk_download_json }}" target="_blank">{% translate 'Download JSON' %}</a>
+                                <li><a class="dropdown-item" href="{{ result.form_links.bulk_download_json }}" target="_blank"><i class="fa-solid fa-file-code me-2"></i>{% translate 'Download JSON' %}</a></li>
                             {% endif %}
                             {% if allow_csv %}
-                                <a class="dropdown-item" href="{{ result.form_links.bulk_download_csv }}">{% translate 'Download CSV' %}</a>
+                                <li><a class="dropdown-item" href="{{ result.form_links.bulk_download_csv }}"><i class="fa-solid fa-file-csv me-2"></i>{% translate 'Download CSV' %}</a></li>
                             {% endif %}
                             {% config_value 'search_download_max_results' as max_results %}
                             {% if result.total > max_results %}
-                                <span class="dropdown-item small font-italic">{% blocktranslate %}(Downloads are limited to {{ max_results }} results.){% endblocktranslate %}</span>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><span class="dropdown-item small text-muted fst-italic">{% blocktranslate %}(Downloads are limited to {{ max_results }} results.){% endblocktranslate %}</span></li>
                             {% endif %}
-                        </div>
+                        </ul>
                     </div>
                 {% endif %}
             </div>
-        </h4>
-        {% include 'ndr_core/messages.html' %}
-
-        <div class="mb-2">
-            {% blocktranslate with total=result.total page=result.page num_pages=result.num_pages search_desc=search_explanation %}
-                Your search for {{ search_desc }} returned {{ total }} results, showing page {{ page }} of {{ num_pages }}.
-            {% endblocktranslate %}
         </div>
+        {% include 'ndr_core/messages.html' %}
 
         {% render_result result search_config %}
 
@@ -80,13 +90,14 @@
     {% if not result %}
         <script>
             $(document).ready(function () {
-                // Show tab based on URL parameter
+                // Show tab based on URL parameter — scroll to top after BS5 focuses the pane
                 var url_params = new URLSearchParams(window.location.search);
                 if (url_params.has('tab')) {
                     var tabEl = document.querySelector('a[href="#' + url_params.get('tab') + '"]');
                     if (tabEl) {
                         var tab = new bootstrap.Tab(tabEl);
                         tab.show();
+                        setTimeout(function() { window.scrollTo(0, 0); }, 0);
                     }
                 }
                 {% if requested_search %}
@@ -94,11 +105,15 @@
                     if (requestedTabEl) {
                         var requestedTab = new bootstrap.Tab(requestedTabEl);
                         requestedTab.show();
+                        setTimeout(function() { window.scrollTo(0, 0); }, 0);
                     }
                 {% endif %}
 
-                // Update URL when tab is clicked - use Bootstrap 5 event
+                // Prevent browser anchor-scroll when clicking tab links, then update URL
                 document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tabEl) {
+                    tabEl.addEventListener('click', function(e) {
+                        e.preventDefault();
+                    });
                     tabEl.addEventListener('shown.bs.tab', function (e) {
                         var tabId = e.target.getAttribute('href').substring(1); // Remove the '#'
                         var newUrl = new URL(window.location.href);
@@ -108,34 +123,108 @@
                     });
                 });
 
-                $('form').bind("keypress", function(e) {
-                  if (e.keyCode == 13) {
-                      let my_id = $('.tab-content .active').attr('id');
-                      let formButton = $('#submit-id-search_button_' + my_id);
-                        formButton.click();
-                      console.log(my_id);
-                      e.preventDefault();
-                      return false;
-                  }
+                // Submit the active tab's form on Enter — find the submit button inside
+                // the currently visible tab pane rather than reconstructing its ID.
+                document.addEventListener('keydown', function(e) {
+                    if (e.key !== 'Enter') return;
+                    var target = e.target;
+                    if (target.tagName === 'TEXTAREA') return; // allow newlines in textareas
+                    var activePane = document.querySelector('.tab-content .tab-pane.active');
+                    var container = activePane || document.querySelector('form');
+                    if (!container) return;
+                    var submitBtn = container.querySelector('[type="submit"]');
+                    if (submitBtn) {
+                        e.preventDefault();
+                        submitBtn.click();
+                    }
                 });
+
+                // Atlas Search autocomplete — auto-wires every simple search input
+                // that has an autocomplete endpoint configured (returns [] if not).
+                (function () {
+                    const urlPattern = "{% url 'ndr_core:autocomplete' '__NDR_CONF__' %}";
+                    document.querySelectorAll('[id^="id_search_term_"]').forEach(function (input) {
+                        const confName = input.id.replace('id_search_term_', '');
+                        const acUrl = urlPattern.replace('__NDR_CONF__', encodeURIComponent(confName));
+                        const datalistId = 'ndr-ac-' + confName;
+
+                        const datalist = document.createElement('datalist');
+                        datalist.id = datalistId;
+                        input.setAttribute('list', datalistId);
+                        input.after(datalist);
+
+                        let timer;
+                        input.addEventListener('input', function () {
+                            clearTimeout(timer);
+                            const q = this.value.trim();
+                            if (q.length < 2) { datalist.innerHTML = ''; return; }
+                            timer = setTimeout(function () {
+                                fetch(acUrl + '?q=' + encodeURIComponent(q))
+                                    .then(function (r) { return r.json(); })
+                                    .then(function (items) {
+                                        datalist.innerHTML = items
+                                            .map(function (s) {
+                                                return '<option value="' + s.replace(/"/g, '&quot;') + '">';
+                                            }).join('');
+                                    })
+                                    .catch(function () {});
+                            }, 250);
+                        });
+                    });
+                })();
             });
         </script>
     {% else %}
         <script type="text/javascript">
          document.addEventListener('DOMContentLoaded', function() {
-              const cardFields = document.querySelectorAll('.result-card-field');
+              // Enable tooltips on result action buttons
+              document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+                  new bootstrap.Tooltip(el);
+              });
 
+              // CSS Grid positioning for result fields
+              const cardFields = document.querySelectorAll('.result-card-field');
               cardFields.forEach(field => {
                   const column = field.dataset.column || 1;
                   const row = field.dataset.row || 'auto';
                   const colspan = field.dataset.colspan || 1;
                   const rowspan = field.dataset.rowspan || 1;
-
                   field.style.setProperty('--grid-column-start', column);
                   field.style.setProperty('--grid-column-span', colspan);
                   field.style.setProperty('--grid-row-start', row);
                   field.style.setProperty('--grid-row-span', rowspan);
               });
+
+              // Client-side compact / full view toggle
+              (function () {
+                  var btn = document.getElementById('ndr-view-toggle');
+                  if (!btn) return;
+                  var showingCompact = btn.dataset.compactDefault === 'true';
+
+                  function applyView() {
+                      document.querySelectorAll('.ndr-view-normal').forEach(function (el) {
+                          el.classList.toggle('d-none', showingCompact);
+                      });
+                      document.querySelectorAll('.ndr-view-compact').forEach(function (el) {
+                          el.classList.toggle('d-none', !showingCompact);
+                      });
+                      var iconToCompact = btn.querySelector('.ndr-icon-to-compact');
+                      var iconToNormal = btn.querySelector('.ndr-icon-to-normal');
+                      if (iconToCompact) iconToCompact.classList.toggle('d-none', showingCompact);
+                      if (iconToNormal) iconToNormal.classList.toggle('d-none', !showingCompact);
+                      var newTitle = showingCompact
+                          ? '{% translate "Show full results" %}'
+                          : '{% translate "Show compact results" %}';
+                      btn.setAttribute('data-bs-original-title', newTitle);
+                      var tip = bootstrap.Tooltip.getInstance(btn);
+                      if (tip) { tip.hide(); tip.update(); }
+                  }
+
+                  btn.addEventListener('click', function () {
+                      showingCompact = !showingCompact;
+                      applyView();
+                  });
+              })();
           });
         </script>
     {% endif %}

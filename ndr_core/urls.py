@@ -152,7 +152,8 @@ from ndr_core.views import (
     NdrMarkForCorrectionView,
     NdrListDownloadView,
     NdrCSVListDownloadView,
-    set_language_view, manifest_url_view
+    set_language_view, manifest_url_view,
+    atlas_autocomplete_view,
 )
 
 app_name = 'ndr_core'
@@ -376,6 +377,9 @@ urlpatterns = [
     # Mark an entry for correction
     path('mark/to/correct/<str:search_config>/<str:record_id>/', NdrMarkForCorrectionView.as_view(),
          name='mark_record'),
+
+    # Atlas Search autocomplete
+    path('autocomplete/<str:search_config>/', atlas_autocomplete_view, name='autocomplete'),
 
     # Search Engine Optimization
     path('configure/seo/',

@@ -29,7 +29,7 @@
         let list_choice_table = Tabulator.findTable("#list_choices-table")[0];
 
         $('#import_csv').click(function(){
-            modal.modal('hide');
+            bootstrap.Modal.getInstance(modal[0]).hide();
             modal.on('hidden.bs.modal', async function (e) {
                 let import_type = $('#id_import_type').val();
                 let csv_file = $('#id_csv_file')[0].files[0];

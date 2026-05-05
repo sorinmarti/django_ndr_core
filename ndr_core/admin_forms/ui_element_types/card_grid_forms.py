@@ -64,6 +64,9 @@ CardGridItemFormSet = inlineformset_factory(
 class CardGridForm(BaseUIElementForm):
     """Form for Card Grid UI Element - displays existing cards in a responsive grid."""
 
+    class Meta(BaseUIElementForm.Meta):
+        fields = ['name', 'label', 'card_grid_columns']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, ui_element_type='card_grid', **kwargs)
 
@@ -80,6 +83,7 @@ class CardGridForm(BaseUIElementForm):
             'Create your cards first, then select them here to arrange them in a grid.'
         )
         self.add_field_row(layout, 'name', 'label', col_class='col-md-6')
+        self.add_field_row(layout, 'card_grid_columns', col_class='col-md-4')
         return helper
 
 

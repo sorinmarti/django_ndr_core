@@ -3,8 +3,12 @@
     .ndr-card-grid .card { width: 100% !important; height: 100%; }
     .ndr-card-grid .card-img-top { height: 200px; object-fit: cover; }
 </style>
+{% with cols=data.card_grid_columns %}
 <div class="ndr-card-grid">
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    <div class="row g-4
+        {% if cols == 'slim' %}row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6
+        {% elif cols == 'wide' %}row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3
+        {% else %}row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4{% endif %}">
         {% for card_element in card_items %}
             <div class="col">
                 {% include 'ndr_core/ui_elements/card.html' with data=card_element %}
@@ -16,3 +20,4 @@
         {% endfor %}
     </div>
 </div>
+{% endwith %}

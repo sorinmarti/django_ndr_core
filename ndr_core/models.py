@@ -565,7 +565,7 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                               help_text="Should the simple search be displayed first?")
     """Should the simple search be displayed first? """
 
-    simple_query_main_field = models.CharField(max_length=100, blank=False, default='transcription.original',
+    simple_query_main_field = models.CharField(max_length=500, blank=False, default='transcription.original',
                                                help_text="The main field to query for a simple search.")
     """The main field to query for a simple search. """
 
@@ -609,12 +609,6 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                     help_text="Size of the result page (e.g. 'How many results at once')")
     """The query results will return a page of the results. You can define the page size"""
 
-    compact_page_size = models.IntegerField(default=10,
-                                            verbose_name="Compact Page Size",
-                                            help_text="Size of the compact result page (e.g. 'How many results at "
-                                                      "once')")
-    """The query results will return a page of the results. You can define the page size"""
-
     repository_url = models.URLField(default=None, null=True, blank=True,
                                      verbose_name="Repository URL",
                                      help_text="URL to the data repository where this data is stored.")
@@ -635,6 +629,11 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                                 verbose_name="Manifest Page Expression",
                                                 help_text="Expression to generate a link to a page in a manifest.")
     """Expression to generate a link to a page in a manifest."""
+
+    api_settings = models.JSONField(default=dict, blank=True,
+                                    verbose_name="API Settings",
+                                    help_text="API-type-specific settings stored as JSON. Managed via the form.")
+    """API-type-specific settings (e.g. Atlas Search options for MongoDB). Keyed by api_type name."""
 
     def __str__(self):
         return self.conf_name
@@ -1686,6 +1685,19 @@ class NdrCoreUIElement(models.Model):
     autoplay = models.BooleanField(default=False,
                                    help_text='Autoplay carousels and slideshows?')
     """Autoplay carousels and slideshows? """
+
+    class CardGridColumns(models.TextChoices):
+        SLIM   = 'slim',   'Slim (6 per row on large screens)'
+        NORMAL = 'normal', 'Normal (4 per row on large screens)'
+        WIDE   = 'wide',   'Wide (3 per row on large screens)'
+
+    card_grid_columns = models.CharField(
+        max_length=10,
+        choices=CardGridColumns.choices,
+        default=CardGridColumns.NORMAL,
+        help_text='Card width in the grid. Applies only to Card Grid elements.'
+    )
+    """Card column width preset for Card Grid UI elements."""
 
     def items(self):
         """Returns the items of the UI element, ordered. """

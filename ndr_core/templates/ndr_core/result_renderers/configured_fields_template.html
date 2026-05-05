@@ -3,7 +3,16 @@
 {% load i18n %}
 
 {% block search_result_content %}
-   {{ card_content }}
+    {% if has_compact %}
+        <div class="ndr-view-normal {% if compact_is_default %}d-none{% endif %}">
+            {{ normal_content }}
+        </div>
+        <div class="ndr-view-compact {% if not compact_is_default %}d-none{% endif %}">
+            {{ compact_content }}
+        </div>
+    {% else %}
+        {{ normal_content }}
+    {% endif %}
 {% endblock %}
 
 {% block citation_info %}

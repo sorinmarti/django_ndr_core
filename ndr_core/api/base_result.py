@@ -269,16 +269,21 @@ class BaseResult(ABC):
         """Returns a dict with links to refine the search or start a new one."""
         form_links = {}
 
-        # Refine URL
+        # Refine URL — remove whichever search button triggered the result (advanced or simple)
         updated_url = self.request.GET.copy()
-        try:
-            del updated_url[f'search_button_{self.search_configuration.conf_name}']
-            if 'tab' in updated_url:
-                del updated_url['tab']
-        except KeyError:
-            pass
+        for btn_key in [f'search_button_{self.search_configuration.conf_name}',
+                        f'search_button_{self.search_configuration.conf_name}_simple']:
+            if btn_key in updated_url:
+                del updated_url[btn_key]
+        if 'tab' in updated_url:
+            del updated_url['tab']
+        # Determine which tab to return to (simple search uses the _simple pane)
+        if f'search_term_{self.search_configuration.conf_name}' in updated_url:
+            refine_tab = self.search_configuration.conf_name + '_simple'
+        else:
+            refine_tab = self.search_configuration.conf_name
         form_links['refine'] = (self.request.path + "?" + updated_url.urlencode() +
-                                "&refine=1&tab=" + self.search_configuration.conf_name)
+                                "&refine=1&tab=" + refine_tab)
 
         # New Search URL
         form_links['new'] = self.request.path + "?tab=" + self.search_configuration.conf_name
@@ -292,44 +297,6 @@ class BaseResult(ABC):
                 reverse('ndr_core:download_csv',
                         kwargs={'search_config': self.search_configuration.conf_name}) +
                 "?" + updated_url.urlencode())
-
-        # Compact URL
-        updated_url = self.request.GET.copy()
-        possible_configs = [
-            f'compact_view_{self.search_configuration.conf_name}',
-            f'compact_view_{self.search_configuration.conf_name}_simple'
-        ]
-
-        for config in possible_configs:
-            pass
-
-        try:
-            if f'compact_view_{self.search_configuration.conf_name}' in updated_url and \
-                    f'search_button_{self.search_configuration.conf_name}' in updated_url:
-
-                form_links['compact_label'] = _("Show full results")
-                del updated_url[f'compact_view_{self.search_configuration.conf_name}']
-                form_links['compact'] = (self.request.path + "?" + updated_url.urlencode())
-
-            elif f'compact_view_{self.search_configuration.conf_name}_simple' in updated_url and \
-                    f'search_button_{self.search_configuration.conf_name}_simple' in updated_url:
-                form_links['compact_label'] = _("Show full results")
-                del updated_url[f'compact_view_{self.search_configuration.conf_name}_simple']
-                form_links['compact'] = (self.request.path + "?" + updated_url.urlencode())
-            else:
-                form_links['compact_label'] = _("Show compact results")
-                if f'search_button_{self.search_configuration.conf_name}' in updated_url:
-                    form_links['compact'] = (self.request.path + "?" + updated_url.urlencode() +
-                                         "&compact_view_" + self.search_configuration.conf_name + "=on")
-                elif f'search_button_{self.search_configuration.conf_name}_simple' in updated_url:
-                    form_links['compact'] = (self.request.path + "?" + updated_url.urlencode() +
-                                         "&compact_view_" + self.search_configuration.conf_name + "_simple=on")
-                else:
-                    form_links['compact'] = "ERROR"
-                    """form_links['compact'] = (self.request.path + "?" + updated_url.urlencode() +
-                                         "&compact_view_" + self.search_configuration.conf_name + "=on")"""
-        except KeyError:
-            pass
 
         return form_links
 
