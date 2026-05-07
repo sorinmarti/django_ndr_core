@@ -4,6 +4,7 @@ from crispy_forms.layout import Layout, Row, Column
 from django import forms
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons, get_info_box
+from ndr_core.admin_forms.ndr_ckeditor_widget import NdrResultCKEditor5Widget
 from ndr_core.admin_forms.widgets import TabChildrenWidget
 from ndr_core.models import NdrCoreResultField
 
@@ -15,6 +16,15 @@ class ResultFieldForm(forms.ModelForm):
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreResultField
         fields = ['label', 'rich_expression', 'field_classes', 'border_label']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Override the rich_expression widget to mark it for the result tag inserter JS
+        from django_ckeditor_5.fields import CKEditor5Field
+        current_widget = self.fields['rich_expression'].widget
+        self.fields['rich_expression'].widget = NdrResultCKEditor5Widget(
+            config_name=getattr(current_widget, 'config_name', 'result_editor')
+        )
 
     @property
     def helper(self):

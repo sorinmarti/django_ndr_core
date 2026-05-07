@@ -13,9 +13,17 @@
     {% url 'ndr_core:configure_search' %}
 {% endblock %}
 
+{% block extra_modals %}
+    {% if not is_tab_field %}
+        {% include 'ndr_core/admin_views/ndr_result_tag_modal.html' %}
+    {% endif %}
+{% endblock %}
+
 {% block page_js %}
     <script src="{% static 'ndr_core/js/admin/result_field_create_edit.js' %}"></script>
     {% if is_tab_field %}
         <script src="{% static 'ndr_core/js/widgets/tab_children_widget.js' %}"></script>
+    {% else %}
+        <script src="{% static 'ndr_core/js/ndr_result_tag_inserter.js' %}"></script>
     {% endif %}
 {% endblock %}

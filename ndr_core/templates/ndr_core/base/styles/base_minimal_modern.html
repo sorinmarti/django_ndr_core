@@ -122,7 +122,7 @@
         {% block content %}
             {% if rendered_text|has_content %}
                 <div class="content-card">
-                    {{ rendered_text|safe }}
+                    <div class="ck-content">{{ rendered_text|safe }}</div>
                 </div>
             {% endif %}
         {% endblock %}

@@ -15,8 +15,14 @@ from ndr_core.admin_forms.result_field_forms import (
 )
 from ndr_core.models import (
     NdrCoreResultField,
-    NdrCoreSearchConfiguration
+    NdrCoreSearchConfiguration,
+    NdrCoreSearchField,
 )
+
+
+def _search_field_hints():
+    """Return all NdrCoreSearchField instances for use as field-path hints."""
+    return NdrCoreSearchField.objects.all().order_by('field_name')
 
 
 class ResultFieldCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
@@ -26,6 +32,11 @@ class ResultFieldCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
     form_class = ResultFieldCreateForm
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/create/result_field_create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_form_fields'] = _search_field_hints()
+        return context
 
     def form_valid(self, form):
         """Handle form submission and check which button was clicked."""
@@ -68,6 +79,11 @@ class ResultFieldEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
     form_class = ResultFieldEditForm
     success_url = reverse_lazy('ndr_core:configure_search')
     template_name = 'ndr_core/admin_views/edit/result_field_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_form_fields'] = _search_field_hints()
+        return context
 
     def get_form_class(self):
         """Return the appropriate form class based on whether this is a tab container."""

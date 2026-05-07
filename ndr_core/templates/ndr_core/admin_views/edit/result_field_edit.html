@@ -13,10 +13,19 @@
     {% endif %}
 {% endblock %}
 
+{% block extra_modals %}
+    {% if not object.is_tab_container %}
+        {% include 'ndr_core/admin_views/ndr_result_tag_modal.html' %}
+    {% endif %}
+{% endblock %}
+
 {% block page_js %}
     {{ block.super }}
     {% if object.is_tab_container %}
         <script src="{% static 'ndr_core/js/widgets/tab_children_widget.js' %}"></script>
+    {% else %}
+        <script src="{% static 'ndr_core/js/admin/result_field_create_edit.js' %}"></script>
+        <script src="{% static 'ndr_core/js/ndr_result_tag_inserter.js' %}"></script>
     {% endif %}
 {% endblock %}
 

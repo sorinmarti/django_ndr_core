@@ -117,7 +117,7 @@
 
                     {% block content %}
                         {% if rendered_text|has_content %}
-                            {{ rendered_text|safe }}
+                            <div class="ck-content">{{ rendered_text|safe }}</div>
                         {% endif %}
                     {% endblock %}
 
@@ -147,7 +147,7 @@
 
                 {% block content_no_nav %}
                     {% if rendered_text|has_content %}
-                        {{ rendered_text|safe }}
+                        <div class="ck-content">{{ rendered_text|safe }}</div>
                     {% endif %}
                 {% endblock %}
 
