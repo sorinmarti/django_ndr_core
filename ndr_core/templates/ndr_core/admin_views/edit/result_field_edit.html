@@ -19,6 +19,33 @@
     {% endif %}
 {% endblock %}
 
+{% block extra_content %}
+    {% if not object.is_tab_container %}
+    <div class="card bg-light mb-3" id="ndr-preview-card">
+        <div class="card-header d-flex align-items-center">
+            <strong><i class="fa-regular fa-eye"></i> Live Preview</strong>
+            {% if example_conf_label %}
+                <span class="text-muted small ms-2">
+                    — using example from <em>{{ example_conf_label }}</em>
+                </span>
+            {% else %}
+                <span class="text-muted small ms-2">
+                    — <a href="{% url 'ndr_core:configure_search' %}">configure an example result</a> to enable preview
+                </span>
+            {% endif %}
+            <button type="button" class="btn btn-sm btn-outline-secondary ms-auto" id="ndr-preview-refresh-btn">
+                <i class="fa-regular fa-rotate-right"></i> Refresh
+            </button>
+        </div>
+        <div class="card-body">
+            <div id="ndr-preview-content" class="ck-content p-2 border rounded bg-white" style="min-height: 60px;">
+                <span class="text-muted small">Preview will appear here as you edit the expression.</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
 {% block page_js %}
     {{ block.super }}
     {% if object.is_tab_container %}
@@ -26,6 +53,67 @@
     {% else %}
         <script src="{% static 'ndr_core/js/admin/result_field_create_edit.js' %}"></script>
         <script src="{% static 'ndr_core/js/ndr_result_tag_inserter.js' %}"></script>
+        <script>
+        (function () {
+            var PREVIEW_URL = '{% url "ndr_core:preview_result_field" %}';
+            var SEARCH_CONF  = '{{ example_conf_pk|default:"" }}';
+            var CSRF_TOKEN   = '{{ csrf_token }}';
+            var EDITOR_ID    = 'id_rich_expression';
+            var previewTimer = null;
+
+            function schedulePreview() {
+                clearTimeout(previewTimer);
+                previewTimer = setTimeout(doPreview, 600);
+            }
+
+            function doPreview() {
+                var editor = window.editors && window.editors[EDITOR_ID];
+                if (!editor) return;
+                var expression = editor.getData();
+                var panel = document.getElementById('ndr-preview-content');
+                if (!panel) return;
+
+                fetch(PREVIEW_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': CSRF_TOKEN
+                    },
+                    body: JSON.stringify({ expression: expression, search_conf: SEARCH_CONF })
+                })
+                .then(function (r) { return r.text(); })
+                .then(function (html) { panel.innerHTML = html; })
+                .catch(function () { /* silent */ });
+            }
+
+            function wireEditor(editor) {
+                editor.model.document.on('change:data', schedulePreview);
+                doPreview();
+            }
+
+            // Wire up as soon as the editor is ready
+            if (window.editors && window.editors[EDITOR_ID]) {
+                wireEditor(window.editors[EDITOR_ID]);
+            } else if (window.ckeditorRegisterCallback) {
+                window.ckeditorRegisterCallback(EDITOR_ID, function () {
+                    wireEditor(window.editors[EDITOR_ID]);
+                });
+            } else {
+                // Fallback: poll briefly
+                var attempts = 0;
+                var poll = setInterval(function () {
+                    if (window.editors && window.editors[EDITOR_ID]) {
+                        clearInterval(poll);
+                        wireEditor(window.editors[EDITOR_ID]);
+                    } else if (++attempts > 40) {
+                        clearInterval(poll);
+                    }
+                }, 250);
+            }
+
+            var refreshBtn = document.getElementById('ndr-preview-refresh-btn');
+            if (refreshBtn) refreshBtn.addEventListener('click', doPreview);
+        }());
+        </script>
     {% endif %}
 {% endblock %}
-

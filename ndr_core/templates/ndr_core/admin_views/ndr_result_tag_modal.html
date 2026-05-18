@@ -1,0 +1,204 @@
+{% load static %}
+<!-- NDR Result Field Tag Inserter Modal -->
+<div class="modal fade" id="ndrResultTagModal" tabindex="-1" aria-labelledby="ndrResultTagModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="ndrResultTagModalLabel">
+          <i class="fa-solid fa-brackets-curly"></i> Insert Field Tag
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <p class="text-muted small mb-3">
+          Build a <code>{field_path|filter:param=val}</code> tag and insert it at the cursor.
+          Up to three filters can be chained.
+        </p>
+
+        <!-- Tab navigation -->
+        <ul class="nav nav-tabs mb-3" id="ndrRtTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="ndrRt-tab-variable" data-bs-toggle="tab"
+                    data-bs-target="#ndrRtTabVariable" type="button" role="tab">
+              <i class="fa-solid fa-database"></i> Data Field
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="ndrRt-tab-literal" data-bs-toggle="tab"
+                    data-bs-target="#ndrRtTabLiteral" type="button" role="tab">
+              <i class="fa-solid fa-quote-left"></i> Literal
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="ndrRtTabContent">
+
+          <!-- ============================================================ -->
+          <!-- DATA FIELD TAB                                                -->
+          <!-- ============================================================ -->
+          <div class="tab-pane fade show active" id="ndrRtTabVariable" role="tabpanel">
+
+            <div class="mb-3">
+              <label for="ndrRtVarPath" class="form-label fw-bold">Field path</label>
+              <input type="text" class="form-control ndrRt-update" id="ndrRtVarPath"
+                     placeholder="e.g. actor.entity_canonical  or  dates[0].year">
+              <div class="form-text">
+                Use dot notation (<code>a.b.c</code>) or bracket notation (<code>a[0].b</code>).
+                MongoDB arrays are traversed automatically.
+              </div>
+            </div>
+
+            {% if example_json_paths %}
+            <div class="mb-3">
+              <div class="text-muted small mb-1">
+                Available fields from example JSON{% if example_conf_label %} <em>({{ example_conf_label }})</em>{% endif %} — click to use:
+              </div>
+              <div class="d-flex flex-wrap gap-1">
+                {% for path in example_json_paths %}
+                  <button type="button"
+                          class="btn btn-sm btn-outline-primary ndrRt-field-chip"
+                          data-path="{{ path }}">
+                    {{ path }}
+                  </button>
+                {% endfor %}
+              </div>
+            </div>
+            {% elif search_form_fields %}
+            <div class="mb-3">
+              <div class="text-muted small mb-1">Known search fields — click to use (set an example result for better hints):</div>
+              <div class="d-flex flex-wrap gap-1">
+                {% for field in search_form_fields %}
+                  <button type="button"
+                          class="btn btn-sm btn-outline-secondary ndrRt-field-chip"
+                          data-path="{{ field.api_parameter|default:field.field_name }}"
+                          title="{{ field.field_label }}">
+                    {{ field.field_label }} <span class="text-muted">({{ field.api_parameter|default:field.field_name }})</span>
+                  </button>
+                {% endfor %}
+              </div>
+            </div>
+            {% else %}
+            <div class="mb-3">
+              <div class="text-muted small">
+                <i class="fa-regular fa-circle-info"></i>
+                No field hints available. <a href="{% url 'ndr_core:configure_search' %}">Configure an example result</a> to get path suggestions.
+              </div>
+            </div>
+            {% endif %}
+
+            <!-- Filter 1 -->
+            <div class="mb-2">
+              <label for="ndrRtVarFilter1" class="form-label fw-bold">Filter 1 <span class="text-muted fw-normal">(optional)</span></label>
+              <select class="form-select form-select-sm" id="ndrRtVarFilter1">
+                <option value="">— no filter —</option>
+              </select>
+              <div class="form-text text-muted" id="ndrRtVarFilterHint1"></div>
+              <div id="ndrRtVarParamArea1" class="ps-2 border-start border-2 ms-1 mt-2"></div>
+            </div>
+
+            <!-- Filter 2 -->
+            <div id="ndrRtVarFilter2Wrap" class="mb-2 d-none">
+              <label for="ndrRtVarFilter2" class="form-label fw-bold">Filter 2</label>
+              <select class="form-select form-select-sm" id="ndrRtVarFilter2">
+                <option value="">— no filter —</option>
+              </select>
+              <div class="form-text text-muted" id="ndrRtVarFilterHint2"></div>
+              <div id="ndrRtVarParamArea2" class="ps-2 border-start border-2 ms-1 mt-2"></div>
+            </div>
+
+            <!-- Filter 3 -->
+            <div id="ndrRtVarFilter3Wrap" class="mb-2 d-none">
+              <label for="ndrRtVarFilter3" class="form-label fw-bold">Filter 3</label>
+              <select class="form-select form-select-sm" id="ndrRtVarFilter3">
+                <option value="">— no filter —</option>
+              </select>
+              <div class="form-text text-muted" id="ndrRtVarFilterHint3"></div>
+              <div id="ndrRtVarParamArea3" class="ps-2 border-start border-2 ms-1 mt-2"></div>
+            </div>
+
+          </div><!-- /ndrRtTabVariable -->
+
+          <!-- ============================================================ -->
+          <!-- LITERAL TAB                                                   -->
+          <!-- ============================================================ -->
+          <div class="tab-pane fade" id="ndrRtTabLiteral" role="tabpanel">
+
+            <div class="mb-3">
+              <label for="ndrRtLiteralText" class="form-label fw-bold">Static text</label>
+              <input type="text" class="form-control ndrRt-update" id="ndrRtLiteralText"
+                     placeholder='e.g. View on map'>
+              <div class="form-text">
+                Generates <code>{"your text"|filter}</code>. Useful to pass a fixed label through a filter
+                (e.g. a link label for a URL stored elsewhere).
+              </div>
+            </div>
+
+            <!-- Filter 1 -->
+            <div class="mb-2">
+              <label for="ndrRtLitFilter1" class="form-label fw-bold">Filter 1 <span class="text-muted fw-normal">(optional)</span></label>
+              <select class="form-select form-select-sm" id="ndrRtLitFilter1">
+                <option value="">— no filter —</option>
+              </select>
+              <div class="form-text text-muted" id="ndrRtLitFilterHint1"></div>
+              <div id="ndrRtLitParamArea1" class="ps-2 border-start border-2 ms-1 mt-2"></div>
+            </div>
+
+            <!-- Filter 2 -->
+            <div id="ndrRtLitFilter2Wrap" class="mb-2 d-none">
+              <label for="ndrRtLitFilter2" class="form-label fw-bold">Filter 2</label>
+              <select class="form-select form-select-sm" id="ndrRtLitFilter2">
+                <option value="">— no filter —</option>
+              </select>
+              <div class="form-text text-muted" id="ndrRtLitFilterHint2"></div>
+              <div id="ndrRtLitParamArea2" class="ps-2 border-start border-2 ms-1 mt-2"></div>
+            </div>
+
+            <!-- Filter 3 -->
+            <div id="ndrRtLitFilter3Wrap" class="mb-2 d-none">
+              <label for="ndrRtLitFilter3" class="form-label fw-bold">Filter 3</label>
+              <select class="form-select form-select-sm" id="ndrRtLitFilter3">
+                <option value="">— no filter —</option>
+              </select>
+              <div class="form-text text-muted" id="ndrRtLitFilterHint3"></div>
+              <div id="ndrRtLitParamArea3" class="ps-2 border-start border-2 ms-1 mt-2"></div>
+            </div>
+
+          </div><!-- /ndrRtTabLiteral -->
+
+        </div><!-- /tab-content -->
+
+        <!-- Syntax reference -->
+        <details class="mt-3">
+          <summary class="text-muted small" style="cursor:pointer;">Syntax reference</summary>
+          <div class="mt-2 p-2 bg-light rounded small font-monospace">
+            <div><code>{field}</code> — simple value</div>
+            <div><code>{field|upper}</code> — with filter</div>
+            <div><code>{field|badge:color=white,bg=primary}</code> — filter with params</div>
+            <div><code>{field|default:value=N/A}</code> — fallback for empty fields</div>
+            <div><code>{field|truncate:length=100|upper}</code> — chained filters</div>
+            <div><code>{nested.child.value}</code> — nested object access</div>
+            <div><code>{list[0].name}</code> — array element access</div>
+          </div>
+        </details>
+
+        <!-- Live preview -->
+        <div class="mt-3 p-2 rounded border bg-light">
+          <span class="text-muted small">Generated tag:</span>
+          <code id="ndrRtTagPreview" class="d-block mt-1 text-break" style="min-height:1.4em;"></code>
+        </div>
+
+      </div><!-- /modal-body -->
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="ndrRtInsertBtn">
+          <i class="fa-solid fa-plus"></i> Insert
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

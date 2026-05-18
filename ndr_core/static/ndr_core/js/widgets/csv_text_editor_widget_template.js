@@ -25,10 +25,12 @@ $.ajax({url: header_url, success: function(result){
         console.log("Error parsing initial data, will load from AJAX:", e);
     }
 
+    let using_ajax = initial_data.length === 0;
+
     // Initialize table with data from textarea, or use AJAX as fallback
     let table = new Tabulator(table_name, {
-        data: initial_data.length > 0 ? initial_data : undefined,
-        ajaxURL: initial_data.length > 0 ? undefined : ajax_url,
+        data: !using_ajax ? initial_data : undefined,
+        ajaxURL: using_ajax ? ajax_url : undefined,
         index: "key",
         movableRows: true,
         addRowPos: "bottom",
@@ -42,16 +44,20 @@ $.ajax({url: header_url, success: function(result){
         text_area.val(JSON.stringify(data));
     }
 
-    // Handle both data loaded from initial data and AJAX
+    // For local data: set count from initial_data; textarea is already correct from server render.
+    // For AJAX data: update textarea once data arrives from the server.
     table.on("tableBuilt", function(){
-        if (initial_data.length > 0) {
+        if (!using_ajax) {
             data_count = initial_data.length;
         }
     });
 
     table.on("dataLoaded", function(data){
         data_count = data.length;
-        cellEdited();
+        if (using_ajax) {
+            // Only sync textarea from AJAX-loaded data; local data is already in the textarea.
+            cellEdited();
+        }
     });
 
     table.on("cellEdited", function(cell){

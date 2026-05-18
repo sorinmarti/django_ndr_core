@@ -236,6 +236,12 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                                       help_text="Condition for multiple list values")
     """Condition for multiple list values"""
 
+    list_sort = models.CharField(max_length=10, blank=True, default='SAVED',
+                                 choices=(('SAVED', 'Saved Order'),
+                                          ('ALPHA', 'Alphabetical')),
+                                 help_text="Sort order for the dropdown choices")
+    """Sort order for dropdown/multi-select choices"""
+
     comparison_operator = models.CharField(max_length=20, blank=True, default='=',
                                           choices=(('=', 'Equal to / At / Exact match'),
                                                    ('>', 'Greater than / After'),
@@ -315,7 +321,8 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         for lang in get_available_languages():
             keys.append((f'value_{lang[0]}', 'Undefined'))
 
-        keys += [('initial', ''),
+        keys += [('group', ''),
+                 ('initial', ''),
                  ('condition', True),
                  ('is_searchable', True),
                  ('is_printable', True)]
@@ -356,18 +363,48 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
         return choices
 
     def get_choices(self, null_choice=False):
-        """Returns the choices of a choice field as a list of tuples. """
+        """Returns the choices of a choice field as a list of tuples, supporting optgroups and sorting."""
         json_list = self.get_choices_list()
         active_language = get_language()
 
+        # Build intermediate list: (display_label, group, choice_tuple)
+        items = []
+        for choice in json_list:
+            value = choice['value']
+            lang_key = f'value_{active_language}'
+            if lang_key in choice and choice[lang_key]:
+                value = choice[lang_key]
+            group = choice.get('group', '')
+            items.append((value, group, (str(choice['key']) + '__' + str(choice['condition']).lower(), value)))
+
+        # Sort items and groups alphabetically if requested
+        if self.list_sort == 'ALPHA':
+            items.sort(key=lambda x: (x[1].lower(), x[0].lower()))
+
+        # Build grouped choices, preserving insertion order of groups
         choices = []
         if null_choice:
             choices.append(('', _("Please Choose")))
-        for choice in json_list:
-            value = choice['value']
-            if f'value_{active_language}' in choice:
-                value = choice[f'value_{active_language}']
-            choices.append((str(choice['key'])+'__'+str(choice['condition']).lower(), value))
+
+        ungrouped = []
+        groups = {}
+        group_order = []
+        for label, group, choice_tuple in items:
+            if not group:
+                ungrouped.append(choice_tuple)
+            else:
+                if group not in groups:
+                    groups[group] = []
+                    group_order.append(group)
+                groups[group].append(choice_tuple)
+
+        if self.list_sort == 'ALPHA':
+            group_order.sort(key=str.lower)
+
+        choices.extend(ungrouped)
+        for group_name in group_order:
+            choices.append((group_name, groups[group_name]))
+
         return choices
 
     def get_initial_value(self):
@@ -634,6 +671,12 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                     verbose_name="API Settings",
                                     help_text="API-type-specific settings stored as JSON. Managed via the form.")
     """API-type-specific settings (e.g. Atlas Search options for MongoDB). Keyed by api_type name."""
+
+    example_result_json = models.JSONField(null=True, blank=True,
+                                           verbose_name="Example Result JSON",
+                                           help_text="Paste a single example API result record here. "
+                                                     "Used to suggest field paths and preview result fields.")
+    """A sample API result record used to power the result field editor and live preview."""
 
     def __str__(self):
         return self.conf_name

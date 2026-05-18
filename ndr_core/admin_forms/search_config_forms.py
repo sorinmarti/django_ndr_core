@@ -347,4 +347,64 @@ class SearchConfigurationEditForm(SearchConfigurationForm):
         """Creates and returns the form helper property."""
         helper = super().helper
         helper.layout.append(get_form_buttons('Save Search Configuration'))
+
+
+class ExampleResultForm(forms.ModelForm):
+    """Form to set the example result JSON for a search configuration."""
+
+    class Meta:
+        model = NdrCoreSearchConfiguration
+        fields = ['example_result_json']
+        widgets = {
+            'example_result_json': forms.Textarea(attrs={
+                'rows': 20,
+                'class': 'form-control font-monospace',
+                'placeholder': '{\n  "id": "example_001",\n  "title": "Example Record"\n}',
+                'id': 'id_example_result_json',
+            }),
+        }
+
+    def clean_example_result_json(self):
+        """Accept raw JSON text and parse it."""
+        import json
+        raw = self.data.get('example_result_json_raw', '').strip()
+        if not raw:
+            return None
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError as e:
+            raise ValidationError(f"Invalid JSON: {e}")
+
+    @property
+    def helper(self):
+        helper = FormHelper()
+        helper.form_method = 'POST'
+        layout = helper.layout = Layout()
+
+        layout.append(Div(
+            HTML('<div class="alert alert-info">'
+                 '<strong><i class="fa-regular fa-circle-info"></i> Example Result JSON:</strong> '
+                 'Paste a single record from your API response here (not the full paginated response, '
+                 'just one <code>{ ... }</code> object). '
+                 'NDR Core will extract all available field paths and use them as hints in the result '
+                 'field editor and for live preview.'
+                 '</div>'),
+            css_class='mb-3'
+        ))
+
+        layout.append(Row(
+            Column(
+                HTML('<label class="form-label fw-bold">JSON</label>'
+                     '<div id="ndr-json-error" class="text-danger small mb-1 d-none"></div>'),
+                HTML('<textarea id="id_example_result_json_raw" name="example_result_json_raw" '
+                     'rows="22" class="form-control font-monospace" '
+                     'placeholder=\'{ "id": "example_001", "title": "Example Record" }\'>'
+                     '</textarea>'),
+                css_class='form-group col-12'
+            ),
+            css_class='row g-2'
+        ))
+
+        layout.append(get_form_buttons('Save Example JSON'))
+        return helper
         return helper

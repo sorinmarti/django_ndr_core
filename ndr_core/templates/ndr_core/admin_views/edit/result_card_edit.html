@@ -1,27 +1,97 @@
 {% extends 'ndr_core/admin_views/edit/_edit.html' %}
 {% load static %}
 
-{% block back_url %}
-    {% url 'ndr_core:configure_search' %}
-{% endblock %}
+{% block back_url %}{% url 'ndr_core:configure_search' %}{% endblock %}
+{% block title %}Configure Result Display{% endblock %}
 
-{% block title %}
-    Configure Result Display
+{% block content %}
+<div class="card bg-light mb-3">
+    <div class="card-header">
+        <a href="{% url 'ndr_core:configure_search' %}" class="btn btn-outline-secondary" role="button">Go Back</a>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">
+            Configure Result Display
+            {% if search_configuration %}
+                &mdash; <span class="text-muted fw-normal fs-6">{{ search_configuration.conf_label }}</span>
+            {% endif %}
+        </h5>
+
+        <p class="text-muted small mb-3">
+            Click a field in the palette to select it, then click an empty cell on the grid to place it.
+            Use <strong>⠿</strong> to drag a field to a new position,
+            <strong>←</strong> / <strong>→</strong> for width,
+            <strong>↑</strong> / <strong>↓</strong> for height,
+            and <strong>×</strong> to remove.
+        </p>
+
+        <form method="post" id="result-card-grid-form">
+            {% csrf_token %}
+            <input type="hidden" id="grid_config_normal"  name="grid_config_normal"  value="{{ initial_normal_json }}">
+            <input type="hidden" id="grid_config_compact" name="grid_config_compact" value="{{ initial_compact_json }}">
+
+            <!-- Bootstrap tabs -->
+            <ul class="nav nav-tabs mb-3" id="resultCardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab-normal-btn"
+                            data-bs-toggle="tab" data-bs-target="#tab-normal"
+                            type="button" role="tab">
+                        Result Card
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link{% if not search_configuration.search_has_compact_result %} disabled{% endif %}"
+                            id="tab-compact-btn"
+                            data-bs-toggle="tab" data-bs-target="#tab-compact"
+                            type="button" role="tab">
+                        Compact Result Card
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="tab-normal" role="tabpanel">
+                    <div id="normal-grid-editor"></div>
+                </div>
+                <div class="tab-pane fade" id="tab-compact" role="tabpanel">
+                    <div id="compact-grid-editor"></div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Update Result Configuration
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block page_js %}
-    <script src="{% static 'ndr_core/js/admin/preview.js' %}"></script>
-    <script src="{% static 'ndr_core/js/admin/result_card_preview.js' %}"></script>
-    <script>
-        $(document).ready(function(){
-            let imageBaseUrl = "{% url 'ndr_core:preview_result_card_image' 'image_string' %}";
-            init_result_preview(imageBaseUrl);
-            init_cpct_result_preview(imageBaseUrl);
-        
-            {% if not search_configuration.search_has_compact_result %}
-                let compact_tab = $("#result_card_tabs li:nth-child(2)");
-                compact_tab.children('a').attr('class', 'nav-link disabled');
-            {% endif %}
-        });
-    </script>
+<script src="{% static 'ndr_core/js/admin/grid_editor.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const availableFields  = {{ available_fields_json|safe }};
+    const initialNormal    = {{ initial_normal_json|safe }};
+    const initialCompact   = {{ initial_compact_json|safe }};
+
+    new GridEditor({
+        containerId:     'normal-grid-editor',
+        hiddenInputId:   'grid_config_normal',
+        availableFields: availableFields,
+        allowRowSpan:    true,
+        initialData:     initialNormal
+    });
+
+    new GridEditor({
+        containerId:     'compact-grid-editor',
+        hiddenInputId:   'grid_config_compact',
+        availableFields: availableFields,
+        allowRowSpan:    true,
+        initialData:     initialCompact
+    });
+});
+</script>
 {% endblock %}

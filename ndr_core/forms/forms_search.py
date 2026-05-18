@@ -430,7 +430,10 @@ class AdvancedSearchForm(_NdrCoreForm):
                             )
                             info_text = info_text_translation.translation
                         except NdrCoreTranslation.DoesNotExist:
-                            info_text = column.search_field.list_choices
+                            raw = column.search_field.list_choices
+                            # list_choices may contain a JSON artifact (e.g. "[]") when the
+                            # field was saved before INFO_TEXT got its own plain-text widget.
+                            info_text = "" if raw.strip() in ("", "[]", "null") else raw
 
                         form_field = Div(
                             HTML(

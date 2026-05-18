@@ -39,7 +39,8 @@
                             <small>
                                 <a href="{% url 'ndr_core:edit_search_form' search.conf_name %}">Configure Search Form</a> &nbsp;|&nbsp;
                                 <a href="{% url 'ndr_core:edit_result_card' search.conf_name %}">Configure Result Card</a> &nbsp;|&nbsp;
-                                <a href="{% url 'ndr_core:edit_data_list_filters' search.conf_name %}">Configure Data List Filters</a>
+                                <a href="{% url 'ndr_core:edit_data_list_filters' search.conf_name %}">Configure Data List Filters</a> &nbsp;|&nbsp;
+                                <a href="{% url 'ndr_core:configure_example_result' search.conf_name %}">Configure Example Result</a>{% if search.example_result_json %} <i class="fa-solid fa-circle-check text-success" title="Example JSON set"></i>{% endif %}
                             </small>
                         </p>
 
@@ -127,9 +128,17 @@
                                 </div>
 
                                 <p class="p-0 m-0">
-                                    <a href="{% url 'ndr_core:edit_result_field' field.pk %}" class="btn btn-sm btn-secondary">
-                                        <i class="fa-regular fa-pen-to-square"></i>
-                                    </a>
+                                    {% with usage=result_field_usage|get_item:field.pk %}
+                                    {% if usage %}
+                                        <a href="{% url 'ndr_core:edit_result_field' field.pk %}?search_conf={{ usage.0.conf_name }}" class="btn btn-sm btn-secondary">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'ndr_core:edit_result_field' field.pk %}" class="btn btn-sm btn-secondary">
+                                            <i class="fa-regular fa-pen-to-square"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% endwith %}
                                     <a href="{% url 'ndr_core:delete_result_field' field.pk %}" class="btn btn-sm btn-danger">
                                         <i class="fa-regular fa-delete-left"></i>
                                     </a>

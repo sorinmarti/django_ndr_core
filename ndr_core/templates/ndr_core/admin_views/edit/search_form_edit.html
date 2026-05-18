@@ -1,21 +1,60 @@
 {% extends 'ndr_core/admin_views/edit/_edit.html' %}
 {% load static %}
 
-{% block back_url %}
-    {% url 'ndr_core:configure_search' %}
-{% endblock %}
+{% block back_url %}{% url 'ndr_core:configure_search' %}{% endblock %}
+{% block title %}Configure Search Form{% endblock %}
 
-{% block title %}
-    Configure Search Form Configuration
+{% block content %}
+<div class="card bg-light mb-3">
+    <div class="card-header">
+        <a href="{% url 'ndr_core:configure_search' %}" class="btn btn-outline-secondary" role="button">Go Back</a>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">
+            Configure Search Form
+            {% if search_configuration %}
+                &mdash; <span class="text-muted fw-normal fs-6">{{ search_configuration.conf_label }}</span>
+            {% endif %}
+        </h5>
+
+        <p class="text-muted small mb-3">
+            Click a field in the palette to select it, then click an empty cell on the grid to place it.
+            Use <strong>⠿</strong> to drag a placed field to a new position,
+            <strong>←</strong> / <strong>→</strong> to adjust width,
+            and <strong>×</strong> to remove a field.
+        </p>
+
+        <form method="post" id="search-form-grid-form">
+            {% csrf_token %}
+            <input type="hidden" id="grid_config" name="grid_config" value="{{ initial_config_json }}">
+
+            <div id="search-grid-editor"></div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Update Search Form Configuration
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block page_js %}
-    <script src="{% static 'ndr_core/js/admin/preview.js' %}"></script>
-    <script src="{% static 'ndr_core/js/admin/search_form_preview.js' %}"></script>
-    <script>
-        $(document).ready(function(){
-            let imageBaseUrl = "{% url 'ndr_core:preview_search_form_image' 'image_string' %}";
-            init_search_form_preview(imageBaseUrl);
-        });
-    </script>
+<script src="{% static 'ndr_core/js/admin/grid_editor.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const availableFields = {{ available_fields_json|safe }};
+    const initialConfig  = {{ initial_config_json|safe }};
+
+    new GridEditor({
+        containerId:     'search-grid-editor',
+        hiddenInputId:   'grid_config',
+        availableFields: availableFields,
+        allowRowSpan:    false,
+        initialData:     initialConfig
+    });
+});
+</script>
 {% endblock %}

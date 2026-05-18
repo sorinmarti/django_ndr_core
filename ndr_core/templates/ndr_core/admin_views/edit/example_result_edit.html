@@ -1,0 +1,106 @@
+{% extends 'ndr_core/admin_views/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <a href="{% url 'ndr_core:configure_search' %}" class="btn btn-outline-secondary" role="button">Go Back</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">
+                <i class="fa-regular fa-brackets-curly"></i>
+                Example Result JSON &mdash; <em>{{ search_config.conf_label }}</em>
+            </h5>
+
+            <p class="text-muted small">
+                Paste a <strong>single record</strong> from your API response (not the full paginated wrapper,
+                just one <code>{ &hellip; }</code> object). NDR Core will extract all field paths
+                from this record and use them as hints in the result field editor.
+            </p>
+
+            {% if json_error %}
+                <div class="alert alert-danger">
+                    <strong>JSON parse error:</strong> {{ json_error }}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="id_example_result_json_raw" class="form-label fw-bold">JSON</label>
+                    <textarea id="id_example_result_json_raw"
+                              name="example_result_json_raw"
+                              rows="24"
+                              class="form-control font-monospace"
+                              placeholder='{ "id": "example_001", "title": "Example Record" }'
+                              spellcheck="false">{{ initial_json }}</textarea>
+                    <div id="ndr-json-feedback" class="form-text"></div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-regular fa-floppy-disk"></i> Save Example JSON
+                </button>
+                <button type="button" class="btn btn-outline-secondary ms-2" id="ndr-json-format-btn">
+                    <i class="fa-regular fa-align-left"></i> Format JSON
+                </button>
+                <button type="button" class="btn btn-outline-danger ms-2" id="ndr-json-clear-btn">
+                    <i class="fa-regular fa-trash"></i> Clear
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% if search_config.example_result_json %}
+    <div class="card bg-light mb-3">
+        <div class="card-header">
+            <strong><i class="fa-regular fa-list-tree"></i> Extracted Field Paths</strong>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small mb-2">
+                These paths are available for use in result field expressions as <code>{path}</code> tags.
+            </p>
+            <div id="ndr-path-list" class="d-flex flex-wrap gap-1">
+                {% for path in extracted_paths %}
+                    <code class="badge bg-secondary text-white font-monospace">{{ path }}</code>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+{% endblock %}
+
+{% block page_js %}
+<script>
+(function () {
+    var ta = document.getElementById('id_example_result_json_raw');
+    var feedback = document.getElementById('ndr-json-feedback');
+
+    function validate() {
+        var raw = ta.value.trim();
+        if (!raw) { feedback.textContent = ''; feedback.className = 'form-text'; return; }
+        try {
+            JSON.parse(raw);
+            feedback.textContent = '✓ Valid JSON';
+            feedback.className = 'form-text text-success';
+        } catch (e) {
+            feedback.textContent = '✗ ' + e.message;
+            feedback.className = 'form-text text-danger';
+        }
+    }
+
+    ta.addEventListener('input', validate);
+    validate();
+
+    document.getElementById('ndr-json-format-btn').addEventListener('click', function () {
+        try {
+            ta.value = JSON.stringify(JSON.parse(ta.value), null, 2);
+            validate();
+        } catch (e) { /* validation message already shown */ }
+    });
+
+    document.getElementById('ndr-json-clear-btn').addEventListener('click', function () {
+        if (confirm('Clear the example JSON?')) { ta.value = ''; validate(); }
+    });
+}());
+</script>
+{% endblock %}

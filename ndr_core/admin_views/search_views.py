@@ -7,7 +7,8 @@ from django.views.generic import CreateView, UpdateView, DeleteView, FormView
 
 from ndr_core.admin_forms.search_config_forms import (
     SearchConfigurationCreateForm,
-    SearchConfigurationEditForm
+    SearchConfigurationEditForm,
+    ExampleResultForm,
 )
 from ndr_core.admin_forms.search_form_forms import SearchConfigurationFormEditForm
 from ndr_core.admin_forms.data_list_filter_forms import DataListFiltersEditForm
@@ -110,52 +111,56 @@ class SearchConfigurationFormEditView(AdminViewMixin, LoginRequiredMixin, FormVi
     template_name = 'ndr_core/admin_views/edit/search_form_edit.html'
     success_url = reverse_lazy('ndr_core:configure_search')
 
-    def get_form(self, form_class=None):
-        """Returns the form for this view. """
-        form = super().get_form(form_class=form_class)
-        fields = (NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk']).search_form_fields.all().
-                  order_by('field_column').order_by('field_row'))
+    def get_context_data(self, **kwargs):
+        """Passes available fields and current placement JSON to the template."""
+        import json
+        context = super().get_context_data(**kwargs)
+        conf = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
+        context['search_configuration'] = conf
 
-        form_row = 0
-        for field in fields:
-            form.fields[f'search_field_{form_row}'].initial = field.search_field
-            form.fields[f'row_field_{form_row}'].initial = field.field_row
-            form.fields[f'column_field_{form_row}'].initial = field.field_column
-            form.fields[f'size_field_{form_row}'].initial = field.field_size
-            form_row += 1
+        # All search fields for the palette
+        all_fields = NdrCoreSearchField.objects.all().order_by('field_label')
+        context['available_fields_json'] = json.dumps([
+            {'id': f.pk, 'label': f.field_label} for f in all_fields
+        ])
 
-        return form
-
-    @staticmethod
-    def get_row_fields(row):
-        """Returns the field names for a given row. """
-        return [f'search_field_{row}', f'row_field_{row}', f'column_field_{row}', f'size_field_{row}']
+        # Current placement state
+        placed = conf.search_form_fields.all().order_by('field_row', 'field_column')
+        context['initial_config_json'] = json.dumps([
+            {
+                'field_id': p.search_field.pk,
+                'label': p.search_field.field_label,
+                'row': p.field_row,
+                'col': p.field_column,
+                'col_span': p.field_size,
+                'row_span': 1,
+            }
+            for p in placed
+        ])
+        return context
 
     def form_valid(self, form):
-        """Creates or updates the form configuration for a search configuration. """
+        """Replaces the entire search form configuration from the grid JSON."""
+        import json
         response = super().form_valid(form)
-        conf_object = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
+        conf = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
 
-        for row in range(20):
-            fields = self.get_row_fields(row)
-            if all(field in form.cleaned_data for field in fields) and \
-                    all(form.cleaned_data[x] is not None for x in fields):
+        # Clear existing placements
+        ids_to_delete = list(conf.search_form_fields.values_list('id', flat=True))
+        conf.search_form_fields.clear()
+        NdrCoreSearchFieldFormConfiguration.objects.filter(id__in=ids_to_delete).delete()
 
-                # There is a valid row of configuration. Check if it already exists in the database.
-                try:
-                    updatable_obj = (
-                        conf_object.search_form_fields.get(search_field=form.cleaned_data[f'search_field_{row}']))
-                    updatable_obj.field_row = form.cleaned_data[f'row_field_{row}']
-                    updatable_obj.field_column = form.cleaned_data[f'column_field_{row}']
-                    updatable_obj.field_size = form.cleaned_data[f'size_field_{row}']
-                    updatable_obj.save()
-                except NdrCoreSearchFieldFormConfiguration.DoesNotExist:
-                    new_field = NdrCoreSearchFieldFormConfiguration.objects.create(
-                        search_field=form.cleaned_data[f'search_field_{row}'],
-                        field_row=form.cleaned_data[f'row_field_{row}'],
-                        field_column=form.cleaned_data[f'column_field_{row}'],
-                        field_size=form.cleaned_data[f'size_field_{row}'])
-                    conf_object.search_form_fields.add(new_field)
+        # Recreate from grid JSON
+        raw = form.cleaned_data.get('grid_config', '') or '[]'
+        for item in json.loads(raw):
+            new_field = NdrCoreSearchFieldFormConfiguration.objects.create(
+                search_field_id=item['field_id'],
+                field_row=item['row'],
+                field_column=item['col'],
+                field_size=item['col_span'],
+            )
+            conf.search_form_fields.add(new_field)
+
         return response
 
 
@@ -191,3 +196,73 @@ class DataListFiltersEditView(AdminViewMixin, LoginRequiredMixin, FormView):
         search_config.data_list_filters.set(form.cleaned_data['data_list_filters'])
 
         return response
+
+
+def extract_json_paths(obj, prefix=''):
+    """Recursively extract all leaf-level dot/bracket paths from a JSON object."""
+    paths = []
+    if isinstance(obj, dict):
+        for key, value in obj.items():
+            full = f'{prefix}.{key}' if prefix else key
+            if isinstance(value, (dict, list)):
+                paths.extend(extract_json_paths(value, full))
+            else:
+                paths.append(full)
+    elif isinstance(obj, list) and obj:
+        # Represent the first element; use [0] notation
+        first = obj[0]
+        item_prefix = f'{prefix}[0]'
+        if isinstance(first, (dict, list)):
+            paths.extend(extract_json_paths(first, item_prefix))
+        else:
+            paths.append(item_prefix)
+    return paths
+
+
+class ExampleResultConfigView(AdminViewMixin, LoginRequiredMixin, View):
+    """View to set and edit the example result JSON for a search configuration."""
+
+    template_name = 'ndr_core/admin_views/edit/example_result_edit.html'
+
+    def _get_config(self, pk):
+        return NdrCoreSearchConfiguration.objects.get(pk=pk)
+
+    def get(self, request, pk, *args, **kwargs):
+        import json
+        config = self._get_config(pk)
+        form = ExampleResultForm(instance=config)
+        initial_raw = json.dumps(config.example_result_json, indent=2) if config.example_result_json else ''
+        paths = extract_json_paths(config.example_result_json) if config.example_result_json else []
+        return render(request, self.template_name, {
+            'form': form,
+            'search_config': config,
+            'initial_json': initial_raw,
+            'extracted_paths': paths,
+        })
+
+    def post(self, request, pk, *args, **kwargs):
+        import json
+        config = self._get_config(pk)
+        raw = request.POST.get('example_result_json_raw', '').strip()
+
+        if raw:
+            try:
+                parsed = json.loads(raw)
+            except json.JSONDecodeError as e:
+                form = ExampleResultForm(instance=config)
+                paths = extract_json_paths(config.example_result_json) if config.example_result_json else []
+                return render(request, self.template_name, {
+                    'form': form,
+                    'search_config': config,
+                    'initial_json': raw,
+                    'json_error': str(e),
+                    'extracted_paths': paths,
+                })
+            config.example_result_json = parsed
+        else:
+            config.example_result_json = None
+
+        config.save(update_fields=['example_result_json'])
+        from django.contrib import messages as django_messages
+        django_messages.success(request, "Example result JSON saved.")
+        return redirect('ndr_core:configure_search')

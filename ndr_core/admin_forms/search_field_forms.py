@@ -15,16 +15,27 @@ class SearchFieldForm(forms.ModelForm):
         """Initializes the form with the provided arguments."""
         super().__init__(*args, **kwargs)
 
-        self.fields['list_choices'] = forms.CharField(widget=CSVTextEditorWidget(
-            attrs={'instance': kwargs.get('instance', None), 'type_field_id': 'id_field_type'}),
-            help_text="key, value, value_{lang}, is_searchable, is_printable, info, info_{lang}")
+        instance = kwargs.get('instance', None)
+        is_info_text = (instance is not None and
+                        instance.field_type == NdrCoreSearchField.FieldType.INFO_TEXT)
+
+        if is_info_text:
+            self.fields['list_choices'] = forms.CharField(
+                widget=forms.Textarea(attrs={'rows': 6}),
+                required=False,
+                help_text="Info text content shown in the search form.",
+            )
+        else:
+            self.fields['list_choices'] = forms.CharField(widget=CSVTextEditorWidget(
+                attrs={'instance': instance, 'type_field_id': 'id_field_type'}),
+                help_text="key, value, value_{lang}, is_searchable, is_printable, info, info_{lang}")
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
         model = NdrCoreSearchField
         fields = ['field_name', 'field_label', 'field_type', 'field_required', 'help_text', 'api_parameter',
                   'lower_value', 'upper_value', 'list_choices', 'use_in_csv_export', 'initial_value', 'data_field_type',
-                  'input_transformation_regex', 'list_condition', 'comparison_operator', 'text_choices']
+                  'input_transformation_regex', 'list_condition', 'list_sort', 'comparison_operator', 'text_choices']
 
     @property
     def helper(self):
@@ -134,9 +145,10 @@ class SearchFieldForm(forms.ModelForm):
         layout.append(form_row)
 
         form_row = Row(
-            Column('list_condition', css_class='form-group col-4'),
-            Column('lower_value', css_class='form-group col-4'),
-            Column('upper_value', css_class='form-group col-4'),
+            Column('list_condition', css_class='form-group col-3'),
+            Column('list_sort', css_class='form-group col-3'),
+            Column('lower_value', css_class='form-group col-3'),
+            Column('upper_value', css_class='form-group col-3'),
             css_class='row g-2'
         )
         layout.append(form_row)

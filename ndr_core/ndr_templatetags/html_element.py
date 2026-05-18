@@ -2,7 +2,7 @@
 class HTMLElement:
     """A class to represent an HTML element."""
 
-    COLOR_CLASSES = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark']
+    COLOR_CLASSES = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark', 'white', 'black']
     HTML_COLOR_NAMES = [
         "AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure",
         "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue",
@@ -93,24 +93,21 @@ class HTMLElement:
 
         # print(option_name, option_value, value, data)
 
+        color_style_string = 'color' if option_name != 'bg' else 'background-color'
+
         if option_value in self.COLOR_CLASSES:
-            self.add_attribute('class', f"badge-{value}")
-
-        color_style_string = 'color'
-        if option_name == 'bg':
-            color_style_string = 'background-color'
-
-        if option_value in self.HTML_COLOR_NAMES:
+            # Bootstrap 5: use bg-* for background, text-* for foreground
+            if option_name == 'bg':
+                self.add_attribute('class', f"bg-{option_value}")
+            else:
+                self.add_attribute('class', f"text-{option_value}")
+        elif option_value.capitalize() in self.HTML_COLOR_NAMES:
             self.add_attribute('style', f'{color_style_string}: {option_value};')
-        if option_value.startswith('#') or option_value.startswith('rgb') or option_value.startswith('hsl'):
+        elif option_value.startswith('#') or option_value.startswith('rgb') or option_value.startswith('hsl'):
             self.add_attribute('style', f'{color_style_string}: {option_value};')
-        if option_value.startswith('val__'):
-            self.add_attribute('style', f'{color_style_string}: niy;')
-        if option_value.startswith('byval__'):
-            self.add_attribute('style', f'{color_style_string}: niy;')
-        if option_value == 'byval':
+        elif option_value == 'byval':
             self.add_attribute('style', f'{color_style_string}: {self.get_color_from_value(value)};')
-        if option_value == 'gradient':
+        elif option_value == 'gradient':
             # Red to green gradient based on numeric value (0-100 or 0-1)
             self.add_attribute('style', f'{color_style_string}: {self.get_gradient_color(value)};')
 

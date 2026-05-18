@@ -122,6 +122,7 @@ def get_field_list_header(request, field_type):
         header.append(get_table_column(title, field))
 
     if field_type == NdrCoreSearchField.FieldType.LIST or field_type == NdrCoreSearchField.FieldType.MULTI_LIST:
+        header.append(get_table_column('Group', 'group'))
         header.append(get_table_column('Searchable', 'is_searchable', 'tickCross'))
         header.append(get_table_column('Displayable', 'is_printable', 'tickCross'))
     if field_type == NdrCoreSearchField.FieldType.BOOLEAN_LIST:

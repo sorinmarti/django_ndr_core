@@ -9,6 +9,7 @@ from ndr_core.admin_views.result_views import (
     ResultFieldCreateView,
     TabFieldCreateView,
     ResultFieldEditView,
+    ResultFieldPreviewView,
     preview_result_card_image,
     ResultFieldDeleteView,
     SearchConfigurationResultEditView
@@ -69,7 +70,8 @@ from ndr_core.admin_views.search_views import (
     SearchConfigurationDeleteView,
     SearchConfigurationFormEditView,
     SearchConfigurationCopyView,
-    DataListFiltersEditView
+    DataListFiltersEditView,
+    ExampleResultConfigView,
 )
 from ndr_core.admin_views.color_views import (
     ConfigureColorPalettes,
@@ -326,6 +328,8 @@ urlpatterns = [
          name='edit_result_card'),
     path('configure/search/edit/data_list_filters/<str:pk>/', DataListFiltersEditView.as_view(),
          name='edit_data_list_filters'),
+    path('configure/search/edit/example_result/<str:pk>/', ExampleResultConfigView.as_view(),
+         name='configure_example_result'),
     path('configure/search/edit/search_field/<str:pk>/', SearchFieldEditView.as_view(),
          name='edit_search_field'),
     path('configure/search/edit/result_field/<str:pk>/', ResultFieldEditView.as_view(),
@@ -344,6 +348,8 @@ urlpatterns = [
          name='preview_search_form_image'),
     path('configure/search/result/preview/<str:img_config>/', preview_result_card_image,
          name='preview_result_card_image'),
+    path('configure/search/result_field/preview/', ResultFieldPreviewView.as_view(),
+         name='preview_result_field'),
     path('configure/search/ajax/field/<str:field_name>/choices/', get_field_list_choices, name='get_field_choices'),
     path('configure/search/ajax/field/<int:field_type>/header/', get_field_list_header, name='get_field_header'),
 
