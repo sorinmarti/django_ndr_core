@@ -77,7 +77,7 @@
                                         <small class="text-muted">
                                             <i class="fa-regular fa-circle-info"></i> Used by:
                                             {% for search_config in search_field_usage|get_item:field.pk %}
-                                                <span class="badge badge-secondary">{{ search_config.conf_label }}</span>{% if not forloop.last %}, {% endif %}
+                                                <span class="badge bg-secondary">{{ search_config.conf_label }}</span>{% if not forloop.last %}, {% endif %}
                                             {% endfor %}
                                         </small>
                                     {% else %}
@@ -117,7 +117,7 @@
                                         <small class="text-muted">
                                             <i class="fa-regular fa-circle-info"></i> Used by:
                                             {% for search_config in result_field_usage|get_item:field.pk %}
-                                                <span class="badge badge-secondary">{{ search_config.conf_label }}</span>{% if not forloop.last %}, {% endif %}
+                                                <span class="badge bg-secondary">{{ search_config.conf_label }}</span>{% if not forloop.last %}, {% endif %}
                                             {% endfor %}
                                         </small>
                                     {% else %}

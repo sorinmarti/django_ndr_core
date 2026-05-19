@@ -754,8 +754,21 @@ class NdrCorePage(TranslatableMixin, models.Model):
     """The index determines the order the pages are displayed. 0 comes first (=most left)"""
 
     search_configs = models.ManyToManyField(NdrCoreSearchConfiguration)
-    """If the page is of one of the search types (SEARCH, COMBINED_SEARCH), a number of search configurations can 
+    """If the page is of one of the search types (SEARCH, COMBINED_SEARCH), a number of search configurations can
     be saved. """
+
+    combined_simple_search_config = models.ForeignKey(
+        NdrCoreSearchConfiguration,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='combined_master_for',
+        help_text="Master config for the combined simple search tab. "
+                  "When set, replaces the individual per-config simple search tabs "
+                  "with one unified tab that queries all configs simultaneously.",
+    )
+    """When set, enables a single combined simple search tab that runs a query across all
+    search configurations on this page that have has_simple_search=True. Results are merged
+    and sorted by this config's sort_field. The tab title and label are taken from this config."""
 
     template_text = CKEditor5Field(config_name='page_editor', null=True, blank=True,
                                            help_text='Text for your template page')

@@ -340,13 +340,23 @@ class SearchConfigurationCreateForm(SearchConfigurationForm):
 
 
 class SearchConfigurationEditForm(SearchConfigurationForm):
-    """Form to create a search field form. """
+    """Form to edit an existing search configuration.
+
+    conf_name is disabled because it is the primary key — changing it would
+    create a duplicate instead of updating the existing record.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['conf_name'].disabled = True
+        self.fields['conf_name'].help_text = "The configuration name cannot be changed after creation."
 
     @property
     def helper(self):
         """Creates and returns the form helper property."""
         helper = super().helper
         helper.layout.append(get_form_buttons('Save Search Configuration'))
+        return helper
 
 
 class ExampleResultForm(forms.ModelForm):
@@ -406,5 +416,4 @@ class ExampleResultForm(forms.ModelForm):
         ))
 
         layout.append(get_form_buttons('Save Example JSON'))
-        return helper
         return helper

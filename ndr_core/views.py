@@ -291,39 +291,56 @@ class SearchView(_NdrCoreSearchView):
         explanations = []
 
         for field_name, value in form.cleaned_data.items():
-            if field_name.startswith(requested_search) and value not in [None, '', []]:
-                # Remove the search config prefix to get the actual field name
-                actual_field_name = field_name[len(requested_search) + 1:]
+            if not field_name.startswith(requested_search):
+                continue
+            if value in [None, '', [], False]:
+                continue
 
-                # Skip condition fields as they're modifiers, not search terms
-                if actual_field_name.endswith('_condition'):
-                    continue
+            actual_field_name = field_name[len(requested_search) + 1:]
 
-                # Get the field configuration for human-readable label
-                try:
-                    field_config = search_config.search_form_fields.get(
-                        search_field__field_name=actual_field_name
-                    )
-                    field_label = field_config.search_field.field_label
+            # Skip modifier/meta fields — they're not search terms
+            if actual_field_name.endswith(('_condition', '_operator')):
+                continue
+            if actual_field_name.startswith(('compact_view_', 'and_or_field_')):
+                continue
 
-                    # Format the value appropriately
+            try:
+                field_config = search_config.search_form_fields.get(
+                    search_field__field_name=actual_field_name
+                )
+                search_field = field_config.search_field
+                field_label = search_field.field_label
+
+                # Resolve choice keys to human-readable labels
+                if search_field.is_choice_field():
+                    choices_dict = search_field.get_choices_list_dict()
+
+                    def _resolve(v):
+                        # BOOLEAN_LIST values have format "key__true" or "key__false"
+                        key = v.split('__')[0] if '__' in str(v) else str(v)
+                        entry = choices_dict.get(key)
+                        return entry.get('value', key) if entry else key
+
                     if isinstance(value, list):
-                        if len(value) == 1:
-                            formatted_value = f"'{value[0]}'"
-                        else:
-                            formatted_value = " or ".join(f"'{v}'" for v in value)
+                        formatted_value = ', '.join(_resolve(v) for v in value)
                     else:
-                        formatted_value = f"'{value}'"
+                        formatted_value = _resolve(value)
 
-                    explanations.append(f"{field_label} {formatted_value}")
-                except:
-                    # If we can't find the field config, skip it
-                    continue
+                # NumberRange returns a sorted list of ints — show as compact range
+                elif isinstance(value, list) and value:
+                    if len(value) == 1:
+                        formatted_value = str(value[0])
+                    else:
+                        formatted_value = f'{value[0]}–{value[-1]}'
 
-        if explanations:
-            return " with ".join(explanations)
-        else:
-            return "all available fields"
+                else:
+                    formatted_value = str(value)
+
+                explanations.append(f'{field_label}: {formatted_value}')
+            except Exception:
+                continue
+
+        return ' | '.join(explanations) if explanations else 'all available fields'
 
     def get(self, request, *args, **kwargs):
         """A view to search for records in the configured API. """
@@ -342,8 +359,60 @@ class SearchView(_NdrCoreSearchView):
             form = self.form_class(request.GET, ndr_page=self.ndr_page)
             # If the form is valid: create a search query
             if form.is_valid():
-                # The search is either a simple or a custom/advanced search
-                if requested_search.endswith('_simple'):
+                # ------------------------------------------------------------------ #
+                # Combined simple search: one term, multiple configs, merged results  #
+                # ------------------------------------------------------------------ #
+                if requested_search == 'combined_simple':
+                    search_term = request.GET.get('search_term_combined_simple', '').strip()
+                    if not search_term:
+                        messages.error(request, _('Please enter a search term.'))
+                        context.update({'form': form, 'requested_search': requested_search})
+                        return render(request, self.template_name, context)
+
+                    and_or = request.GET.get('and_or_field_combined_simple', 'and')
+                    page = int(request.GET.get('page', 1))
+                    master_config = self.ndr_page.combined_simple_search_config
+
+                    combined_results = []  # list of {'data': {...}, 'search_config': conf}
+                    total_combined = 0
+
+                    for conf in self.ndr_page.search_configs.filter(has_simple_search=True):
+                        try:
+                            api_factory = ApiFactory(conf)
+                            query_obj = api_factory.get_query_instance(page=page)
+                            query_string = query_obj.get_simple_query(
+                                search_term, page, and_or=and_or
+                            )
+                            result_obj = api_factory.get_result_instance(query_string, self.request)
+                            result_obj.load_result()
+                            total_combined += result_obj.total
+                            for item in result_obj.results:
+                                combined_results.append({
+                                    'data': item['data'],
+                                    'search_config': conf,
+                                })
+                        except Exception:
+                            pass
+
+                    if not combined_results:
+                        messages.error(request, _('No results found.'))
+                    else:
+                        # Sort merged list by master config's sort_field
+                        sort_field = master_config.sort_field if master_config else None
+                        if sort_field:
+                            reverse_sort = (master_config.sort_order == 'desc') if master_config else False
+                            combined_results.sort(
+                                key=lambda r: r['data'].get(sort_field, ''),
+                                reverse=reverse_sort,
+                            )
+                        context.update({
+                            'combined_results': combined_results,
+                            'combined_total': total_combined,
+                            'search_explanation': search_term,
+                        })
+
+                # The search is a per-config simple search
+                elif requested_search.endswith('_simple'):
                     requested_search_actual = requested_search[:-len('_simple')]
                     search_term = request.GET.get(f'search_term_{requested_search_actual}', '')
                     if search_term == '':
@@ -359,6 +428,25 @@ class SearchView(_NdrCoreSearchView):
                     query_string = query_obj.get_simple_query(request.GET.get(query_key, ''),
                                                               request.GET.get("page", 1),
                                                               and_or=request.GET.get('and_or_field', 'and'))
+
+                    # Create a result object and load the result
+                    result = api_factory.get_result_instance(query_string, self.request)
+                    result.load_result()
+
+                    if result.total == 0:
+                        messages.error(request, _('No results found.'))
+                    else:
+                        context.update({'search_config': search_config})
+                        context.update({'result': result})
+                        compact_checked = (
+                            request.GET.get(f'compact_view_{search_config.conf_name}', 'off') == 'on'
+                            or request.GET.get(f'compact_view_{search_config.conf_name}_simple', 'off') == 'on'
+                        )
+                        initial_compact = compact_checked if search_config.search_has_compact_result else False
+                        context.update({'initial_compact_view': initial_compact})
+                        search_explanation = self.build_search_explanation(form, requested_search, search_config)
+                        context.update({'search_explanation': search_explanation})
+
                 # An advanced search is called
                 else:
                     has_values = False
@@ -379,27 +467,27 @@ class SearchView(_NdrCoreSearchView):
                     self.fill_search_query_values(requested_search, query_obj)
                     query_string = query_obj.get_advanced_query()
 
-                # Create a result object and load the result
-                result = api_factory.get_result_instance(query_string, self.request)
-                result.load_result()
+                    # Create a result object and load the result
+                    result = api_factory.get_result_instance(query_string, self.request)
+                    result.load_result()
 
-                if result.total == 0:
-                    messages.error(request, _('No results found.'))
-                else:
-                    context.update({'search_config': search_config})
-                    context.update({'result': result})
-                    # Determine initial compact view state: checkbox in form overrides model default
-                    conf = search_config.conf_name
-                    compact_checked = (
-                        request.GET.get(f'compact_view_{conf}', 'off') == 'on'
-                        or request.GET.get(f'compact_view_{conf}_simple', 'off') == 'on'
-                    )
-                    initial_compact = compact_checked if search_config.search_has_compact_result else False
-                    context.update({'initial_compact_view': initial_compact})
+                    if result.total == 0:
+                        messages.error(request, _('No results found.'))
+                    else:
+                        context.update({'search_config': search_config})
+                        context.update({'result': result})
+                        # Determine initial compact view state: checkbox in form overrides model default
+                        conf = search_config.conf_name
+                        compact_checked = (
+                            request.GET.get(f'compact_view_{conf}', 'off') == 'on'
+                            or request.GET.get(f'compact_view_{conf}_simple', 'off') == 'on'
+                        )
+                        initial_compact = compact_checked if search_config.search_has_compact_result else False
+                        context.update({'initial_compact_view': initial_compact})
 
-                    # Add search explanation for results summary
-                    search_explanation = self.build_search_explanation(form, requested_search, search_config)
-                    context.update({'search_explanation': search_explanation})
+                        # Add search explanation for results summary
+                        search_explanation = self.build_search_explanation(form, requested_search, search_config)
+                        context.update({'search_explanation': search_explanation})
         else:
             if "refine" in request.GET.keys():
                 form = self.form_class(request.GET, ndr_page=self.ndr_page)

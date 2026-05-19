@@ -40,6 +40,13 @@ class PageForm(forms.ModelForm):
         widget=SearchConfigurationWidget(
             attrs={'data-minimum-input-length': 0}))
 
+    combined_simple_search_config = forms.ModelChoiceField(
+        queryset=NdrCoreSearchConfiguration.objects.filter(has_simple_search=True).order_by('conf_name'),
+        required=False,
+        empty_label='— none (use per-config simple tabs) —',
+        help_text="Select a master config to enable a single combined simple search tab across all configs on this page."
+    )
+
     parent_page = forms.ModelChoiceField(queryset=NdrCorePage.objects.filter(parent_page=None),
                                          required=False,
                                          help_text="If you want this page to be a sub-page of another "
@@ -64,7 +71,8 @@ class PageForm(forms.ModelForm):
         """Configure the model form. Provide model class and form fields."""
         model = NdrCorePage
         fields = ['name', 'show_page_title', 'label', 'show_in_navigation', 'show_navigation', 'show_footer',
-                  'center_content', 'page_type', 'parent_page', 'search_configs', 'view_name', 'template_text',
+                  'center_content', 'page_type', 'parent_page', 'search_configs', 'combined_simple_search_config',
+                  'view_name', 'template_text',
                   'use_default_background', 'background_image', 'background_image_dark', 'background_display_mode',
                   'background_position', 'background_size', 'overlay_enabled', 'overlay_color', 'overlay_opacity',
                   'image_opacity']
@@ -184,6 +192,12 @@ class PageForm(forms.ModelForm):
 
         form_row = Row(
             Column('search_configs', css_class='form-group col-md-12 mb-0'),
+            css_class='row g-2'
+        )
+        layout.append(form_row)
+
+        form_row = Row(
+            Column('combined_simple_search_config', css_class='form-group col-md-12 mb-0'),
             css_class='row g-2'
         )
         layout.append(form_row)

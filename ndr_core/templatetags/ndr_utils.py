@@ -167,6 +167,25 @@ def render_result_tag(parser, token):
     return RenderResultNode(token_list[1], token_list[2])
 
 
+@register.simple_tag(takes_context=True)
+def render_result_item(context, data, search_config):
+    """Render a single result card for a combined-search item.
+
+    Usage: {% render_result_item item.data item.search_config %}
+    """
+    ctx_copy = context.new({
+        'ndr_combined_conf': search_config,
+        'request': context.get('request'),
+    })
+    node = RenderResultNode('ndr_combined_placeholder', 'ndr_combined_conf')
+    has_fields = search_config.result_card_fields.all().count() > 0
+    if has_fields:
+        return node.create_card(ctx_copy, {'data': data}, False)
+    else:
+        card_context = {'result': {'data': data}}
+        return mark_safe(get_template('ndr_core/result_renderers/default_template.html').render(card_context))
+
+
 class RenderResultNode(template.Node):
     """Renders a result object."""
 

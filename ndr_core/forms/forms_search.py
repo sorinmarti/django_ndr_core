@@ -67,6 +67,7 @@ class AdvancedSearchForm(_NdrCoreForm):
     Needs a search config and then creates and configures the form from it."""
 
     search_configs = None
+    combined_simple_config = None
 
     def __init__(self, *args, **kwargs):
         """Initializes all needed form fields for the configured search based on
@@ -77,8 +78,10 @@ class AdvancedSearchForm(_NdrCoreForm):
 
         if self.ndr_page is not None:
             self.search_configs = self.ndr_page.search_configs.all()
+            self.combined_simple_config = getattr(self.ndr_page, 'combined_simple_search_config', None)
         elif "search_config" in kwargs:
             self.search_configs = [kwargs.pop("search_config")]
+            self.combined_simple_config = None
         else:
             raise AttributeError("No Search Config Found")
 
@@ -88,11 +91,15 @@ class AdvancedSearchForm(_NdrCoreForm):
         if len(args) > 0:
             self.query_dict = self.query_dict_to_dict(args[0])
 
+        # If a combined simple search master config is set, add ONE combined simple tab field.
+        if self.combined_simple_config:
+            self.init_combined_simple_search_fields(self.combined_simple_config)
+
         # Search Form is composed of different search configurations. Each of them has its own tab.
         # A search configuration may have a simple search tab as well.
         for search_config in self.search_configs:
-            # If the search configuration has a simple search tab, add the fields to the form.
-            if search_config.has_simple_search:
+            # Per-config simple tabs are suppressed when combined mode is active.
+            if search_config.has_simple_search and not self.combined_simple_config:
                 self.init_simple_search_fields(search_config)
 
             # If the search configuration has an advanced search tab, add the fields to the form.
@@ -336,6 +343,20 @@ class AdvancedSearchForm(_NdrCoreForm):
                 f"compact_view_{search_config.conf_name}_simple"
             ] = self.get_compact_view_field(search_config)
 
+    def init_combined_simple_search_fields(self, master_config):
+        """Create form fields for the combined simple search tab (single field shared across all configs)."""
+        self.fields['search_term_combined_simple'] = forms.CharField(
+            label=master_config.simple_query_label,
+            required=False,
+            max_length=100,
+            help_text=master_config.simple_query_help_text,
+        )
+        self.fields['and_or_field_combined_simple'] = forms.ChoiceField(
+            label=_("And or Or Search"),
+            choices=[("and", _("AND search")), ("or", _("OR search"))],
+            required=False,
+        )
+
     @staticmethod
     def get_simple_search_layout_fields(search_config):
         """Create and return layout fields for the simple search fields."""
@@ -348,6 +369,22 @@ class AdvancedSearchForm(_NdrCoreForm):
         )
 
         return search_field, type_field
+
+    @staticmethod
+    def get_combined_search_button():
+        """Create and return right-aligned search button for the combined simple search tab."""
+        div = Div(
+            Div(css_class="col-md-9"),
+            Div(
+                Div(
+                    NdrCoreFormSubmit('search_button_combined_simple', _("Search")),
+                    css_class="text-right",
+                ),
+                css_class="col-md-3",
+            ),
+            css_class="row g-2",
+        )
+        return div
 
     @staticmethod
     def get_search_button(search_config, simple=False):
@@ -388,11 +425,29 @@ class AdvancedSearchForm(_NdrCoreForm):
         # There can be multiple search configurations for one page. Each of them gets its own tab.
         tabs = TabHolder(css_id="id_tabs")
 
+        # If combined simple search is enabled, prepend the unified tab.
+        if self.combined_simple_config:
+            master = self.combined_simple_config
+            tab_combined = Tab(
+                master.simple_search_tab_title,
+                css_id='combined_simple',
+            )
+            tab_combined.append(Div(
+                Field('search_term_combined_simple', wrapper_class='col-md-12'),
+                css_class='row g-2',
+            ))
+            tab_combined.append(Div(
+                Field('and_or_field_combined_simple', wrapper_class='col-md-4'),
+                css_class='row g-2',
+            ))
+            tab_combined.append(self.get_combined_search_button())
+            tabs.append(tab_combined)
+
         # For each search configuration, create a tab and add the form fields to it.
         for search_config in self.search_configs:
-            # Each search configuration can have a simple search tab.
+            # Each search configuration can have a simple search tab (suppressed in combined mode).
             tab_simple = None
-            if search_config.has_simple_search:
+            if search_config.has_simple_search and not self.combined_simple_config:
                 tab_simple = Tab(
                     search_config.simple_search_tab_title,
                     css_id=f"{search_config.conf_name}_simple",
@@ -499,7 +554,7 @@ class AdvancedSearchForm(_NdrCoreForm):
                 tab.append(self.get_search_button(search_config))
                 tabs.append(tab)
 
-            if search_config.has_simple_search and not search_config.simple_search_first:
+            if search_config.has_simple_search and not search_config.simple_search_first and not self.combined_simple_config:
                 tabs.append(tab_simple)
 
         if len(tabs) == 1:

@@ -221,7 +221,12 @@ class MongoDBQuery(BaseQuery):
                         and_list.append({key: condition})
 
             if value is not None:
-                query['filter'][field.parameter] = value
+                path_parts = [p.strip() for p in field.parameter.split(',') if p.strip()]
+                if len(path_parts) > 1:
+                    # Comma-separated api_parameter: search across all fields with $or
+                    and_list.append({'$or': [{part: value} for part in path_parts]})
+                else:
+                    query['filter'][field.parameter] = value
 
         if len(and_list) > 0:
             query['filter']['$and'] = and_list
