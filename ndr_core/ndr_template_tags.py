@@ -17,7 +17,7 @@ class TextPreRenderer:
 
     MAX_ITERATIONS = 50
     ui_element_regex = r'\[\[element\|([a-zA-Z0-9_-]+)\]\]'
-    link_element_regex = r'\[\[(file|page|orcid|plotly|link)(?:-([a-z]+)-([a-z0-9]+)(?:-([a-z0-9]+))?)?\|([0-9a-zA-Z_ /?=&;:.#%~+@-]*)(?:\|([^\]]*))?\]\]'
+    link_element_regex = r'\[\[(file|page|orcid|plotly|link|image)(?:-([a-z]+)-([a-z0-9]+)(?:-([a-z0-9]+))?)?\|([0-9a-zA-Z_ /?=&;:.#%~+@-]*)(?:\|([^\]]*))?\]\]'
     url_element_regex = r'\[\[url\|([0-9a-zA-Z_ -]*)\]\]'  # deprecated, kept for parse-compat
     setting_regex = r'\[\[setting\|([a-zA-Z0-9_-]+)\]\]'
     # Updated regex to capture both old syntax ([[start_block=Title]]) and new syntax ([[start_block:options]])
@@ -25,7 +25,7 @@ class TextPreRenderer:
     code_start_regex = r'\[\[start_code(?:=(.*?))?\]\]'
     code_end_regex = r'\[\[end_code\]\]'
     toc_regex = r'\[\[toc\]\]'
-    link_element_classes = {'figure': NdrCoreImage, 'file': NdrCoreUpload, 'page': NdrCorePage, 'plotly': NdrCoreUpload}
+    link_element_classes = {'image': NdrCoreImage, 'file': NdrCoreUpload, 'page': NdrCorePage, 'plotly': NdrCoreUpload}
     link_element_keys = {"page": "view_name"}
 
     text = None
@@ -692,6 +692,30 @@ class TextPreRenderer:
                 original_tag = original_tag[:-2] + f'|{custom_label}]]'
 
             return text.replace(original_tag, link_html)
+
+        if template == "image":
+            element = self.get_element(template, element_id)
+            if element is None:
+                error_html = f"<span class='text-danger'>Image not found: {element_id}</span>"
+                return text.replace(f'[[image|{element_id}]]', error_html)
+
+            alt = custom_label or element.alt_text or ''
+            img_attrs = f'src="{element.image.url}" alt="{alt}" class="img-fluid"'
+            # -width-NNN → max-width constraint
+            if render_type == 'width' and style:
+                img_attrs += f' style="max-width:{style}px;"'
+
+            img_html = f'<img {img_attrs}>'
+
+            # Reconstruct original tag for replacement
+            if render_type and style:
+                orig = f'[[image-{render_type}-{style}|{element_id}]]'
+            else:
+                orig = f'[[image|{element_id}]]'
+            if custom_label is not None:
+                orig = orig[:-2] + f'|{custom_label}]]'
+
+            return text.replace(orig, img_html)
 
         if template == "plotly":
             # Reconstruct the original tag (may include options like -height-800)

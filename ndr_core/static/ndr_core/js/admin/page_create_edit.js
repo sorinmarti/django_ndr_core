@@ -1,8 +1,12 @@
 
 function setComponents(select_value) {
     let search_configs = $('#div_id_search_configs');
+    let combined_simple = $('#div_id_combined_simple_search_config');
     let template_text = $('#div_id_template_text');
     let info_text = $('#page_type_info')
+
+    // Hide combined simple search by default; show only for Search pages
+    combined_simple.hide();
 
     switch (select_value) {
             case '1':   // Template Page
@@ -25,6 +29,7 @@ function setComponents(select_value) {
                 break;
             case '3':   // Custom Search
                 search_configs.show();
+                combined_simple.show();
                 template_text.show();
                 info_text.text('Creates a page with one or multiple custom search forms. You need to create these forms ' +
                                'before you can use this page type. Multiple forms are displayed in tabs. You can add ' +

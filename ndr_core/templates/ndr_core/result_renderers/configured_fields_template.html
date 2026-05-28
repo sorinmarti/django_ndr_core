@@ -2,6 +2,19 @@
 {% load ndr_utils %}
 {% load i18n %}
 
+{% block card_header_actions %}
+    {% if has_compact %}
+        <button type="button"
+                class="btn btn-outline-secondary ms-auto ndr-card-view-toggle"
+                style="font-size:0.7rem;padding:1px 6px;line-height:1.4;"
+                data-compact="{{ compact_is_default|yesno:'true,false' }}"
+                title="{% if compact_is_default %}{% translate 'Show full result' %}{% else %}{% translate 'Show compact result' %}{% endif %}">
+            <span class="ndr-card-icon-to-compact {% if compact_is_default %}d-none{% endif %}">&#8722;</span>
+            <span class="ndr-card-icon-to-normal {% if not compact_is_default %}d-none{% endif %}">&#43;</span>
+        </button>
+    {% endif %}
+{% endblock %}
+
 {% block search_result_content %}
     {% if has_compact %}
         <div class="ndr-view-normal {% if compact_is_default %}d-none{% endif %}">

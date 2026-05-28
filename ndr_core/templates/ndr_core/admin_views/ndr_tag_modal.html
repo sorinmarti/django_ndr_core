@@ -34,6 +34,12 @@
             </button>
           </li>
           <li class="nav-item" role="presentation">
+            <button class="nav-link" id="ndr-tab-images" data-bs-toggle="tab"
+                    data-bs-target="#ndrTabImages" type="button" role="tab">
+              <i class="fa-solid fa-image"></i> Images
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
             <button class="nav-link" id="ndr-tab-generated" data-bs-toggle="tab"
                     data-bs-target="#ndrTabGenerated" type="button" role="tab">
               <i class="fa-solid fa-wand-magic-sparkles"></i> Generated
@@ -235,6 +241,40 @@
 
             </div>
           </div><!-- /ndrTabLinks -->
+
+          <!-- ============================================================ -->
+          <!-- IMAGES TAB                                                    -->
+          <!-- ============================================================ -->
+          <div class="tab-pane fade" id="ndrTabImages" role="tabpanel">
+            <div class="mb-3">
+              <label for="ndrImage" class="form-label fw-bold">Image</label>
+              {% if images %}
+                <select class="form-select ndr-update" id="ndrImage">
+                  <option value="">— choose an image —</option>
+                  {% for img in images %}
+                    <option value="{{ img.pk }}" data-url="{{ img.image.url }}">
+                      #{{ img.pk }}{% if img.alt_text %} — {{ img.alt_text }}{% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+                <div id="ndrImagePreviewBox" class="mt-2 d-none">
+                  <img id="ndrImageThumb" src="" alt="" class="img-thumbnail" style="max-height:120px;">
+                </div>
+              {% else %}
+                <p class="text-muted">No images found. <a href="{% url 'ndr_core:configure_images' %}">Upload an image first.</a></p>
+              {% endif %}
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <label for="ndrImageWidth" class="form-label">Max width <span class="text-muted">(px, optional)</span></label>
+                <input type="number" class="form-control ndr-update" id="ndrImageWidth" placeholder="e.g. 400" min="1">
+              </div>
+              <div class="col-6">
+                <label for="ndrImageAlt" class="form-label">Alt text <span class="text-muted">(optional)</span></label>
+                <input type="text" class="form-control ndr-update" id="ndrImageAlt" placeholder="overrides stored alt text">
+              </div>
+            </div>
+          </div><!-- /ndrTabImages -->
 
           <!-- ============================================================ -->
           <!-- GENERATED TAB                                                 -->

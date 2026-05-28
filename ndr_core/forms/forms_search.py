@@ -480,15 +480,15 @@ class AdvancedSearchForm(_NdrCoreForm):
                             info_text_translation = NdrCoreTranslation.objects.get(
                                 object_id=column.search_field.field_name,
                                 language=get_language(),
-                                field_name="list_choices",
+                                field_name="text_choices",
                                 table_name="ndrcoresearchfield",
                             )
                             info_text = info_text_translation.translation
                         except NdrCoreTranslation.DoesNotExist:
-                            raw = column.search_field.list_choices
-                            # list_choices may contain a JSON artifact (e.g. "[]") when the
-                            # field was saved before INFO_TEXT got its own plain-text widget.
-                            info_text = "" if raw.strip() in ("", "[]", "null") else raw
+                            # text_choices is the canonical store; fall back to list_choices
+                            # for fields saved before this fix.
+                            raw = column.search_field.text_choices or column.search_field.list_choices
+                            info_text = "" if not raw or raw.strip() in ("", "[]", "null") else raw
 
                         form_field = Div(
                             HTML(

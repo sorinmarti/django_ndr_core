@@ -1,9 +1,8 @@
-  <div class="result-card-field"
+  <div class="result-card-field {{ classes }}"
        data-column="{{ field_column }}"
        data-row="{{ field_row }}"
        data-colspan="{{ field_column_span }}"
        data-rowspan="{{ field_row_span }}"
-       class="{{ classes }}"
        style="position: relative; {% if border_label %}margin-top: 12px;{% endif %}">
       <!-- Border label positioned on the top border -->
       {% if border_label %}

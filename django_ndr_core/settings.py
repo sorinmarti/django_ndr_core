@@ -234,6 +234,28 @@ customColorPalette = [
     ]
 
 # CKEDITOR 5 SETTINGS
+CKEDITOR_5_FONT_FAMILIES = [
+    'default',
+    'Arial, Helvetica, sans-serif',
+    'Courier New, Courier, monospace',
+    'Georgia, serif',
+    'Times New Roman, Times, serif',
+    'Trebuchet MS, Helvetica, sans-serif',
+    'Verdana, Geneva, sans-serif',
+    'Roboto, sans-serif',
+    'Open Sans, sans-serif',
+    'Lato, sans-serif',
+    'Montserrat, sans-serif',
+    'Playfair Display, serif',
+    'Source Code Pro, monospace',
+]
+
+CKEDITOR_5_GOOGLE_FONTS_CSS = (
+    'https://fonts.googleapis.com/css2?'
+    'family=Roboto&family=Open+Sans&family=Lato&family=Montserrat'
+    '&family=Playfair+Display&family=Source+Code+Pro&display=swap'
+)
+
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': ['heading', '|', 'bold', 'italic', 'link',
@@ -308,7 +330,12 @@ CKEDITOR_5_CONFIGS = {
                 {'model': 'leadSmall', 'view': {'name': 'p', 'classes': ['lead', 'lead-sm']}, 'title': 'Lead Text (Small)', 'class': 'ck-heading_lead-sm'},
                 {'model': 'leadLarge', 'view': {'name': 'p', 'classes': ['lead', 'lead-lg']}, 'title': 'Lead Text (Large)', 'class': 'ck-heading_lead-lg'},
             ]
-        }
+        },
+        'fontFamily': {
+            'options': CKEDITOR_5_FONT_FAMILIES,
+            'supportAllValues': False,
+        },
+        'contentsCss': [CKEDITOR_5_GOOGLE_FONTS_CSS],
     },
     'result_editor': {
         'toolbar': [
@@ -376,6 +403,11 @@ CKEDITOR_5_CONFIGS = {
                 {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2'},
                 {'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3'}
             ]
-        }
+        },
+        'fontFamily': {
+            'options': CKEDITOR_5_FONT_FAMILIES,
+            'supportAllValues': False,
+        },
+        'contentsCss': [CKEDITOR_5_GOOGLE_FONTS_CSS],
     }
 }

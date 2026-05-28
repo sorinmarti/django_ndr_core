@@ -172,7 +172,7 @@ class TranslateFieldForm(TranslateForm):
         "field_label",
         "help_text",
         {
-            "field": "list_choices",
+            "field": "text_choices",
             "widget": "textarea",
             "condition": {
                 "field": "field_type",

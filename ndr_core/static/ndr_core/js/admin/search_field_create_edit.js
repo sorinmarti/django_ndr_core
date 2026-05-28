@@ -221,6 +221,7 @@ function selectType(select_value) {
         case '10':      // Info Text
             api_parameter.attr('disabled', 'disabled');
             initial_value.attr('disabled', 'disabled');
+            field_required.attr('disabled', 'disabled');
             help_text.attr('disabled', 'disabled');
             data_field_type.attr('disabled', 'disabled');
             use_in_csv_export.attr('disabled', 'disabled');

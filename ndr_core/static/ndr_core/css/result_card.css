@@ -81,3 +81,9 @@
 .rc-scrollable-container:hover::-webkit-scrollbar-thumb:hover {
     background-color: rgba(0, 0, 0, 0.35);
 }
+
+/* CKEditor font-size classes — active inside result card fields */
+.result-card-field .text-tiny  { font-size: var(--ck-content-font-size-tiny,  0.7em);  }
+.result-card-field .text-small { font-size: var(--ck-content-font-size-small, 0.85em); }
+.result-card-field .text-big   { font-size: var(--ck-content-font-size-big,   1.4em);  }
+.result-card-field .text-huge  { font-size: var(--ck-content-font-size-huge,  1.8em);  }

@@ -21,12 +21,13 @@ def ndr_tag_inserter(context):
     all pages, UI elements, file uploads and string-type settings so no AJAX
     is needed at runtime.
     """
-    from ndr_core.models import NdrCorePage, NdrCoreUIElement, NdrCoreUpload, NdrCoreValue
+    from ndr_core.models import NdrCorePage, NdrCoreUIElement, NdrCoreUpload, NdrCoreValue, NdrCoreImage
 
     ctx = {
         'pages': NdrCorePage.objects.all().order_by('name'),
         'ui_elements': NdrCoreUIElement.objects.all().order_by('type', 'name'),
         'uploads': NdrCoreUpload.objects.all().order_by('title'),
+        'images': NdrCoreImage.objects.filter(image_active=True).order_by('-uploaded_at'),
         'settings': NdrCoreValue.objects.filter(
             value_type__in=['string', 'rich', 'url']
         ).order_by('value_label'),
@@ -428,6 +429,9 @@ def has_content(html):
     """Check if HTML has actual content beyond empty tags and whitespace entities."""
     if not html:
         return False
+    # Visual elements count as content even without text
+    if re.search(r'<(img|video|audio|canvas|svg|iframe)\b', html, re.IGNORECASE):
+        return True
     text = re.sub(r'<[^>]+>', '', html)
     text = text.replace('&nbsp;', '').replace('&#160;', '')
     return bool(text.strip())

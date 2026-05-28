@@ -16,19 +16,9 @@ class SearchFieldForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         instance = kwargs.get('instance', None)
-        is_info_text = (instance is not None and
-                        instance.field_type == NdrCoreSearchField.FieldType.INFO_TEXT)
-
-        if is_info_text:
-            self.fields['list_choices'] = forms.CharField(
-                widget=forms.Textarea(attrs={'rows': 6}),
-                required=False,
-                help_text="Info text content shown in the search form.",
-            )
-        else:
-            self.fields['list_choices'] = forms.CharField(widget=CSVTextEditorWidget(
-                attrs={'instance': instance, 'type_field_id': 'id_field_type'}),
-                help_text="key, value, value_{lang}, is_searchable, is_printable, info, info_{lang}")
+        self.fields['list_choices'] = forms.CharField(widget=CSVTextEditorWidget(
+            attrs={'instance': instance, 'type_field_id': 'id_field_type'}),
+            help_text="key, value, value_{lang}, is_searchable, is_printable, info, info_{lang}")
 
     class Meta:
         """Configure the model form. Provide model class and form fields."""
