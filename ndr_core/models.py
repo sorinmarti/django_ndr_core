@@ -1366,13 +1366,14 @@ class NdrCoreValue(models.Model):
 
     def get_options(self):
         """For lists there are options, saved as string in the form: (key1,value1);(key2,value2)"""
-        if self.value_type in (NdrCoreValue.ValueType.LIST, self.value_type == NdrCoreValue.ValueType.MULTI_LIST):
+        if self.value_type in (NdrCoreValue.ValueType.LIST, NdrCoreValue.ValueType.MULTI_LIST):
             options = []
             option_tuples = self.value_options.split(";")
             for ot in option_tuples:
                 ot = ot[1:-1]   # remove brackets
-                spl = ot.split(',')
-                options.append(spl)
+                spl = ot.split(',', 1)
+                if len(spl) == 2:
+                    options.append(spl)
             return options
         return None
 

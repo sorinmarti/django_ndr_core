@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "i!z9v*-jdwx)xt2h1u+a*k)jh-zi7z8%swt#_i6l366ru-qyuj"
+SECRET_KEY = "cr9t)@#@em!^no^y(-00t^+l)!8_t8kzynr-!7m^n24lym&%sj"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -147,8 +147,9 @@ LOGOUT_URL = reverse_lazy('ndr_core:logout')
 LOGIN_REDIRECT_URL = reverse_lazy('ndr_core:dashboard')
 """Overwrites the default urls for the django authentication system."""
 
-# NDR FORMS SETTINGS
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+# NDR FORMS SETTINGS
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 """Django crispy forms - used to render forms."""
 
@@ -200,12 +201,6 @@ GEOIP_PATH = os.path.join('geoip/')
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 """Needed for the ck-editor"""
 
-# RECAPTCHA SETTINGS
-SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
-RECAPTCHA_PUBLIC_KEY = 'y0uR3c4PtCh4pUbL1cK3y'
-RECAPTCHA_PRIVATE_KEY = 'y0uR3c4PtCh4pr1v4t3K3y'
-"""Recaptcha key to use for the captcha functionality for the contact form.. """
-
 customColorPalette = [
         {
             'color': 'hsl(4, 90%, 58%)',
@@ -234,28 +229,6 @@ customColorPalette = [
     ]
 
 # CKEDITOR 5 SETTINGS
-CKEDITOR_5_FONT_FAMILIES = [
-    'default',
-    'Arial, Helvetica, sans-serif',
-    'Courier New, Courier, monospace',
-    'Georgia, serif',
-    'Times New Roman, Times, serif',
-    'Trebuchet MS, Helvetica, sans-serif',
-    'Verdana, Geneva, sans-serif',
-    'Roboto, sans-serif',
-    'Open Sans, sans-serif',
-    'Lato, sans-serif',
-    'Montserrat, sans-serif',
-    'Playfair Display, serif',
-    'Source Code Pro, monospace',
-]
-
-CKEDITOR_5_GOOGLE_FONTS_CSS = (
-    'https://fonts.googleapis.com/css2?'
-    'family=Roboto&family=Open+Sans&family=Lato&family=Montserrat'
-    '&family=Playfair+Display&family=Source+Code+Pro&display=swap'
-)
-
 CKEDITOR_5_CONFIGS = {
     'default': {
         'toolbar': ['heading', '|', 'bold', 'italic', 'link',
@@ -330,12 +303,7 @@ CKEDITOR_5_CONFIGS = {
                 {'model': 'leadSmall', 'view': {'name': 'p', 'classes': ['lead', 'lead-sm']}, 'title': 'Lead Text (Small)', 'class': 'ck-heading_lead-sm'},
                 {'model': 'leadLarge', 'view': {'name': 'p', 'classes': ['lead', 'lead-lg']}, 'title': 'Lead Text (Large)', 'class': 'ck-heading_lead-lg'},
             ]
-        },
-        'fontFamily': {
-            'options': CKEDITOR_5_FONT_FAMILIES,
-            'supportAllValues': False,
-        },
-        'contentsCss': [CKEDITOR_5_GOOGLE_FONTS_CSS],
+        }
     },
     'result_editor': {
         'toolbar': [
@@ -403,11 +371,12 @@ CKEDITOR_5_CONFIGS = {
                 {'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2'},
                 {'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3'}
             ]
-        },
-        'fontFamily': {
-            'options': CKEDITOR_5_FONT_FAMILIES,
-            'supportAllValues': False,
-        },
-        'contentsCss': [CKEDITOR_5_GOOGLE_FONTS_CSS],
+        }
     }
 }
+
+# RECAPTCHA SETTINGS
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
+RECAPTCHA_PUBLIC_KEY = 'y0uR3c4PtCh4pUbL1cK3y'
+RECAPTCHA_PRIVATE_KEY = 'y0uR3c4PtCh4pr1v4t3K3y'
+"""Recaptcha key to use for the captcha functionality for the contact form.. """
