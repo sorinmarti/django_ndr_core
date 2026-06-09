@@ -1,109 +1,132 @@
-"""Management command to update app page templates from ndr_core's app_init sources."""
+"""Management command to update project page templates from ndr_core app_init sources."""
+import filecmp
 import os
+
 import shutil
 
 from django.contrib.staticfiles import finders
 from django.core.management.base import BaseCommand
 
+from ndr_core.admin_views.page_views import get_base_file_name
+from ndr_core.models import NdrCorePage
 from ndr_core.ndr_settings import NdrSettings
 
-# HTML files in app_init that are page templates (exclude css, py, txt, png, mmdb)
-TEMPLATE_FILES = [
-    'base.html',
-    'index.html',
-    'search.html',
-    'data_list.html',
-    'viewer.html',
-    'fullscreen.html',
-    'flip_book.html',
-    'about_us.html',
-    'contact.html',
-    'template.html',
-    'test.html',
-]
+
+def get_dest_path(page):
+    """Returns the absolute path of the page's template file in the project."""
+    return os.path.join(
+        NdrSettings.get_templates_path(),
+        f'{page.get_full_path()}.html'
+    )
 
 
 class Command(BaseCommand):
-    help = 'Update app page templates from ndr_core app_init sources.'
+    help = 'Check and update project page templates against ndr_core app_init sources.'
 
     def add_arguments(self, parser):
-        parser.add_argument(
-            '--template',
-            type=str,
-            default=None,
-            help='Update only the named template file (e.g. base.html). Omit to update all.',
-        )
         parser.add_argument(
             '--list',
             action='store_true',
             default=False,
-            help='List available templates and whether they exist in the app, then exit.',
+            help='Show status of all page templates and exit.',
+        )
+        parser.add_argument(
+            '--page',
+            type=str,
+            default=None,
+            metavar='VIEW_NAME',
+            help='Update only the page with this view_name (non-interactive).',
         )
         parser.add_argument(
             '--force',
             action='store_true',
             default=False,
-            help='Skip confirmation prompt.',
+            help='Update all outdated templates without prompting.',
         )
 
     def handle(self, *args, **options):
-        templates_dir = NdrSettings.get_templates_path()
+        pages = NdrCorePage.objects.all().order_by('view_name')
 
-        if options['list']:
-            self.stdout.write('Available app_init templates:')
-            for name in TEMPLATE_FILES:
-                dest = os.path.join(templates_dir, name)
-                status = self.style.SUCCESS('exists') if os.path.isfile(dest) else self.style.WARNING('missing')
-                self.stdout.write(f'  {name:30s} [{status}]')
+        if not pages.exists():
+            self.stdout.write(self.style.WARNING('No pages found in the database.'))
             return
 
-        # Determine which files to update
-        if options['template']:
-            target = options['template']
-            if target not in TEMPLATE_FILES:
-                self.stdout.write(self.style.ERROR(
-                    f'Unknown template "{target}". Use --list to see available templates.'
-                ))
-                return
-            targets = [target]
-        else:
-            targets = TEMPLATE_FILES
+        # Build status table: (page, source_path, dest_path, status)
+        rows = []
+        for page in pages:
+            try:
+                source = get_base_file_name(page.page_type)
+            except FileNotFoundError:
+                source = None
 
-        # Resolve sources and destinations
-        plan = []
-        for name in targets:
-            source = finders.find(f'ndr_core/app_init/{name}')
+            dest = get_dest_path(page)
+
             if source is None:
-                self.stdout.write(self.style.WARNING(f'  Source not found for "{name}", skipping.'))
-                continue
-            dest = os.path.join(templates_dir, name)
-            plan.append((name, source, dest))
+                status = 'no-source'
+            elif not os.path.isfile(dest):
+                status = 'missing'
+            elif filecmp.cmp(source, dest, shallow=False):
+                status = 'up-to-date'
+            else:
+                status = 'differs'
 
-        if not plan:
-            self.stdout.write(self.style.WARNING('Nothing to update.'))
+            rows.append((page, source, dest, status))
+
+        # -- LIST mode --
+        if options['list']:
+            self.stdout.write(f'\n{"Page (view_name)":<35} {"Type":<15} {"Status"}')
+            self.stdout.write('-' * 70)
+            for page, source, dest, status in rows:
+                type_label = page.get_page_type_display()
+                if status == 'up-to-date':
+                    styled = self.style.SUCCESS(status)
+                elif status == 'differs':
+                    styled = self.style.WARNING(status)
+                elif status == 'missing':
+                    styled = self.style.ERROR(status)
+                else:
+                    styled = status
+                self.stdout.write(f'{page.get_full_path():<35} {type_label:<15} {styled}')
+            self.stdout.write('')
             return
 
-        # Show plan
-        self.stdout.write('The following templates will be overwritten:')
-        for name, source, dest in plan:
-            exists = '(overwrite)' if os.path.isfile(dest) else '(new)'
-            self.stdout.write(f'  {name} {exists}')
-            self.stdout.write(f'    src : {source}')
-            self.stdout.write(f'    dest: {dest}')
-
-        # Confirm unless --force
-        if not options['force']:
-            confirm = input('\nProceed? (y/n) ')
-            if confirm.lower() != 'y':
-                self.stdout.write(self.style.ERROR('Aborted.'))
+        # -- SINGLE PAGE mode --
+        if options['page']:
+            target = options['page']
+            match = [(p, s, d, st) for p, s, d, st in rows if p.view_name == target]
+            if not match:
+                self.stdout.write(self.style.ERROR(f'No page with view_name "{target}" found.'))
                 return
+            rows = match
 
-        # Execute
-        if not os.path.isdir(templates_dir):
-            os.makedirs(templates_dir)
+        # -- UPDATE mode --
+        outdated = [(p, s, d, st) for p, s, d, st in rows if st in ('differs', 'missing')]
 
-        for name, source, dest in plan:
-            shutil.copyfile(source, dest)
-            self.stdout.write(self.style.SUCCESS(f'  Copied {name}'))
+        if not outdated:
+            self.stdout.write(self.style.SUCCESS('All page templates are up-to-date.'))
+            return
 
-        self.stdout.write(self.style.SUCCESS('Done.'))
+        for page, source, dest, status in outdated:
+            label = page.get_full_path()
+            type_label = page.get_page_type_display()
+            self.stdout.write(f'\n  Page : {label}  ({type_label})')
+            self.stdout.write(f'  File : {dest}')
+            self.stdout.write(f'  Status: {status}')
+
+            if options['force']:
+                do_update = True
+            else:
+                answer = input('  Update this template? (y/n/q) ').strip().lower()
+                if answer == 'q':
+                    self.stdout.write('Aborted.')
+                    return
+                do_update = (answer == 'y')
+
+            if do_update:
+                os.makedirs(os.path.dirname(dest), exist_ok=True)
+                shutil.copyfile(source, dest)
+                self.stdout.write(self.style.SUCCESS(f'  Updated.'))
+            else:
+                self.stdout.write(f'  Skipped.')
+
+        self.stdout.write(self.style.SUCCESS('\nDone.'))
