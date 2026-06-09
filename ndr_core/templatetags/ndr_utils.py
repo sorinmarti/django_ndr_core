@@ -181,9 +181,9 @@ def render_result_item(context, data, search_config):
     node = RenderResultNode('ndr_combined_placeholder', 'ndr_combined_conf')
     has_fields = search_config.result_card_fields.all().count() > 0
     if has_fields:
-        return node.create_card(ctx_copy, {'data': data}, False)
+        return node.create_card(ctx_copy, data, context.get('initial_compact_view', False))
     else:
-        card_context = {'result': {'data': data}}
+        card_context = {'result': data}
         return mark_safe(get_template('ndr_core/result_renderers/default_template.html').render(card_context))
 
 
@@ -422,6 +422,29 @@ def tojson(value):
 def contains_page(nav_item, page):
     """Returns True if page is any child of nav_item, regardless of show_in_navigation."""
     return nav_item.ndrcorepage_set.filter(pk=page.pk).exists()
+
+
+@register.filter
+def field_type_badge_class(field_type):
+    """Returns Bootstrap badge bg class for a NdrCoreSearchField field_type integer."""
+    mapping = {
+        1:  'bg-primary',            # STRING
+        2:  'bg-info text-dark',     # NUMBER
+        3:  'bg-success',            # LIST
+        4:  'bg-success',            # MULTI_LIST
+        5:  'bg-warning text-dark',  # BOOLEAN
+        6:  'bg-danger',             # DATE
+        7:  'bg-danger',             # DATE_RANGE
+        8:  'bg-info text-dark',     # NUMBER_RANGE
+        9:  'bg-secondary',          # HIDDEN
+        10: 'bg-dark',               # INFO_TEXT
+        11: 'bg-warning text-dark',  # BOOLEAN_LIST
+        12: 'bg-info text-dark',     # FLOAT
+    }
+    try:
+        return mapping.get(int(field_type), 'bg-secondary')
+    except (TypeError, ValueError):
+        return 'bg-secondary'
 
 
 @register.filter

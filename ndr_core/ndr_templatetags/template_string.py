@@ -197,7 +197,11 @@ class TemplateStringVariable:
         value = data
         for key in keys:
             try:
-                value = value[key]
+                if isinstance(value, list) and not key.isdigit():
+                    # Collect sub-key from each dict in the list
+                    value = [item[key] for item in value if isinstance(item, dict) and key in item]
+                else:
+                    value = value[key]
             except TypeError as e:
                 if key.isdigit():
                     try:

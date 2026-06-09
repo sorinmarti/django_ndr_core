@@ -298,6 +298,8 @@ class AdvancedSearchForm(_NdrCoreForm):
 
                 # Add the field to the form if it was created.
                 if form_field is not None:
+                    if not search_field.show_label:
+                        form_field.label = ''
                     self.fields[
                         f"{search_config.conf_name}_{search_field.field_name}"
                     ] = form_field
@@ -329,14 +331,17 @@ class AdvancedSearchForm(_NdrCoreForm):
             label=search_config.simple_query_label,
             required=False,
             max_length=100,
-            help_text=search_config.simple_query_help_text,
+            help_text=mark_safe(
+                f'<small class="form-text text-muted">{search_config.simple_query_help_text}</small>'
+            ),
         )
 
-        self.fields[f"and_or_field_{search_config.conf_name}"] = forms.ChoiceField(
-            label=_("And or Or Search"),
-            choices=[("and", _("AND search")), ("or", _("OR search"))],
-            required=False,
-        )
+        if search_config.show_and_or_field:
+            self.fields[f"and_or_field_{search_config.conf_name}"] = forms.ChoiceField(
+                label=_("And or Or Search"),
+                choices=[("and", _("AND search")), ("or", _("OR search"))],
+                required=False,
+            )
 
         if search_config.search_has_compact_result:
             self.fields[
@@ -349,32 +354,38 @@ class AdvancedSearchForm(_NdrCoreForm):
             label=master_config.simple_query_label,
             required=False,
             max_length=100,
-            help_text=master_config.simple_query_help_text,
+            help_text=mark_safe(
+                f'<small class="form-text text-muted">{master_config.simple_query_help_text}</small>'
+            ),
         )
-        self.fields['and_or_field_combined_simple'] = forms.ChoiceField(
-            label=_("And or Or Search"),
-            choices=[("and", _("AND search")), ("or", _("OR search"))],
-            required=False,
-        )
+        if master_config.show_and_or_field:
+            self.fields['and_or_field_combined_simple'] = forms.ChoiceField(
+                label=_("And or Or Search"),
+                choices=[("and", _("AND search")), ("or", _("OR search"))],
+                required=False,
+            )
+        if master_config.search_has_compact_result:
+            self.fields['compact_view_combined_simple'] = self.get_compact_view_field(master_config)
 
     @staticmethod
     def get_simple_search_layout_fields(search_config):
         """Create and return layout fields for the simple search fields."""
 
-        search_field = Field(
-            f"search_term_{search_config.conf_name}", wrapper_class="col-md-12"
-        )
-        type_field = Field(
-            f"and_or_field_{search_config.conf_name}", wrapper_class="col-md-4"
-        )
-
-        return search_field, type_field
+        fields = [Field(f"search_term_{search_config.conf_name}", wrapper_class="col-md-12")]
+        if search_config.show_and_or_field:
+            fields.append(Field(f"and_or_field_{search_config.conf_name}", wrapper_class="col-md-4"))
+        return fields
 
     @staticmethod
-    def get_combined_search_button():
+    def get_combined_search_button(master_config=None):
         """Create and return right-aligned search button for the combined simple search tab."""
+        compact_field = None
+        if master_config and master_config.search_has_compact_result:
+            compact_field = Field('compact_view_combined_simple', wrapper_class="col-md-12")
+
         div = Div(
-            Div(css_class="col-md-9"),
+            Div(css_class="col-md-5"),
+            Div(Div(compact_field, css_class="text-right"), css_class="col-md-4"),
             Div(
                 Div(
                     NdrCoreFormSubmit('search_button_combined_simple', _("Search")),
@@ -434,13 +445,14 @@ class AdvancedSearchForm(_NdrCoreForm):
             )
             tab_combined.append(Div(
                 Field('search_term_combined_simple', wrapper_class='col-md-12'),
-                css_class='row g-2',
+                css_class='row g-2 mt-2',
             ))
-            tab_combined.append(Div(
-                Field('and_or_field_combined_simple', wrapper_class='col-md-4'),
-                css_class='row g-2',
-            ))
-            tab_combined.append(self.get_combined_search_button())
+            if master.show_and_or_field:
+                tab_combined.append(Div(
+                    Field('and_or_field_combined_simple', wrapper_class='col-md-4'),
+                    css_class='row g-2 mt-2',
+                ))
+            tab_combined.append(self.get_combined_search_button(master))
             tabs.append(tab_combined)
 
         # For each search configuration, create a tab and add the form fields to it.
@@ -453,8 +465,9 @@ class AdvancedSearchForm(_NdrCoreForm):
                     css_id=f"{search_config.conf_name}_simple",
                 )
                 fields = self.get_simple_search_layout_fields(search_config)
-                tab_simple.append(Div(fields[0], css_class="row g-2"))
-                tab_simple.append(Div(*fields[1:], css_class="row g-2"))
+                tab_simple.append(Div(fields[0], css_class="row g-2 mt-2"))
+                if len(fields) > 1:
+                    tab_simple.append(Div(*fields[1:], css_class="row g-2 mt-2"))
 
                 tab_simple.append(self.get_search_button(search_config, simple=True))
                 if search_config.simple_search_first:
@@ -471,7 +484,7 @@ class AdvancedSearchForm(_NdrCoreForm):
 
             for row in range(field_range):
                 row += 1  # The row starts with 1, not 0.
-                form_row = Div(css_class="row g-2")
+                form_row = Div(css_class="row g-2 mt-2")
                 # The column is the inner loop.
                 for column in search_config.search_form_fields.filter(field_row=row).order_by("field_column"):
                     # Type is INFO_TEXT, so we create a div with the text.
@@ -490,12 +503,18 @@ class AdvancedSearchForm(_NdrCoreForm):
                             raw = column.search_field.text_choices or column.search_field.list_choices
                             info_text = "" if not raw or raw.strip() in ("", "[]", "null") else raw
 
+                        if column.search_field.show_label:
+                            title_html = (
+                                f'<i class="fa-regular fa-circle-info"></i>&nbsp;'
+                                f"<strong>{column.search_field.field_label}</strong><br/>"
+                            )
+                        else:
+                            title_html = ''
                         form_field = Div(
                             HTML(
                                 mark_safe(
                                     f'<div class="alert alert-info small" role="alert">'
-                                    f'<i class="fa-regular fa-circle-info"></i>&nbsp;'
-                                    f"<strong>{column.search_field.field_label}</strong><br/>"
+                                    f"{title_html}"
                                     f"{info_text}"
                                     f"</div>"
                                 )

@@ -71,7 +71,9 @@
                             <li class="list-group-item list-group-item-action d-flex py-2">
                                 <div class="p-0 m-0 flex-grow-1">
                                     <div>
-                                        <i class="fa-regular fa-square"></i> {{ field.field_label }} ({{ field.get_field_type_display }}: {{ field.field_name }})
+                                        <span class="badge {{ field.field_type|field_type_badge_class }}">{{ field.get_field_type_display }}</span>
+                                        {{ field.field_label }}
+                                        <small class="text-muted">{{ field.field_name }}</small>
                                     </div>
                                     {% if search_field_usage|get_item:field.pk %}
                                         <small class="text-muted">

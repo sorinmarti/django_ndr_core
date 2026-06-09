@@ -68,7 +68,7 @@ class SearchConfigurationForm(forms.ModelForm):
                   'search_id_field', 'sort_field', 'sort_order',
                   'search_has_compact_result', 'compact_result_is_default', 'page_size',
                   'citation_expression', 'repository_url',
-                  'has_simple_search', 'simple_search_first', 'simple_query_main_field',
+                  'has_simple_search', 'simple_search_first', 'show_and_or_field', 'simple_query_main_field',
                   'simple_query_label', 'simple_query_help_text', 'simple_search_tab_title',
                   'manifest_relation_expression', 'manifest_page_expression']
 
@@ -210,6 +210,7 @@ class SearchConfigurationForm(forms.ModelForm):
         form_row = Row(
             Column('has_simple_search', css_class='col-4'),
             Column('simple_search_first', css_class='col-4'),
+            Column('show_and_or_field', css_class='col-4'),
             css_class='row g-2'
         )
         layout.append(form_row)

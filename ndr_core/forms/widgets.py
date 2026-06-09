@@ -117,13 +117,11 @@ class BootstrapSwitchWidget(forms.Widget):
     """Creates a switch for crispy forms. """
 
     def render(self, name, value, attrs=None, renderer=None):
-        selected = ""
-        if value:
-            selected = "checked"
+        selected = " checked" if value else ""
         html = f"""
-        <div class="custom-control custom-switch">
-            <input type="checkbox" {selected} name="{name}" class="custom-control-input" id="{attrs["id"]}">
-            <label class="custom-control-label small" for="{attrs["id"]}">{ self.attrs.get("label", "") }</label>
+        <div class="form-check form-switch">
+            <input type="checkbox"{selected} name="{name}" class="form-check-input" id="{attrs["id"]}" role="switch">
+            <label class="form-check-label small" for="{attrs["id"]}">{ self.attrs.get("label", "") }</label>
         </div>
         """
         return mark_safe(html)

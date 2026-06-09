@@ -38,7 +38,7 @@ Clean, centered three-column design with modern styling
 
     {# Partner institutions section - Always included if configured #}
     {% config_value 'footer_show_partners' as show_partners %}
-    {% if show_partners %}
+    {% if show_partners and partners %}
     <div class="footer-partners-section py-5 border-top">
         <h6 class="footer-heading text-center mb-4">{% trans "Our Partners" %}</h6>
         {% include 'ndr_core/base/footer_components/footer_partners.html' %}

@@ -373,7 +373,7 @@ class SearchView(_NdrCoreSearchView):
                     page = int(request.GET.get('page', 1))
                     master_config = self.ndr_page.combined_simple_search_config
 
-                    combined_results = []  # list of {'data': {...}, 'search_config': conf}
+                    combined_results = []  # list of {'data': <full result dict>, 'search_config': conf}
                     total_combined = 0
 
                     for conf in self.ndr_page.search_configs.filter(has_simple_search=True):
@@ -388,7 +388,7 @@ class SearchView(_NdrCoreSearchView):
                             total_combined += result_obj.total
                             for item in result_obj.results:
                                 combined_results.append({
-                                    'data': item['data'],
+                                    'data': item,  # full transformed dict: id, data, result_meta, options
                                     'search_config': conf,
                                 })
                         except Exception:
@@ -402,13 +402,17 @@ class SearchView(_NdrCoreSearchView):
                         if sort_field:
                             reverse_sort = (master_config.sort_order == 'desc') if master_config else False
                             combined_results.sort(
-                                key=lambda r: r['data'].get(sort_field, ''),
+                                key=lambda r: r['data']['data'].get(sort_field, ''),
                                 reverse=reverse_sort,
                             )
+                        compact_checked = request.GET.get('compact_view_combined_simple', 'off') == 'on'
+                        initial_compact = compact_checked if (master_config and master_config.search_has_compact_result) else False
                         context.update({
                             'combined_results': combined_results,
                             'combined_total': total_combined,
                             'search_explanation': search_term,
+                            'initial_compact_view': initial_compact,
+                            'combined_has_compact': master_config.search_has_compact_result if master_config else False,
                         })
 
                 # The search is a per-config simple search

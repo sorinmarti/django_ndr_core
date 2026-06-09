@@ -291,6 +291,10 @@ class NdrCoreSearchField(TranslatableMixin, models.Model):
                                                             "(Example to convert a year to a date regex: "
                                                             "'{_value_}-??-??')")
 
+    show_label = models.BooleanField(default=True,
+                                     help_text="Show the field label in the search form. "
+                                               "Uncheck to render the field without a label.")
+
     def __getattribute__(self, item):
         """Returns the translated field for a given language. If no translation exists,
         the default value is returned. """
@@ -677,6 +681,9 @@ class NdrCoreSearchConfiguration(TranslatableMixin, models.Model):
                                            help_text="Paste a single example API result record here. "
                                                      "Used to suggest field paths and preview result fields.")
     """A sample API result record used to power the result field editor and live preview."""
+
+    show_and_or_field = models.BooleanField(default=True,
+                                            help_text="Show the AND / OR search toggle in the simple search tab.")
 
     def __str__(self):
         return self.conf_name
