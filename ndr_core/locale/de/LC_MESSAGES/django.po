@@ -7,21 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-15 12:34+0200\n"
+"POT-Creation-Date: 2026-06-15 22:39+0200\n"
 "PO-Revision-Date: 2024-04-15 12:33+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.3.2\n"
-
-#: .\api\api_ninjas\api_ninjas_result.py:21
-#: .\api\ndr_core\ndr_core_result.py:16
-msgid "Result could not be loaded"
-msgstr "Ergebnis konnte nicht geladen werden"
 
 #: .\api\base_result.py:90
 msgid "The connection timed out"
@@ -30,10 +25,6 @@ msgstr "Zeitüberschreitung bei der Verbindung"
 #: .\api\base_result.py:94
 msgid "Query could not be requested"
 msgstr "Abfrage konnte nicht angefordert werden"
-
-#: .\api\base_result.py:102
-msgid "The server returned status code: {result.status_code}"
-msgstr "Der Server hat den Statuscode zurückgegeben: {result.status_code}"
 
 #: .\api\base_result.py:153
 msgid "Download the record as a JSON file"
@@ -55,23 +46,20 @@ msgstr "Sehen Sie sich diesen Ausschnitt im Kontext an"
 msgid "Copy Citation"
 msgstr "Kopiere Zitierweise"
 
-#: .\api\base_result.py:310 .\api\base_result.py:316
-msgid "Show full results"
-msgstr "Vollständige Ergebnisse anzeigen"
-
-#: .\api\base_result.py:320
-msgid "Show compact results"
-msgstr "Kompakte Ergebnisanzeige"
-
-#: .\api\mongodb\mongodb_result.py:65
+#: .\api\mongodb\mongodb_result.py:132
 msgid "Timed out"
 msgstr "Time Out"
+
+#: .\api\ndr_core\ndr_core_result.py:16
+msgid "Result could not be loaded"
+msgstr "Ergebnis konnte nicht geladen werden"
 
 #: .\forms\fields.py:32
 msgid "Invalid value: Format is \"1,2,3-5,7\""
 msgstr "Ungültiger Wert: Format ist \"1,2,3-5,7\""
 
 #: .\forms\fields.py:43 .\forms\fields.py:49
+#, python-brace-format
 msgid "Value is out of range. ({}-{})"
 msgstr "Der Wert liegt außerhalb des zulässigen Bereichs. ({}-{})"
 
@@ -103,47 +91,87 @@ msgstr "Manifest"
 msgid "Choose the manifest to display."
 msgstr "Suchen Sie das Manifest aus, das angezeigt werden soll."
 
-#: .\forms\forms_manifest.py:37
-msgid "Show"
-msgstr "Anzeigen"
+#: .\forms\forms_search.py:57
+msgid "Filter"
+msgstr "Filtern"
 
-#: .\forms\forms_search.py:186
+#: .\forms\forms_search.py:59
+msgid "Clear"
+msgstr "Zurücksetzen"
+
+#: .\forms\forms_search.py:136
+msgid "Exact"
+msgstr "Exakt"
+
+#: .\forms\forms_search.py:136
+msgid "Contains"
+msgstr "Enthält"
+
+#: .\forms\forms_search.py:143
+msgid "Exact: exact match"
+msgstr "Exakt: exakte Übereinstimmung"
+
+#: .\forms\forms_search.py:144
+msgid "Contains: uses regex"
+msgstr "Enthält: Reguläre Ausdrücke"
+
+#: .\forms\forms_search.py:226
+msgid "At"
+msgstr "Am"
+
+#: .\forms\forms_search.py:226
+msgid "After"
+msgstr "Nach"
+
+#: .\forms\forms_search.py:226
+msgid "Before"
+msgstr "Vor"
+
+#: .\forms\forms_search.py:227
+msgid "At or after"
+msgstr "Am oder nach"
+
+#: .\forms\forms_search.py:227
+msgid "At or before"
+msgstr "Am oder vor"
+
+#: .\forms\forms_search.py:291
 msgid "AND"
 msgstr "UND"
 
-#: .\forms\forms_search.py:187
+#: .\forms\forms_search.py:292
 msgid "OR"
 msgstr "ODER"
 
-#: .\forms\forms_search.py:193
+#: .\forms\forms_search.py:298
 msgid "AND: all."
 msgstr "UND: Alle."
 
-#: .\forms\forms_search.py:194
+#: .\forms\forms_search.py:299
 msgid "OR: at least one."
 msgstr "OR: Mindestens eines."
 
-#: .\forms\forms_search.py:212
+#: .\forms\forms_search.py:324
 msgid "Compact Result View"
 msgstr "Kompakte Ergebnisanzeige"
 
-#: .\forms\forms_search.py:227
+#: .\forms\forms_search.py:343 .\forms\forms_search.py:365
 msgid "And or Or Search"
 msgstr "\"Und\" oder \"Oder\" suchen"
 
-#: .\forms\forms_search.py:228
+#: .\forms\forms_search.py:344 .\forms\forms_search.py:366
 msgid "AND search"
 msgstr "UND Suche"
 
-#: .\forms\forms_search.py:228
+#: .\forms\forms_search.py:344 .\forms\forms_search.py:366
 msgid "OR search"
 msgstr "ODER suchen"
 
-#: .\forms\forms_search.py:269
+#: .\forms\forms_search.py:393 .\forms\forms_search.py:421
 msgid "Search"
 msgstr "Suche"
 
-#: .\models.py:324
+#: .\models.py:421
 msgid "Please Choose"
 msgstr "Bitte auswählen"
 
@@ -152,67 +180,81 @@ msgid "Fill in the form below to contact us with any queries."
 msgstr ""
 "Füllen Sie das untenstehende Formular aus, um uns bei Fragen zu kontaktieren."
 
-#: .\static\ndr_core\app_init\search.html:12
+#: .\static\ndr_core\app_init\search.html:21
 msgid "Search Results"
 msgstr "Suchergebnisse"
 
-#: .\static\ndr_core\app_init\search.html:18
+#: .\static\ndr_core\app_init\search.html:23
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                Your search returned %(total)s results, showing page "
+#| "%(page)s of %(num_pages)s.\n"
+#| "            "
+msgid ""
+"\n"
+"                        Your search for %(search_desc)s returned %(total)s "
+"results, showing page %(page)s of %(num_pages)s.\n"
+"                    "
+msgstr ""
+"\n"
+"Ihre Suche ergab %(total)s Ergebnisse und zeigte die Seite %(page)s von "
+"%(num_pages)s.\n"
+"            "
+
+#: .\static\ndr_core\app_init\search.html:33
+#: .\static\ndr_core\app_init\search.html:216
+msgid "Show full results"
+msgstr "Vollständige Ergebnisse anzeigen"
+
+#: .\static\ndr_core\app_init\search.html:33
+#: .\static\ndr_core\app_init\search.html:217
+msgid "Show compact results"
+msgstr "Kompakte Ergebnisanzeige"
+
+#: .\static\ndr_core\app_init\search.html:40
 msgid "Refine Search"
 msgstr "Suche verfeinern"
 
-#: .\static\ndr_core\app_init\search.html:21
+#: .\static\ndr_core\app_init\search.html:43
 msgid "New Search"
 msgstr "Neue Suche"
 
-#: .\static\ndr_core\app_init\search.html:28
+#: .\static\ndr_core\app_init\search.html:50
+#: .\templates\ndr_core\ui_elements\pdf_viewer.html:36
 msgid "Download"
 msgstr "Download"
 
-#: .\static\ndr_core\app_init\search.html:32
+#: .\static\ndr_core\app_init\search.html:55
 msgid "Download JSON"
 msgstr "JSON herunterladen"
 
-#: .\static\ndr_core\app_init\search.html:35
+#: .\static\ndr_core\app_init\search.html:58
 msgid "Download CSV"
 msgstr "CSV herunterladen"
 
-#: .\static\ndr_core\app_init\search.html:39
+#: .\static\ndr_core\app_init\search.html:63
 #, python-format
 msgid "(Downloads are limited to %(max_results)s results.)"
 msgstr "(Downloads sind auf %(max_results)s Ergebnisse beschränkt.)"
 
-#: .\static\ndr_core\app_init\search.html:49
-#, python-format
-msgid ""
-"\n"
-"                Your search returned %(total)s results, showing page %(page)"
-"s of %(num_pages)s.\n"
-"            "
-msgstr ""
-"\n"
-"Ihre Suche ergab %(total)s Ergebnisse und zeigte die Seite %(page)s von %"
-"(num_pages)s.\n"
-"            "
+#: .\templates\ndr_core\404.html:9
+#: .\templates\ndr_core\under_construction.html:9
+msgid "Under Construction"
+msgstr "Wartungsmodus"
 
 #: .\templates\ndr_core\404.html:16
-msgid "Error 404"
-msgstr "Fehler 404"
+msgid "Sorry this page does not exist!"
+msgstr "Diese Seite existiert leider nicht!"
 
-#: .\templates\ndr_core\404.html:18
-msgid "Go To Home Page"
-msgstr "Zur Startseite gehen"
-
-#: .\templates\ndr_core\404.html:24
-msgid "Oops. Something went wrong!"
-msgstr "Leider ist etwas schief gegangen!"
-
-#: .\templates\ndr_core\404.html:26
-msgid "The page you are looking for is not available."
-msgstr "Die gesuchte Seite ist nicht verfügbar."
-
-#: .\templates\ndr_core\404.html:29
-msgid "Main Page"
-msgstr "Hauptseite"
+#: .\templates\ndr_core\404.html:22
+#: .\templates\ndr_core\under_construction.html:29
+msgid ""
+"This is an NDR Core installation. You are seeing this page because it has "
+"been sto to \"under construction\"."
+msgstr ""
+"Dies ist eine NDR Core-Installation. Sie sehen diese Seite, weil sie auf "
+"\"im Aufbau\" gesetzt wurde."
 
 #: .\templates\ndr_core\admin_views\bootstrap4-responsive.html:66
 msgid "previous"
@@ -223,11 +265,63 @@ msgid "next"
 msgstr "weiter"
 
 #: .\templates\ndr_core\base\footer.html:38
+#: .\templates\ndr_core\base\footer_components\footer_socials.html:19
 msgid "Connect"
 msgstr "Verbinden"
 
+#: .\templates\ndr_core\base\styles\base_default.html:100
+#: .\templates\ndr_core\base\styles\base_glass_harmony.html:97
+#: .\templates\ndr_core\base\styles\base_left.html:94
+#: .\templates\ndr_core\base\styles\base_minimal_modern.html:103
+#: .\templates\ndr_core\base\styles\base_top_fixed.html:76
+#: .\templates\ndr_core\base\styles\base_unibas_brand.html:51
+msgid "Toggle dark mode"
+msgstr "Dunkelmodus umschalten"
+
+#: .\templates\ndr_core\base\styles\base_default.html:101
+#: .\templates\ndr_core\base\styles\base_default.html:203
+#: .\templates\ndr_core\base\styles\base_left.html:95
+#: .\templates\ndr_core\base\styles\base_left.html:216
+#: .\templates\ndr_core\base\styles\base_top_fixed.html:77
+#: .\templates\ndr_core\base\styles\base_top_fixed.html:158
+#: .\templates\ndr_core\base\styles\base_unibas_brand.html:51
+#: .\templates\ndr_core\base\styles\base_unibas_brand.html:171
+msgid "Dark"
+msgstr "Dunkel"
+
+#: .\templates\ndr_core\base\styles\base_default.html:203
+#: .\templates\ndr_core\base\styles\base_left.html:216
+#: .\templates\ndr_core\base\styles\base_top_fixed.html:158
+#: .\templates\ndr_core\base\styles\base_unibas_brand.html:171
+msgid "Light"
+msgstr "Hell"
+
+#: .\templates\ndr_core\base\styles\base_glass_harmony.html:41
+#: .\templates\ndr_core\base\styles\base_left.html:71
+#: .\templates\ndr_core\base\styles\base_minimal_modern.html:48
+#: .\templates\ndr_core\base\styles\base_top_fixed.html:35
+msgid "Toggle navigation"
+msgstr "Navigation umschalten"
+
+#: .\templates\ndr_core\base\styles\base_glass_harmony.html:141
+#: .\templates\ndr_core\base\styles\base_minimal_modern.html:147
+msgid "Scroll to top"
+msgstr "Nach oben scrollen"
+
+#: .\templates\ndr_core\base\styles\footers\footer_glass_harmony.html:26
+msgid "Quick Links"
+msgstr "Schnelllinks"
+
+#: .\templates\ndr_core\base\styles\footers\footer_glass_harmony.html:43
+#: .\templates\ndr_core\base\styles\footers\footer_minimal_modern.html:43
+msgid "Our Partners"
+msgstr "Unsere Partner"
+
+#: .\templates\ndr_core\base\styles\footers\footer_minimal_modern.html:27
+msgid "Navigation"
+msgstr "Navigation"
+
 #: .\templates\ndr_core\result_renderers\base_compact_renderer.html:11
-#: .\templates\ndr_core\result_renderers\base_renderer.html:11
 #, python-format
 msgid ""
 "\n"
@@ -238,10 +332,54 @@ msgstr ""
 "                Resultat %(result_number)s von %(total_results)s\n"
 "            "
 
-#: .\templates\ndr_core\result_renderers\configured_fields_template.html:10
+#: .\templates\ndr_core\result_renderers\base_renderer.html:14
+#, python-format
+msgid ""
+"\n"
+"                of %(total_results)s results\n"
+"            "
+msgstr ""
+"\n"
+"                von %(total_results)s Ergebnissen\n"
+"            "
+
+#: .\templates\ndr_core\result_renderers\configured_fields_template.html:11
+#, fuzzy
+#| msgid "Show full results"
+msgid "Show full result"
+msgstr "Vollständige Ergebnisse anzeigen"
+
+#: .\templates\ndr_core\result_renderers\configured_fields_template.html:11
+#, fuzzy
+#| msgid "Show compact results"
+msgid "Show compact result"
+msgstr "Kompakte Ergebnisanzeige"
+
+#: .\templates\ndr_core\result_renderers\configured_fields_template.html:32
 #: .\templates\ndr_core\result_renderers\default_template.html:12
 msgid "Cite:"
 msgstr "Zitieren:"
+
+#: .\templates\ndr_core\result_renderers\single_detail_template.html:10
+#: .\templates\ndr_core\result_renderers\single_detail_template.html:14
+msgid "Back to list"
+msgstr "Zurück zur Liste"
+
+#: .\templates\ndr_core\ui_elements\audio.html:19
+msgid "Your browser does not support the audio element."
+msgstr "Ihr Browser unterstützt das Audio-Element nicht."
+
+#: .\templates\ndr_core\ui_elements\audio.html:25
+msgid "File"
+msgstr "Datei"
+
+#: .\templates\ndr_core\ui_elements\audio.html:30
+msgid "No audio file specified. Please upload an audio file."
+msgstr "Keine Audiodatei angegeben. Bitte laden Sie eine Audiodatei hoch."
+
+#: .\templates\ndr_core\ui_elements\pdf_viewer.html:82
+msgid "No PDF file configured for this viewer."
+msgstr "Keine PDF-Datei für diesen Viewer konfiguriert."
 
 #: .\templates\ndr_core\ui_elements\slideshow.html:14
 msgid "Previous"
@@ -251,41 +389,62 @@ msgstr "Zurück"
 msgid "Next"
 msgstr "Weiter"
 
-#: .\templates\ndr_core\under_construction.html:9
-msgid "Under Construction"
-msgstr "Wartungsmodus"
+#: .\templates\ndr_core\ui_elements\video.html:42
+msgid "Unsupported video provider"
+msgstr "Nicht unterstützter Videoanbieter"
+
+#: .\templates\ndr_core\ui_elements\video.html:48
+msgid "Video configuration incomplete. Please specify provider and video ID."
+msgstr "Videokonfiguration unvollständig. Bitte Anbieter und Video-ID angeben."
 
 #: .\templates\ndr_core\under_construction.html:16
 msgid "This page is currently under construction."
 msgstr "Diese Seite befindet sich derzeit im Aufbau."
 
-#: .\templates\ndr_core\under_construction.html:29
-msgid ""
-"This is an NDR Core installation. You are seeing this page because it has "
-"been sto to \"under construction\"."
-msgstr ""
-"Dies ist eine NDR Core-Installation. Sie sehen diese Seite, weil sie auf "
-"\"im Aufbau\" gesetzt wurde."
-
-#: .\views.py:278
+#: .\views.py:368 .\views.py:423
 msgid "Please enter a search term."
 msgstr "Geben Sie bitte einen Suchbegriff ein."
 
-#: .\views.py:300
-msgid "Please fill out at least one search field."
-msgstr "Bitte füllen Sie mindestens ein Suchfeld aus."
-
-#: .\views.py:315
+#: .\views.py:398 .\views.py:441 .\views.py:479
 msgid "No results found."
 msgstr "Keine Ergebnisse gefunden."
 
-#: .\views.py:345
+#: .\views.py:464
+msgid "Please fill out at least one search field."
+msgstr "Bitte füllen Sie mindestens ein Suchfeld aus."
+
+#: .\views.py:517
 msgid "Thank you! The message has been sent."
 msgstr "Vielen Dank! Die Nachricht wurde gesendet."
 
-#: .\views.py:354
+#: .\views.py:526
 msgid "Please correct the errors below."
 msgstr "Bitte korrigieren Sie die untenstehenden Fehler."
+
+#: .\views.py:565
+msgid "No search configuration found for this data list page."
+msgstr "Keine Suchkonfiguration für diese Datenlisten-Seite gefunden."
+
+#~ msgid "The server returned status code: {result.status_code}"
+#~ msgstr "Der Server hat den Statuscode zurückgegeben: {result.status_code}"
+
+#~ msgid "Show"
+#~ msgstr "Anzeigen"
+
+#~ msgid "Error 404"
+#~ msgstr "Fehler 404"
+
+#~ msgid "Go To Home Page"
+#~ msgstr "Zur Startseite gehen"
+
+#~ msgid "Oops. Something went wrong!"
+#~ msgstr "Leider ist etwas schief gegangen!"
+
+#~ msgid "The page you are looking for is not available."
+#~ msgstr "Die gesuchte Seite ist nicht verfügbar."
+
+#~ msgid "Main Page"
+#~ msgstr "Hauptseite"
 
 #~ msgid "Search for anything!"
 #~ msgstr "Suche nach allem!"
@@ -300,8 +459,8 @@ msgstr "Bitte korrigieren Sie die untenstehenden Fehler."
 #~ "        "
 #~ msgstr ""
 #~ "\n"
-#~ "%(meta.total)s Elemente werden angezeigt. Seite %(meta.page)s von %(meta."
-#~ "num_pages)s wird angezeigt.\n"
+#~ "%(meta.total)s Elemente werden angezeigt. Seite %(meta.page)s von %"
+#~ "(meta.num_pages)s wird angezeigt.\n"
 #~ "        "
 
 #~ msgid "Categories:"

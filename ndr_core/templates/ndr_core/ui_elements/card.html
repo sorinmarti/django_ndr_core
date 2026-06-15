@@ -4,22 +4,27 @@
     .ndr-card-linked:hover { transform: translateY(-4px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
 </style>
 {% with card_item=data.items.0 %}
-    <div class="card{% if card_item.url %} ndr-card-linked{% endif %}" style="width: 18rem;">
+    <div class="card{% if card_item.url and not card_item.rich_text %} ndr-card-linked{% endif %}" style="width: 18rem;">
         {% if card_item.ndr_image %}
             <img class="card-img-top" src="{{ card_item.ndr_image.image.url }}" alt="Card image cap">
         {% endif %}
       <div class="card-body">
-          {% if card_item.url %}
+          {# stretched-link only when there is no rich text (avoids nested <a> invalid HTML) #}
+          {% if card_item.url and not card_item.rich_text %}
               <a href="{{ card_item.url }}" class="stretched-link"></a>
           {% endif %}
 
           {% if card_item.title %}
             <h5 class="card-title">{{ card_item.title }}</h5>
           {% endif %}
-          {% if card_item.text %}
-              <p class="card-text">
-                  {{ card_item.text }}
-              </p>
+
+          {% if card_item.rich_text %}
+              <div class="card-text ck-content">{{ card_item.rich_text|safe }}</div>
+              {% if card_item.url %}
+                  <a href="{{ card_item.url }}" class="btn btn-sm btn-outline-primary mt-2">→</a>
+              {% endif %}
+          {% elif card_item.text %}
+              <p class="card-text">{{ card_item.text }}</p>
           {% endif %}
       </div>
     </div>

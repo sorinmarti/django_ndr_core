@@ -161,6 +161,20 @@
                     {% include 'ndr_core/ui_elements/audio.html' with data=object %}
                 {% elif object.type == "academic_about" %}
                     {% include 'ndr_core/ui_elements/academic_about.html' with data=object %}
+                {% elif object.type == "zotero_group" %}
+                    {% with items=object.items %}
+                        {% if items %}
+                            {% with item=items.0 %}
+                                <p class="text-muted mb-1">
+                                    <i class="fa-regular fa-books"></i> Zotero Group Library
+                                    — Group ID: <strong>{{ item.object_id }}</strong>
+                                    {% if item.title %}, Title: <strong>{{ item.title }}</strong>{% endif %}
+                                </p>
+                            {% endwith %}
+                        {% else %}
+                            <p class="text-muted">Not configured yet.</p>
+                        {% endif %}
+                    {% endwith %}
                 {% elif object.type == "card_grid" %}
                     {% with items=object.items %}
                         <p class="text-muted mb-1"><i class="fa-regular fa-grid-2"></i> Card Grid — {{ items|length }} card{{ items|length|pluralize }} configured.</p>

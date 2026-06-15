@@ -3,6 +3,7 @@
 {% load static %}
 
 {% block extra_css %}
+{{ form.media.css }}
 {% include 'ndr_core/admin_views/includes/image_picker_init_css.html' %}
 {% endblock %}
 
@@ -23,5 +24,6 @@
 {% endblock %}
 
 {% block page_js %}
+{{ form.media.js }}
 {% include 'ndr_core/admin_views/includes/image_picker_init_js.html' %}
 {% endblock %}

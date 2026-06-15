@@ -75,7 +75,7 @@ class PageForm(forms.ModelForm):
                   'view_name', 'template_text',
                   'use_default_background', 'background_image', 'background_image_dark', 'background_display_mode',
                   'background_position', 'background_size', 'overlay_enabled', 'overlay_color', 'overlay_opacity',
-                  'image_opacity']
+                  'overlay_color_dark', 'overlay_opacity_dark', 'image_opacity']
 
     def __init__(self, *args, **kwargs):
         """Init class and create form helper."""
@@ -227,10 +227,26 @@ class PageForm(forms.ModelForm):
                 css_class='row g-2'
             ),
             Row(
-                Column('overlay_enabled', css_class='form-group col-md-4 mb-0'),
+                Column('overlay_enabled', css_class='form-group col-md-12 mb-0'),
+                css_class='row g-2'
+            ),
+            Row(
+                Column(HTML('<small class="text-muted">Light mode</small>'), css_class='col-md-12'),
+                css_class='row g-0'
+            ),
+            Row(
                 Column('overlay_color', css_class='form-group col-md-4 mb-0'),
                 Column('overlay_opacity', css_class='form-group col-md-4 mb-0'),
                 Column('image_opacity', css_class='form-group col-md-4 mb-0'),
+                css_class='row g-2'
+            ),
+            Row(
+                Column(HTML('<small class="text-muted">Dark mode (leave blank to use light mode values)</small>'), css_class='col-md-12'),
+                css_class='row g-0 mt-2'
+            ),
+            Row(
+                Column('overlay_color_dark', css_class='form-group col-md-4 mb-0'),
+                Column('overlay_opacity_dark', css_class='form-group col-md-4 mb-0'),
                 css_class='row g-2'
             ),
         ]
@@ -285,6 +301,11 @@ class PageEditForm(PageForm):
         if self.initial["view_name"] == "index":
             self.fields['view_name'].disabled = True
             self.fields['view_name'].help_text = "This is your landing page you can\'t change its view name."
+        # Exclude the page being edited from its own parent dropdown
+        if self.instance and self.instance.pk:
+            self.fields['parent_page'].queryset = NdrCorePage.objects.filter(
+                parent_page=None
+            ).exclude(pk=self.instance.pk)
 
     @property
     def helper(self):
@@ -418,6 +439,21 @@ class BackgroundForm(forms.Form):
         help_text='0.0 = fully transparent, 1.0 = fully opaque.',
         widget=forms.NumberInput(attrs={'step': '0.05'}),
     )
+    overlay_color_dark = forms.CharField(
+        required=False,
+        max_length=20,
+        label='Overlay Colour (Dark Mode)',
+        help_text='Leave blank to use the same colour as light mode.',
+        widget=forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),
+    )
+    overlay_opacity_dark = forms.FloatField(
+        required=False,
+        min_value=0.0,
+        max_value=1.0,
+        label='Overlay Opacity (Dark Mode)',
+        help_text='Leave blank to use the same opacity as light mode.',
+        widget=forms.NumberInput(attrs={'step': '0.05'}),
+    )
     image_opacity = forms.FloatField(
         required=False,
         min_value=0.0,
@@ -445,13 +481,21 @@ class BackgroundForm(forms.Form):
             return None
 
         self.initial = {
-            'bg_image':        _image_initial('default_bg_image_id'),
-            'bg_image_dark':   _image_initial('default_bg_image_dark_id'),
-            'display_mode':    NdrCoreValue.get_or_initialize('default_bg_display_mode').get_value(),
-            'overlay_enabled': NdrCoreValue.get_or_initialize('default_overlay_enabled').get_value(),
-            'overlay_color':   NdrCoreValue.get_or_initialize('default_overlay_color').get_value(),
-            'overlay_opacity': NdrCoreValue.get_or_initialize('default_overlay_opacity').get_value(),
-            'image_opacity':   NdrCoreValue.get_or_initialize(
+            'bg_image':             _image_initial('default_bg_image_id'),
+            'bg_image_dark':        _image_initial('default_bg_image_dark_id'),
+            'display_mode':         NdrCoreValue.get_or_initialize('default_bg_display_mode').get_value(),
+            'overlay_enabled':      NdrCoreValue.get_or_initialize('default_overlay_enabled').get_value(),
+            'overlay_color':        NdrCoreValue.get_or_initialize('default_overlay_color').get_value(),
+            'overlay_opacity':      NdrCoreValue.get_or_initialize('default_overlay_opacity').get_value(),
+            'overlay_color_dark':   NdrCoreValue.get_or_initialize(
+                'default_overlay_color_dark', init_value='',
+                init_label='Default Overlay Colour (Dark Mode)'
+            ).get_value() or None,
+            'overlay_opacity_dark': NdrCoreValue.get_or_initialize(
+                'default_overlay_opacity_dark', init_value='',
+                init_label='Default Overlay Opacity (Dark Mode)'
+            ).get_value() or None,
+            'image_opacity':        NdrCoreValue.get_or_initialize(
                 'default_bg_image_opacity', init_value='1.0',
                 init_label='Default Background Image Opacity'
             ).get_value(),
@@ -477,6 +521,10 @@ class BackgroundForm(forms.Form):
         opacity = self.cleaned_data.get('overlay_opacity')
         _set('default_overlay_opacity', opacity if opacity is not None else 0.5)
 
+        _set('default_overlay_color_dark', self.cleaned_data.get('overlay_color_dark') or '')
+        dark_opacity = self.cleaned_data.get('overlay_opacity_dark')
+        _set('default_overlay_opacity_dark', dark_opacity if dark_opacity is not None else '')
+
         img_opacity = self.cleaned_data.get('image_opacity')
         _set('default_bg_image_opacity', img_opacity if img_opacity is not None else 1.0)
 
@@ -500,9 +548,22 @@ class BackgroundForm(forms.Form):
             css_class='row g-2',
         ))
         layout.append(Row(
+            Column(HTML('<small class="text-muted">Light mode</small>'), css_class='col-md-12'),
+            css_class='row g-0',
+        ))
+        layout.append(Row(
             Column('overlay_color', css_class='col-md-4'),
             Column('overlay_opacity', css_class='col-md-4'),
             Column('image_opacity', css_class='col-md-4'),
+            css_class='row g-2',
+        ))
+        layout.append(Row(
+            Column(HTML('<small class="text-muted">Dark mode (leave blank to use light mode values)</small>'), css_class='col-md-12'),
+            css_class='row g-0 mt-2',
+        ))
+        layout.append(Row(
+            Column('overlay_color_dark', css_class='col-md-4'),
+            Column('overlay_opacity_dark', css_class='col-md-4'),
             css_class='row g-2',
         ))
         layout.append(get_form_buttons('Save Background Settings'))

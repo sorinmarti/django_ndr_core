@@ -299,6 +299,31 @@
 
     </div>
 
+    <!-- ── References &amp; Libraries ──────────────────────────────────────── -->
+    <h4 class="mt-2 mb-3"><i class="fa-regular fa-books"></i> References &amp; Libraries</h4>
+    <div class="row mb-4">
+
+        <!-- Zotero Group Library -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{% static 'ndr_core/images/admin/ui_elements/none.png' %}"
+                     class="card-img-top" alt="Zotero Group Library"
+                     style="height: 160px; object-fit: contain; padding: 20px; background: #f8f9fa;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title"><i class="fa-regular fa-books"></i> Zotero Group Library</h5>
+                    <p class="card-text flex-grow-1">
+                        Display a live bibliography from a Zotero group library.
+                        Supports public and private libraries. Items are fetched from the Zotero API.
+                    </p>
+                    <a href="{% url 'ndr_core:create_ui_element_zotero_group' %}" class="btn btn-primary btn-block">
+                        <i class="fa-regular fa-plus-circle"></i> Create Zotero Library
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
     <!-- ── Data &amp; Code ────────────────────────────────────────────────── -->
     <h4 class="mt-2 mb-3"><i class="fa-regular fa-code"></i> Data &amp; Code</h4>
     <div class="row mb-4">

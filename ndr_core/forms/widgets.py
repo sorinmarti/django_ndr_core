@@ -1,6 +1,6 @@
 """Widgets for crispy forms. """
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import BaseInput, Layout, Row, Column, HTML
+from crispy_forms.layout import Layout, Row, Column, HTML
 from django import forms
 from django.contrib.staticfiles import finders
 from django.urls import reverse
@@ -158,15 +158,13 @@ class CustomRange(forms.TextInput):
         return mark_safe(html + "<script>" + inline_code + "</script>")
 
 
-class NdrCoreFormSubmit(BaseInput):
+class NdrCoreFormSubmit(HTML):
     """Creates a submit button for crispy forms. """
 
-    input_type = "submit"
-
-    def __init__(self, *args, **kwargs):
+    def __init__(self, name, value, **kwargs):
         """Init the submit button. """
-        self.field_classes = "btn btn-primary w-100"
-        super().__init__(*args, **kwargs)
+        button_html = f'<button type="submit" name="{name}" class="btn btn-primary">{value}</button>'
+        super().__init__(mark_safe(button_html))
 
 
 class NdrCoreFilterButton(HTML):

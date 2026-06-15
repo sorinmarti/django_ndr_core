@@ -12,6 +12,7 @@ from .team_grid_forms import TeamGridCreateForm, TeamGridEditForm
 from .js_module_forms import JSModuleCreateForm, JSModuleEditForm
 from .card_grid_forms import CardGridCreateForm, CardGridEditForm, CardGridItemFormSet
 from .pdf_viewer_forms import PdfViewerCreateForm, PdfViewerEditForm
+from .zotero_forms import ZoteroGroupCreateForm, ZoteroGroupEditForm
 
 __all__ = [
     'BaseUIElementForm',
@@ -42,4 +43,6 @@ __all__ = [
     'CardGridItemFormSet',
     'PdfViewerCreateForm',
     'PdfViewerEditForm',
+    'ZoteroGroupCreateForm',
+    'ZoteroGroupEditForm',
 ]

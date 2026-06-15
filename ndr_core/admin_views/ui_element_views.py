@@ -24,6 +24,7 @@ from ndr_core.admin_forms.ui_element_types.video_forms import VideoCreateForm, V
 from ndr_core.admin_forms.ui_element_types.audio_forms import AudioCreateForm, AudioEditForm
 from ndr_core.admin_forms.ui_element_types.pdf_viewer_forms import PdfViewerCreateForm, PdfViewerEditForm
 from ndr_core.admin_forms.ui_element_types.academic_about_forms import AcademicAboutCreateForm, AcademicAboutEditForm
+from ndr_core.admin_forms.ui_element_types.zotero_forms import ZoteroGroupCreateForm, ZoteroGroupEditForm
 from ndr_core.admin_forms.ui_element_types.team_grid_forms import TeamGridCreateForm, TeamGridEditForm, TeamGridItemFormSet
 from ndr_core.admin_forms.ui_element_types.slides_forms import SlidesItemFormSet
 from ndr_core.admin_forms.ui_element_types.carousel_forms import CarouselItemFormSet
@@ -604,6 +605,22 @@ class CardGridEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
             return redirect(self.success_url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
+
+
+class ZoteroGroupCreateView(AdminViewMixin, LoginRequiredMixin, CreateView):
+    """View to create a new Zotero Group Library UI Element."""
+    model = NdrCoreUIElement
+    form_class = ZoteroGroupCreateForm
+    success_url = reverse_lazy('ndr_core:configure_ui_elements')
+    template_name = 'ndr_core/admin_views/create/ui_element_zotero_group_create.html'
+
+
+class ZoteroGroupEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
+    """View to edit an existing Zotero Group Library UI Element."""
+    model = NdrCoreUIElement
+    form_class = ZoteroGroupEditForm
+    success_url = reverse_lazy('ndr_core:configure_ui_elements')
+    template_name = 'ndr_core/admin_views/edit/ui_element_zotero_group_edit.html'
 
 
 # ============================================================================

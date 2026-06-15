@@ -4,6 +4,8 @@ import uuid
 import json
 from urllib.parse import urlparse
 from django.templatetags.static import static
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 from ndr_core.models import NdrCoreSearchField, NdrCorePage
 from ndr_core.ndr_templatetags.abstract_filter import AbstractFilter
@@ -13,7 +15,7 @@ from ndr_core.utils import get_nested_value
 
 def get_get_filter_class(filter_name):
     """Returns the filter class."""
-    if filter_name in ["lower", "upper", "title", "capitalize"]:
+    if filter_name in ["lower", "upper", "title", "capitalize", "nl2br", "center"]:
         return StringFilter
     if filter_name == "bool":
         return BoolFilter
@@ -61,6 +63,8 @@ def get_get_filter_class(filter_name):
         return CodeFilter
     if filter_name == "plotly":
         return PlotlyFilter
+    if filter_name == "badges":
+        return BadgesFilter
 
     raise ValueError(f"Filter {filter_name} not found.")
 
@@ -87,6 +91,14 @@ class StringFilter(AbstractFilter):
             return self.get_value().title()
         if self.filter_name == "capitalize":
             return self.get_value().capitalize()
+        if self.filter_name == "nl2br":
+            return mark_safe(escape(self.get_value()).replace('\n', '<br>'))
+        if self.filter_name == "center":
+            return mark_safe(
+                '<div style="width:fit-content;margin:0 auto;text-align:left;">'
+                + str(self.get_value())
+                + '</div>'
+            )
 
         return self.get_value()
 
@@ -272,8 +284,8 @@ class BadgeTemplateFilter(AbstractFilter):
         badge_element.add_attribute("class", "font-weight-normal")
 
         if self.get_configuration("tt"):
-            badge_element.add_attribute("data-toggle", "tooltip")
-            badge_element.add_attribute("data-placement", "top")
+            badge_element.add_attribute("data-bs-toggle", "tooltip")
+            badge_element.add_attribute("data-bs-placement", "top")
             if not self.get_configuration("field"):
                 # Replace placeholders in tooltip text
                 tt_text = self.get_configuration("tt")
@@ -376,10 +388,15 @@ class ImageTemplateFilter(AbstractFilter):
             url = str(value)
 
         # Handle IIIF resize if specified
+        # IIIF URL structure: /{region}/{size}/{rotation}/{quality}.{format}
+        # Replace the {size} segment (max, full, pct:N, w,h, !w,h, w,, ,h)
+        # with pct:{value}, regardless of what size was used originally.
         if self.get_configuration("iiif_resize") and url:
-            url = url.replace(
-                "/full/0/default.",
-                f'/pct:{self.get_configuration("iiif_resize")}/0/default.',
+            pct = self.get_configuration("iiif_resize")
+            url = re.sub(
+                r'/(full|[\d,!]+)/(max|full|pct:[\d.]+|!?[\d]+,[\d]*)(/\d+/(?:default|native|bitonal|gray|color)\.)',
+                rf'/\1/pct:{pct}\3',
+                url,
             )
 
         if self.get_configuration("iiif_full") and url:
@@ -1848,7 +1865,7 @@ class TableTemplateFilter(AbstractFilter):
         return []
 
     def allowed_attributes(self):
-        return ["cols", "headers", "expr", "tstyle", "tclass", "rowclass",
+        return ["cols", "headers", "expr", "widths", "tstyle", "tclass", "rowclass",
                 "limit", "empty", "empty_cell", "join", "responsive"]
 
     def needed_options(self):
@@ -1874,6 +1891,7 @@ class TableTemplateFilter(AbstractFilter):
         cols = self.parse_array_config(self.get_configuration("cols"))
         headers = self.parse_array_config(self.get_configuration("headers"))
         expressions = self.parse_array_config(self.get_configuration("expr"), preserve_quotes=True, delimiter=';')
+        widths = self.parse_array_config(self.get_configuration("widths"), delimiter=';')
 
         # Auto-detect columns if not specified
         if not cols:
@@ -1900,7 +1918,7 @@ class TableTemplateFilter(AbstractFilter):
                 pass
 
         # Build table HTML
-        table_html = self.build_table_html(value, cols, headers, expressions)
+        table_html = self.build_table_html(value, cols, headers, expressions, widths)
 
         # Wrap in responsive div if configured
         responsive = self.get_configuration("responsive")
@@ -1909,7 +1927,7 @@ class TableTemplateFilter(AbstractFilter):
 
         return table_html
 
-    def build_table_html(self, data, cols, headers, expressions):
+    def build_table_html(self, data, cols, headers, expressions, widths=None):
         """Build the complete table HTML."""
         # Determine table classes
         tstyle = self.get_configuration("tstyle") or "plain"
@@ -1923,6 +1941,18 @@ class TableTemplateFilter(AbstractFilter):
         # Build table
         table = HTMLElement("table")
         table.add_attribute("class", table_classes)
+
+        # Emit <colgroup> if widths were specified
+        if widths:
+            colgroup_html = '<colgroup>'
+            for i in range(len(cols)):
+                w = widths[i] if i < len(widths) else ''
+                if w:
+                    colgroup_html += f'<col style="width:{w}">'
+                else:
+                    colgroup_html += '<col>'
+            colgroup_html += '</colgroup>'
+            table.add_content(colgroup_html)
 
         # Build thead
         thead = HTMLElement("thead")
@@ -2895,3 +2925,101 @@ class PlotlyFilter(AbstractFilter):
             return value
 
         return None
+
+
+class BadgesFilter(AbstractFilter):
+    """Renders a list of tag objects as colored, optionally linked Bootstrap badges.
+
+    Each item in the list is expected to be a dict. Relevant fields are configurable.
+
+    Params:
+        text_field  — dict key for the badge label          (default: text)
+        color_field — dict key whose value drives bg color  (default: type)
+        id_field    — dict key for the link target id       (default: entry_id)
+        label_field — dict key for the human-readable type  (default: label)
+        param       — query-string parameter name for link  (default: id)
+        page        — NDR page view_name; omit to skip link
+
+    Tooltip format: "{color_field value}: {label_field value}"
+    """
+
+    def needed_attributes(self):
+        return []
+
+    def allowed_attributes(self):
+        return ["text_field", "color_field", "id_field", "label_field", "param", "page", "tt"]
+
+    def needed_options(self):
+        return []
+
+    def processes_list_as_whole(self):
+        return True
+
+    def get_rendered_value(self):
+        items = self.value
+        if not isinstance(items, list):
+            items = [items]
+
+        text_field = self.get_configuration("text_field") or "text"
+        color_field = self.get_configuration("color_field") or "type"
+        id_field = self.get_configuration("id_field") or "entry_id"
+        label_field = self.get_configuration("label_field") or "label"
+        param = self.get_configuration("param") or "id"
+        page_name = self.get_configuration("page")
+
+        page_url = None
+        if page_name:
+            try:
+                page = NdrCorePage.objects.get(view_name=page_name)
+                page_url = page.url()
+            except NdrCorePage.DoesNotExist:
+                pass
+
+        badges_html = []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+
+            text_val = item.get(text_field, "")
+            color_val = item.get(color_field, "")
+            entry_id = item.get(id_field, "")
+            label_val = item.get(label_field, "")
+
+            bg_color = HTMLElement.get_color_from_value(color_val)
+            # Auto-select dark/light text based on lightness (hsl lightness=80% is always dark enough)
+            text_color = "#000000"
+
+            tt_template = self.get_configuration("tt")
+            if tt_template:
+                tooltip = escape(re.sub(
+                    r'\[([^\]]+)\]',
+                    lambda m: str(item.get(m.group(1), '')),
+                    tt_template
+                ))
+            elif color_val and label_val:
+                tooltip = f"{escape(color_val)}: {escape(label_val)}"
+            elif label_val:
+                tooltip = escape(label_val)
+            else:
+                tooltip = ""
+
+            badge_attrs = (
+                f'class="badge badge-auto-text font-weight-normal" '
+                f'style="background-color:{bg_color};color:{text_color};"'
+            )
+            if tooltip:
+                badge_attrs += f' data-bs-toggle="tooltip" data-bs-placement="top" title="{tooltip}"'
+
+            badge_html = f'<span {badge_attrs}>{escape(str(text_val))}</span>'
+
+            if page_url and entry_id:
+                badge_html = (
+                    f'<a href="{escape(page_url)}?{escape(param)}={escape(str(entry_id))}" '
+                    f'style="text-decoration:none;">{badge_html}</a>'
+                )
+
+            badges_html.append(badge_html)
+
+        return mark_safe(
+            '<span class="ndr-badges">' + " ".join(badges_html) + "</span>"
+        )

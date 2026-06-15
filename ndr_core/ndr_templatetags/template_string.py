@@ -88,11 +88,12 @@ class TemplateStringVariable:
 
 
     def _split_filter_with_quotes(self, text, delimiter):
-        """Split text by delimiter, but respect quoted strings."""
+        """Split text by delimiter, respecting quoted strings and [...] bracket groups."""
         parts = []
         current_part = ""
         in_quotes = False
         quote_char = None
+        bracket_depth = 0
         i = 0
 
         while i < len(text):
@@ -110,7 +111,13 @@ class TemplateStringVariable:
                     in_quotes = False
                     quote_char = None
                     current_part += char
-            elif char == delimiter and not in_quotes:
+            elif char == '[' and not in_quotes:
+                bracket_depth += 1
+                current_part += char
+            elif char == ']' and not in_quotes:
+                bracket_depth -= 1
+                current_part += char
+            elif char == delimiter and not in_quotes and bracket_depth == 0:
                 if current_part.strip():
                     parts.append(current_part.strip())
                 current_part = ""
@@ -316,7 +323,21 @@ class TemplateString:
         """Returns all variables in a string."""
         try:
             variables = []
-            for var in Formatter().parse(self.string):
+            # Strip list block content so inner-template variables are not resolved
+            # against the outer data context (they are handled by _process_list_blocks).
+            string_for_parsing = re.sub(
+                r'(?:<p[^>]*>\s*)?\[\[start_list=\w+\]\].*?\[\[end_list\]\](?:\s*</p>)?',
+                '',
+                self.string,
+                flags=re.DOTALL
+            )
+            string_for_parsing = re.sub(
+                r'(?:<p[^>]*>\s*)?\[\[start_info_box(?:=\w+)?\]\].*?\[\[end_info_box\]\](?:\s*</p>)?',
+                '',
+                string_for_parsing,
+                flags=re.DOTALL
+            )
+            for var in Formatter().parse(string_for_parsing):
                 if var[1] is not None and var[1] != '':
                     raw_variable_string = var[1]
                     if var[2] is not None and var[2] != '':
@@ -339,10 +360,102 @@ class TemplateString:
         """
         return self.string
 
+    @staticmethod
+    def _strip_html_whitespace(text):
+        """Strip leading/trailing <br>, &nbsp;, non-breaking spaces, and whitespace."""
+        noise = r'(\s|<br\s*/?>|&nbsp;|\xa0)+'
+        text = re.sub(r'^' + noise, '', text, flags=re.IGNORECASE)
+        text = re.sub(noise + r'$', '', text, flags=re.IGNORECASE)
+        return text
+
+    def _process_list_blocks(self, string):
+        """Pre-process [[start_list=varname]]...[[end_list]] blocks.
+
+        For each block, the named list is retrieved from self.data, and the inner
+        template is rendered once per item (with the item dict as data context).
+        Results are wrapped in <ul class="ndr-list-block"><li>...</li></ul>.
+        [[item]] markers inside the block are stripped before rendering.
+
+        Also consumes an optional surrounding <p>...</p> that CKEditor adds, since
+        a <p> wrapping a <ul> is invalid HTML.
+        """
+        pattern = re.compile(
+            r'(?:<p[^>]*>\s*)?\[\[start_list=(\w+)\]\](.*?)\[\[end_list\]\](?:\s*</p>)?',
+            re.DOTALL
+        )
+
+        def render_block(match):
+            varname = match.group(1)
+            inner_template = match.group(2)
+
+            # Remove [[item]] markers and any surrounding HTML whitespace/br noise
+            inner_template = re.sub(r'\[\[item\]\](\s|&nbsp;|\xa0)*', '', inner_template, flags=re.IGNORECASE)
+            inner_template = self._strip_html_whitespace(inner_template)
+
+            try:
+                items = self.data[varname]
+            except (KeyError, TypeError):
+                return self.get_error(KeyError(varname))
+
+            if not isinstance(items, list):
+                items = [items]
+
+            lis = []
+            for item in items:
+                if not isinstance(item, dict):
+                    item = {'value': item}
+                rendered = TemplateString(inner_template, item, self.show_errors).get_formatted_string()
+                lis.append(f'<li>{rendered}</li>')
+
+            return '<ul class="ndr-list-block">' + ''.join(lis) + '</ul>'
+
+        return pattern.sub(render_block, string)
+
+    def _process_info_boxes(self, string):
+        """Pre-process [[start_info_box[=type]]]...[[end_info_box]] blocks.
+
+        Renders the inner content as a Bootstrap alert. The optional type parameter
+        controls the alert style: info (default), warning, danger, success.
+
+        Example:
+            [[start_info_box]]          → alert-info
+            [[start_info_box=warning]]  → alert-warning
+            [[start_info_box=danger]]   → alert-danger
+            [[start_info_box=success]]  → alert-success
+        """
+        pattern = re.compile(
+            r'(?:<p[^>]*>\s*)?\[\[start_info_box(?:=(\w+))?\]\](.*?)\[\[end_info_box\]\](?:\s*</p>)?',
+            re.DOTALL
+        )
+
+        alert_classes = {
+            'info':    ('alert-info',    'fa-circle-info'),
+            'warning': ('alert-warning', 'fa-triangle-exclamation'),
+            'danger':  ('alert-danger',  'fa-circle-exclamation'),
+            'error':   ('alert-danger',  'fa-circle-exclamation'),
+            'success': ('alert-success', 'fa-circle-check'),
+        }
+
+        def render_box(match):
+            box_type = (match.group(1) or 'info').lower()
+            inner_content = self._strip_html_whitespace(match.group(2))
+
+            alert_class, icon = alert_classes.get(box_type, alert_classes['info'])
+            rendered = TemplateString(inner_content, self.data, self.show_errors).get_formatted_string()
+
+            return (
+                f'<div class="alert {alert_class}" role="alert">'
+                f'<i class="fa-regular {icon}"></i> {rendered}'
+                f'</div>'
+            )
+
+        return pattern.sub(render_box, string)
+
     def get_formatted_string(self):
         """Returns the formatted string. All variables are replaced with their values. All filters are applied.
         Example: "I want to see the {key|upper}" -> "I want to see the CAT"""
-        formatted_string = self.string
+        formatted_string = self._process_list_blocks(self.string)
+        formatted_string = self._process_info_boxes(formatted_string)
         for variable in self.variables:
             try:
                 data = variable.get_value(self.data)

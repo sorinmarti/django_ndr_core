@@ -43,6 +43,9 @@
                 {{ site_title }}
             {% endblock %}
         </a>
+        {% logo_image_path as nav_logo_src %}
+        <img src="{{ nav_logo_src }}" class="nav-scrolled-logo" alt="" aria-hidden="true">
+        <span id="navPageTitle" class="nav-page-title">{{ page.name }}</span>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                 aria-controls="navbarContent" aria-expanded="false" aria-label="{% trans 'Toggle navigation' %}">
             <span class="navbar-toggler-icon"></span>
@@ -229,6 +232,11 @@
             });
         });
     }
+
+    // Initialize Bootstrap tooltips
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+        new bootstrap.Tooltip(el);
+    });
 
     // Smooth scroll for anchor links — exclude Bootstrap tab/pill toggles
     document.querySelectorAll('a[href^="#"]:not([data-bs-toggle="tab"]):not([data-bs-toggle="pill"])').forEach(anchor => {

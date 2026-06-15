@@ -2,6 +2,15 @@
 {% load django_tables2 %}
 {% load crispy_forms_tags %}
 {% load ndr_values %}
+{% load static %}
+
+{% block extra_css %}
+    {% if form %}{{ form.media.css }}{% endif %}
+{% endblock %}
+
+{% block page_js %}
+    {% if form %}{{ form.media.js }}{% endif %}
+{% endblock %}
 
 {% block content %}
     <h2><i class="fa-regular fa-gear"></i> Settings</h2>

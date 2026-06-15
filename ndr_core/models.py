@@ -23,6 +23,18 @@ TRANSLATABLE_TABLES = (
 """Tables which contain translatable fields."""
 
 
+def _hex_to_rgba(hex_color, opacity):
+    """Convert a hex color string and opacity float to an rgba() CSS string."""
+    h = (hex_color or '#000000').lstrip('#')
+    if len(h) == 6:
+        try:
+            r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+            return f'rgba({r}, {g}, {b}, {opacity})'
+        except ValueError:
+            pass
+    return f'rgba(0, 0, 0, {opacity})'
+
+
 def get_available_languages():
     """Returns a list of available languages."""
 
@@ -39,6 +51,21 @@ def get_available_languages():
     return available_languages
 
 
+def _active_language_codes():
+    """Return the cached set of configured additional language codes.
+
+    Uses Django's cache (5-minute TTL) so translation lookups don't hit the DB
+    on every field access.  Invalidated by settings_forms when available_languages
+    is saved.
+    """
+    from django.core.cache import cache
+    codes = cache.get('ndr_active_lang_codes')
+    if codes is None:
+        codes = frozenset(code for code, _ in get_available_languages())
+        cache.set('ndr_active_lang_codes', codes, 300)
+    return codes
+
+
 class TranslatableMixin:
     """Mixin which provides methods to translate translatable fields.
     All text values in the configuration are saved in a primary language.
@@ -51,8 +78,11 @@ class TranslatableMixin:
     def translated_field(self, orig_value, field_name, object_id):
         """Returns the translated field for a given language. If no translation exists,
         the default value is returned. """
+        current_lang = get_language()
+        if current_lang not in _active_language_codes():
+            return orig_value
         try:
-            translation = NdrCoreTranslation.objects.get(language=get_language(),
+            translation = NdrCoreTranslation.objects.get(language=current_lang,
                                                          table_name=self._meta.model_name,
                                                          field_name=field_name,
                                                          object_id=object_id)
@@ -886,6 +916,24 @@ class NdrCorePage(TranslatableMixin, models.Model):
     )
     """Opacity of the overlay (0.0 to 1.0)."""
 
+    overlay_color_dark = models.CharField(
+        max_length=7,
+        null=True,
+        blank=True,
+        default=None,
+        help_text="Overlay colour for dark mode (leave blank to use same as light mode)"
+    )
+    """Dark-mode overlay colour; if None falls back to overlay_color."""
+
+    overlay_opacity_dark = models.FloatField(
+        null=True,
+        blank=True,
+        default=None,
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+        help_text="Overlay opacity for dark mode (leave blank to use same as light mode)"
+    )
+    """Dark-mode overlay opacity; if None falls back to overlay_opacity."""
+
     image_opacity = models.FloatField(
         default=1.0,
         validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
@@ -903,8 +951,11 @@ class NdrCorePage(TranslatableMixin, models.Model):
     def translated_template_text(self):
         """Returns the translated template_text for a given language.
         If no translation exists, the default template_text is returned. """
+        current_lang = get_language()
+        if current_lang not in _active_language_codes():
+            return self.template_text
         try:
-            translation = NdrCoreRichTextTranslation.objects.get(language=get_language(),
+            translation = NdrCoreRichTextTranslation.objects.get(language=current_lang,
                                                                  table_name='NdrCorePage',
                                                                  field_name='template_text',
                                                                  object_id=str(self.id))
@@ -982,6 +1033,14 @@ class NdrCorePage(TranslatableMixin, models.Model):
                     'default_bg_image_opacity', init_value='1.0',
                     init_label='Default Background Image Opacity'
                 ).get_value()
+                default_overlay_color_dark = NdrCoreValue.get_or_initialize(
+                    'default_overlay_color_dark', init_value='',
+                    init_label='Default Overlay Colour (Dark Mode)'
+                ).get_value()
+                default_overlay_opacity_dark = NdrCoreValue.get_or_initialize(
+                    'default_overlay_opacity_dark', init_value='',
+                    init_label='Default Overlay Opacity (Dark Mode)'
+                ).get_value()
 
                 # Convert opacity strings to float
                 try:
@@ -994,6 +1053,16 @@ class NdrCorePage(TranslatableMixin, models.Model):
                 except (ValueError, TypeError):
                     image_opacity_float = 1.0
 
+                # Build dark overlay rgba only when a dark-specific value is configured
+                overlay_rgba_dark = None
+                if default_overlay_color_dark or default_overlay_opacity_dark:
+                    dark_color = default_overlay_color_dark or default_overlay_color
+                    try:
+                        dark_opacity = float(default_overlay_opacity_dark) if default_overlay_opacity_dark else overlay_opacity_float
+                    except (ValueError, TypeError):
+                        dark_opacity = overlay_opacity_float
+                    overlay_rgba_dark = _hex_to_rgba(dark_color, dark_opacity)
+
                 return {
                     'bg_image': default_bg_image,
                     'bg_image_dark': default_bg_image_dark,
@@ -1003,6 +1072,8 @@ class NdrCorePage(TranslatableMixin, models.Model):
                     'overlay_enabled': default_overlay_enabled,
                     'overlay_color': default_overlay_color,
                     'overlay_opacity': overlay_opacity_float,
+                    'overlay_rgba': _hex_to_rgba(default_overlay_color, overlay_opacity_float),
+                    'overlay_rgba_dark': overlay_rgba_dark,
                     'image_opacity': image_opacity_float,
                 }
             except NdrCoreValue.DoesNotExist:
@@ -1015,10 +1086,18 @@ class NdrCorePage(TranslatableMixin, models.Model):
                     'overlay_enabled': False,
                     'overlay_color': '#000000',
                     'overlay_opacity': 0.5,
+                    'overlay_rgba': _hex_to_rgba('#000000', 0.5),
+                    'overlay_rgba_dark': None,
                     'image_opacity': 1.0,
                 }
         else:
             # Return page-specific settings
+            # Build dark overlay rgba only when a dark-specific value is explicitly set
+            overlay_rgba_dark = None
+            if self.overlay_color_dark or self.overlay_opacity_dark is not None:
+                dark_color = self.overlay_color_dark or self.overlay_color
+                dark_opacity = self.overlay_opacity_dark if self.overlay_opacity_dark is not None else self.overlay_opacity
+                overlay_rgba_dark = _hex_to_rgba(dark_color, dark_opacity)
             return {
                 'bg_image': self.background_image,
                 'bg_image_dark': self.background_image_dark,
@@ -1028,6 +1107,8 @@ class NdrCorePage(TranslatableMixin, models.Model):
                 'overlay_enabled': self.overlay_enabled,
                 'overlay_color': self.overlay_color,
                 'overlay_opacity': self.overlay_opacity,
+                'overlay_rgba': _hex_to_rgba(self.overlay_color, self.overlay_opacity),
+                'overlay_rgba_dark': overlay_rgba_dark,
                 'image_opacity': self.image_opacity,
             }
 
@@ -1725,6 +1806,7 @@ class NdrCoreUIElement(models.Model):
         JS_MODULE = "js_module", "JavaScript Module"
         CARD_GRID = "card_grid", "Card Grid"
         PDF_VIEWER = "pdf_viewer", "PDF Viewer"
+        ZOTERO_GROUP = "zotero_group", "Zotero Group Library"
 
     type = models.CharField(max_length=100,
                             choices=UIElementType.choices,
@@ -1874,9 +1956,12 @@ class NdrCoreUiElementItem(models.Model, TranslatableMixin):
     def translated_rich_text(self):
         """Get translated version of rich_text field."""
         from django.utils.translation import get_language
+        current_lang = get_language()
+        if current_lang not in _active_language_codes():
+            return self.rich_text
         try:
             translation = NdrCoreRichTextTranslation.objects.get(
-                language=get_language(),
+                language=current_lang,
                 table_name='ndrcoreuielementitem',
                 field_name='rich_text',
                 object_id=str(self.id)

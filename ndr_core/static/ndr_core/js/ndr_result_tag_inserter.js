@@ -48,6 +48,8 @@
         { group: 'text', name: 'lower',      label: 'Lowercase',     hint: 'Convert text to lower case.',                          params: [] },
         { group: 'text', name: 'title',      label: 'Title case',    hint: 'Convert text to Title Case.',                          params: [] },
         { group: 'text', name: 'capitalize', label: 'Capitalize',    hint: 'Capitalize the first letter.',                         params: [] },
+        { group: 'text', name: 'nl2br',      label: 'Newline → <br>', hint: 'Replace newline characters (\\n) with HTML <br> tags.', params: [] },
+        { group: 'text', name: 'center',     label: 'Center block',   hint: 'Wrap content in a centered block (lines stay left-aligned, the block itself is centered). Chain after nl2br: {value|nl2br|center}.', params: [] },
         { group: 'text', name: 'truncate',   label: 'Truncate',      hint: 'Limit the text to a maximum number of characters.',    params: [{ id: 'p_truncate_length', key: 'length', label: 'Max chars', placeholder: '200' }] },
 
         // ── Numbers & Dates ───────────────────────────────────────────────
@@ -83,6 +85,15 @@
         { group: 'collections', name: 'list',      label: 'List',      hint: 'Render an array as an HTML list.',                          params: [{ id: 'p_list_type', key: 'type', label: 'Type (ul / ol)', placeholder: 'ul' }, { id: 'p_list_limit', key: 'limit', label: 'Limit items', placeholder: '' }] },
         { group: 'collections', name: 'table',     label: 'Table',     hint: 'Render a list of objects as an HTML table.',               params: [{ id: 'p_table_class', key: 'class', label: 'CSS class', placeholder: 'table table-sm' }] },
         { group: 'collections', name: 'datatable', label: 'DataTable', hint: 'Render a list of objects as an interactive DataTable.',    params: [{ id: 'p_datatable_class', key: 'class', label: 'CSS class', placeholder: 'table' }] },
+        { group: 'collections', name: 'badges',    label: 'Badges',    hint: 'Render a list of tag objects as colored Bootstrap badges. Each item should be a dict with text, type, entry_id, and label fields.', params: [
+            { id: 'p_badges_text_field',  key: 'text_field',  label: 'Text field',  widget: 'text', placeholder: 'text' },
+            { id: 'p_badges_color_field', key: 'color_field', label: 'Color field', widget: 'text', placeholder: 'type' },
+            { id: 'p_badges_id_field',    key: 'id_field',    label: 'ID field',    widget: 'text', placeholder: 'entry_id' },
+            { id: 'p_badges_label_field', key: 'label_field', label: 'Label field', widget: 'text', placeholder: 'label' },
+            { id: 'p_badges_page',        key: 'page',        label: 'Link page (view_name)', widget: 'text', placeholder: '' },
+            { id: 'p_badges_param',       key: 'param',       label: 'Link param name', widget: 'text', placeholder: 'id' },
+            { id: 'p_badges_tt',          key: 'tt',          label: 'Tooltip template (use [field_name])', widget: 'text', placeholder: '[type]: [label]' }
+        ]},
 
         // ── Advanced ──────────────────────────────────────────────────────
         { group: 'advanced', name: 'fieldify', label: 'Fieldify',     hint: 'Look up a human-readable label for a coded value via a search field definition.', params: [{ id: 'p_fieldify_field', key: 'field', label: 'Field name', placeholder: 'my_field' }] },

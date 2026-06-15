@@ -5,9 +5,20 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Div, HTML, ButtonHolder, Submit
 from django import forms
 from django.forms.widgets import Select, SelectMultiple
+from django_select2.forms import Select2MultipleWidget
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons, get_info_box
-from ndr_core.models import NdrCoreValue, NdrCoreImage, get_available_languages
+from ndr_core.models import (NdrCoreValue, NdrCoreImage, get_available_languages,
+                              NdrCoreTranslation, NdrCoreRichTextTranslation)
+
+
+def _purge_translations(language_codes):
+    """Delete all translation records for the given language codes and bust the cache."""
+    from django.core.cache import cache
+    if language_codes:
+        NdrCoreTranslation.objects.filter(language__in=language_codes).delete()
+        NdrCoreRichTextTranslation.objects.filter(language__in=language_codes).delete()
+        cache.delete('ndr_active_lang_codes')
 
 
 class ImagePickerWidget(Select):
@@ -102,7 +113,8 @@ class SettingsListForm(forms.Form):
                 self.fields[f"save_{setting}"] = forms.MultipleChoiceField(label=label,
                                                                            required=False,
                                                                            choices=setting_obj.get_options(),
-                                                                           help_text=setting_obj.value_help_text)
+                                                                           help_text=setting_obj.value_help_text,
+                                                                           widget=Select2MultipleWidget)
             elif setting_obj.value_type == NdrCoreValue.ValueType.URL:
                 self.fields[f"save_{setting}"] = forms.URLField(label=label,
                                                                 required=False,
@@ -118,17 +130,29 @@ class SettingsListForm(forms.Form):
             if f"save_{setting}" in self.data:
                 obj = NdrCoreValue.objects.get(value_name=setting)
                 if obj.value_type == NdrCoreValue.ValueType.MULTI_LIST:
-                    obj.value_value = ','.join(self.data.getlist(f"save_{setting}"))
+                    old_values = set(v.strip() for v in obj.value_value.split(',') if v.strip())
+                    new_values = set(self.data.getlist(f"save_{setting}"))
+                    obj.value_value = ','.join(new_values)
+                    obj.save()
+                    if setting == 'available_languages':
+                        removed = old_values - new_values
+                        _purge_translations(removed)
                 else:
                     obj.value_value = self.data[f"save_{setting}"]
-                obj.save()
+                    obj.save()
             else:
-                # If the setting is not in the data and its type is BOOLEAN, it means it was unchecked.
+                # Field absent from POST data: unchecked boolean or empty multi-select.
                 try:
                     obj = NdrCoreValue.objects.get(value_name=setting)
                     if obj.value_type == NdrCoreValue.ValueType.BOOLEAN:
                         obj.value_value = False
                         obj.save()
+                    elif obj.value_type == NdrCoreValue.ValueType.MULTI_LIST:
+                        old_values = set(v.strip() for v in obj.value_value.split(',') if v.strip())
+                        obj.value_value = ''
+                        obj.save()
+                        if setting == 'available_languages':
+                            _purge_translations(old_values)
                 except NdrCoreValue.DoesNotExist:
                     pass
 

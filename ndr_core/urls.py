@@ -134,6 +134,7 @@ from ndr_core.admin_views.ui_element_views import (
     JSModuleCreateView, JSModuleEditView,
     CardGridCreateView, CardGridEditView,
     PdfViewerCreateView, PdfViewerEditView,
+    ZoteroGroupCreateView, ZoteroGroupEditView,
     # Helper
     get_ndr_image_path
 )
@@ -307,6 +308,8 @@ urlpatterns = [
     path('configure/ui_elements/edit/js_module/<str:pk>/', JSModuleEditView.as_view(), name='edit_ui_element_js_module'),
     path('configure/ui_elements/create/card_grid/', CardGridCreateView.as_view(), name='create_ui_element_card_grid'),
     path('configure/ui_elements/edit/card_grid/<str:pk>/', CardGridEditView.as_view(), name='edit_ui_element_card_grid'),
+    path('configure/ui_elements/create/zotero_group/', ZoteroGroupCreateView.as_view(), name='create_ui_element_zotero_group'),
+    path('configure/ui_elements/edit/zotero_group/<str:pk>/', ZoteroGroupEditView.as_view(), name='edit_ui_element_zotero_group'),
 
     # SEARCH CONFIGURATIONS
     path('configure/search/', ConfigureSearch.as_view(), name='configure_search'),

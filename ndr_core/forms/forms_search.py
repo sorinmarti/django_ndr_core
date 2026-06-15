@@ -49,14 +49,16 @@ class DataListSearchForm(_NdrCoreForm):
 
         helper = FormHelper()
         helper.form_method = "GET"
-        helper.form_class = "form-inline justify-content-end"
         layout = helper.layout = Layout()
 
         # Add the search field with filter and clear buttons inline
-        layout.append(Field("search_term", wrapper_class="mr-2 align-self-start"))
-        layout.append(NdrCoreFilterButton(_("Filter")))
-        layout.append(HTML("&nbsp;"))
-        layout.append(NdrCoreClearButton(_("Clear")))
+        layout.append(Field("search_term"))
+        layout.append(Div(
+            NdrCoreFilterButton(_("Filter")),
+            HTML("&nbsp;"),
+            NdrCoreClearButton(_("Clear")),
+            css_class="d-flex justify-content-end gap-2 mt-2"
+        ))
 
         return helper
 

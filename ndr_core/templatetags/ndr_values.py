@@ -1,7 +1,7 @@
 """Template tags for NDR Core."""
 from django import template
 from django.utils.safestring import mark_safe
-from django.utils.translation import get_language
+from django.utils.translation import get_language, get_language_info
 
 from ndr_core.models import NdrCoreValue, NdrCoreImage, get_available_languages
 from ndr_core.ndr_settings import NdrSettings
@@ -48,8 +48,31 @@ def get_version(name):
 
 @register.simple_tag(name="ndr_available_languages")
 def tag_get_available_languages():
-    """Returns a list of available languages."""
-    return [('en', 'English')] + get_available_languages()
+    """Returns a list of available languages.
+
+    Returns the configured base language plus any additional languages.
+    The language selector is only shown when this list has more than one entry.
+    """
+    base_lang = NdrCoreValue.get_or_initialize(
+        value_name='ndr_language',
+        init_value='en',
+        init_label='Base Language',
+        init_type=NdrCoreValue.ValueType.STRING,
+    ).get_value() or 'en'
+
+    try:
+        base_info = get_language_info(base_lang)
+        base_label = base_info['name_local']
+    except Exception:
+        base_label = base_lang
+
+    additional = get_available_languages()
+    # Deduplicate: skip additional entries that match the base language
+    result = [(base_lang, base_label)]
+    for code, label in additional:
+        if code != base_lang:
+            result.append((code, label))
+    return result
 
 
 @register.simple_tag(name="logo_image_path")

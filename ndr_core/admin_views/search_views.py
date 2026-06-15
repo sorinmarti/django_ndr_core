@@ -93,12 +93,20 @@ class SearchConfigurationDeleteView(AdminViewMixin, LoginRequiredMixin, DeleteVi
 class SearchConfigurationCopyView(AdminViewMixin, LoginRequiredMixin, View):
     """ View to copy a Search configuration. """
 
-    def get(self, request, *args, **kwargs):
-        """GET request for this view. """
-
+    def post(self, request, *args, **kwargs):
+        """POST request for this view. Receives new conf_name and conf_label from the modal form."""
         search_conf = NdrCoreSearchConfiguration.objects.get(pk=self.kwargs['pk'])
-        search_conf.conf_name = f'{search_conf.conf_name}_copy'
-        search_conf.conf_label = f'{search_conf.conf_label} (Copy)'
+        new_conf_name = request.POST.get('conf_name', '').strip()
+        new_conf_label = request.POST.get('conf_label', '').strip()
+
+        if not new_conf_name:
+            new_conf_name = f'{search_conf.conf_name}_copy'
+        if not new_conf_label:
+            new_conf_label = f'{search_conf.conf_label} (Copy)'
+
+        search_conf.conf_name = new_conf_name
+        search_conf.conf_label = new_conf_label
+        search_conf.pk = new_conf_name
         search_conf.save()
 
         return redirect('ndr_core:configure_search')

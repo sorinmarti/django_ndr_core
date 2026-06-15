@@ -51,11 +51,15 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: {{ page_background.overlay_color }};
-            opacity: {{ page_background.overlay_opacity }};
+            background-color: {{ page_background.overlay_rgba }};
             z-index: 0;
             pointer-events: none;
         }
+        {% if page_background.overlay_rgba_dark %}
+        [data-theme="dark"] body::before {
+            background-color: {{ page_background.overlay_rgba_dark }};
+        }
+        {% endif %}
         {% endif %}
 
         body > * {
@@ -95,10 +99,14 @@
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: {{ page_background.overlay_color }};
-            opacity: {{ page_background.overlay_opacity }};
+            background-color: {{ page_background.overlay_rgba }};
             z-index: 1;
         }
+        {% if page_background.overlay_rgba_dark %}
+        [data-theme="dark"] .page-header-bg::before {
+            background-color: {{ page_background.overlay_rgba_dark }};
+        }
+        {% endif %}
         {% endif %}
 
         .page-header-bg > * {

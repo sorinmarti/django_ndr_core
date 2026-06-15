@@ -603,6 +603,78 @@ class TextPreRenderer:
                         pass
             context['card_items'] = card_items
 
+        # Special handling for ZOTERO_GROUP type
+        if element.type == NdrCoreUIElement.UIElementType.ZOTERO_GROUP:
+            items = element.items()
+            if items:
+                item = items[0]
+                group_id = item.object_id
+                api_key = item.text
+                section_title = item.title
+                items_per_page, cache_ttl_hours = self._parse_zotero_provider(item.provider)
+
+                zotero_all_items = []
+                zotero_error = None
+
+                if group_id:
+                    import hashlib as _hashlib
+                    key_hash = _hashlib.md5(api_key.encode()).hexdigest()[:8] if api_key else 'pub'
+                    cache_key = f'ndr_zotero_{re.sub(r"[^a-zA-Z0-9]", "_", group_id)}_{key_hash}'
+
+                    from django.core.cache import cache as _cache
+                    zotero_all_items = _cache.get(cache_key)
+
+                    if zotero_all_items is None:
+                        try:
+                            zotero_all_items = self._fetch_all_zotero_items(group_id, api_key)
+                            _cache.set(cache_key, zotero_all_items, timeout=cache_ttl_hours * 3600)
+                        except Exception as exc:
+                            zotero_error = str(exc)
+                            zotero_all_items = []
+                else:
+                    zotero_error = 'No Zotero group ID configured.'
+
+                # Pagination
+                page_param = f'zotero_p_{element.name}'
+                try:
+                    current_page = max(1, int(self.request.GET.get(page_param, 1)))
+                except (ValueError, TypeError):
+                    current_page = 1
+
+                total_items = len(zotero_all_items)
+                total_pages = max(1, (total_items + items_per_page - 1) // items_per_page)
+                current_page = min(current_page, total_pages)
+
+                start_idx = (current_page - 1) * items_per_page
+                end_idx = start_idx + items_per_page
+
+                # Build base URL for pagination links (preserves existing query params)
+                query = self.request.GET.copy()
+                query.pop(page_param, None)
+                base_query = query.urlencode()
+                page_base_url = (
+                    f'{self.request.path}?{base_query}&{page_param}='
+                    if base_query else
+                    f'{self.request.path}?{page_param}='
+                )
+
+                context.update({
+                    'zotero_items': zotero_all_items[start_idx:end_idx],
+                    'zotero_section_title': section_title,
+                    'zotero_error': zotero_error,
+                    'zotero_page': current_page,
+                    'zotero_total_pages': total_pages,
+                    'zotero_total_items': total_items,
+                    'zotero_page_start': start_idx + 1,
+                    'zotero_page_end': min(end_idx, total_items),
+                    'zotero_page_base_url': page_base_url,
+                    'zotero_page_range': self._build_page_range(current_page, total_pages),
+                    'zotero_prev_page': max(1, current_page - 1),
+                    'zotero_next_page': min(total_pages, current_page + 1),
+                })
+            else:
+                context['zotero_error'] = 'No configuration found.'
+
         # Special handling for JS_MODULE type
         if element.type == NdrCoreUIElement.UIElementType.JS_MODULE:
             items = element.items()
@@ -640,6 +712,88 @@ class TextPreRenderer:
             return result_obj.results[0]['data']
 
         return None
+
+    def _parse_zotero_provider(self, provider_value):
+        """Parse provider field: 'items_per_page' or 'items_per_page:cache_ttl_hours'."""
+        if ':' in (provider_value or ''):
+            parts = provider_value.split(':', 1)
+            try:
+                items_per_page = max(1, int(parts[0]))
+            except (ValueError, TypeError):
+                items_per_page = 20
+            try:
+                cache_ttl_hours = max(1, int(parts[1]))
+            except (ValueError, TypeError):
+                cache_ttl_hours = 24
+        else:
+            try:
+                items_per_page = max(1, int(provider_value)) if provider_value else 20
+            except (ValueError, TypeError):
+                items_per_page = 20
+            cache_ttl_hours = 24
+        return items_per_page, cache_ttl_hours
+
+    def _fetch_all_zotero_items(self, group_id, api_key=None, max_total=1000):
+        """Fetch all top-level items from a Zotero group library, handling API pagination."""
+        import requests as _requests
+
+        all_items = []
+        start = 0
+        batch = 100  # Zotero API maximum per request
+
+        headers = {'Zotero-API-Version': '3'}
+        if api_key:
+            headers['Authorization'] = f'Bearer {api_key}'
+
+        while len(all_items) < max_total:
+            response = _requests.get(
+                f'https://api.zotero.org/groups/{group_id}/items/top',
+                params={
+                    'limit': min(batch, max_total - len(all_items)),
+                    'start': start,
+                    'format': 'json',
+                    'sort': 'date',
+                    'direction': 'desc',
+                },
+                headers=headers,
+                timeout=10,
+            )
+            if response.status_code == 403:
+                raise Exception('Access denied. Check the API key or make the library public.')
+            if response.status_code == 404:
+                raise Exception('Group library not found. Check the group ID.')
+            response.raise_for_status()
+
+            batch_items = response.json()
+            if not batch_items:
+                break
+
+            all_items.extend(batch_items)
+            start += len(batch_items)
+
+            total = int(response.headers.get('Total-Results', 0))
+            if start >= total:
+                break
+
+        return all_items
+
+    def _build_page_range(self, current, total, window=2):
+        """Return list of page numbers with None as ellipsis markers."""
+        if total <= 1:
+            return []
+        pages = set()
+        pages.add(1)
+        pages.add(total)
+        for i in range(max(1, current - window), min(total, current + window) + 1):
+            pages.add(i)
+        result = []
+        prev = None
+        for p in sorted(pages):
+            if prev is not None and p - prev > 1:
+                result.append(None)
+            result.append(p)
+            prev = p
+        return result
 
     def render_element(self, template, element_id, text, render_type=None, style=None, size=None, custom_label=None):
         """Renders an element with optional styling parameters."""
@@ -846,7 +1000,11 @@ class TextPreRenderer:
             return None
 
     def _get_page_element(self, element_id):
-        """Looks up a page by view_name (top-level) or parent/child path."""
+        """Looks up a page by view_name (top-level) or parent/child path.
+
+        For a plain view_name (no slash): tries top-level first, then falls back
+        to any page with that view_name if exactly one match exists.
+        """
         try:
             if '/' in element_id:
                 parent = None
@@ -856,7 +1014,13 @@ class TextPreRenderer:
                     parent = page
                 return page
             else:
-                return NdrCorePage.objects.get(view_name=element_id, parent_page=None)
+                try:
+                    return NdrCorePage.objects.get(view_name=element_id, parent_page=None)
+                except NdrCorePage.DoesNotExist:
+                    pages = NdrCorePage.objects.filter(view_name=element_id)
+                    if pages.count() == 1:
+                        return pages.first()
+                    return None
         except NdrCorePage.DoesNotExist:
             return None
 

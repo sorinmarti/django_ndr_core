@@ -214,13 +214,18 @@ form {
     border-color: var(--button-color) !important;
 }
 
-input, select, textarea {
+/* Exclude checkboxes, radios, range, color pickers — they use background-image for appearance */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+select,
+textarea {
     color: var(--form-field-fg) !important;
     background: var(--form-field-bg) !important;
     border-color: rgba(128, 128, 128, 0.3) !important;
 }
 
-input:focus, select:focus, textarea:focus {
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):focus,
+select:focus,
+textarea:focus {
     background: var(--form-field-bg) !important;
     color: var(--form-field-fg) !important;
     border-color: var(--button-color) !important;
@@ -230,24 +235,30 @@ label {
     color: var(--text-color) !important;
 }
 
-/* Dark mode form enhancements */
-[data-theme="dark"] .form-control {
-    background-color: var(--form-field-bg) !important;
-    color: var(--form-field-fg) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-[data-theme="dark"] .form-control:focus {
-    background-color: var(--form-field-bg) !important;
+/* Bootstrap switch — use palette button color instead of Bootstrap blue */
+.form-switch .form-check-input:checked {
+    background-color: var(--button-color) !important;
     border-color: var(--button-color) !important;
 }
 
-[data-theme="dark"] input,
+/* Dark mode form enhancements — fields lightened so they stand out from the container */
+[data-theme="dark"] .form-control {
+    background-color: color-mix(in srgb, var(--form-field-bg), white 10%) !important;
+    color: var(--form-field-fg) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+[data-theme="dark"] .form-control:focus {
+    background-color: color-mix(in srgb, var(--form-field-bg), white 10%) !important;
+    border-color: var(--button-color) !important;
+}
+
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-    background-color: var(--form-field-bg) !important;
+    background-color: color-mix(in srgb, var(--form-field-bg), white 10%) !important;
     color: var(--form-field-fg) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
 }
 
 [data-theme="dark"] input::placeholder,
@@ -257,6 +268,13 @@ label {
 
 [data-theme="dark"] label {
     color: var(--text-color) !important;
+}
+
+/* Help text / muted text is readable in dark mode */
+[data-theme="dark"] .form-text,
+[data-theme="dark"] .text-muted {
+    color: var(--text-color) !important;
+    opacity: 0.65;
 }
 
 /* Override Bootstrap bg-white class in dark mode */
@@ -678,4 +696,67 @@ ul li, ol li {
 
 [data-theme="dark"] .card-header .card-title {
     color: var(--title-color) !important;
+}
+
+/* PAGINATION */
+.page-link {
+    background-color: var(--container-bg-color) !important;
+    color: var(--text-color) !important;
+    border-color: rgba(128, 128, 128, 0.3) !important;
+}
+
+.page-link:hover {
+    background-color: var(--button-color) !important;
+    color: var(--button-text-color) !important;
+    border-color: var(--button-color) !important;
+}
+
+.page-item.active .page-link {
+    background-color: var(--button-color) !important;
+    color: var(--button-text-color) !important;
+    border-color: var(--button-color) !important;
+}
+
+.page-item.disabled .page-link {
+    background-color: var(--container-bg-color) !important;
+    color: var(--text-color) !important;
+    opacity: 0.45;
+}
+
+[data-theme="dark"] .page-link {
+    background-color: var(--container-bg-color) !important;
+    color: var(--text-color) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .page-link:hover {
+    background-color: var(--button-color) !important;
+    color: var(--button-text-color) !important;
+    border-color: var(--button-color) !important;
+}
+
+[data-theme="dark"] .page-item.active .page-link {
+    background-color: var(--button-color) !important;
+    color: var(--button-text-color) !important;
+    border-color: var(--button-color) !important;
+}
+
+[data-theme="dark"] .page-item.disabled .page-link {
+    background-color: var(--container-bg-color) !important;
+    color: var(--text-color) !important;
+    opacity: 0.4;
+}
+
+/* BUTTON - Dark mode visibility */
+[data-theme="dark"] .btn-primary {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* DATA LIST - Card spacing */
+.data-list-card {
+    margin-bottom: 0.6rem;
 }

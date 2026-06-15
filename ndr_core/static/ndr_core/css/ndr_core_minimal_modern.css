@@ -58,6 +58,44 @@ p {
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Page title in navbar — visible only when scrolled */
+.nav-page-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-color);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+    margin-left: 0.25rem;
+}
+
+#mainNav.navbar-scrolled .nav-page-title {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Small logo that appears next to page title when scrolled */
+.nav-scrolled-logo {
+    height: 28px;
+    width: auto;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    margin-left: 1rem;
+    border-radius: 4px;
+}
+
+#mainNav.navbar-scrolled .nav-scrolled-logo {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* Navbar brand */
 .navbar-brand {
     font-size: 1.5rem;
@@ -164,6 +202,15 @@ p {
     height: 4px;
     background: var(--accent-color-1);
     border-radius: 2px;
+}
+
+/* CKEditor table width fix: the editor puts width on the <figure> wrapper,
+   but the inner <table> defaults to shrink-to-fit. Make it fill the figure. */
+figure.table {
+    max-width: 100%;
+}
+figure.table table {
+    width: 100%;
 }
 
 /* Content card - subtle elevation */

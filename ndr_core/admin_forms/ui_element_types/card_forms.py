@@ -1,6 +1,7 @@
 """Forms for Card UI Element type."""
 from crispy_forms.layout import Layout, Row, Column, HTML
 from django import forms
+from django_ckeditor_5.widgets import CKEditor5Widget
 
 from ndr_core.admin_forms.admin_forms import get_form_buttons
 from ndr_core.models import NdrCoreUIElement, NdrCoreUiElementItem, NdrCorePage
@@ -52,10 +53,10 @@ class CardForm(BaseUIElementForm):
         help_text='Card title'
     )
     text = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 4}),
+        widget=CKEditor5Widget(config_name='page_editor'),
         required=False,
         label='Text',
-        help_text='Card description text'
+        help_text='Card body text — supports rich text with links, bold, lists, etc.'
     )
     internal_page = PageChoiceField(
         queryset=NdrCorePage.objects.all().order_by('index'),
@@ -102,7 +103,7 @@ class CardForm(BaseUIElementForm):
                 order_idx=0,
                 ndr_image=self.cleaned_data.get('card_image'),
                 title=self.cleaned_data.get('title', ''),
-                text=self.cleaned_data.get('text', ''),
+                rich_text=self.cleaned_data.get('text', ''),
                 url=link_url
             )
 
@@ -173,7 +174,7 @@ class CardEditForm(CardForm):
                 item = items[0]  # Card only has one item
                 self.fields['card_image'].initial = item.ndr_image
                 self.fields['title'].initial = item.title
-                self.fields['text'].initial = item.text
+                self.fields['text'].initial = item.rich_text or item.text
                 # Try to match stored URL back to an internal page
                 if item.url:
                     matched_page = next(

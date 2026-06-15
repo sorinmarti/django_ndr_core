@@ -45,9 +45,13 @@
                         </p>
 
                         <p class="p-0 m-0">
-                            <a href="{% url 'ndr_core:copy_search_config' search.pk %}" class="btn btn-sm btn-secondary">
+                            <button type="button" class="btn btn-sm btn-secondary"
+                                    data-bs-toggle="modal" data-bs-target="#copySearchModal"
+                                    data-copy-url="{% url 'ndr_core:copy_search_config' search.pk %}"
+                                    data-conf-name="{{ search.conf_name }}_copy"
+                                    data-conf-label="{{ search.conf_label }} (Copy)">
                                 <i class="fa-regular fa-copy"></i>
-                            </a>
+                            </button>
                             <a href="{% url 'ndr_core:edit_search_config' search.pk %}" class="btn btn-sm btn-secondary">
                                 <i class="fa-regular fa-pen-to-square"></i>
                             </a>
@@ -161,4 +165,49 @@
         <strong>Result Fields</strong> are the fields that are displayed in the search results.
     </div>
 
+    <!-- Copy Search Config Modal -->
+    <div class="modal fade" id="copySearchModal" tabindex="-1" aria-labelledby="copySearchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" id="copySearchForm">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="copySearchModalLabel">
+                            <i class="fa-regular fa-copy"></i> Copy Search Configuration
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="copyConfLabel" class="form-label">Configuration Label <small class="text-muted">(display name)</small></label>
+                            <input type="text" class="form-control" id="copyConfLabel" name="conf_label" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="copyConfName" class="form-label">Configuration Name <small class="text-muted">(identifier, no spaces)</small></label>
+                            <input type="text" class="form-control" id="copyConfName" name="conf_name" required pattern="[A-Za-z0-9_\-]+">
+                            <div class="form-text">Only letters, numbers, underscores and hyphens.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-regular fa-copy"></i> Create Copy
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block page_js %}
+<script>
+    document.getElementById('copySearchModal').addEventListener('show.bs.modal', function (event) {
+        var btn = event.relatedTarget;
+        document.getElementById('copyConfName').value = btn.getAttribute('data-conf-name');
+        document.getElementById('copyConfLabel').value = btn.getAttribute('data-conf-label');
+        document.getElementById('copySearchForm').action = btn.getAttribute('data-copy-url');
+    });
+</script>
 {% endblock %}
