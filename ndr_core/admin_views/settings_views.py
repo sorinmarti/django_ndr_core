@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
 from django.core.serializers.base import DeserializationError
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
@@ -17,6 +18,8 @@ from ndr_core.admin_forms.settings_forms import (
     SettingsSetEditableForm,
     SettingsSetUnderConstructionForm,
     SettingsSetLiveForm,
+    SettingsSetPasswordProtectedForm,
+    SettingsSetPasswordRemovedForm,
     LogoManagementForm,
 )
 from ndr_core.admin_views.admin_views import AdminViewMixin
@@ -250,6 +253,58 @@ class SetPageLiveView(AdminViewMixin, LoginRequiredMixin, FormView):
     def form_valid(self, form):
         NdrCoreValue.objects.filter(value_name='under_construction').update(value_value='false')
         return super().form_valid(form)
+
+
+class SetPagePasswordProtectedView(AdminViewMixin, LoginRequiredMixin, FormView):
+    """View to enable password protection on the site."""
+
+    template_name = "ndr_core/admin_views/page_state/settings_set_password_protected.html"
+    form_class = SettingsSetPasswordProtectedForm
+    success_url = reverse_lazy("ndr_core:configure_settings")
+
+    def form_valid(self, form):
+        password = form.cleaned_data['password']
+        val = NdrCoreValue.get_or_initialize('page_password_protected',
+                                             init_value='false',
+                                             init_type=NdrCoreValue.ValueType.BOOLEAN)
+        val.value_value = 'true'
+        val.save()
+        pw_val = NdrCoreValue.get_or_initialize('page_password',
+                                                init_value='',
+                                                init_type=NdrCoreValue.ValueType.STRING)
+        pw_val.value_value = password
+        pw_val.save()
+        return super().form_valid(form)
+
+
+class SetPagePasswordRemovedView(AdminViewMixin, LoginRequiredMixin, FormView):
+    """View to remove password protection from the site."""
+
+    template_name = "ndr_core/admin_views/page_state/settings_set_password_removed.html"
+    form_class = SettingsSetPasswordRemovedForm
+    success_url = reverse_lazy("ndr_core:configure_settings")
+
+    def form_valid(self, form):
+        val = NdrCoreValue.get_or_initialize('page_password_protected',
+                                             init_value='false',
+                                             init_type=NdrCoreValue.ValueType.BOOLEAN)
+        val.value_value = 'false'
+        val.save()
+        return super().form_valid(form)
+
+
+class UnlockSiteView(View):
+    """Public view: verifies the preview password and sets the session unlock flag."""
+
+    def post(self, request):
+        entered = request.POST.get('password', '')
+        stored = NdrCoreValue.get_or_initialize(
+            'page_password', init_value='', init_type=NdrCoreValue.ValueType.STRING
+        ).get_value()
+        if entered and entered == stored:
+            request.session['ndr_site_unlocked'] = True
+            return JsonResponse({'success': True})
+        return JsonResponse({'success': False})
 
 
 class ManageLogosView(AdminViewMixin, LoginRequiredMixin, View):

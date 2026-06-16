@@ -256,5 +256,12 @@
 {% block page_js %}
 {% endblock %}
 
+{% config_value 'page_password_protected' as is_password_protected %}
+{% if is_password_protected and not request.user.is_authenticated %}
+    {% if not request.session.ndr_site_unlocked %}
+        {% include 'ndr_core/includes/password_gate.html' %}
+    {% endif %}
+{% endif %}
+
 </body>
 </html>

@@ -71,7 +71,7 @@ p {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 300px;
-    margin-left: 0.25rem;
+    margin-left: 0.75rem;
 }
 
 #mainNav.navbar-scrolled .nav-page-title {
@@ -87,7 +87,7 @@ p {
     transform: translateY(-4px);
     transition: opacity 0.3s ease, transform 0.3s ease;
     pointer-events: none;
-    margin-left: 1rem;
+    margin-left: 0.25rem;
     border-radius: 4px;
 }
 
@@ -126,8 +126,19 @@ p {
     color: var(--accent-color-1) !important;
 }
 
-/* Underline effect for active links — exclude dropdown toggles so the caret arrow is preserved */
+/* Underline effect for active links — use ::after for plain links, ::before for dropdown
+   toggles (Bootstrap occupies ::after with its caret) */
 .navbar-nav .nav-link.active:not(.dropdown-toggle)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    right: 1rem;
+    height: 2px;
+    background: var(--accent-color-1);
+}
+
+.navbar-nav .nav-link.active.dropdown-toggle::before {
     content: '';
     position: absolute;
     bottom: 0;

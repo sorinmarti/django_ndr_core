@@ -163,7 +163,11 @@ class NdrCoreFormSubmit(HTML):
 
     def __init__(self, name, value, **kwargs):
         """Init the submit button. """
-        button_html = f'<button type="submit" name="{name}" class="btn btn-primary">{value}</button>'
+        button_html = f'''
+            <button type="submit" name="{name}" class="btn btn-primary align-self-start">
+                <i class="fa-solid fa-magnifying-glass"></i> {value}
+            </button>
+        '''
         super().__init__(mark_safe(button_html))
 
 

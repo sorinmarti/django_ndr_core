@@ -51,6 +51,16 @@
                         <i class="fa-regular fa-exclamation-circle"></i> Set Under Construction
                     </a>
                 {% endif %}
+                {% config_value 'page_password_protected' as is_password_protected %}
+                {% if is_password_protected %}
+                    <a href="{% url 'ndr_core:set_page_password_removed' %}" class="btn btn-sm btn-warning m-1">
+                        <i class="fa-regular fa-lock-open"></i> Remove Password Protection
+                    </a>
+                {% else %}
+                    <a href="{% url 'ndr_core:set_page_password_protected' %}" class="btn btn-sm btn-secondary m-1">
+                        <i class="fa-regular fa-lock"></i> Set Password Protection
+                    </a>
+                {% endif %}
             </div>
             <div>
                 <a href="{% url 'ndr_core:help_chapter' 'settings' %}" class="btn btn-sm btn-outline-secondary m-1">

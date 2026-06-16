@@ -381,51 +381,35 @@ class AdvancedSearchForm(_NdrCoreForm):
     @staticmethod
     def get_combined_search_button(master_config=None):
         """Create and return right-aligned search button for the combined simple search tab."""
-        compact_field = None
-        if master_config and master_config.search_has_compact_result:
-            compact_field = Field('compact_view_combined_simple', wrapper_class="col-md-12")
+        elements = []
 
-        div = Div(
-            Div(css_class="col-md-5"),
-            Div(Div(compact_field, css_class="text-right"), css_class="col-md-4"),
-            Div(
-                Div(
-                    NdrCoreFormSubmit('search_button_combined_simple', _("Search")),
-                    css_class="text-right",
-                ),
-                css_class="col-md-3",
-            ),
-            css_class="row g-2",
-        )
-        return div
+        if master_config and master_config.search_has_compact_result:
+            elements.append(Field('compact_view_combined_simple', wrapper_class="mb-0 align-self-center"))
+
+        elements.append(NdrCoreFormSubmit('search_button_combined_simple', _("Search")))
+        elements.append(NdrCoreClearButton(_("Clear")))
+
+        return Div(*elements, css_class="d-flex justify-content-end align-items-center gap-2 mt-2")
 
     @staticmethod
     def get_search_button(search_config, simple=False):
-        """Create and return right aligned search button."""
+        """Create and return right-aligned search button."""
         search_button_field_name = f"search_button_{search_config.conf_name}"
         if simple:
             search_button_field_name += "_simple"
 
-        compact_field = None
+        elements = []
+
         if search_config.search_has_compact_result:
             field_name = f"compact_view_{search_config.conf_name}"
             if simple:
                 field_name += "_simple"
-            compact_field = Field(field_name, wrapper_class="col-md-12")
+            elements.append(Field(field_name, wrapper_class="mb-0 align-self-center"))
 
-        div = Div(
-            Div(css_class="col-md-5"),
-            Div(Div(compact_field, css_class="text-right"), css_class="col-md-4"),
-            Div(
-                Div(
-                    NdrCoreFormSubmit(search_button_field_name, _("Search")),
-                    css_class="text-right",
-                ),
-                css_class="col-md-3",
-            ),
-            css_class="row g-2",
-        )
-        return div
+        elements.append(NdrCoreFormSubmit(search_button_field_name, _("Search")))
+        elements.append(NdrCoreClearButton(_("Clear")))
+
+        return Div(*elements, css_class="d-flex justify-content-end align-items-center gap-2 mt-2")
 
     @property
     def helper(self):

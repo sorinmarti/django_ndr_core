@@ -158,10 +158,13 @@
                                         </li>
                                         {% if user.is_authenticated %}
                                             <li class="nav-item">
-                                                <a class="nav-link" href="{% url 'ndr_core:logout' %}">
-                                                    <i class="fa-regular fa-right-from-bracket"></i>
-                                                    Logout
-                                                </a>
+                                                <form method="post" action="{% url 'ndr_core:logout' %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="nav-link btn btn-link p-0">
+                                                        <i class="fa-regular fa-right-from-bracket"></i>
+                                                        Logout
+                                                    </button>
+                                                </form>
                                             </li>
                                         {% else %}
                                             <li class="nav-item">

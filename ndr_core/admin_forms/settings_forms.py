@@ -344,6 +344,48 @@ class SettingsSetLiveForm(forms.Form):
         return helper
 
 
+class SettingsSetPasswordProtectedForm(forms.Form):
+    """Form to enable password protection on the site."""
+
+    password = forms.CharField(
+        max_length=100,
+        label="Preview Password",
+        help_text="Visitors must enter this password to access the site.",
+        widget=forms.PasswordInput(render_value=True),
+    )
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = FormHelper()
+        helper.form_method = "POST"
+        helper.layout = Layout(
+            'password',
+            ButtonHolder(
+                Submit("submit", "Set Password & Protect", css_class="btn-danger"),
+                css_class="modal-footer",
+            )
+        )
+        return helper
+
+
+class SettingsSetPasswordRemovedForm(forms.Form):
+    """Form to remove password protection from the site."""
+
+    @property
+    def helper(self):
+        """Creates and returns the form helper property."""
+        helper = FormHelper()
+        helper.form_method = "POST"
+        helper.layout = Layout()
+        bh = ButtonHolder(
+            Submit("submit", "Remove Password Protection", css_class="btn-default"),
+            css_class="modal-footer",
+        )
+        helper.layout.append(bh)
+        return helper
+
+
 class LogoManagementForm(forms.Form):
     """Form to manage page logos (per language) and footer partner logos."""
 

@@ -103,6 +103,9 @@ from ndr_core.admin_views.settings_views import (
     SetPageEditableView,
     SetPageUnderConstructionView,
     SetPageLiveView,
+    SetPagePasswordProtectedView,
+    SetPagePasswordRemovedView,
+    UnlockSiteView,
     ManageLogosView,
 )
 from ndr_core.admin_views.ui_style_views import (
@@ -187,6 +190,11 @@ urlpatterns = [
     path('configure/settings/set/under_construction/', SetPageUnderConstructionView.as_view(),
          name='set_page_under_construction'),
     path('configure/settings/set/live/', SetPageLiveView.as_view(), name='set_page_live'),
+    path('configure/settings/set/password_protected/', SetPagePasswordProtectedView.as_view(),
+         name='set_page_password_protected'),
+    path('configure/settings/set/password_removed/', SetPagePasswordRemovedView.as_view(),
+         name='set_page_password_removed'),
+    path('unlock/', UnlockSiteView.as_view(), name='unlock_site'),
     path('configure/logos/', ManageLogosView.as_view(), name='manage_logos'),
 
 
