@@ -25,6 +25,7 @@ class TextPreRenderer:
     code_start_regex = r'\[\[start_code(?:=(.*?))?\]\]'
     code_end_regex = r'\[\[end_code\]\]'
     toc_regex = r'\[\[toc\]\]'
+    float_regex = r'\[\[(float_right|float_left|float_text|end_float)\]\]'
     link_element_classes = {'image': NdrCoreImage, 'file': NdrCoreUpload, 'page': NdrCorePage, 'plotly': NdrCoreUpload}
     link_element_keys = {"page": "view_name"}
 
@@ -425,6 +426,73 @@ class TextPreRenderer:
             # If [[toc]] is present but no titled blocks exist, remove the tag
             rendered_text = rendered_text.replace('[[toc]]', '')
 
+        return rendered_text
+
+    def create_floats(self):
+        """Replaces float tags with a flexbox side-by-side layout.
+
+        Usage:
+            [[float_right]]
+            [[element|my_card]]
+            [[float_text]]
+            Text that appears to the LEFT of the card.
+            [[end_float]]
+
+        [[float_right]] puts the element on the right, text on the left.
+        [[float_left]]  puts the element on the left, text on the right.
+        [[float_text]]  separates the element from the wrapping text.
+        [[end_float]]   closes the layout.
+        """
+        rendered_text = self.text
+
+        # Strip <p> tags that wrap individual float control tags
+        rendered_text = re.sub(
+            r'<p>\s*(\[\[(?:float_right|float_left|float_text|end_float)\]\])\s*</p>', r'\1', rendered_text
+        )
+        # Strip opening <p> that immediately precedes a float start (CKEditor wraps the whole construct)
+        rendered_text = re.sub(
+            r'<p>(\s*\[\[float_(?:right|left)\]\])', r'\1', rendered_text
+        )
+        # Strip closing </p> that immediately follows [[end_float]]
+        rendered_text = re.sub(
+            r'(\[\[end_float\]\]\s*)</p>', r'\1', rendered_text
+        )
+        # Strip stray <br> around float control tags
+        rendered_text = re.sub(
+            r'(\[\[(?:float_right|float_left|float_text|end_float)\]\])\s*<br\s*/?>', r'\1', rendered_text
+        )
+        rendered_text = re.sub(
+            r'<br\s*/?>\s*(\[\[(?:float_right|float_left|float_text|end_float)\]\])', r'\1', rendered_text
+        )
+        # Strip &nbsp; entities, non-breaking spaces, and whitespace between
+        # [[float_right/left]] and the following [[ tag (CKEditor inserts many &nbsp; between lines)
+        rendered_text = re.sub(
+            r'(\[\[float_(?:right|left)\]\])(?:[ \t\r\n\u00a0]|&nbsp;|<br\s*/?>)+(?=\[\[)',
+            r'\1', rendered_text, flags=re.IGNORECASE
+        )
+
+        # float_right: row-reverse puts the first child (element) on the right
+        rendered_text = rendered_text.replace(
+            '[[float_right]]',
+            '<div style="display:flex; flex-direction:row-reverse; gap:1.5rem; align-items:flex-start;">'
+            '<div style="flex-shrink:0; width:fit-content;">'
+        )
+        # float_left: normal row puts the first child (element) on the left
+        rendered_text = rendered_text.replace(
+            '[[float_left]]',
+            '<div style="display:flex; flex-direction:row; gap:1.5rem; align-items:flex-start;">'
+            '<div style="flex-shrink:0; width:fit-content;">'
+        )
+        # float_text: closes the element div, opens the text div
+        rendered_text = rendered_text.replace(
+            '[[float_text]]',
+            '</div><div style="flex:1; min-width:0;">'
+        )
+        # end_float: closes the text div and the outer wrapper
+        rendered_text = rendered_text.replace(
+            '[[end_float]]',
+            '</div></div>'
+        )
         return rendered_text
 
     def create_code_blocks(self):
@@ -1034,6 +1102,7 @@ class TextPreRenderer:
         try:
             self.text = self.create_code_blocks()
             self.text = self.create_containers()
+            self.text = self.create_floats()
             self.text = self.create_toc()
             self.text = self.create_ui_elements()
             self.text = self.create_settings()

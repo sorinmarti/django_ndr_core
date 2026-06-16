@@ -1845,6 +1845,14 @@ class NdrCoreUIElement(models.Model):
     )
     """Card column width preset for Card Grid UI elements."""
 
+    card_width = models.CharField(
+        max_length=30,
+        blank=True,
+        default='18rem',
+        help_text='CSS width of the card (e.g. 18rem, 300px, 100%). Applies only to single Card elements.'
+    )
+    """CSS width for single Card UI elements."""
+
     def items(self):
         """Returns the items of the UI element, ordered. """
         return self.ndrcoreuielementitem_set.all().order_by('order_idx')

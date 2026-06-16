@@ -4,7 +4,7 @@
     .ndr-card-linked:hover { transform: translateY(-4px); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
 </style>
 {% with card_item=data.items.0 %}
-    <div class="card{% if card_item.url and not card_item.rich_text %} ndr-card-linked{% endif %}" style="width: 18rem;">
+    <div class="card{% if card_item.url and not card_item.rich_text %} ndr-card-linked{% endif %}" style="width: {{ data.card_width|default:'18rem' }};">
         {% if card_item.ndr_image %}
             <img class="card-img-top" src="{{ card_item.ndr_image.image.url }}" alt="Card image cap">
         {% endif %}

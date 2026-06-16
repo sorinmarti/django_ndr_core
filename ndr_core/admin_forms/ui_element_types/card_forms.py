@@ -71,6 +71,9 @@ class CardForm(BaseUIElementForm):
         help_text='External or custom URL (e.g. https://example.com). Ignored when an internal page is selected.'
     )
 
+    class Meta(BaseUIElementForm.Meta):
+        fields = BaseUIElementForm.Meta.fields + ['card_width']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, ui_element_type='card', **kwargs)
 
@@ -142,6 +145,12 @@ class CardForm(BaseUIElementForm):
         ))
         self.add_field_row(layout, 'internal_page', col_class='col-md-6')
         self.add_field_row(layout, 'url', col_class='col-md-6')
+
+        layout.append(Row(
+            Column(HTML('<h5 class="mt-3 mb-3">Dimensions</h5>'), css_class='col-12'),
+            css_class='row g-2'
+        ))
+        self.add_field_row(layout, 'card_width', col_class='col-md-4')
 
         return helper
 
