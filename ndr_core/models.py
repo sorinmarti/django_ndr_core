@@ -781,6 +781,10 @@ class NdrCorePage(TranslatableMixin, models.Model):
                                              help_text="Should the page be displayed in the navigation?")
     """If this is set to False, the page will not be displayed in the navigation. """
 
+    show_in_footer_navigation = models.BooleanField(default=True,
+                                                     help_text="Should the page be displayed in the footer navigation?")
+    """If set, the page appears in the footer nav regardless of show_in_navigation."""
+
     nav_icon = models.CharField(max_length=200,
                                 help_text='The fontawesome nav icon (leave blank if none)',
                                 blank=True)

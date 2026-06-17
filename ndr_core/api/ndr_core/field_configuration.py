@@ -69,9 +69,12 @@ class FieldConfiguration:
         # A float field returns a single value
         elif self.field.field_type == NdrCoreSearchField.FieldType.FLOAT:
             self.value = self.apply_modifications(value)
-        # A number range field returns a list of values
+        # A number range field returns a list of values — apply modifications per element
         elif self.field.field_type == NdrCoreSearchField.FieldType.NUMBER_RANGE:
-            self.value = self.apply_modifications(value)
+            if isinstance(value, list):
+                self.value = [self.apply_modifications(v) for v in value]
+            else:
+                self.value = self.apply_modifications(value)
         # All other fields return a single value
         else:
             self.value = self.apply_modifications(value)

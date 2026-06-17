@@ -102,30 +102,25 @@ class MongoDBResult(BaseResult):
                 }
                 return
 
-            # Calculate the number of documents to skip in order to get the correct list. Size of the list is page_size
-            # and the page number is 1-based.
+            # Single $facet aggregation: one scan for both the page of hits and the total count.
+            # (Two separate find() + count_documents() calls would scan the collection twice.)
             skip = self.page * self.page_size - self.page_size
+            pipeline = [
+                {"$match": self.query['filter']},
+                {"$sort": dict(self.query['sort'])},
+                {"$facet": {
+                    "hits":  [{"$skip": skip}, {"$limit": self.page_size}],
+                    "total": [{"$count": "count"}],
+                }},
+            ]
+            facet_result = next(collection.aggregate(pipeline), {})
+            hits = [json.loads(json_util.dumps(h)) for h in facet_result.get('hits', [])]
+            total_count = (facet_result.get('total') or [{}])[0].get('count', 0)
 
-            # Retrieve the documents from the collection
-            my_document = collection.find(filter=self.query['filter'],
-                                          sort=self.query['sort'],
-                                          skip=skip,
-                                          limit=self.page_size)
-
-            # Convert the documents to a list of dictionaries
-            hits = []
-            for hit in my_document:
-                hit = json.loads(json_util.dumps(hit))
-                hits.append(hit)
-
-            # Get the total number of documents in the result
-            total_count = collection.count_documents(self.query['filter'])
-
-            # Create the raw result
             self.raw_result = {
                 "total": total_count,
                 "page": self.page,
-                "hits": hits
+                "hits": hits,
             }
 
         except pymongo.errors.ServerSelectionTimeoutError as e:

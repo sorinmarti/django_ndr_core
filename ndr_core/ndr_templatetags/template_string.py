@@ -203,6 +203,8 @@ class TemplateStringVariable:
         keys = self.get_keys()
         value = data
         for key in keys:
+            if value is None:
+                return None
             try:
                 if isinstance(value, list) and not key.isdigit():
                     # Collect sub-key from each dict in the list
@@ -213,8 +215,10 @@ class TemplateStringVariable:
                 if key.isdigit():
                     try:
                         value = value[int(key)]
-                    except IndexError:
-                        raise IndexError(f"Nested key not found: {e}") from e
+                    except (IndexError, TypeError):
+                        return None
+                else:
+                    return None
             except KeyError as e:
                 raise KeyError(f"Nested key not found: {e}") from e
         return value

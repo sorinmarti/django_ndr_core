@@ -17,18 +17,21 @@ class MongoDBQuery(BaseQuery):
             return self._build_atlas_search_query(search_term, sort_direction)
 
         search_words = search_term.split(' ')
-        if and_or == 'and':
-            regex_string = '^(?=.*' + ')(?=.*'.join(search_words) + ')'
-        else:
-            regex_string = f"({'|'.join(search_words)})"
-
-        regex_clause = {'$regex': regex_string, '$options': 'msi'}
-
         path_parts = [p.strip() for p in self.search_config.simple_query_main_field.split(',') if p.strip()]
-        if len(path_parts) > 1:
-            field_filter = {'$or': [{field: regex_clause} for field in path_parts]}
+
+        def word_clause(word):
+            """Simple per-word regex — avoids slow lookahead assertions."""
+            regex = {'$regex': word, '$options': 'i'}
+            if len(path_parts) > 1:
+                return {'$or': [{field: regex} for field in path_parts]}
+            return {path_parts[0]: regex}
+
+        if len(search_words) == 1:
+            field_filter = word_clause(search_words[0])
+        elif and_or == 'and':
+            field_filter = {'$and': [word_clause(w) for w in search_words]}
         else:
-            field_filter = {path_parts[0]: regex_clause}
+            field_filter = {'$or': [word_clause(w) for w in search_words]}
 
         query = {
             'filter': field_filter,

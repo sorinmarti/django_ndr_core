@@ -141,6 +141,7 @@ class _NdrCoreView(View):
         context = {'page': self.ndr_page,
                    'rendered_text': self.pre_render_text(),
                    'navigation': NdrCorePage.objects.filter(parent_page=None, show_in_navigation=True).order_by('index'),
+                   'footer_navigation': NdrCorePage.objects.filter(parent_page=None, show_in_footer_navigation=True).order_by('index'),
                    'partners': partners,
                    'page_background': page_background}
         return context

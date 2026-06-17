@@ -2,15 +2,15 @@
 
 {% comment %}
 Component: Footer Navigation Links
-Optional: Design choice to repeat main navigation in footer
+Shows all pages that have show_in_footer_navigation=True.
+Default is True, so main nav pages appear here unless explicitly unchecked.
+Footer-only pages (show_in_navigation=False, show_in_footer_navigation=True) also appear here.
 {% endcomment %}
 
-{% config_value 'footer_show_main_navigation' as show_navigation %}
-
-{% if show_navigation %}
+{% if footer_navigation %}
 <nav class="footer-navigation">
     <ul class="navbar-nav navbar-ul-items">
-        {% for nav_item in navigation %}
+        {% for nav_item in footer_navigation %}
             <li class="nav-item">
                 <a href="{{ nav_item.url }}" class="footer-link">{{ nav_item.label }}</a>
             </li>
