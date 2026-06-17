@@ -11,7 +11,7 @@ url = 'https://api.nodegoat.dasch.swiss/data/type/11679/object?filter={"form": {
 url = "https://api.nodegoat.dasch.swiss/model/type/11679/"
 #url = ' https://api.nodegoat.dasch.swiss/data/type/11679/object?filter={"form": {"filter_1": {"type_id": "11679", "object_definitions": {"34189": [{"equality": "*", "value": "otto"}]}}}}'
 
-token = "hX9Prrif0H0AKQgSthdSbmhv80Ix0Y0M3CidzhKm6kl2dF3tXP"  # Replace with your actual bearer token
+token = "xxx"  # Replace with your actual bearer token
 
 headers = {
     "Authorization": f"Bearer {token}",
