@@ -181,6 +181,12 @@ class PageEditView(AdminViewMixin, LoginRequiredMixin, UpdateView):
                 base_file = get_base_file_name(updated_instance.page_type)
                 shutil.copyfile(base_file, new_filename)
 
+            # Rename the children's subdirectory if it exists
+            old_dir = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{original_instance.get_full_path()}'
+            new_dir = f'{NdrSettings.APP_NAME}/templates/{NdrSettings.APP_NAME}/{updated_instance.get_full_path()}'
+            if os.path.isdir(old_dir):
+                os.rename(old_dir, new_dir)
+
         # The file has been renamed. If the page type has changed, we need to replace the file
         if original_instance.page_type != updated_instance.page_type:
             # Page Type Changed

@@ -5,6 +5,23 @@
 <div class="container text-center">
     <link rel="stylesheet" href="{% static 'tify/dist/tify.css' %}">
     <script src="{% static 'tify/dist/tify.js' %}"></script>
+    <style>
+        /* Map Tify's theme variables to the active NDR Core colour palette */
+        #tify {
+            --tify-base-color:         var(--button-color);
+            --tify-link-color:         var(--link-color);
+            --tify-text-color:         var(--text-color);
+            --tify-text-muted-color:   var(--tab-title-color);
+            --tify-header-bg:          var(--container-bg-color);
+            /* Lighter tints of the accent — derived manually since CSS cannot lighten hex */
+            --tify-base-color-light:   #8dbd8d;
+            --tify-base-color-lighter: #d4ebd4;
+        }
+        [data-theme="dark"] #tify {
+            --tify-base-color-light:   #7db67d;
+            --tify-base-color-lighter: #1e2e1e;
+        }
+    </style>
     {% with manifest_group=data.items.0.manifest_group %}
         {% if manifest_group %}
             {% with manifest_count=manifest_group.ndrcoremanifest_set.count %}
