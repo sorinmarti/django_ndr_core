@@ -118,12 +118,11 @@ class JSModuleForm(BaseUIElementForm):
                     if extracted.get('options', {}).get('mediaBasePath'):
                         module_config.setdefault('options', {})['mediaBasePath'] = extracted['options']['mediaBasePath']
 
-                # Create item with package reference
+                # Create item — zip not stored, files already extracted to storage
                 NdrCoreUiElementItem.objects.create(
                     belongs_to=instance,
                     order_idx=0,
                     js_module_config=module_config,
-                    js_module_package=package_file,
                     js_module_extracted=True,
                     title=f"JS Module: {instance.name}"
                 )
